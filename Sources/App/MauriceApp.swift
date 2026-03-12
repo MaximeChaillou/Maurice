@@ -138,20 +138,20 @@ struct MauriceApp: App {
             TranscriptsContentView(viewModel: transcriptListViewModel)
         case .meetings:
             FolderContentView(
-                directory: AppSettings.meetingsDirectory,
                 emptyIcon: "calendar",
                 emptyTitle: "Aucune réunion sélectionnée",
                 markdownTheme: markdownTheme,
                 navigateByDate: true,
                 showSkillConfig: true,
-                recordingViewModel: recordingViewModel
+                recordingViewModel: recordingViewModel,
+                viewModel: FolderContentViewModel(directory: AppSettings.meetingsDirectory)
             )
         case .people:
             FolderContentView(
-                directory: AppSettings.peopleDirectory,
                 emptyIcon: "person.2",
                 emptyTitle: "Aucune personne sélectionnée",
-                markdownTheme: markdownTheme
+                markdownTheme: markdownTheme,
+                viewModel: FolderContentViewModel(directory: AppSettings.peopleDirectory)
             )
         case .tasks:
             TasksView(markdownTheme: markdownTheme)

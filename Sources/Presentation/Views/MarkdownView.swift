@@ -44,6 +44,10 @@ struct MarkdownView: NSViewRepresentable {
         return scrollView
     }
 
+    static func dismantleNSView(_ scrollView: NSScrollView, coordinator: MarkdownCoordinator) {
+        coordinator.stopObservingFrame()
+    }
+
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? CheckboxTextView else { return }
 
@@ -114,6 +118,13 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
                 self.lastKnownWidth = w
                 self.applyMarkdownStyling()
             }
+        }
+    }
+
+    func stopObservingFrame() {
+        if let observer = frameObserver {
+            NotificationCenter.default.removeObserver(observer)
+            frameObserver = nil
         }
     }
 
@@ -223,7 +234,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
     private func styleAllLines(
         lines: [String], activeLine: Int, codeLines: Set<Int>, storage: NSTextStorage
     ) {
-        buildTableInfos(lines: lines)
+        buildTableInfos(lines: lines, codeLines: codeLines)
         var offset = 0
         for (i, line) in lines.enumerated() {
             let len = (line as NSString).length
@@ -266,7 +277,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
 
     // MARK: - Table block detection
 
-    private func buildTableInfos(lines: [String]) {
+    private func buildTableInfos(lines: [String], codeLines: Set<Int> = []) {
         var offsets: [Int] = []
         var offset = 0
         for line in lines {
@@ -277,7 +288,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         var i = 0
         while i < lines.count {
             let trimmed = lines[i].trimmingCharacters(in: .whitespaces)
-            guard trimmed.hasPrefix("|") && trimmed.hasSuffix("|") else { i += 1; continue }
+            guard !codeLines.contains(i), trimmed.hasPrefix("|") && trimmed.hasSuffix("|") else { i += 1; continue }
             let tableStart = i
             while i < lines.count {
                 let t = lines[i].trimmingCharacters(in: .whitespaces)

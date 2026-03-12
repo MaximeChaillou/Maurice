@@ -45,6 +45,7 @@
 		A1A2A3A4A5A6A7A8A9A0A1A2 /* MeetingSkillConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */; };
 		C1C2C3C4C5C6C7C8C9C0C1C2 /* MeetingConfigSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */; };
 		E1E2E3E4E5E6E7E8E9E0E1E2 /* SkillRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */; };
+		FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */; };
 		A2A3A4A5A6A7A8A9A0A1A2A3 /* SkillConsoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B3B4B5B6B7B8B9B0B1B2B3 /* SkillConsoleView.swift */; };
 		F3A4B5C6D7E8F9A0B1C2D3E4 /* RecordingControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */; };
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
@@ -54,6 +55,9 @@
 		3344556677889900112233CC /* PersistentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4455667788990011223344DD /* PersistentCodable.swift */; };
 		6B7C8D9E0F1A2B3C4D5E6F7A /* FloatingSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
+		T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T101A102B103C104D105E106F /* CodableColorTests.swift */; };
+		T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T202A203B204C205D206E207F /* MarkdownThemeTests.swift */; };
+		T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T303A304B305C306D307E308F /* MarkdownStylingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +99,7 @@
 		B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSkillConfig.swift; sourceTree = "<group>"; };
 		D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigSidebar.swift; sourceTree = "<group>"; };
 		F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunner.swift; sourceTree = "<group>"; };
+		FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModel.swift; sourceTree = "<group>"; };
 		B2B3B4B5B6B7B8B9B0B1B2B3 /* SkillConsoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillConsoleView.swift; sourceTree = "<group>"; };
 		A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingControlBar.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF660011 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -105,6 +110,10 @@
 		5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSearchButton.swift; sourceTree = "<group>"; };
 		8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		F41DF75230BDB23FDEA3D4B4 /* Maurice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maurice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		T101A102B103C104D105E106F /* CodableColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColorTests.swift; sourceTree = "<group>"; };
+		T202A203B204C205D206E207F /* MarkdownThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeTests.swift; sourceTree = "<group>"; };
+		T303A304B305C306D307E308F /* MarkdownStylingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStylingTests.swift; sourceTree = "<group>"; };
+		TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MauriceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -132,8 +141,19 @@
 			isa = PBXGroup;
 			children = (
 				F41DF75230BDB23FDEA3D4B4 /* Maurice.app */,
+				TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		TG01AG02BG03CG04DG05EG06F /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				T101A102B103C104D105E106F /* CodableColorTests.swift */,
+				T303A304B305C306D307E308F /* MarkdownStylingTests.swift */,
+				T202A203B204C205D206E207F /* MarkdownThemeTests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		242D0C7FEA5829D1BB31A081 /* UseCases */ = {
@@ -175,8 +195,10 @@
 			isa = PBXGroup;
 			children = (
 				DD44EE55FF66AA11BB22CC33 /* DirectoryNavigation.swift */,
+				FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
 				BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */,
+				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
 				4EF01F9CF20F47DD9403B154 /* TranscriptListViewModel.swift */,
 			);
 			path = ViewModels;
@@ -247,7 +269,6 @@
 				E85222273DB7968BE346AD9C /* MarkdownTheme.swift */,
 				B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */,
 				A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */,
-				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
 				6E435614E19D148F97CACBD6 /* PreparationState.swift */,
 				D3BB87B902BB488323B85563 /* StoredTranscript.swift */,
 				A26DEF28AB727905D3069845 /* Transcription.swift */,
@@ -262,6 +283,7 @@
 			children = (
 				DB1C88E174D4B7D07C1EFB99 /* Resources */,
 				0A125F4E210B0AE3C88ECC7A /* Sources */,
+				TG01AG02BG03CG04DG05EG06F /* Tests */,
 				1BB583D8B7C5D14E61393EB3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -275,6 +297,24 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXContainerItemProxy section */
+		TC01AC02BC03CC04DC05EC06F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CA168FEE059EC3395A91EE1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8B6400061725FF1D54D605A;
+			remoteInfo = Maurice;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		TD01AD02BD03CD04DD05ED06F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8B6400061725FF1D54D605A /* Maurice */;
+			targetProxy = TC01AC02BC03CC04DC05EC06F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXNativeTarget section */
 		E8B6400061725FF1D54D605A /* Maurice */ = {
@@ -296,6 +336,24 @@
 			productReference = F41DF75230BDB23FDEA3D4B4 /* Maurice.app */;
 			productType = "com.apple.product-type.application";
 		};
+		TN01AN02BN03CN04DN05EN06F /* MauriceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = TL01AL02BL03CL04DL05EL06F /* Build configuration list for PBXNativeTarget "MauriceTests" */;
+			buildPhases = (
+				TS01AS02BS03CS04DS05ES06F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				TD01AD02BD03CD04DD05ED06F /* PBXTargetDependency */,
+			);
+			name = MauriceTests;
+			packageProductDependencies = (
+			);
+			productName = MauriceTests;
+			productReference = TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -308,6 +366,11 @@
 					E8B6400061725FF1D54D605A = {
 						DevelopmentTeam = 7XBGRFP286;
 						ProvisioningStyle = Automatic;
+					};
+					TN01AN02BN03CN04DN05EN06F = {
+						DevelopmentTeam = 7XBGRFP286;
+						ProvisioningStyle = Automatic;
+						TestTargetID = E8B6400061725FF1D54D605A;
 					};
 				};
 			};
@@ -326,6 +389,7 @@
 			projectRoot = "";
 			targets = (
 				E8B6400061725FF1D54D605A /* Maurice */,
+				TN01AN02BN03CN04DN05EN06F /* MauriceTests */,
 			);
 		};
 /* End PBXProject section */
@@ -411,9 +475,20 @@
 				AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */,
 				CC33DD44EE55FF66AA11BB22 /* DirectoryNavigation.swift in Sources */,
 				EE55FF66AA11BB22CC33DD44 /* DirectoryScanner.swift in Sources */,
+				FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		TS01AS02BS03CS04DS05ES06F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
+				T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */,
+				T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +658,40 @@
 			};
 			name = Release;
 		};
+		TX01AX02BX03CX04DX05EX06F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7XBGRFP286;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
+				PRODUCT_NAME = MauriceTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Maurice.app/Contents/MacOS/Maurice";
+			};
+			name = Debug;
+		};
+		TY01AY02BY03CY04DY05EY06F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7XBGRFP286;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
+				PRODUCT_NAME = MauriceTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Maurice.app/Contents/MacOS/Maurice";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -600,6 +709,15 @@
 			buildConfigurations = (
 				4850C42E73E55BA81E990B9A /* Debug */,
 				2DD984319C043F5E23E7D146 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		TL01AL02BL03CL04DL05EL06F /* Build configuration list for PBXNativeTarget "MauriceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TX01AX02BX03CX04DX05EX06F /* Debug */,
+				TY01AY02BY03CY04DY05EY06F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

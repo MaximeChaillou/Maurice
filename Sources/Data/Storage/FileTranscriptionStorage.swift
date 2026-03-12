@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+private let logger = Logger(subsystem: "com.maxime.maurice", category: "Storage")
 
 final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
     private var directory: URL {
@@ -22,7 +25,7 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         let targetDir: URL
         if let sub = subdirectory {
             targetDir = directory.appendingPathComponent(sub, isDirectory: true)
-            try? FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
         } else {
             targetDir = directory
         }
@@ -45,9 +48,8 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         let ss = String(format: "%02d", Int(entry.timestamp) % 60)
         let line = "[\(mm):\(ss)]\n\(entry.text)\n\n"
 
-        if let data = line.data(using: .utf8) {
-            handle.write(data)
-        }
+        guard let data = line.data(using: .utf8) else { return }
+        try handle.write(contentsOf: data)
     }
 
     private func formatTranscript(_ transcription: Transcription) -> String {
@@ -96,17 +98,30 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
     }
 
     func rename(_ transcript: StoredTranscript, to newName: String) async throws -> StoredTranscript {
+        let invalidChars = CharacterSet(charactersIn: "/:\\*?\"<>|")
         let sanitized = newName
-            .replacingOccurrences(of: "/", with: "-")
-            .replacingOccurrences(of: ":", with: "-")
+            .components(separatedBy: invalidChars).joined(separator: "-")
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let newURL = directory.appendingPathComponent("\(sanitized).txt")
+        guard !sanitized.isEmpty else {
+            throw StorageError.invalidName
+        }
+        let parentDir = transcript.url.deletingLastPathComponent()
+        let newURL = parentDir.appendingPathComponent("\(sanitized).txt")
+        if FileManager.default.fileExists(atPath: newURL.path) {
+            throw StorageError.duplicateName(sanitized)
+        }
         try FileManager.default.moveItem(at: transcript.url, to: newURL)
         return StoredTranscript(id: newURL, name: sanitized, date: transcript.date, entries: transcript.entries)
     }
 
     private func parseTranscript(at url: URL) -> StoredTranscript? {
-        guard let content = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+        let content: String
+        do {
+            content = try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            logger.warning("Impossible de lire \(url.lastPathComponent): \(error.localizedDescription)")
+            return nil
+        }
 
         let lines = content.components(separatedBy: "\n")
         guard let header = lines.first, header.hasPrefix("Maurice Transcript") else { return nil }
@@ -139,5 +154,17 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let dateString = formatter.string(from: transcription.startDate)
         return "transcription_\(dateString).txt"
+    }
+}
+
+enum StorageError: Error, LocalizedError {
+    case invalidName
+    case duplicateName(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidName: "Le nom du fichier est invalide."
+        case .duplicateName(let name): "Un fichier nommé « \(name) » existe déjà."
+        }
     }
 }

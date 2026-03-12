@@ -61,104 +61,83 @@ final class RecordingViewModel {
         startRecording(fromFileURL: url)
     }
 
+    // MARK: - Recording
+
     private func startRecording(fromFileURL fileURL: URL) {
-        Task {
-            preparationState = .idle
-            errorMessage = nil
-
-            do {
-                try await recordingUseCase.prepare { [weak self] state in
-                    Task { @MainActor in
-                        self?.preparationState = state
-                    }
-                }
-
-                let buffer = audioLevelBuffer
-                recordingUseCase.onAudioLevel = { level in
-                    buffer.append(level)
-                }
-
-                let stream = try await recordingUseCase.startRecording(fromFileURL: fileURL)
-                entries = []
-                volatileText = ""
-                audioLevelBuffer.reset()
-                transcription = Transcription()
-                liveFileURL = try recordingUseCase.beginLiveSession(startDate: transcription!.startDate, subdirectory: subdirectory)
-                isRecording = true
-
-                listeningTask = Task {
-                    for await event in stream {
-                        switch event {
-                        case .entry(let entry):
-                            entries.append(entry)
-                            transcription?.entries.append(entry)
-                            volatileText = ""
-                            if let url = liveFileURL {
-                                try? recordingUseCase.appendEntry(entry, to: url)
-                            }
-                        case .volatile(let text):
-                            volatileText = text
-                            try? await Task.sleep(for: .milliseconds(30))
-                        case .error(let message):
-                            errorMessage = message
-                        }
-                    }
-                    // File playback finished — auto-stop
-                    stopRecording()
-                }
-            } catch {
-                await recordingUseCase.stopRecording()
-                errorMessage = error.localizedDescription
-                preparationState = .failed(error.localizedDescription)
-            }
+        launchPipeline { useCase in
+            try await useCase.startRecording(fromFileURL: fileURL)
         }
     }
 
     private func startRecording() {
-        Task {
-            preparationState = .idle
-            errorMessage = nil
+        launchPipeline { useCase in
+            try await useCase.startRecording()
+        }
+    }
 
+    private func launchPipeline(
+        streamProvider: @escaping @Sendable (RecordingUseCase) async throws -> AsyncStream<TranscriptionEvent>
+    ) {
+        preparationState = .idle
+        errorMessage = nil
+
+        let useCase = recordingUseCase
+        let buffer = audioLevelBuffer
+        let subdirectory = subdirectory
+
+        listeningTask = Task {
             do {
-                try await recordingUseCase.prepare { [weak self] state in
-                    Task { @MainActor in
-                        self?.preparationState = state
+                // Prepare model on background thread
+                try await Task.detached {
+                    try await useCase.prepare { [weak self] state in
+                        Task { @MainActor in
+                            self?.preparationState = state
+                        }
                     }
-                }
 
-                let buffer = audioLevelBuffer
-                recordingUseCase.onAudioLevel = { level in
-                    buffer.append(level)
-                }
+                    useCase.onAudioLevel = { level in
+                        buffer.append(level)
+                    }
+                }.value
 
-                let stream = try await recordingUseCase.startRecording()
+                let stream = try await streamProvider(useCase)
+
                 entries = []
                 volatileText = ""
                 audioLevelBuffer.reset()
                 transcription = Transcription()
-                liveFileURL = try recordingUseCase.beginLiveSession(startDate: transcription!.startDate, subdirectory: subdirectory)
+                liveFileURL = try useCase.beginLiveSession(
+                    startDate: transcription!.startDate,
+                    subdirectory: subdirectory
+                )
                 isRecording = true
 
-                listeningTask = Task {
-                    for await event in stream {
-                        switch event {
-                        case .entry(let entry):
-                            entries.append(entry)
-                            transcription?.entries.append(entry)
-                            volatileText = ""
-                            if let url = liveFileURL {
-                                try? recordingUseCase.appendEntry(entry, to: url)
+                // Stream loop stays on MainActor for smooth UI
+                for await event in stream {
+                    switch event {
+                    case .entry(let entry):
+                        entries.append(entry)
+                        transcription?.entries.append(entry)
+                        volatileText = ""
+                        // File I/O on background
+                        if let url = liveFileURL {
+                            let useCase = useCase
+                            Task.detached {
+                                try? useCase.appendEntry(entry, to: url)
                             }
-                        case .volatile(let text):
-                            volatileText = text
-                            try? await Task.sleep(for: .milliseconds(30))
-                        case .error(let message):
-                            errorMessage = message
                         }
+                    case .volatile(let text):
+                        volatileText = text
+                        try? await Task.sleep(for: .milliseconds(30))
+                    case .error(let message):
+                        errorMessage = message
                     }
                 }
+                // Stream ended (file playback) — auto-stop
+                stopRecording()
             } catch {
-                await recordingUseCase.stopRecording()
+                let useCase = useCase
+                Task.detached { await useCase.stopRecording() }
                 errorMessage = error.localizedDescription
                 preparationState = .failed(error.localizedDescription)
             }
@@ -166,16 +145,17 @@ final class RecordingViewModel {
     }
 
     private func stopRecording() {
-        Task {
-            await recordingUseCase.stopRecording()
+        listeningTask?.cancel()
+        listeningTask = nil
+        isRecording = false
+        volatileText = ""
+        audioLevelBuffer.reset()
+        transcription = nil
+        liveFileURL = nil
 
-            listeningTask?.cancel()
-            listeningTask = nil
-            isRecording = false
-            volatileText = ""
-            audioLevelBuffer.reset()
-            transcription = nil
-            liveFileURL = nil
+        let useCase = recordingUseCase
+        Task.detached {
+            await useCase.stopRecording()
         }
     }
 }

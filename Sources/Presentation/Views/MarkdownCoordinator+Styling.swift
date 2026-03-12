@@ -1,5 +1,16 @@
 import AppKit
 
+// MARK: - Cached Regexes
+
+// swiftlint:disable force_try
+private enum MarkdownRegex {
+    static let bold = try! NSRegularExpression(pattern: "\\*\\*(.+?)\\*\\*")
+    static let italic = try! NSRegularExpression(pattern: "(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)")
+    static let inlineCode = try! NSRegularExpression(pattern: "(?<!`)`(?!`)(.+?)(?<!`)`(?!`)")
+    static let strikethrough = try! NSRegularExpression(pattern: "~~(.+?)~~")
+}
+// swiftlint:enable force_try
+
 // MARK: - Block & Inline Styling
 
 extension MarkdownCoordinator {
@@ -225,12 +236,12 @@ extension MarkdownCoordinator {
 
         styleInlinePattern(
             storage: storage, lineText: lineText, baseOffset: range.location,
-            pattern: "\\*\\*(.+?)\\*\\*", markerLen: 2,
+            regex: MarkdownRegex.bold, markerLen: 2,
             trait: .boldFontMask, color: theme.boldColor.nsColor
         )
         styleInlinePattern(
             storage: storage, lineText: lineText, baseOffset: range.location,
-            pattern: "(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)", markerLen: 1,
+            regex: MarkdownRegex.italic, markerLen: 1,
             trait: .italicFontMask, color: theme.italicColor.nsColor
         )
         styleInlineCode(storage: storage, lineText: lineText, baseOffset: range.location)
@@ -240,10 +251,9 @@ extension MarkdownCoordinator {
     // swiftlint:disable:next function_parameter_count
     private func styleInlinePattern(
         storage: NSTextStorage, lineText: String, baseOffset: Int,
-        pattern: String, markerLen: Int, trait: NSFontTraitMask,
+        regex: NSRegularExpression, markerLen: Int, trait: NSFontTraitMask,
         color: NSColor
     ) {
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
         let nsLine = lineText as NSString
         for match in regex.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
             let full = match.range
@@ -265,9 +275,8 @@ extension MarkdownCoordinator {
     }
 
     private func styleInlineCode(storage: NSTextStorage, lineText: String, baseOffset: Int) {
-        guard let regex = try? NSRegularExpression(pattern: "(?<!`)`(?!`)(.+?)(?<!`)`(?!`)") else { return }
         let nsLine = lineText as NSString
-        for match in regex.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
+        for match in MarkdownRegex.inlineCode.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
             let full = match.range
             hideRange(NSRange(location: baseOffset + full.location, length: 1))
             hideRange(NSRange(location: baseOffset + full.location + full.length - 1, length: 1))
@@ -283,9 +292,8 @@ extension MarkdownCoordinator {
     }
 
     private func styleInlineStrikethrough(storage: NSTextStorage, lineText: String, baseOffset: Int) {
-        guard let regex = try? NSRegularExpression(pattern: "~~(.+?)~~") else { return }
         let nsLine = lineText as NSString
-        for match in regex.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
+        for match in MarkdownRegex.strikethrough.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
             let full = match.range
             hideRange(NSRange(location: baseOffset + full.location, length: 2))
             hideRange(NSRange(location: baseOffset + full.location + full.length - 2, length: 2))

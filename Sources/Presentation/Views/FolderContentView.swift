@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct FolderContentView: View {
-    let directory: URL
     let emptyIcon: String
     let emptyTitle: String
     var markdownTheme: MarkdownTheme = MarkdownTheme()
@@ -9,19 +8,13 @@ struct FolderContentView: View {
     var showSkillConfig: Bool = false
     var recordingViewModel: RecordingViewModel?
 
-    @State private var folders: [FolderItem] = []
-    @State private var selectedFolder: String?
-    @State private var selectedFile: URL?
-    @State private var fileIndex: Int = 0
+    @State var viewModel: FolderContentViewModel
+
     @State private var showConfigSidebar: Bool = false
     @State private var showTranscriptOverlay: Bool = false
-    @State private var skillConfig: MeetingSkillConfig = MeetingSkillConfig.load()
-    @State private var skillRunner = SkillRunner()
-    @State private var isAddingFolder = false
-    @State private var newFolderName = ""
 
     private var isSidebarVisible: Bool {
-        showSkillConfig && showConfigSidebar && selectedFolder != nil
+        showSkillConfig && showConfigSidebar && viewModel.selectedFolder != nil
     }
 
     var body: some View {
@@ -37,8 +30,8 @@ struct FolderContentView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
 
-                    if skillRunner.isRunning || !skillRunner.outputLines.isEmpty {
-                        SkillConsoleView(runner: skillRunner)
+                    if viewModel.skillRunner.isRunning || !viewModel.skillRunner.outputLines.isEmpty {
+                        SkillConsoleView(runner: viewModel.skillRunner)
                     }
                 }
                 .frame(width: isSidebarVisible ? geo.size.width - 321 : geo.size.width)
@@ -46,20 +39,20 @@ struct FolderContentView: View {
                 if isSidebarVisible {
                     Divider()
                     MeetingConfigSidebar(
-                        folderName: selectedFolder!,
-                        config: $skillConfig,
-                        runner: skillRunner
+                        folderName: viewModel.selectedFolder!,
+                        config: $viewModel.skillConfig,
+                        runner: viewModel.skillRunner
                     )
                     .transition(.move(edge: .trailing))
                 }
             }
         }
-        .onAppear { loadFolders() }
-        .onChange(of: skillRunner.isRunning) {
-            if !skillRunner.isRunning {
-                loadFolders()
-                if let folder = currentFolder {
-                    selectFileAtIndex(in: folder)
+        .onAppear { viewModel.loadFolders() }
+        .onChange(of: viewModel.skillRunner.isRunning) {
+            if !viewModel.skillRunner.isRunning {
+                viewModel.loadFolders()
+                if let folder = viewModel.currentFolder {
+                    viewModel.selectFileAtIndex(in: folder)
                 }
             }
         }
@@ -69,8 +62,8 @@ struct FolderContentView: View {
 
     private var folderList: some View {
         VStack(spacing: 0) {
-            List(selection: $selectedFolder) {
-                ForEach(folders) { folder in
+            List(selection: $viewModel.selectedFolder) {
+                ForEach(viewModel.folders) { folder in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(folder.name)
                             .font(.body)
@@ -83,32 +76,32 @@ struct FolderContentView: View {
                     .tag(folder.name)
                 }
             }
-            .onChange(of: selectedFolder) {
-                selectedFile = nil
+            .onChange(of: viewModel.selectedFolder) {
+                viewModel.selectedFile = nil
                 showTranscriptOverlay = false
-                recordingViewModel?.subdirectory = selectedFolder
-                if navigateByDate, let folder = currentFolder {
-                    fileIndex = 0
-                    selectFileAtIndex(in: folder)
+                recordingViewModel?.subdirectory = viewModel.selectedFolder
+                if navigateByDate, let folder = viewModel.currentFolder {
+                    viewModel.fileIndex = 0
+                    viewModel.selectFileAtIndex(in: folder)
                 }
             }
 
             Divider()
 
-            if isAddingFolder {
+            if viewModel.isAddingFolder {
                 HStack(spacing: 8) {
-                    TextField("Nom de la réunion", text: $newFolderName)
+                    TextField("Nom de la réunion", text: $viewModel.newFolderName)
                         .textFieldStyle(.roundedBorder)
-                        .onSubmit { createFolder() }
-                        .onExitCommand { isAddingFolder = false; newFolderName = "" }
-                    Button("OK") { createFolder() }
-                        .disabled(newFolderName.trimmingCharacters(in: .whitespaces).isEmpty)
-                    Button("Annuler", role: .cancel) { isAddingFolder = false; newFolderName = "" }
+                        .onSubmit { viewModel.createFolder() }
+                        .onExitCommand { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
+                    Button("OK") { viewModel.createFolder() }
+                        .disabled(viewModel.newFolderName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button("Annuler", role: .cancel) { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
                 }
                 .padding(8)
             } else {
                 Button {
-                    isAddingFolder = true
+                    viewModel.isAddingFolder = true
                 } label: {
                     Label("Nouvelle réunion", systemImage: "plus")
                 }
@@ -123,7 +116,7 @@ struct FolderContentView: View {
 
     @ViewBuilder
     private var detailPane: some View {
-        if let folder = currentFolder {
+        if let folder = viewModel.currentFolder {
             if navigateByDate {
                 dateNavigationDetail(for: folder)
             } else if folder.files.count == 1, let file = folder.files.first {
@@ -146,7 +139,7 @@ struct FolderContentView: View {
 
     private func dateNavigationDetail(for folder: FolderItem) -> some View {
         let sortedFiles = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
-        let safeIndex = min(fileIndex, sortedFiles.count - 1)
+        let safeIndex = min(viewModel.fileIndex, sortedFiles.count - 1)
         let file = sortedFiles[max(safeIndex, 0)]
 
         return VStack(spacing: 0) {
@@ -182,14 +175,14 @@ struct FolderContentView: View {
     private func dateNavigationHeader(file: FolderFile, totalFiles: Int) -> some View {
         HStack {
             Button {
-                if fileIndex < totalFiles - 1 { fileIndex += 1 }
+                if viewModel.fileIndex < totalFiles - 1 { viewModel.fileIndex += 1 }
             } label: {
                 Image(systemName: "chevron.left")
                     .frame(width: 32, height: 32)
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
-            .disabled(fileIndex >= totalFiles - 1)
+            .disabled(viewModel.fileIndex >= totalFiles - 1)
 
             Spacer()
 
@@ -204,14 +197,14 @@ struct FolderContentView: View {
             Spacer()
 
             Button {
-                if fileIndex > 0 { fileIndex -= 1 }
+                if viewModel.fileIndex > 0 { viewModel.fileIndex -= 1 }
             } label: {
                 Image(systemName: "chevron.right")
                     .frame(width: 32, height: 32)
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
-            .disabled(fileIndex <= 0)
+            .disabled(viewModel.fileIndex <= 0)
 
             if showSkillConfig {
                 configToggleButton
@@ -228,7 +221,7 @@ struct FolderContentView: View {
             fileList(for: folder)
                 .frame(minWidth: 180, idealWidth: 220, maxWidth: 280)
 
-            if let url = selectedFile,
+            if let url = viewModel.selectedFile,
                let file = folder.files.first(where: { $0.url == url }) {
                 FolderFileDetailView(file: file, markdownTheme: markdownTheme)
                     .id(file.id)
@@ -244,7 +237,7 @@ struct FolderContentView: View {
     }
 
     private func fileList(for folder: FolderItem) -> some View {
-        List(selection: $selectedFile) {
+        List(selection: $viewModel.selectedFile) {
             ForEach(folder.files) { file in
                 VStack(alignment: .leading, spacing: 4) {
                     Text(file.name)
@@ -275,63 +268,6 @@ struct FolderContentView: View {
         }
         .buttonStyle(.plain)
         .help("Configurer les skills")
-    }
-
-    // MARK: - Helpers
-
-    private var currentFolder: FolderItem? {
-        guard let name = selectedFolder else { return nil }
-        return folders.first { $0.name == name }
-    }
-
-    private func selectFileAtIndex(in folder: FolderItem) {
-        let sorted = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
-        guard !sorted.isEmpty else { return }
-        let idx = min(fileIndex, sorted.count - 1)
-        selectedFile = sorted[idx].url
-    }
-
-    // MARK: - Folder creation
-
-    private func createFolder() {
-        let name = newFolderName.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty else { return }
-
-        let folderURL = directory.appendingPathComponent(name, isDirectory: true)
-        try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let fileName = formatter.string(from: Date()) + ".md"
-        let fileURL = folderURL.appendingPathComponent(fileName)
-        FileManager.default.createFile(atPath: fileURL.path, contents: nil)
-
-        newFolderName = ""
-        isAddingFolder = false
-        loadFolders()
-        selectedFolder = name
-    }
-
-    // MARK: - Data loading
-
-    private func loadFolders() {
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-
-        let contents = DirectoryScanner.scan(at: directory)
-
-        folders = contents.folders.compactMap { folder in
-            let files = scanFiles(in: folder.url)
-            guard !files.isEmpty else { return nil }
-            return FolderItem(name: folder.name, url: folder.url, files: files)
-        }
-        .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-    }
-
-    private func scanFiles(in dir: URL) -> [FolderFile] {
-        DirectoryScanner.scan(at: dir, fileExtension: "md").files
-            .map { FolderFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
-                              date: $0.date, url: $0.url) }
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
     }
 }
 

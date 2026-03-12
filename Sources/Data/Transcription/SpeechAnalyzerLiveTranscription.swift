@@ -8,14 +8,24 @@ private let logger = Logger(subsystem: "com.maxime.maurice", category: "SpeechAn
 final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecked Sendable {
     private let locale: Locale
 
+    /// Lock protecting state shared between the audio callback thread and async methods.
+    private let lock = NSLock()
+
+    // State accessed from audio callback — always access under `lock`.
+    private var inputContinuation: AsyncStream<AnalyzerInput>.Continuation?
+    private var onAudioLevelHandler: (@Sendable (Float) -> Void)?
+
+    // State accessed only from async context (effectively serialized by caller).
     private var analyzer: SpeechAnalyzer?
     private var transcriber: SpeechTranscriber?
-    private var inputContinuation: AsyncStream<AnalyzerInput>.Continuation?
     private var audioEngine: AVAudioEngine?
     private var startTime: Date?
     private var activity: NSObjectProtocol?
 
-    var onAudioLevel: (@Sendable (Float) -> Void)?
+    var onAudioLevel: (@Sendable (Float) -> Void)? {
+        get { lock.withLock { onAudioLevelHandler } }
+        set { lock.withLock { onAudioLevelHandler = newValue } }
+    }
 
     init(locale: Locale = Locale(identifier: "fr-FR")) {
         self.locale = locale
@@ -54,8 +64,8 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
             throw SpeechAnalyzerError.audioFormatError
         }
 
-        let (inputStream, inputContinuation) = AsyncStream<AnalyzerInput>.makeStream()
-        self.inputContinuation = inputContinuation
+        let (inputStream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        lock.withLock { inputContinuation = continuation }
 
         let analyzer = SpeechAnalyzer(
             inputSequence: inputStream,
@@ -111,8 +121,8 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
             throw SpeechAnalyzerError.audioFormatError
         }
 
-        let (inputStream, inputContinuation) = AsyncStream<AnalyzerInput>.makeStream()
-        self.inputContinuation = inputContinuation
+        let (inputStream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
+        lock.withLock { inputContinuation = continuation }
 
         let analyzer = SpeechAnalyzer(
             inputSequence: inputStream,
@@ -163,17 +173,28 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
             audioEngine = nil
         }
 
-        inputContinuation?.finish()
-        inputContinuation = nil
+        lock.withLock {
+            inputContinuation?.finish()
+            inputContinuation = nil
+            onAudioLevelHandler = nil
+        }
 
         try? await analyzer?.finalizeAndFinishThroughEndOfInput()
         analyzer = nil
         startTime = nil
         activity = nil
-        onAudioLevel = nil
     }
 
     // MARK: - Audio Capture
+
+    private struct FileCaptureContext {
+        let audioFile: AVAudioFile
+        let converter: AVAudioConverter
+        let readBufferSize: AVAudioFrameCount
+        let estimatedFrames: AVAudioFrameCount
+        let fileFormat: AVAudioFormat
+        let analyzerFormat: AVAudioFormat
+    }
 
     private func startFileCapture(fileURL: URL, analyzerFormat: AVAudioFormat) throws {
         guard let audioFile = try? AVAudioFile(forReading: fileURL) else {
@@ -187,57 +208,70 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
 
         let readBufferSize: AVAudioFrameCount = 1024
         let ratio = analyzerFormat.sampleRate / fileFormat.sampleRate
-        let estimatedFrames = AVAudioFrameCount(Double(readBufferSize) * ratio) + 1
+        let ctx = FileCaptureContext(
+            audioFile: audioFile,
+            converter: converter,
+            readBufferSize: readBufferSize,
+            estimatedFrames: AVAudioFrameCount(Double(readBufferSize) * ratio) + 1,
+            fileFormat: fileFormat,
+            analyzerFormat: analyzerFormat
+        )
 
         Task.detached { [weak self] in
             guard let self else { return }
 
             while audioFile.framePosition < audioFile.length {
-                guard let readBuffer = AVAudioPCMBuffer(
-                    pcmFormat: fileFormat,
-                    frameCapacity: readBufferSize
-                ) else { break }
-
-                do {
-                    try audioFile.read(into: readBuffer)
-                } catch {
-                    break
-                }
-
-                // Compute RMS for visualization (boost for synthetic voice)
-                let frameLength = vDSP_Length(readBuffer.frameLength)
-                if frameLength > 0, let channelData = readBuffer.floatChannelData {
-                    var rms: Float = 0
-                    vDSP_rmsqv(channelData[0], 1, &rms, frameLength)
-                    self.onAudioLevel?(min(rms * 4, 1.0))
-                }
-
-                guard let continuation = self.inputContinuation else { break }
-
-                guard let convertedBuffer = AVAudioPCMBuffer(
-                    pcmFormat: analyzerFormat,
-                    frameCapacity: estimatedFrames
-                ) else { break }
-
-                var error: NSError?
-                nonisolated(unsafe) let unsafeReadBuffer = readBuffer
-                converter.convert(to: convertedBuffer, error: &error) { _, outStatus in
-                    outStatus.pointee = .haveData
-                    return unsafeReadBuffer
-                }
-                guard error == nil, convertedBuffer.frameLength > 0 else { continue }
-                continuation.yield(AnalyzerInput(buffer: convertedBuffer))
-
-                // Simulate real-time playback pace
-                let chunkDuration = Double(readBuffer.frameLength) / fileFormat.sampleRate
+                guard self.processNextFileChunk(ctx) else { break }
+                let chunkDuration = Double(readBufferSize) / fileFormat.sampleRate
                 try? await Task.sleep(for: .milliseconds(Int(chunkDuration * 1000)))
             }
 
-            // Signal end of file: finalize the analyzer so transcriber.results ends
-            self.inputContinuation?.finish()
-            self.inputContinuation = nil
+            self.lock.withLock {
+                self.inputContinuation?.finish()
+                self.inputContinuation = nil
+            }
             try? await self.analyzer?.finalizeAndFinishThroughEndOfInput()
         }
+    }
+
+    /// Process a single chunk from the audio file. Returns `false` to stop the loop.
+    private func processNextFileChunk(_ ctx: FileCaptureContext) -> Bool {
+        guard let readBuffer = AVAudioPCMBuffer(
+            pcmFormat: ctx.fileFormat,
+            frameCapacity: ctx.readBufferSize
+        ) else { return false }
+
+        do {
+            try ctx.audioFile.read(into: readBuffer)
+        } catch {
+            return false
+        }
+
+        let frameLength = vDSP_Length(readBuffer.frameLength)
+        if frameLength > 0, let channelData = readBuffer.floatChannelData {
+            var rms: Float = 0
+            vDSP_rmsqv(channelData[0], 1, &rms, frameLength)
+            let handler = lock.withLock { onAudioLevelHandler }
+            handler?(min(rms * 4, 1.0))
+        }
+
+        let continuation = lock.withLock { inputContinuation }
+        guard let continuation else { return false }
+
+        guard let convertedBuffer = AVAudioPCMBuffer(
+            pcmFormat: ctx.analyzerFormat,
+            frameCapacity: ctx.estimatedFrames
+        ) else { return false }
+
+        var error: NSError?
+        nonisolated(unsafe) let unsafeReadBuffer = readBuffer
+        ctx.converter.convert(to: convertedBuffer, error: &error) { _, outStatus in
+            outStatus.pointee = .haveData
+            return unsafeReadBuffer
+        }
+        guard error == nil, convertedBuffer.frameLength > 0 else { return true }
+        continuation.yield(AnalyzerInput(buffer: convertedBuffer))
+        return true
     }
 
     private func startAudioCapture(analyzerFormat: AVAudioFormat) throws {
@@ -259,11 +293,13 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
             if frameLength > 0, let channelData = pcmBuffer.floatChannelData {
                 var rms: Float = 0
                 vDSP_rmsqv(channelData[0], 1, &rms, frameLength)
-                self.onAudioLevel?(rms)
+                let handler = self.lock.withLock { self.onAudioLevelHandler }
+                handler?(rms)
             }
 
             // Forward audio to speech analyzer
-            guard let continuation = self.inputContinuation else { return }
+            let continuation = self.lock.withLock { self.inputContinuation }
+            guard let continuation else { return }
 
             let ratio = analyzerFormat.sampleRate / nativeFormat.sampleRate
             let estimatedFrames = AVAudioFrameCount(Double(pcmBuffer.frameLength) * ratio) + 1

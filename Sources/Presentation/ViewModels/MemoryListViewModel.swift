@@ -2,6 +2,7 @@ import Foundation
 import Observation
 
 @Observable
+@MainActor
 final class MemoryListViewModel {
     let navigation: DirectoryNavigation
     private(set) var folders: [Folder] = []
