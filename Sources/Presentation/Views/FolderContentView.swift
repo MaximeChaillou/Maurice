@@ -1,0 +1,496 @@
+import SwiftUI
+
+struct FolderContentView: View {
+    let directory: URL
+    let emptyIcon: String
+    let emptyTitle: String
+    var markdownTheme: MarkdownTheme = MarkdownTheme()
+    var navigateByDate: Bool = false
+    var showSkillConfig: Bool = false
+    var recordingViewModel: RecordingViewModel?
+
+    @State private var folders: [FolderItem] = []
+    @State private var selectedFolder: String?
+    @State private var selectedFile: URL?
+    @State private var fileIndex: Int = 0
+    @State private var showConfigSidebar: Bool = false
+    @State private var showTranscriptOverlay: Bool = false
+    @State private var skillConfig: MeetingSkillConfig = MeetingSkillConfig.load()
+    @State private var skillRunner = SkillRunner()
+    @State private var isAddingFolder = false
+    @State private var newFolderName = ""
+
+    private var isSidebarVisible: Bool {
+        showSkillConfig && showConfigSidebar && selectedFolder != nil
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    HSplitView {
+                        folderList
+                            .frame(minWidth: 200, idealWidth: 220, maxWidth: 280)
+                            .layoutPriority(1)
+
+                        detailPane
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+
+                    if skillRunner.isRunning || !skillRunner.outputLines.isEmpty {
+                        SkillConsoleView(runner: skillRunner)
+                    }
+                }
+                .frame(width: isSidebarVisible ? geo.size.width - 321 : geo.size.width)
+
+                if isSidebarVisible {
+                    Divider()
+                    MeetingConfigSidebar(
+                        folderName: selectedFolder!,
+                        config: $skillConfig,
+                        runner: skillRunner
+                    )
+                    .transition(.move(edge: .trailing))
+                }
+            }
+        }
+        .onAppear { loadFolders() }
+        .onChange(of: skillRunner.isRunning) {
+            if !skillRunner.isRunning {
+                loadFolders()
+                if let folder = currentFolder {
+                    selectFileAtIndex(in: folder)
+                }
+            }
+        }
+    }
+
+    // MARK: - Folder list (left)
+
+    private var folderList: some View {
+        VStack(spacing: 0) {
+            List(selection: $selectedFolder) {
+                ForEach(folders) { folder in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(folder.name)
+                            .font(.body)
+                            .lineLimit(1)
+                        Text("\(folder.fileCount) fichier\(folder.fileCount > 1 ? "s" : "")")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                    .tag(folder.name)
+                }
+            }
+            .onChange(of: selectedFolder) {
+                selectedFile = nil
+                showTranscriptOverlay = false
+                recordingViewModel?.subdirectory = selectedFolder
+                if navigateByDate, let folder = currentFolder {
+                    fileIndex = 0
+                    selectFileAtIndex(in: folder)
+                }
+            }
+
+            Divider()
+
+            if isAddingFolder {
+                HStack(spacing: 8) {
+                    TextField("Nom de la réunion", text: $newFolderName)
+                        .textFieldStyle(.roundedBorder)
+                        .onSubmit { createFolder() }
+                        .onExitCommand { isAddingFolder = false; newFolderName = "" }
+                    Button("OK") { createFolder() }
+                        .disabled(newFolderName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button("Annuler", role: .cancel) { isAddingFolder = false; newFolderName = "" }
+                }
+                .padding(8)
+            } else {
+                Button {
+                    isAddingFolder = true
+                } label: {
+                    Label("Nouvelle réunion", systemImage: "plus")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .padding(8)
+            }
+        }
+    }
+
+    // MARK: - Right pane
+
+    @ViewBuilder
+    private var detailPane: some View {
+        if let folder = currentFolder {
+            if navigateByDate {
+                dateNavigationDetail(for: folder)
+            } else if folder.files.count == 1, let file = folder.files.first {
+                FolderFileDetailView(file: file, markdownTheme: markdownTheme)
+                    .id(file.id)
+            } else {
+                fileListDetail(for: folder)
+            }
+        } else {
+            ContentUnavailableView(
+                emptyTitle,
+                systemImage: emptyIcon,
+                description: Text("Sélectionnez un élément dans la liste.")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    // MARK: - Navigate by date mode
+
+    private func dateNavigationDetail(for folder: FolderItem) -> some View {
+        let sortedFiles = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+        let safeIndex = min(fileIndex, sortedFiles.count - 1)
+        let file = sortedFiles[max(safeIndex, 0)]
+
+        return VStack(spacing: 0) {
+            dateNavigationHeader(file: file, totalFiles: sortedFiles.count)
+            Divider()
+
+            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
+                .id(file.id)
+
+            if let vm = recordingViewModel {
+                TabButtonRepresentable(isOpen: showTranscriptOverlay) {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showTranscriptOverlay.toggle()
+                    }
+                }
+                .frame(width: 60, height: 22)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.trailing, 40)
+                .padding(.top, -22)
+                .zIndex(1)
+
+                if showTranscriptOverlay {
+                    MeetingTranscriptContent(viewModel: vm)
+                }
+
+                Divider()
+                RecordingControlBar(viewModel: vm)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func dateNavigationHeader(file: FolderFile, totalFiles: Int) -> some View {
+        HStack {
+            Button {
+                if fileIndex < totalFiles - 1 { fileIndex += 1 }
+            } label: {
+                Image(systemName: "chevron.left")
+                    .frame(width: 32, height: 32)
+                    .glassEffect(.regular.interactive(), in: .circle)
+            }
+            .buttonStyle(.plain)
+            .disabled(fileIndex >= totalFiles - 1)
+
+            Spacer()
+
+            VStack(spacing: 2) {
+                Text(file.name)
+                    .font(.headline)
+                Text(file.date, format: .dateTime.day().month(.abbreviated).year().hour().minute())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Button {
+                if fileIndex > 0 { fileIndex -= 1 }
+            } label: {
+                Image(systemName: "chevron.right")
+                    .frame(width: 32, height: 32)
+                    .glassEffect(.regular.interactive(), in: .circle)
+            }
+            .buttonStyle(.plain)
+            .disabled(fileIndex <= 0)
+
+            if showSkillConfig {
+                configToggleButton
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    // MARK: - File list mode
+
+    private func fileListDetail(for folder: FolderItem) -> some View {
+        HSplitView {
+            fileList(for: folder)
+                .frame(minWidth: 180, idealWidth: 220, maxWidth: 280)
+
+            if let url = selectedFile,
+               let file = folder.files.first(where: { $0.url == url }) {
+                FolderFileDetailView(file: file, markdownTheme: markdownTheme)
+                    .id(file.id)
+            } else {
+                ContentUnavailableView(
+                    "Aucun fichier sélectionné",
+                    systemImage: "doc.text",
+                    description: Text("Sélectionnez un fichier dans la liste.")
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+
+    private func fileList(for folder: FolderItem) -> some View {
+        List(selection: $selectedFile) {
+            ForEach(folder.files) { file in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(file.name)
+                        .font(.body)
+                        .lineLimit(1)
+                    Text(file.date, format: .dateTime.day().month(.abbreviated).year())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 2)
+                .tag(file.url)
+            }
+        }
+    }
+
+    // MARK: - Config sidebar toggle
+
+    private var configToggleButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showConfigSidebar.toggle()
+            }
+        } label: {
+            Image(systemName: showConfigSidebar ? "sidebar.trailing" : "gearshape")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .glassEffect(.regular.interactive(), in: .circle)
+        }
+        .buttonStyle(.plain)
+        .help("Configurer les skills")
+    }
+
+    // MARK: - Helpers
+
+    private var currentFolder: FolderItem? {
+        guard let name = selectedFolder else { return nil }
+        return folders.first { $0.name == name }
+    }
+
+    private func selectFileAtIndex(in folder: FolderItem) {
+        let sorted = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+        guard !sorted.isEmpty else { return }
+        let idx = min(fileIndex, sorted.count - 1)
+        selectedFile = sorted[idx].url
+    }
+
+    // MARK: - Folder creation
+
+    private func createFolder() {
+        let name = newFolderName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+
+        let folderURL = directory.appendingPathComponent(name, isDirectory: true)
+        try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let fileName = formatter.string(from: Date()) + ".md"
+        let fileURL = folderURL.appendingPathComponent(fileName)
+        FileManager.default.createFile(atPath: fileURL.path, contents: nil)
+
+        newFolderName = ""
+        isAddingFolder = false
+        loadFolders()
+        selectedFolder = name
+    }
+
+    // MARK: - Data loading
+
+    private func loadFolders() {
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+        let contents = DirectoryScanner.scan(at: directory)
+
+        folders = contents.folders.compactMap { folder in
+            let files = scanFiles(in: folder.url)
+            guard !files.isEmpty else { return nil }
+            return FolderItem(name: folder.name, url: folder.url, files: files)
+        }
+        .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private func scanFiles(in dir: URL) -> [FolderFile] {
+        DirectoryScanner.scan(at: dir, fileExtension: "md").files
+            .map { FolderFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
+                              date: $0.date, url: $0.url) }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+    }
+}
+
+// MARK: - Models
+
+struct FolderItem: Identifiable {
+    let name: String, url: URL, files: [FolderFile]
+    var id: String { name }
+    var fileCount: Int { files.count }
+}
+
+struct FolderFile: Identifiable, Hashable {
+    let id: URL, name: String, date: Date, url: URL
+    var content: String { (try? String(contentsOf: url, encoding: .utf8)) ?? "" }
+    func save(content: String) { try? content.write(to: url, atomically: true, encoding: .utf8) }
+}
+
+// MARK: - Detail views
+
+private struct FolderFileDetailView: View {
+    let file: FolderFile
+    var markdownTheme: MarkdownTheme = MarkdownTheme()
+    @State private var bodyText: String = ""
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text(file.name)
+                .font(.headline)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+
+            Divider()
+
+            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct FolderFileEditorView: View {
+    let file: FolderFile
+    var markdownTheme: MarkdownTheme = MarkdownTheme()
+    @State private var bodyText: String = ""
+
+    var body: some View {
+        ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
+            .onAppear { bodyText = file.content }
+            .onChange(of: bodyText) { file.save(content: bodyText) }
+    }
+}
+
+// MARK: - Meeting transcript tab & content
+
+private struct TabButtonRepresentable: NSViewRepresentable {
+    let isOpen: Bool
+    let action: () -> Void
+
+    func makeNSView(context: Context) -> TabButtonNSView {
+        let view = TabButtonNSView()
+        view.action = action
+        view.isOpen = isOpen
+        return view
+    }
+
+    func updateNSView(_ nsView: TabButtonNSView, context: Context) {
+        nsView.isOpen = isOpen
+        nsView.action = action
+        nsView.needsDisplay = true
+    }
+}
+
+private final class TabButtonNSView: NSView {
+    var isOpen = false
+    var action: (() -> Void)?
+    private var cursorTrackingArea: NSTrackingArea?
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        wantsLayer = true
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let old = cursorTrackingArea { removeTrackingArea(old) }
+        let area = NSTrackingArea(
+            rect: bounds,
+            options: [.cursorUpdate, .activeAlways],
+            owner: self
+        )
+        addTrackingArea(area)
+        cursorTrackingArea = area
+    }
+
+    override func cursorUpdate(with event: NSEvent) {
+        NSCursor.pointingHand.set()
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        let radius: CGFloat = 6
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: bounds.minX, y: bounds.minY))
+        path.addLine(to: CGPoint(x: bounds.minX, y: bounds.maxY - radius))
+        path.addQuadCurve(to: CGPoint(x: bounds.minX + radius, y: bounds.maxY),
+                          control: CGPoint(x: bounds.minX, y: bounds.maxY))
+        path.addLine(to: CGPoint(x: bounds.maxX - radius, y: bounds.maxY))
+        path.addQuadCurve(to: CGPoint(x: bounds.maxX, y: bounds.maxY - radius),
+                          control: CGPoint(x: bounds.maxX, y: bounds.maxY))
+        path.addLine(to: CGPoint(x: bounds.maxX, y: bounds.minY))
+        path.closeSubpath()
+
+        let nsPath = NSBezierPath(cgPath: path)
+        NSColor.controlBackgroundColor.withAlphaComponent(0.6).setFill()
+        nsPath.fill()
+
+        // Chevron
+        let name = isOpen ? "chevron.down" : "chevron.up"
+        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .bold)
+            .applying(.init(paletteColors: [.secondaryLabelColor]))
+        if let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(config) {
+            let size = image.size
+            let point = NSPoint(x: (bounds.width - size.width) / 2,
+                                y: (bounds.height - size.height) / 2)
+            image.draw(at: point, from: .zero, operation: .sourceOver, fraction: 1)
+        }
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        action?()
+    }
+}
+
+private struct MeetingTranscriptContent: View {
+    let viewModel: RecordingViewModel
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            ScrollView {
+                if viewModel.entries.isEmpty && viewModel.volatileText.isEmpty {
+                    Text("En attente de transcription…")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                } else {
+                    BubbleListView(
+                        entries: viewModel.entries.map(\.text),
+                        volatileText: viewModel.volatileText,
+                        autoScroll: true
+                    )
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: 300)
+        .background(.background)
+    }
+}

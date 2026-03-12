@@ -1,0 +1,48 @@
+name: Maurice
+options:
+  bundleIdPrefix: com.maxime
+  deploymentTarget:
+    macOS: "26.0"
+  xcodeVersion: "26"
+  minimumXcodeGenVersion: "2.42.0"
+
+targets:
+  Maurice:
+    type: application
+    platform: macOS
+    sources:
+      - Sources
+      - Resources/Assets.xcassets
+      - path: Resources/debug_sample.aiff
+        type: file
+        buildPhase: resources
+    preBuildScripts:
+      - script: |
+          if command -v swiftlint >/dev/null 2>&1; then
+            swiftlint lint --config "${SRCROOT}/.swiftlint.yml"
+          else
+            echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+          fi
+        name: SwiftLint
+        basedOnDependencyAnalysis: false
+    entitlements:
+      path: Resources/Maurice.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.device.audio-input: true
+    info:
+      path: Resources/Info.plist
+      properties:
+        CFBundleIconName: AppIcon
+        NSMicrophoneUsageDescription: "Maurice needs access to your microphone to transcribe meetings."
+        NSSpeechRecognitionUsageDescription: "Maurice needs speech recognition to transcribe meetings."
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 7XBGRFP286
+        PRODUCT_BUNDLE_IDENTIFIER: com.maxime.maurice
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        PRODUCT_NAME: Maurice
