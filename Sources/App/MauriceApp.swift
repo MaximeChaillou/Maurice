@@ -44,7 +44,7 @@ struct MauriceApp: App {
                         onRecordTap: { handleRecordTap() }
                     )
                     .overlay(alignment: .trailing) {
-                        FloatingSearchButton(runner: skillRunner)
+                        AskButton(runner: skillRunner)
                             .padding(.trailing, 16)
                     }
                     .padding(.horizontal, 16)

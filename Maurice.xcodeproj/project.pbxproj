@@ -60,7 +60,7 @@
 		EE55FF66AA11BB22CC33DD44 /* DirectoryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF66AA11BB22CC33DD44EE55 /* DirectoryScanner.swift */; };
 		1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2233445566778899001122BB /* ThemedMarkdownView.swift */; };
 		3344556677889900112233CC /* PersistentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4455667788990011223344DD /* PersistentCodable.swift */; };
-		6B7C8D9E0F1A2B3C4D5E6F7A /* FloatingSearchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */; };
+		6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
 		T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T101A102B103C104D105E106F /* CodableColorTests.swift */; };
 		T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T202A203B204C205D206E207F /* MarkdownThemeTests.swift */; };
@@ -121,7 +121,7 @@
 		FF66AA11BB22CC33DD44EE55 /* DirectoryScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScanner.swift; sourceTree = "<group>"; };
 		2233445566778899001122BB /* ThemedMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedMarkdownView.swift; sourceTree = "<group>"; };
 		4455667788990011223344DD /* PersistentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodable.swift; sourceTree = "<group>"; };
-		5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSearchButton.swift; sourceTree = "<group>"; };
+		5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButton.swift; sourceTree = "<group>"; };
 		8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		F41DF75230BDB23FDEA3D4B4 /* Maurice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maurice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		T101A102B103C104D105E106F /* CodableColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColorTests.swift; sourceTree = "<group>"; };
@@ -256,7 +256,7 @@
 				0CCE5D26DA608CC61EE9377C /* BubbleView.swift */,
 				E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */,
 				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
-				5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */,
+				5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */,
 				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
@@ -462,7 +462,7 @@
 				E1EE8116314F840B3C8FE1A0 /* BubbleScrollTransition.swift in Sources */,
 				C38E3C07DF3155E5019E2EC1 /* BubbleView.swift in Sources */,
 				3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */,
-				6B7C8D9E0F1A2B3C4D5E6F7A /* FloatingSearchButton.swift in Sources */,
+				6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */,
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,
 				E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */,
 				18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */,

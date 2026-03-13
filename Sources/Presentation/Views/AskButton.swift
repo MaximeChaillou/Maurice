@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct FloatingSearchButton: View {
+struct AskButton: View {
     var runner: SkillRunner
     @State private var isExpanded = false
     @State private var searchText = ""
@@ -100,7 +100,7 @@ struct FloatingSearchButton: View {
                     isSearchFieldFocused = true
                 }
             } label: {
-                Image(systemName: "magnifyingglass")
+                Image(systemName: "sparkles")
                     .font(.system(size: 24, weight: .medium))
                     .frame(width: 56, height: 56)
                     .contentShape(Circle())
