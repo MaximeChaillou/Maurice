@@ -2,7 +2,8 @@ import SwiftUI
 
 enum SettingsSection: String, CaseIterable, Identifiable {
     case general = "Général"
-    case appearance = "Apparence"
+    case background = "Arrière-plan"
+    case appearance = "Markdown style"
     case skills = "Skills"
     case claudeMD = "CLAUDE.md"
 
@@ -11,6 +12,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .general: "folder"
+        case .background: "paintpalette"
         case .appearance: "paintbrush"
         case .skills: "terminal"
         case .claudeMD: "doc.text"
@@ -19,7 +21,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
 }
 
 struct SettingsView: View {
-    @Binding var markdownTheme: MarkdownTheme
+    @Binding var appTheme: AppTheme
     var onRootDirectoryChanged: (() -> Void)?
     @State private var selectedSection: SettingsSection? = .general
 
@@ -48,19 +50,14 @@ struct SettingsView: View {
         switch selectedSection {
         case .general:
             GeneralSettingsView(onRootDirectoryChanged: onRootDirectoryChanged)
+        case .background:
+            BackgroundSettingsView(appTheme: $appTheme)
         case .appearance:
-            MarkdownThemeSettingsView(theme: $markdownTheme)
-                .toolbar {
-                    ToolbarItem(placement: .destructiveAction) {
-                        Button("Réinitialiser") {
-                            markdownTheme = MarkdownTheme()
-                        }
-                    }
-                }
+            MarkdownThemeSettingsView(theme: $appTheme.markdown)
         case .skills:
-            SkillsSettingsView(markdownTheme: markdownTheme)
+            SkillsSettingsView(markdownTheme: appTheme.markdown)
         case .claudeMD:
-            ClaudeMDView(markdownTheme: markdownTheme)
+            ClaudeMDView(markdownTheme: appTheme.markdown)
         case .none:
             ContentUnavailableView(
                 "Aucune section sélectionnée",
@@ -352,5 +349,83 @@ private struct SkillsSettingsView: View {
         if selectedSkill == skill { selectedSkill = nil }
         skillToDelete = nil
         loadSkills()
+    }
+}
+
+// MARK: - Arrière-plan
+
+private struct TabInfo {
+    let tab: AppTab
+    let label: String
+    let icon: String
+}
+
+private struct BackgroundSettingsView: View {
+    @Binding var appTheme: AppTheme
+
+    private let tabs: [TabInfo] = [
+        TabInfo(tab: .meeting, label: "Réunions", icon: "calendar"),
+        TabInfo(tab: .people, label: "Personnes", icon: "person.2"),
+        TabInfo(tab: .task, label: "Tâches", icon: "checklist"),
+        TabInfo(tab: .search, label: "Recherche", icon: "magnifyingglass"),
+    ]
+
+    var body: some View {
+        Form {
+            Section("Couleur par onglet") {
+                ForEach(tabs, id: \.tab) { item in
+                    HStack {
+                        Label(item.label, systemImage: item.icon)
+                        Spacer()
+                        ColorPicker(
+                            "",
+                            selection: hueBinding(for: item.tab),
+                            supportsOpacity: false
+                        )
+                        .labelsHidden()
+                    }
+                }
+            }
+
+            Section {
+                HStack {
+                    Text("Aperçu")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+
+                HStack(spacing: 12) {
+                    ForEach(tabs, id: \.tab) { item in
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(previewColor(for: item.tab))
+                                .frame(height: 60)
+                            Text(item.label)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func hueBinding(for tab: AppTab) -> Binding<Color> {
+        Binding(
+            get: {
+                Color(hue: appTheme.hue(for: tab), saturation: 0.55, brightness: 0.50)
+            },
+            set: { newColor in
+                let nsColor = NSColor(newColor).usingColorSpace(.sRGB) ?? NSColor(newColor)
+                var h: CGFloat = 0
+                nsColor.getHue(&h, saturation: nil, brightness: nil, alpha: nil)
+                appTheme.setHue(Double(h), for: tab)
+            }
+        )
+    }
+
+    private func previewColor(for tab: AppTab) -> Color {
+        Color(hue: appTheme.hue(for: tab), saturation: 0.55, brightness: 0.20)
     }
 }

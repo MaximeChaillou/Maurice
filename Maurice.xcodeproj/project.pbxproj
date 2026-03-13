@@ -11,6 +11,7 @@
 		11D3A80F21C7C70218420F31 /* TranscriptListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF01F9CF20F47DD9403B154 /* TranscriptListViewModel.swift */; };
 		189A198050B6E9C085345576 /* StoredTranscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB87B902BB488323B85563 /* StoredTranscript.swift */; };
 		18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85222273DB7968BE346AD9C /* MarkdownTheme.swift */; };
+		AT01AT02AT03AT04AT05AT06 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */; };
 		1E337A3F4474B9E4A98681C4 /* AudioLevelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77A2B4E42762CB9B33B85A0 /* AudioLevelBuffer.swift */; };
 		2080165B86775CA518F786AF /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CE9DD4757DD131F4C42682 /* MarkdownView.swift */; };
 		22443CA3296F2DA4F031A2E4 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4940A0DA1A88D72F0CCA66E /* RecordingView.swift */; };
@@ -102,6 +103,7 @@
 		E6F7A8B9C0D1E2F3A4B5C6D7 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentView.swift; sourceTree = "<group>"; };
 		E85222273DB7968BE346AD9C /* MarkdownTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTheme.swift; sourceTree = "<group>"; };
+		AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSkillConfig.swift; sourceTree = "<group>"; };
 		D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigSidebar.swift; sourceTree = "<group>"; };
 		F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunner.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				BB22CC33DD44EE55FF660011 /* Folder.swift */,
 				4455667788990011223344DD /* PersistentCodable.swift */,
 				E85222273DB7968BE346AD9C /* MarkdownTheme.swift */,
+				AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */,
 				B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */,
 				A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */,
 				6E435614E19D148F97CACBD6 /* PreparationState.swift */,
@@ -463,6 +466,7 @@
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,
 				E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */,
 				18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */,
+				AT01AT02AT03AT04AT05AT06 /* AppTheme.swift in Sources */,
 				2D5E9D1C64C59AC43B8B7516 /* MarkdownThemeSettingsView.swift in Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* MarkdownCoordinator+Styling.swift in Sources */,
 				C3D4E5F6A7B8C9D0E1F2A3B4 /* MarkdownLayoutManager.swift in Sources */,

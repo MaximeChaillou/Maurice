@@ -7,7 +7,7 @@ struct MauriceApp: App {
     @State private var memoryListViewModel = MemoryListViewModel()
     @State private var skillRunner = SkillRunner()
     @State private var coordinator = NavigationCoordinator()
-    @State private var markdownTheme = MarkdownTheme.load()
+    @State private var appTheme = AppTheme.load()
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
 
@@ -26,7 +26,8 @@ struct MauriceApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                WaveBackground()
+                WaveBackground(hue: appTheme.hue(for: coordinator.activeTab))
+                    .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
 
                 VStack(spacing: 0) {
                     FloatingTabBar(activeTab: $coordinator.activeTab)
@@ -56,22 +57,29 @@ struct MauriceApp: App {
                     transcriptListViewModel.load()
                 }
             }
-            .onChange(of: markdownTheme) { markdownTheme.save() }
+            .onChange(of: appTheme) { appTheme.save() }
             .onReceive(NotificationCenter.default.publisher(for: .skillRunnerDidFinish)) { _ in
                 transcriptListViewModel.load()
                 memoryListViewModel.reloadDirectory()
             }
         }
         .defaultSize(width: 1100, height: 700)
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                SettingsMenuButton()
+            }
+        }
 
-        Settings {
-            SettingsView(markdownTheme: $markdownTheme) {
+        Window("Réglages", id: "settings") {
+            SettingsView(appTheme: $appTheme) {
                 memoryListViewModel.reloadDirectory()
                 transcriptListViewModel.load()
-                markdownTheme = MarkdownTheme.load()
+                appTheme = AppTheme.load()
             }
-            .frame(minWidth: 600, minHeight: 400)
+            .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
         }
+        .defaultSize(width: 800, height: 600)
+        .windowResizability(.contentMinSize)
     }
 
     // MARK: - Record
@@ -106,7 +114,7 @@ struct MauriceApp: App {
             FolderContentView(
                 emptyIcon: "calendar",
                 emptyTitle: "Aucune réunion sélectionnée",
-                markdownTheme: markdownTheme,
+                markdownTheme: appTheme.markdown,
                 navigateByDate: true,
                 showSkillConfig: true,
                 recordingViewModel: recordingViewModel,
@@ -117,12 +125,12 @@ struct MauriceApp: App {
             FolderContentView(
                 emptyIcon: "person.2",
                 emptyTitle: "Aucune personne sélectionnée",
-                markdownTheme: markdownTheme,
+                markdownTheme: appTheme.markdown,
                 skillRunner: skillRunner,
                 viewModel: peopleViewModel
             )
         case .task:
-            TasksView(markdownTheme: markdownTheme)
+            TasksView(markdownTheme: appTheme.markdown)
         case .search:
             SearchView(
                 onOpenMeeting: { name in
@@ -141,5 +149,16 @@ struct MauriceApp: App {
                 }
             )
         }
+    }
+}
+
+private struct SettingsMenuButton: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Réglages…") {
+            openWindow(id: "settings")
+        }
+        .keyboardShortcut(",", modifiers: .command)
     }
 }

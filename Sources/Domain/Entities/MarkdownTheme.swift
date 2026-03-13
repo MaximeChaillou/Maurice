@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MarkdownTheme: PersistentCodable, Equatable {
+struct MarkdownTheme: Codable, Equatable {
     // MARK: - Background
 
     var backgroundColor: CodableColor = CodableColor(.clear)
@@ -95,12 +95,6 @@ struct MarkdownTheme: PersistentCodable, Equatable {
         codeBackgroundColor = try c.decodeIfPresent(CodableColor.self, forKey: .codeBackgroundColor) ?? defaults.codeBackgroundColor
         dividerColor = try c.decodeIfPresent(CodableColor.self, forKey: .dividerColor) ?? defaults.dividerColor
         maxContentWidth = try c.decodeIfPresent(CGFloat.self, forKey: .maxContentWidth) ?? defaults.maxContentWidth
-    }
-
-    // MARK: - Persistence
-
-    static var persistenceURL: URL {
-        AppSettings.themeFileURL
     }
 }
 

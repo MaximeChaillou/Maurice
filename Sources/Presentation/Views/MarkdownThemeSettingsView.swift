@@ -8,16 +8,18 @@ struct MarkdownThemeSettingsView: View {
     private let pickerWidth: CGFloat = 44
 
     var body: some View {
-        Form {
-            generalSection
-            layoutSection
-            headingsSection
-            textSection
-            quoteSection
-            codeSection
+        ScrollView {
+            Form {
+                generalSection
+                layoutSection
+                headingsSection
+                textSection
+                quoteSection
+                codeSection
+            }
+            .formStyle(.grouped)
         }
-        .formStyle(.grouped)
-        .frame(minWidth: 420, minHeight: 500)
+        .frame(minWidth: 420)
         .onAppear { loadFonts() }
     }
 
