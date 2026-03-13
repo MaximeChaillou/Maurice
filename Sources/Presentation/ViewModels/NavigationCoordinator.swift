@@ -4,7 +4,6 @@ enum AppTab: String, CaseIterable {
     case meeting
     case people
     case task
-    case search
 }
 
 @MainActor @Observable

@@ -367,7 +367,6 @@ private struct BackgroundSettingsView: View {
         TabInfo(tab: .meeting, label: "Réunions", icon: "calendar"),
         TabInfo(tab: .people, label: "Personnes", icon: "person.2"),
         TabInfo(tab: .task, label: "Tâches", icon: "checklist"),
-        TabInfo(tab: .search, label: "Recherche", icon: "magnifyingglass"),
     ]
 
     var body: some View {

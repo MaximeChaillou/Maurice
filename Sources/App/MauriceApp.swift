@@ -10,6 +10,8 @@ struct MauriceApp: App {
     @State private var appTheme = AppTheme.load()
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
+    @State private var searchService = SemanticSearchService()
+    @State private var showSearch = false
 
     init() {
         let storage = FileTranscriptionStorage()
@@ -30,7 +32,7 @@ struct MauriceApp: App {
                     .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
 
                 VStack(spacing: 0) {
-                    FloatingTabBar(activeTab: $coordinator.activeTab)
+                    FloatingTabBar(activeTab: $coordinator.activeTab, onSearchTap: { showSearch = true })
                         .padding(.top, 12)
                         .padding(.bottom, 8)
 
@@ -62,11 +64,49 @@ struct MauriceApp: App {
                 transcriptListViewModel.load()
                 memoryListViewModel.reloadDirectory()
             }
+            .overlay {
+                if showSearch {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .onTapGesture { showSearch = false }
+                        .transition(.opacity)
+
+                    SearchView(
+                        onOpenMeeting: { name in
+                            if name.isEmpty {
+                                coordinator.activeTab = .task
+                            } else {
+                                meetingViewModel.loadFolders()
+                                meetingViewModel.selectedFolder = name
+                                coordinator.activeTab = .meeting
+                            }
+                        },
+                        onOpenPerson: { name in
+                            peopleViewModel.loadFolders()
+                            peopleViewModel.selectedFolder = name
+                            coordinator.activeTab = .people
+                        },
+                        searchService: searchService,
+                        isPresented: $showSearch
+                    )
+                    .frame(width: 600, height: 450)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.3), radius: 30, y: 10)
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
+                }
+            }
+            .animation(.spring(duration: 0.3, bounce: 0.15), value: showSearch)
         }
         .defaultSize(width: 1100, height: 700)
         .commands {
             CommandGroup(replacing: .appSettings) {
                 SettingsMenuButton()
+            }
+            CommandGroup(after: .textEditing) {
+                Button("Rechercher…") {
+                    showSearch = true
+                }
+                .keyboardShortcut("f", modifiers: .command)
             }
         }
 
@@ -133,23 +173,6 @@ struct MauriceApp: App {
             )
         case .task:
             TasksView(markdownTheme: appTheme.markdown)
-        case .search:
-            SearchView(
-                onOpenMeeting: { name in
-                    if name.isEmpty {
-                        coordinator.activeTab = .task
-                    } else {
-                        meetingViewModel.loadFolders()
-                        meetingViewModel.selectedFolder = name
-                        coordinator.activeTab = .meeting
-                    }
-                },
-                onOpenPerson: { name in
-                    peopleViewModel.loadFolders()
-                    peopleViewModel.selectedFolder = name
-                    coordinator.activeTab = .people
-                }
-            )
         }
     }
 }

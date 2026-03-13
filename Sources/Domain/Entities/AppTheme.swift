@@ -15,7 +15,6 @@ struct AppTheme: PersistentCodable, Equatable {
         case .meeting: meetingTabHue
         case .people: peopleTabHue
         case .task: taskTabHue
-        case .search: searchTabHue
         }
     }
 
@@ -24,7 +23,6 @@ struct AppTheme: PersistentCodable, Equatable {
         case .meeting: meetingTabHue = hue
         case .people: peopleTabHue = hue
         case .task: taskTabHue = hue
-        case .search: searchTabHue = hue
         }
     }
 
