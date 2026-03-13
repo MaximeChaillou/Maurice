@@ -17,9 +17,7 @@ struct MeetingTranscriptsView: View {
 
             if let url = selectedTranscript,
                let transcript = transcripts.first(where: { $0.url == url }) {
-                TranscriptDetailView(transcript: transcript) { newName in
-                    renameTranscript(transcript, to: newName)
-                }
+                TranscriptDetailView(transcript: transcript)
             } else {
                 ContentUnavailableView(
                     "Aucun transcript sélectionné",

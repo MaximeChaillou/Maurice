@@ -30,8 +30,9 @@ final class FolderContentViewModel {
 
         folders = contents.folders.compactMap { folder in
             let files = scanFiles(in: folder.url)
-            guard !files.isEmpty else { return nil }
-            return FolderItem(name: folder.name, url: folder.url, files: files)
+            let dateEntries = scanDateEntries(in: folder.url)
+            guard !files.isEmpty || !dateEntries.isEmpty else { return nil }
+            return FolderItem(name: folder.name, url: folder.url, files: files, dateEntries: dateEntries)
         }
         .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
@@ -72,5 +73,43 @@ final class FolderContentViewModel {
             .map { FolderFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
                               date: $0.date, url: $0.url) }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+    }
+
+    private func scanDateEntries(in dir: URL) -> [MeetingDateEntry] {
+        let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
+        let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
+        let storage = FileTranscriptionStorage()
+
+        // Group by date prefix (YYYY-MM-DD)
+        var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
+
+        for file in mdFiles {
+            let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            let folderFile = FolderFile(
+                id: file.url,
+                name: datePrefix,
+                date: file.date,
+                url: file.url
+            )
+            dateMap[datePrefix, default: (nil, nil)].note = folderFile
+        }
+
+        for file in transcriptFiles {
+            let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            if let parsed = storage.parseTranscriptFile(at: file.url) {
+                dateMap[datePrefix, default: (nil, nil)].transcript = parsed
+            }
+        }
+
+        return dateMap.map { key, value in
+            let date = value.note?.date ?? value.transcript?.date ?? Date.distantPast
+            return MeetingDateEntry(
+                dateString: key,
+                date: date,
+                noteFile: value.note,
+                transcript: value.transcript
+            )
+        }
+        .sorted { $0.dateString.localizedStandardCompare($1.dateString) == .orderedDescending }
     }
 }

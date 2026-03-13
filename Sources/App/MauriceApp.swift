@@ -10,7 +10,6 @@ struct MauriceApp: App {
     @State private var markdownTheme = MarkdownTheme.load()
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
-    @Environment(\.openWindow) private var openWindow
 
     init() {
         let storage = FileTranscriptionStorage()
@@ -36,24 +35,18 @@ struct MauriceApp: App {
 
                     tabContent
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(.white.opacity(0.12), lineWidth: 1)
-                        )
+                        .glassEffect(.regular, in: .rect(cornerRadius: 12))
                         .padding(.horizontal, 16)
 
-                    HStack(alignment: .bottom) {
-                        Spacer()
-                        FloatingActionBar(
-                            isRecording: recordingViewModel.isRecording,
-                            onRecordTap: { handleRecordTap() }
-                        )
-                        Spacer()
-                    }
+                    FloatingActionBar(
+                        viewModel: recordingViewModel,
+                        onRecordTap: { handleRecordTap() }
+                    )
                     .overlay(alignment: .trailing) {
                         FloatingSearchButton(runner: skillRunner)
                             .padding(.trailing, 16)
                     }
+                    .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
             }
@@ -71,7 +64,7 @@ struct MauriceApp: App {
         }
         .defaultSize(width: 1100, height: 700)
 
-        Window("Réglages", id: "settings") {
+        Settings {
             SettingsView(markdownTheme: $markdownTheme) {
                 memoryListViewModel.reloadDirectory()
                 transcriptListViewModel.load()
@@ -79,7 +72,6 @@ struct MauriceApp: App {
             }
             .frame(minWidth: 600, minHeight: 400)
         }
-        .defaultSize(width: 750, height: 500)
     }
 
     // MARK: - Record

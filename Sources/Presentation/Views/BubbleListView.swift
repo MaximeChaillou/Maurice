@@ -1,16 +1,47 @@
 import SwiftUI
 
 struct BubbleListView: View {
-    let entries: [String]
+    let entries: [TranscriptLine]
     var volatileText: String = ""
     var autoScroll: Bool = false
+
+    init(entries: [TranscriptLine], volatileText: String = "", autoScroll: Bool = false) {
+        self.entries = entries
+        self.volatileText = volatileText
+        self.autoScroll = autoScroll
+    }
+
+    init(entries: [String], volatileText: String = "", autoScroll: Bool = false) {
+        self.entries = entries.map { .text($0) }
+        self.volatileText = volatileText
+        self.autoScroll = autoScroll
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(entries.enumerated()), id: \.offset) { _, entry in
-                    BubbleView(text: entry, style: .final)
-                        .bubbleScrollTransition()
+                    switch entry {
+                    case .text(let text):
+                        BubbleView(text: text, style: .final)
+                            .bubbleScrollTransition()
+                    case .separator(let text):
+                        if text == "---" {
+                            GeometryReader { geo in
+                                Divider()
+                                    .frame(width: geo.size.width * 0.9)
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                            .frame(height: 1)
+                            .padding(.vertical, 8)
+                        } else {
+                            Text(text)
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.vertical, 4)
+                        }
+                    }
                 }
                 if !volatileText.isEmpty {
                     BubbleView(text: volatileText, style: .volatile)

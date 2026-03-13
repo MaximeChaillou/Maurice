@@ -22,18 +22,21 @@ struct FolderContentView: View {
 
             detailPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .inspector(isPresented: $showConfigSidebar) {
-            if let folderName = viewModel.selectedFolder, let runner = skillRunner {
+
+            if showConfigSidebar,
+               let folderName = viewModel.selectedFolder,
+               let runner = skillRunner {
+                Divider()
                 MeetingConfigSidebar(
                     folderName: folderName,
                     config: $viewModel.skillConfig,
                     runner: runner
                 )
-                .presentationBackground(.clear)
+                .frame(width: 320)
+                .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .inspectorColumnWidth(min: 280, ideal: 320, max: 400)
+        .animation(.easeInOut(duration: 0.2), value: showConfigSidebar)
         .onAppear { viewModel.loadFolders() }
         .onChange(of: skillRunner?.isRunning) {
             if skillRunner?.isRunning == false {
@@ -105,7 +108,7 @@ struct FolderContentView: View {
     @ViewBuilder
     private var detailPane: some View {
         if let folder = viewModel.currentFolder {
-            if navigateByDate {
+            if navigateByDate, !folder.dateEntries.isEmpty {
                 dateNavigationDetail(for: folder)
             } else if folder.files.count == 1, let file = folder.files.first {
                 FolderFileDetailView(file: file, markdownTheme: markdownTheme)
@@ -128,45 +131,49 @@ struct FolderContentView: View {
     @State private var showTranscripts = false
 
     private func dateNavigationDetail(for folder: FolderItem) -> some View {
-        let sortedFiles = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
-        let safeIndex = min(viewModel.fileIndex, sortedFiles.count - 1)
-        let file = sortedFiles[max(safeIndex, 0)]
+        let entries = folder.dateEntries
+        let safeIndex = min(viewModel.fileIndex, entries.count - 1)
+        let entry = entries[max(safeIndex, 0)]
 
         return VStack(spacing: 0) {
-            dateNavigationHeader(file: file, totalFiles: sortedFiles.count)
+            dateNavigationHeader(entry: entry, totalEntries: entries.count)
             Divider()
 
-            if showTranscripts {
-                MeetingTranscriptsView(meetingName: folder.name)
-            } else {
+            if showTranscripts, let transcript = entry.transcript {
+                TranscriptDetailView(transcript: transcript)
+                    .id(transcript.id)
+            } else if let file = entry.noteFile {
                 FolderFileEditorView(file: file, markdownTheme: markdownTheme)
                     .id(file.id)
+            } else if let transcript = entry.transcript {
+                TranscriptDetailView(transcript: transcript)
+                    .id(transcript.id)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: viewModel.fileIndex) {
+            // Reset toggle when navigating to a new date
+            showTranscripts = false
+        }
     }
 
-    private func dateNavigationHeader(file: FolderFile, totalFiles: Int) -> some View {
+    private func dateNavigationHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
         HStack {
             Button {
-                if viewModel.fileIndex < totalFiles - 1 { viewModel.fileIndex += 1 }
+                if viewModel.fileIndex < totalEntries - 1 { viewModel.fileIndex += 1 }
             } label: {
                 Image(systemName: "chevron.left")
                     .frame(width: 32, height: 32)
+                    .contentShape(Circle())
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
-            .disabled(viewModel.fileIndex >= totalFiles - 1)
+            .disabled(viewModel.fileIndex >= totalEntries - 1)
 
             Spacer()
 
-            VStack(spacing: 2) {
-                Text(file.name)
-                    .font(.headline)
-                Text(file.date, format: .dateTime.day().month(.abbreviated).year().hour().minute())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(entry.date, format: .dateTime.day().month(.wide).year())
+                .font(.headline)
 
             Spacer()
 
@@ -175,24 +182,14 @@ struct FolderContentView: View {
             } label: {
                 Image(systemName: "chevron.right")
                     .frame(width: 32, height: 32)
+                    .contentShape(Circle())
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
             .disabled(viewModel.fileIndex <= 0)
 
             if navigateByDate {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showTranscripts.toggle()
-                    }
-                } label: {
-                    Image(systemName: showTranscripts ? "doc.text" : "waveform")
-                        .font(.body)
-                        .frame(width: 32, height: 32)
-                        .glassEffect(.regular.interactive(), in: .circle)
-                }
-                .buttonStyle(.plain)
-                .help(showTranscripts ? "Afficher les notes" : "Afficher les transcripts")
+                transcriptToggleButton(for: entry)
             }
 
             if showSkillConfig, skillRunner != nil {
@@ -246,6 +243,31 @@ struct FolderContentView: View {
         .scrollContentBackground(.hidden)
     }
 
+    // MARK: - Transcript toggle
+
+    private func transcriptToggleButton(for entry: MeetingDateEntry) -> some View {
+        let canToggle = entry.hasNote && entry.hasTranscript
+        return Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showTranscripts.toggle()
+            }
+        } label: {
+            Image(systemName: showTranscripts ? "doc.text" : "waveform")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+                .glassEffect(.regular.interactive(), in: .circle)
+                .opacity(canToggle ? 1.0 : 0.3)
+        }
+        .buttonStyle(.plain)
+        .disabled(!canToggle)
+        .help(
+            !canToggle
+                ? (entry.hasNote ? "Pas de transcript" : "Pas de note")
+                : (showTranscripts ? "Afficher les notes" : "Afficher les transcripts")
+        )
+    }
+
     // MARK: - Config sidebar toggle
 
     private var configToggleButton: some View {
@@ -257,6 +279,7 @@ struct FolderContentView: View {
             Image(systemName: showConfigSidebar ? "sidebar.trailing" : "gearshape")
                 .font(.body)
                 .frame(width: 32, height: 32)
+                .contentShape(Circle())
                 .glassEffect(.regular.interactive(), in: .circle)
         }
         .buttonStyle(.plain)
@@ -268,8 +291,19 @@ struct FolderContentView: View {
 
 struct FolderItem: Identifiable {
     let name: String, url: URL, files: [FolderFile]
+    var dateEntries: [MeetingDateEntry] = []
     var id: String { name }
-    var fileCount: Int { files.count }
+    var fileCount: Int { max(files.count, dateEntries.count) }
+}
+
+struct MeetingDateEntry: Identifiable {
+    let dateString: String
+    let date: Date
+    let noteFile: FolderFile?
+    let transcript: StoredTranscript?
+    var id: String { dateString }
+    var hasNote: Bool { noteFile != nil }
+    var hasTranscript: Bool { transcript != nil }
 }
 
 struct FolderFile: Identifiable, Hashable {

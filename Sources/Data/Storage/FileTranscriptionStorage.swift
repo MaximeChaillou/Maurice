@@ -18,23 +18,35 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
     }
 
     func beginLiveSession(startDate: Date, subdirectory: String? = nil) throws -> URL {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let fileName = "transcription_\(formatter.string(from: startDate)).txt"
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "yyyy-MM-dd"
+        let fileName = "\(dayFormatter.string(from: startDate)).transcript"
 
         let targetDir: URL
         if let sub = subdirectory {
-            targetDir = directory.appendingPathComponent(sub, isDirectory: true)
+            targetDir = AppSettings.meetingsDirectory.appendingPathComponent(sub, isDirectory: true)
             try FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
         } else {
             targetDir = directory
         }
         let url = targetDir.appendingPathComponent(fileName)
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        let header = "Maurice Transcript — \(dateFormatter.string(from: startDate))\n\n"
-        try header.write(to: url, atomically: true, encoding: .utf8)
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let header = "Maurice Transcript — \(timeFormatter.string(from: startDate))\n\n"
+
+        if FileManager.default.fileExists(atPath: url.path) {
+            // Append to existing transcript with separator
+            let handle = try FileHandle(forWritingTo: url)
+            defer { try? handle.close() }
+            handle.seekToEndOfFile()
+            let separator = "\n---\n\n\(header)"
+            if let data = separator.data(using: .utf8) {
+                try handle.write(contentsOf: data)
+            }
+        } else {
+            try header.write(to: url, atomically: true, encoding: .utf8)
+        }
         return url
     }
 
@@ -114,6 +126,10 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         return StoredTranscript(id: newURL, name: sanitized, date: transcript.date, entries: transcript.entries)
     }
 
+    func parseTranscriptFile(at url: URL) -> StoredTranscript? {
+        parseTranscript(at: url)
+    }
+
     private func parseTranscript(at url: URL) -> StoredTranscript? {
         let content: String
         do {
@@ -128,15 +144,21 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
 
         let date = parseDateFromHeader(header) ?? Date.distantPast
 
-        let entries = lines.dropFirst()
-            .filter { line in
+        let entries: [TranscriptLine] = lines.dropFirst()
+            .compactMap { line in
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
-                return !trimmed.isEmpty && !trimmed.hasPrefix("[")
+                if trimmed.isEmpty || trimmed.hasPrefix("[") { return nil }
+                if trimmed.hasPrefix("Maurice Transcript") || trimmed == "---" {
+                    return .separator(trimmed)
+                }
+                return .text(trimmed)
             }
 
-        let name = url.deletingPathExtension().lastPathComponent
-            .replacingOccurrences(of: "transcription_", with: "")
-            .replacingOccurrences(of: "_", with: " ")
+        var name = url.deletingPathExtension().lastPathComponent
+        if name.hasPrefix("transcription_") {
+            name = name.replacingOccurrences(of: "transcription_", with: "")
+                .replacingOccurrences(of: "_", with: " ")
+        }
 
         return StoredTranscript(id: url, name: name, date: date, entries: entries)
     }

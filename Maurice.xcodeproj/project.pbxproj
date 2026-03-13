@@ -51,6 +51,7 @@
 		FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */; };
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 		MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */; };
+		DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */; };
 		SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV11SV12SV13SV14SV15SV16 /* SearchView.swift */; };
 		F3A4B5C6D7E8F9A0B1C2D3E4 /* RecordingControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */; };
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
@@ -110,6 +111,7 @@
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
 		MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingTranscriptsView.swift; sourceTree = "<group>"; };
+		DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTranscriptsView.swift; sourceTree = "<group>"; };
 		SV11SV12SV13SV14SV15SV16 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingControlBar.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF660011 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
 				D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */,
 				MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */,
+				DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* MarkdownLayoutManager.swift */,
 				2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */,
@@ -497,6 +500,7 @@
 				FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */,
 				WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */,
 				MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */,
+				DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */,
 				SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
