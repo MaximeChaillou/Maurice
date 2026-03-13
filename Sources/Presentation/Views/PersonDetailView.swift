@@ -15,11 +15,18 @@ struct PersonDetailView: View {
     @State private var isAddingEvaluation = false
     @State private var isAddingObjectif = false
     @State private var newFileName = ""
+    @State private var showImportFiche = false
+    @State private var showImportEvaluation = false
+    @State private var showImportObjectif = false
 
     var body: some View {
         sectionContent
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear { loadSubfolders() }
+            .onChange(of: activeSection) { loadSubfolders() }
+            .onReceive(NotificationCenter.default.publisher(for: .skillRunnerDidFinish)) { _ in
+                loadSubfolders()
+            }
     }
 
     @ViewBuilder
@@ -28,7 +35,7 @@ struct PersonDetailView: View {
         case .profil:
             markdownFileEditor(fileName: "profil.md")
         case .ficheDePoste:
-            markdownFileEditor(fileName: "fiche-de-poste.md")
+            ficheDePosteSection
         case .oneOnOne:
             PersonOneOnOneView(personURL: personURL, markdownTheme: markdownTheme)
         case .evaluations:
@@ -37,6 +44,8 @@ struct PersonDetailView: View {
                 isAdding: $isAddingEvaluation, newFileName: $newFileName,
                 addLabel: "Nouvelle évaluation", emptyTitle: "Aucune évaluation",
                 emptyIcon: "checkmark.seal", markdownTheme: markdownTheme,
+                skillRunner: skillRunner,
+                subfolderURL: personURL.appendingPathComponent("evaluations", isDirectory: true),
                 onCreate: { createSubfolderFile(subfolder: "evaluations", isAdding: $isAddingEvaluation) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "evaluations") }
             )
@@ -46,10 +55,58 @@ struct PersonDetailView: View {
                 isAdding: $isAddingObjectif, newFileName: $newFileName,
                 addLabel: "Nouvel objectif", emptyTitle: "Aucun objectif",
                 emptyIcon: "target", markdownTheme: markdownTheme,
+                skillRunner: skillRunner,
+                subfolderURL: personURL.appendingPathComponent("objectifs", isDirectory: true),
                 onCreate: { createSubfolderFile(subfolder: "objectifs", isAdding: $isAddingObjectif) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "objectifs") }
             )
         }
+    }
+
+    // MARK: - Fiche de poste with import
+
+    @ViewBuilder
+    private var ficheDePosteSection: some View {
+        let fileURL = personURL.appendingPathComponent("fiche-de-poste.md")
+        let file = FolderFile(
+            id: fileURL,
+            name: fileURL.deletingPathExtension().lastPathComponent,
+            date: (try? FileManager.default.attributesOfItem(
+                atPath: fileURL.path
+            )[.modificationDate] as? Date) ?? Date(),
+            url: fileURL
+        )
+        VStack(spacing: 0) {
+            if let runner = skillRunner {
+                HStack {
+                    Spacer()
+                    Button {
+                        showImportFiche = true
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                            .frame(width: 32, height: 32)
+                            .contentShape(Circle())
+                            .glassEffect(.regular.interactive(), in: .circle)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Importer un fichier ou un lien")
+                    .popover(isPresented: $showImportFiche) {
+                        ImportDocumentView(
+                            targetPath: fileURL.path,
+                            runner: runner,
+                            onDismiss: { showImportFiche = false }
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+
+                Divider()
+            }
+
+            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
+        }
+        .id("fiche-de-poste.md")
     }
 
     // MARK: - Markdown file editor
@@ -315,10 +372,13 @@ struct SubfolderNavigationView: View {
     let emptyTitle: String
     let emptyIcon: String
     var markdownTheme: MarkdownTheme = MarkdownTheme()
+    var skillRunner: SkillRunner?
+    var subfolderURL: URL?
     var onCreate: () -> Void
     var onDelete: (FolderFile) -> Void
 
     @State private var fileToDelete: FolderFile?
+    @State private var showImport = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -357,11 +417,28 @@ struct SubfolderNavigationView: View {
             ContentUnavailableView(emptyTitle, systemImage: emptyIcon)
             Spacer()
             Divider()
-            Button { isAdding = true } label: {
-                Label(addLabel, systemImage: "plus")
+            HStack(spacing: 8) {
+                Button { isAdding = true } label: {
+                    Label(addLabel, systemImage: "plus")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                if let runner = skillRunner, let folderURL = subfolderURL {
+                    Button { showImport = true } label: {
+                        Label("Importer", systemImage: "square.and.arrow.down")
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .popover(isPresented: $showImport) {
+                        ImportDocumentView(
+                            targetPath: folderURL.appendingPathComponent("import.md").path,
+                            runner: runner,
+                            onDismiss: { showImport = false }
+                        )
+                    }
+                }
             }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
             .padding(8)
         }
     }
@@ -411,6 +488,24 @@ struct SubfolderNavigationView: View {
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
+
+            if let runner = skillRunner, let folderURL = subfolderURL {
+                Button { showImport = true } label: {
+                    Image(systemName: "square.and.arrow.down")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Circle())
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .help("Importer un fichier ou un lien")
+                .popover(isPresented: $showImport) {
+                    ImportDocumentView(
+                        targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
+                        runner: runner,
+                        onDismiss: { showImport = false }
+                    )
+                }
+            }
 
             Menu {
                 Button(role: .destructive) { fileToDelete = file } label: {

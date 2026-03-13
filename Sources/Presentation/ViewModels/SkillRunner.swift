@@ -8,6 +8,7 @@ enum SkillOutputKind {
     case assistant
     case tool
     case system
+    case error
 }
 
 struct SkillOutputLine: Identifiable {
@@ -32,19 +33,48 @@ final class SkillRunner {
     var actionID: UUID?
     private(set) var skillLabel: String?
 
+    private static var mauricePermissions: [String] {
+        let root = AppSettings.rootDirectory.path
+        return [
+            "--allowedTools", "Read(\(root)/**)",
+            "--allowedTools", "Write(\(root)/**)",
+            "--allowedTools", "Edit(\(root)/**)"
+        ]
+    }
+
     func run(skillFilename: String, buttonName: String, workingDirectory: URL) {
         skillLabel = buttonName
         let commandName = skillFilename.replacingOccurrences(of: ".md", with: "")
         launchClaude(
             prompt: "/\(commandName)",
-            extraArgs: ["--permission-mode", "acceptEdits"],
+            extraArgs: ["--permission-mode", "acceptEdits"] + Self.mauricePermissions,
             workingDirectory: workingDirectory
         )
     }
 
     func runPrompt(_ prompt: String, workingDirectory: URL) {
         skillLabel = nil
-        launchClaude(prompt: prompt, extraArgs: [], workingDirectory: workingDirectory)
+        launchClaude(
+            prompt: prompt,
+            extraArgs: Self.mauricePermissions,
+            workingDirectory: workingDirectory
+        )
+    }
+
+    func runImport(source: String, targetPath: String, workingDirectory: URL) {
+        skillLabel = "Import"
+        let prompt = "/maurice-convert-file-to-md source: \(source)\ntarget: \(targetPath)"
+        let sourceDir = URL(fileURLWithPath: source).deletingLastPathComponent().path
+        let targetDir = URL(fileURLWithPath: targetPath).deletingLastPathComponent().path
+        launchClaude(
+            prompt: prompt,
+            extraArgs: [
+                "--permission-mode", "acceptEdits",
+                "--allowedTools", "Read(\(sourceDir)/**)",
+                "--allowedTools", "Write(\(targetDir)/**)"
+            ],
+            workingDirectory: workingDirectory
+        )
     }
 
     private func launchClaude(prompt: String, extraArgs: [String], workingDirectory: URL) {
@@ -66,8 +96,9 @@ final class SkillRunner {
             "--include-partial-messages"
         ] + extraArgs
         proc.currentDirectoryURL = workingDirectory
+        let errPipe = Pipe()
         proc.standardOutput = pipe
-        proc.standardError = FileHandle.nullDevice
+        proc.standardError = errPipe
 
         var environment = ProcessInfo.processInfo.environment
         environment["CLAUDECODE"] = ""
@@ -79,6 +110,11 @@ final class SkillRunner {
         let readQueue = DispatchQueue(label: "skill-runner-read")
         readQueue.async { [weak self] in
             self?.readStreamJSON(from: pipe)
+        }
+
+        let errQueue = DispatchQueue(label: "skill-runner-err")
+        errQueue.async { [weak self] in
+            self?.readStderr(from: errPipe)
         }
 
         proc.terminationHandler = { [weak self] _ in
@@ -238,6 +274,38 @@ final class SkillRunner {
         }
         if !keys.isEmpty { return keys.prefix(3).joined(separator: ", ") }
         return ""
+    }
+
+    // MARK: - Stderr
+
+    nonisolated private func readStderr(from pipe: Pipe) {
+        let handle = pipe.fileHandleForReading
+        var buffer = Data()
+
+        while true {
+            let chunk = handle.availableData
+            if chunk.isEmpty { break }
+            buffer.append(chunk)
+
+            while let newlineRange = buffer.range(of: Data([0x0A])) {
+                let lineData = buffer.subdata(in: buffer.startIndex..<newlineRange.lowerBound)
+                buffer.removeSubrange(buffer.startIndex...newlineRange.lowerBound)
+                if let line = String(data: lineData, encoding: .utf8),
+                   !line.trimmingCharacters(in: .whitespaces).isEmpty {
+                    Task { @MainActor [weak self] in
+                        self?.appendLine(line, kind: .error)
+                    }
+                }
+            }
+        }
+
+        if !buffer.isEmpty,
+           let line = String(data: buffer, encoding: .utf8),
+           !line.trimmingCharacters(in: .whitespaces).isEmpty {
+            Task { @MainActor [weak self] in
+                self?.appendLine(line, kind: .error)
+            }
+        }
     }
 
     // MARK: - Helpers

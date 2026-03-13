@@ -203,6 +203,12 @@ struct AskButton: View {
                 .foregroundStyle(.primary)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
+        case .error:
+            Text(line.text)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundStyle(.red)
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -229,6 +235,7 @@ struct AskButton: View {
             case .assistant: .assistant
             case .tool: .tool
             case .system: .system
+            case .error: .error
             }
             conversationLines.append(ConversationLine(text: line.text, kind: kind))
         }
@@ -425,7 +432,7 @@ private struct ConversationLine: Identifiable, Equatable {
     let kind: Kind
 
     enum Kind {
-        case user, assistant, tool, system
+        case user, assistant, tool, system, error
     }
 
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
