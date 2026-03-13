@@ -13,7 +13,6 @@ final class FolderContentViewModel {
     var isAddingFolder = false
     var newFolderName = ""
     var skillConfig: MeetingSkillConfig = MeetingSkillConfig.load()
-    var skillRunner = SkillRunner()
 
     var currentFolder: FolderItem? {
         guard let name = selectedFolder else { return nil }

@@ -93,6 +93,7 @@ struct MeetingConfigSidebar: View {
             runner.actionID = action.id
             runner.run(
                 skillFilename: action.skillFilename,
+                buttonName: action.buttonName,
                 workingDirectory: AppSettings.rootDirectory
             )
         }

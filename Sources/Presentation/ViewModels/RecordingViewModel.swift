@@ -101,40 +101,7 @@ final class RecordingViewModel {
                 }.value
 
                 let stream = try await streamProvider(useCase)
-
-                entries = []
-                volatileText = ""
-                audioLevelBuffer.reset()
-                transcription = Transcription()
-                liveFileURL = try useCase.beginLiveSession(
-                    startDate: transcription!.startDate,
-                    subdirectory: subdirectory
-                )
-                isRecording = true
-
-                // Stream loop stays on MainActor for smooth UI
-                for await event in stream {
-                    switch event {
-                    case .entry(let entry):
-                        entries.append(entry)
-                        transcription?.entries.append(entry)
-                        volatileText = ""
-                        // File I/O on background
-                        if let url = liveFileURL {
-                            let useCase = useCase
-                            Task.detached {
-                                try? useCase.appendEntry(entry, to: url)
-                            }
-                        }
-                    case .volatile(let text):
-                        volatileText = text
-                        try? await Task.sleep(for: .milliseconds(30))
-                    case .error(let message):
-                        errorMessage = message
-                    }
-                }
-                // Stream ended (file playback) — auto-stop
-                stopRecording()
+                try await processStream(stream, useCase: useCase, subdirectory: subdirectory)
             } catch {
                 let useCase = useCase
                 Task.detached { await useCase.stopRecording() }
@@ -142,6 +109,43 @@ final class RecordingViewModel {
                 preparationState = .failed(error.localizedDescription)
             }
         }
+    }
+
+    private func processStream(
+        _ stream: AsyncStream<TranscriptionEvent>,
+        useCase: RecordingUseCase,
+        subdirectory: String?
+    ) async throws {
+        entries = []
+        volatileText = ""
+        audioLevelBuffer.reset()
+        transcription = Transcription()
+        liveFileURL = try useCase.beginLiveSession(
+            startDate: transcription!.startDate,
+            subdirectory: subdirectory
+        )
+        isRecording = true
+
+        for await event in stream {
+            switch event {
+            case .entry(let entry):
+                entries.append(entry)
+                transcription?.entries.append(entry)
+                volatileText = ""
+                if let url = liveFileURL {
+                    let useCase = useCase
+                    Task.detached {
+                        try? useCase.appendEntry(entry, to: url)
+                    }
+                }
+            case .volatile(let text):
+                volatileText = text
+                try? await Task.sleep(for: .milliseconds(30))
+            case .error(let message):
+                errorMessage = message
+            }
+        }
+        stopRecording()
     }
 
     private func stopRecording() {

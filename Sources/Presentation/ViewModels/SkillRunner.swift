@@ -30,8 +30,10 @@ final class SkillRunner {
     private var currentToolInput: String = ""
 
     var actionID: UUID?
+    private(set) var skillLabel: String?
 
-    func run(skillFilename: String, workingDirectory: URL) {
+    func run(skillFilename: String, buttonName: String, workingDirectory: URL) {
+        skillLabel = buttonName
         let commandName = skillFilename.replacingOccurrences(of: ".md", with: "")
         launchClaude(
             prompt: "/\(commandName)",
@@ -41,6 +43,7 @@ final class SkillRunner {
     }
 
     func runPrompt(_ prompt: String, workingDirectory: URL) {
+        skillLabel = nil
         launchClaude(prompt: prompt, extraArgs: [], workingDirectory: workingDirectory)
     }
 

@@ -5,6 +5,7 @@ struct MauriceApp: App {
     @State private var recordingViewModel: RecordingViewModel
     @State private var transcriptListViewModel: TranscriptListViewModel
     @State private var memoryListViewModel = MemoryListViewModel()
+    @State private var skillRunner = SkillRunner()
     @State private var sidebarSelection: SidebarSection? = .recording
     @State private var markdownTheme = MarkdownTheme.load()
     @Environment(\.openWindow) private var openWindow
@@ -30,7 +31,7 @@ struct MauriceApp: App {
                 detailView
             }
             .overlay(alignment: .bottomTrailing) {
-                FloatingSearchButton()
+                FloatingSearchButton(runner: skillRunner)
                     .padding(16)
                     .padding(.leading, 300)
             }
@@ -144,6 +145,7 @@ struct MauriceApp: App {
                 navigateByDate: true,
                 showSkillConfig: true,
                 recordingViewModel: recordingViewModel,
+                skillRunner: skillRunner,
                 viewModel: FolderContentViewModel(directory: AppSettings.meetingsDirectory)
             )
         case .people:
@@ -151,6 +153,7 @@ struct MauriceApp: App {
                 emptyIcon: "person.2",
                 emptyTitle: "Aucune personne sélectionnée",
                 markdownTheme: markdownTheme,
+                skillRunner: skillRunner,
                 viewModel: FolderContentViewModel(directory: AppSettings.peopleDirectory)
             )
         case .tasks:

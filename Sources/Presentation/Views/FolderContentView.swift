@@ -7,6 +7,7 @@ struct FolderContentView: View {
     var navigateByDate: Bool = false
     var showSkillConfig: Bool = false
     var recordingViewModel: RecordingViewModel?
+    var skillRunner: SkillRunner?
 
     @State var viewModel: FolderContentViewModel
 
@@ -29,27 +30,23 @@ struct FolderContentView: View {
                         detailPane
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-
-                    if viewModel.skillRunner.isRunning || !viewModel.skillRunner.outputLines.isEmpty {
-                        SkillConsoleView(runner: viewModel.skillRunner)
-                    }
                 }
                 .frame(width: isSidebarVisible ? geo.size.width - 321 : geo.size.width)
 
-                if isSidebarVisible {
+                if isSidebarVisible, let runner = skillRunner {
                     Divider()
                     MeetingConfigSidebar(
                         folderName: viewModel.selectedFolder!,
                         config: $viewModel.skillConfig,
-                        runner: viewModel.skillRunner
+                        runner: runner
                     )
                     .transition(.move(edge: .trailing))
                 }
             }
         }
         .onAppear { viewModel.loadFolders() }
-        .onChange(of: viewModel.skillRunner.isRunning) {
-            if !viewModel.skillRunner.isRunning {
+        .onChange(of: skillRunner?.isRunning) {
+            if skillRunner?.isRunning == false {
                 viewModel.loadFolders()
                 if let folder = viewModel.currentFolder {
                     viewModel.selectFileAtIndex(in: folder)

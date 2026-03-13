@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct FloatingSearchButton: View {
+    var runner: SkillRunner
     @State private var isExpanded = false
     @State private var searchText = ""
-    @State private var runner = SkillRunner()
     @State private var conversationLines: [ConversationLine] = []
+    @State private var lastSyncedCount = 0
     @FocusState private var isSearchFieldFocused: Bool
 
     private var showResponse: Bool {
@@ -51,6 +52,19 @@ struct FloatingSearchButton: View {
             in: isExpanded ? .rect(cornerRadius: 20) : .rect(cornerRadius: 28)
         )
         .frame(maxWidth: isExpanded ? .infinity : 56)
+        .onChange(of: runner.isRunning) {
+            if runner.isRunning {
+                if let label = runner.skillLabel {
+                    conversationLines.append(ConversationLine(text: "Exécution du skill « \(label) »…", kind: .user))
+                    lastSyncedCount = 0
+                }
+                if !isExpanded {
+                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                        isExpanded = true
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Input bar
@@ -205,8 +219,11 @@ struct FloatingSearchButton: View {
     }
 
     private func syncRunnerOutput() {
-        let existingRunnerCount = conversationLines.filter { $0.kind != .user }.count
-        let newLines = runner.outputLines.dropFirst(existingRunnerCount)
+        // Runner was reset (new run started) — reset sync counter
+        if runner.outputLines.count < lastSyncedCount {
+            lastSyncedCount = 0
+        }
+        let newLines = runner.outputLines.dropFirst(lastSyncedCount)
         for line in newLines {
             let kind: ConversationLine.Kind = switch line.kind {
             case .assistant: .assistant
@@ -215,6 +232,7 @@ struct FloatingSearchButton: View {
             }
             conversationLines.append(ConversationLine(text: line.text, kind: kind))
         }
+        lastSyncedCount = runner.outputLines.count
     }
 
     private func scrollToBottom(_ proxy: ScrollViewProxy) {
@@ -276,6 +294,7 @@ struct FloatingSearchButton: View {
         runner.outputLines = []
         runner.currentText = ""
         conversationLines = []
+        lastSyncedCount = 0
     }
 }
 
