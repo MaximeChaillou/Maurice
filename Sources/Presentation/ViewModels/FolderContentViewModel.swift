@@ -39,7 +39,13 @@ final class FolderContentViewModel {
     func createFolder() {
         let name = newFolderName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
+        createFolderWithName(name)
+        newFolderName = ""
+        isAddingFolder = false
+    }
 
+    @discardableResult
+    func createFolderWithName(_ name: String) -> String {
         let folderURL = directory.appendingPathComponent(name, isDirectory: true)
         try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
@@ -49,10 +55,9 @@ final class FolderContentViewModel {
         let fileURL = folderURL.appendingPathComponent(fileName)
         FileManager.default.createFile(atPath: fileURL.path, contents: nil)
 
-        newFolderName = ""
-        isAddingFolder = false
         loadFolders()
         selectedFolder = name
+        return name
     }
 
     func selectFileAtIndex(in folder: FolderItem) {

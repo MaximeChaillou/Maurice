@@ -125,6 +125,8 @@ struct FolderContentView: View {
 
     // MARK: - Navigate by date mode
 
+    @State private var showTranscripts = false
+
     private func dateNavigationDetail(for folder: FolderItem) -> some View {
         let sortedFiles = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
         let safeIndex = min(viewModel.fileIndex, sortedFiles.count - 1)
@@ -134,8 +136,12 @@ struct FolderContentView: View {
             dateNavigationHeader(file: file, totalFiles: sortedFiles.count)
             Divider()
 
-            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
-                .id(file.id)
+            if showTranscripts {
+                MeetingTranscriptsView(meetingName: folder.name)
+            } else {
+                FolderFileEditorView(file: file, markdownTheme: markdownTheme)
+                    .id(file.id)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -173,6 +179,21 @@ struct FolderContentView: View {
             }
             .buttonStyle(.plain)
             .disabled(viewModel.fileIndex <= 0)
+
+            if navigateByDate {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showTranscripts.toggle()
+                    }
+                } label: {
+                    Image(systemName: showTranscripts ? "doc.text" : "waveform")
+                        .font(.body)
+                        .frame(width: 32, height: 32)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .help(showTranscripts ? "Afficher les notes" : "Afficher les transcripts")
+            }
 
             if showSkillConfig, skillRunner != nil {
                 configToggleButton
@@ -290,4 +311,3 @@ struct FolderFileEditorView: View {
             .onChange(of: bodyText) { file.save(content: bodyText) }
     }
 }
-
