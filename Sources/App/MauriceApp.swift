@@ -6,7 +6,7 @@ struct MauriceApp: App {
     @State private var transcriptListViewModel: TranscriptListViewModel
     @State private var memoryListViewModel = MemoryListViewModel()
     @State private var skillRunner = SkillRunner()
-    @State private var sidebarSelection: SidebarSection? = .recording
+    @State private var coordinator = NavigationCoordinator()
     @State private var markdownTheme = MarkdownTheme.load()
     @Environment(\.openWindow) private var openWindow
 
@@ -24,26 +24,43 @@ struct MauriceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationSplitView(columnVisibility: .constant(.doubleColumn)) {
-                sidebar
-                    .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 300)
-            } detail: {
-                detailView
-            }
-            .overlay(alignment: .bottomTrailing) {
-                FloatingSearchButton(runner: skillRunner)
-                    .padding(16)
-                    .padding(.leading, 300)
+            ZStack {
+                WaveBackground()
+
+                VStack(spacing: 0) {
+                    FloatingTabBar(activeTab: $coordinator.activeTab)
+                        .padding(.top, 12)
+                        .padding(.bottom, 8)
+
+                    tabContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.white.opacity(0.12), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 16)
+
+                // Bottom action bar
+                HStack(alignment: .bottom) {
+                    Spacer()
+                    FloatingActionBar(
+                        isRecording: recordingViewModel.isRecording,
+                        onRecordTap: { recordingViewModel.toggleRecording() }
+                    )
+                    Spacer()
+                }
+                .overlay(alignment: .trailing) {
+                    FloatingSearchButton(runner: skillRunner)
+                        .padding(.trailing, 16)
+                }
+                .padding(.vertical, 12)
+                }
             }
             .onAppear { transcriptListViewModel.load() }
             .onChange(of: recordingViewModel.isRecording) {
                 if !recordingViewModel.isRecording {
                     transcriptListViewModel.load()
-                }
-            }
-            .onChange(of: sidebarSelection) {
-                if sidebarSelection != .meetings {
-                    recordingViewModel.subdirectory = nil
                 }
             }
             .onChange(of: markdownTheme) { markdownTheme.save() }
@@ -65,79 +82,10 @@ struct MauriceApp: App {
         .defaultSize(width: 750, height: 500)
     }
 
-    private var sidebar: some View {
-        List(selection: $sidebarSelection) {
-            Label("Enregistrement", systemImage: "mic.fill")
-                .tag(SidebarSection.recording)
-
-            Label("Transcripts", systemImage: "doc.text")
-                .tag(SidebarSection.transcripts)
-
-            Label("Réunions", systemImage: "calendar")
-                .tag(SidebarSection.meetings)
-
-            Label("Personnes", systemImage: "person.2")
-                .tag(SidebarSection.people)
-
-            Label("Tâches", systemImage: "checklist")
-                .tag(SidebarSection.tasks)
-
-            Label("Mémoire", systemImage: "brain.head.profile")
-                .tag(SidebarSection.memory)
-        }
-        .navigationTitle("Maurice")
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 6) {
-                if recordingViewModel.isRecording {
-                    Button {
-                        recordingViewModel.toggleRecording()
-                    } label: {
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(.red)
-                                .frame(width: 8, height: 8)
-                            Text("Enregistrement en cours")
-                                .font(.caption)
-                                .lineLimit(1)
-                            Spacer()
-                            Image(systemName: "stop.fill")
-                                .font(.caption)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .glassEffect(.regular.interactive(), in: .capsule)
-                    .padding(.horizontal, 8)
-                }
-
-                Button {
-                    openWindow(id: "settings")
-                } label: {
-                    Label("Réglages", systemImage: "gearshape")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .glassEffect(.regular.interactive(), in: .capsule)
-                .padding(.horizontal, 8)
-                .padding(.bottom, 4)
-            }
-        }
-    }
-
     @ViewBuilder
-    private var detailView: some View {
-        switch sidebarSelection {
-        case .recording, .none:
-            RecordingView(viewModel: recordingViewModel)
-        case .transcripts:
-            TranscriptsContentView(viewModel: transcriptListViewModel)
-        case .meetings:
+    private var tabContent: some View {
+        switch coordinator.activeTab {
+        case .meeting:
             FolderContentView(
                 emptyIcon: "calendar",
                 emptyTitle: "Aucune réunion sélectionnée",
@@ -156,147 +104,15 @@ struct MauriceApp: App {
                 skillRunner: skillRunner,
                 viewModel: FolderContentViewModel(directory: AppSettings.peopleDirectory)
             )
-        case .tasks:
+        case .task:
             TasksView(markdownTheme: markdownTheme)
-        case .memory:
-            MemoryContentView(viewModel: memoryListViewModel, markdownTheme: markdownTheme)
-        }
-    }
-}
-
-enum SidebarSection: Hashable {
-    case recording
-    case transcripts
-    case tasks
-    case meetings
-    case people
-    case memory
-}
-
-private struct TranscriptsContentView: View {
-    let viewModel: TranscriptListViewModel
-    @State private var selectedTranscript: URL?
-    @State private var navigationDirection: NavigationDirection = .forward
-
-    var body: some View {
-        HSplitView {
-            VStack(spacing: 0) {
-                if viewModel.navigation.canGoBack {
-                    HStack {
-                        Button {
-                            selectedTranscript = nil
-                            navigationDirection = .backward
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                viewModel.goBack()
-                            }
-                        } label: {
-                            Label("Retour", systemImage: "chevron.left")
-                                .font(.caption)
-                        }
-                        .buttonStyle(.plain)
-                        Spacer()
-                        Text(viewModel.navigation.directoryStack.last?.name ?? "")
-                            .font(.headline)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    Divider()
-                }
-
-                List(selection: $selectedTranscript) {
-                    ForEach(viewModel.folders) { folder in
-                        Button {
-                            selectedTranscript = nil
-                            navigationDirection = .forward
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                viewModel.navigateInto(folder)
-                            }
-                        } label: {
-                            Label {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(folder.name)
-                                        .font(.body)
-                                        .lineLimit(1)
-                                    Text("Dossier")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .padding(.vertical, 2)
-                            } icon: {
-                                Image(systemName: "folder")
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    ForEach(viewModel.transcripts) { transcript in
-                        TranscriptRow(transcript: transcript)
-                            .tag(transcript.url)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.delete(transcript)
-                                } label: {
-                                    Label("Supprimer", systemImage: "trash")
-                                }
-                            }
-                    }
-                }
-                .id(viewModel.navigation.currentDirectory)
-                .transition(.directional(navigationDirection))
-            }
-            .clipped()
-            .frame(minWidth: 200, idealWidth: 250, maxWidth: 300)
-
-            if let url = selectedTranscript,
-               let transcript = viewModel.transcripts.first(where: { $0.url == url }) {
-                TranscriptDetailView(transcript: transcript) { newName in
-                    viewModel.rename(transcript, to: newName)
-                    selectedTranscript =
-                        viewModel.transcripts.first(where: { $0.name == newName })?.url ?? url
-                }
-            } else {
-                ContentUnavailableView(
-                    "Aucun transcript sélectionné",
-                    systemImage: "doc.text",
-                    description: Text("Sélectionnez un transcript dans la liste.")
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }
-    }
-}
-
-enum NavigationDirection {
-    case forward, backward
-}
-
-extension AnyTransition {
-    static func directional(_ direction: NavigationDirection) -> AnyTransition {
-        direction == .forward
-            ? .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
-            : .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing))
-    }
-}
-
-private struct TranscriptRow: View {
-    let transcript: StoredTranscript
-
-    var body: some View {
-        Label {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(transcript.name)
-                    .font(.body)
-                    .lineLimit(1)
-                Text(transcript.date, format: .dateTime.day().month(.abbreviated).hour().minute())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.vertical, 2)
-        } icon: {
-            Image(systemName: "doc.text")
+        case .search:
+            ContentUnavailableView(
+                "Recherche",
+                systemImage: "magnifyingglass",
+                description: Text("La recherche sera bientôt disponible.")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

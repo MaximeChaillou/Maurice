@@ -19,29 +19,24 @@ struct FolderContentView: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            HStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    HSplitView {
-                        folderList
-                            .frame(minWidth: 200, idealWidth: 220, maxWidth: 280)
-                            .layoutPriority(1)
+        HStack(spacing: 0) {
+            folderList
+                .frame(width: 240)
 
-                        detailPane
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                }
-                .frame(width: isSidebarVisible ? geo.size.width - 321 : geo.size.width)
+            Divider()
 
-                if isSidebarVisible, let runner = skillRunner {
-                    Divider()
-                    MeetingConfigSidebar(
-                        folderName: viewModel.selectedFolder!,
-                        config: $viewModel.skillConfig,
-                        runner: runner
-                    )
-                    .transition(.move(edge: .trailing))
-                }
+            detailPane
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if isSidebarVisible, let runner = skillRunner {
+                Divider()
+                MeetingConfigSidebar(
+                    folderName: viewModel.selectedFolder!,
+                    config: $viewModel.skillConfig,
+                    runner: runner
+                )
+                .frame(width: 320)
+                .transition(.move(edge: .trailing))
             }
         }
         .onAppear { viewModel.loadFolders() }
@@ -71,8 +66,10 @@ struct FolderContentView: View {
                     }
                     .padding(.vertical, 2)
                     .tag(folder.name)
+                    .listRowBackground(Color.clear)
                 }
             }
+            .scrollContentBackground(.hidden)
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
                 showTranscriptOverlay = false
@@ -214,9 +211,11 @@ struct FolderContentView: View {
     // MARK: - File list mode
 
     private func fileListDetail(for folder: FolderItem) -> some View {
-        HSplitView {
+        HStack(spacing: 0) {
             fileList(for: folder)
-                .frame(minWidth: 180, idealWidth: 220, maxWidth: 280)
+                .frame(width: 220)
+
+            Divider()
 
             if let url = viewModel.selectedFile,
                let file = folder.files.first(where: { $0.url == url }) {
@@ -246,8 +245,10 @@ struct FolderContentView: View {
                 }
                 .padding(.vertical, 2)
                 .tag(file.url)
+                .listRowBackground(Color.clear)
             }
         }
+        .scrollContentBackground(.hidden)
     }
 
     // MARK: - Config sidebar toggle

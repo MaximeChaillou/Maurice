@@ -1,5 +1,17 @@
 import SwiftUI
 
+enum NavigationDirection {
+    case forward, backward
+}
+
+extension AnyTransition {
+    static func directional(_ direction: NavigationDirection) -> AnyTransition {
+        direction == .forward
+            ? .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
+            : .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing))
+    }
+}
+
 struct MemoryContentView: View {
     let viewModel: MemoryListViewModel
     var markdownTheme: MarkdownTheme = MarkdownTheme()

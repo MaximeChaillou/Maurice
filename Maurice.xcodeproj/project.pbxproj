@@ -46,7 +46,10 @@
 		C1C2C3C4C5C6C7C8C9C0C1C2 /* MeetingConfigSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */; };
 		E1E2E3E4E5E6E7E8E9E0E1E2 /* SkillRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */; };
 		FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */; };
-
+		NA01NA02NA03NA04NA05NA06 /* NavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */; };
+		FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */; };
+		FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */; };
+		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 		F3A4B5C6D7E8F9A0B1C2D3E4 /* RecordingControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */; };
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
 		CC33DD44EE55FF66AA11BB22 /* DirectoryNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF66AA11BB22CC33 /* DirectoryNavigation.swift */; };
@@ -100,7 +103,10 @@
 		D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigSidebar.swift; sourceTree = "<group>"; };
 		F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunner.swift; sourceTree = "<group>"; };
 		FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModel.swift; sourceTree = "<group>"; };
-
+		NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinator.swift; sourceTree = "<group>"; };
+		FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
+		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
+		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
 		A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingControlBar.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF660011 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		DD44EE55FF66AA11BB22CC33 /* DirectoryNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryNavigation.swift; sourceTree = "<group>"; };
@@ -197,6 +203,7 @@
 				DD44EE55FF66AA11BB22CC33 /* DirectoryNavigation.swift */,
 				FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
+				NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */,
 				BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */,
 				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
 				4EF01F9CF20F47DD9403B154 /* TranscriptListViewModel.swift */,
@@ -240,7 +247,9 @@
 				D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */,
 				0CCE5D26DA608CC61EE9377C /* BubbleView.swift */,
 				E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */,
+				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
 				5A6B7C8D9E0F1A2B3C4D5E6F /* FloatingSearchButton.swift */,
+				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
 				D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */,
@@ -255,6 +264,7 @@
 
 				2233445566778899001122BB /* ThemedMarkdownView.swift */,
 				50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */,
+				WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -476,6 +486,10 @@
 				CC33DD44EE55FF66AA11BB22 /* DirectoryNavigation.swift in Sources */,
 				EE55FF66AA11BB22CC33DD44 /* DirectoryScanner.swift in Sources */,
 				FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */,
+				NA01NA02NA03NA04NA05NA06 /* NavigationCoordinator.swift in Sources */,
+				FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */,
+				FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */,
+				WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,
