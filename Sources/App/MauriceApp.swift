@@ -34,8 +34,7 @@ struct MauriceApp: App {
 
                     tabContent
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(
+                        .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(.white.opacity(0.12), lineWidth: 1)
                         )

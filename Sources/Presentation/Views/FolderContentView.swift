@@ -12,11 +12,6 @@ struct FolderContentView: View {
     @State var viewModel: FolderContentViewModel
 
     @State private var showConfigSidebar: Bool = false
-    @State private var showTranscriptOverlay: Bool = false
-
-    private var isSidebarVisible: Bool {
-        showSkillConfig && showConfigSidebar && viewModel.selectedFolder != nil
-    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -27,18 +22,18 @@ struct FolderContentView: View {
 
             detailPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            if isSidebarVisible, let runner = skillRunner {
-                Divider()
+        }
+        .inspector(isPresented: $showConfigSidebar) {
+            if let folderName = viewModel.selectedFolder, let runner = skillRunner {
                 MeetingConfigSidebar(
-                    folderName: viewModel.selectedFolder!,
+                    folderName: folderName,
                     config: $viewModel.skillConfig,
                     runner: runner
                 )
-                .frame(width: 320)
-                .transition(.move(edge: .trailing))
+                .presentationBackground(.clear)
             }
         }
+        .inspectorColumnWidth(min: 280, ideal: 320, max: 400)
         .onAppear { viewModel.loadFolders() }
         .onChange(of: skillRunner?.isRunning) {
             if skillRunner?.isRunning == false {
@@ -72,7 +67,6 @@ struct FolderContentView: View {
             .scrollContentBackground(.hidden)
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
-                showTranscriptOverlay = false
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
                 if navigateByDate, let folder = viewModel.currentFolder {
                     viewModel.fileIndex = 0
@@ -142,26 +136,6 @@ struct FolderContentView: View {
 
             FolderFileEditorView(file: file, markdownTheme: markdownTheme)
                 .id(file.id)
-
-            if let vm = recordingViewModel {
-                TabButtonRepresentable(isOpen: showTranscriptOverlay) {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        showTranscriptOverlay.toggle()
-                    }
-                }
-                .frame(width: 60, height: 22)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.trailing, 40)
-                .padding(.top, -22)
-                .zIndex(1)
-
-                if showTranscriptOverlay {
-                    MeetingTranscriptContent(viewModel: vm)
-                }
-
-                Divider()
-                RecordingControlBar(viewModel: vm)
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -200,7 +174,7 @@ struct FolderContentView: View {
             .buttonStyle(.plain)
             .disabled(viewModel.fileIndex <= 0)
 
-            if showSkillConfig {
+            if showSkillConfig, skillRunner != nil {
                 configToggleButton
             }
         }
@@ -317,114 +291,3 @@ struct FolderFileEditorView: View {
     }
 }
 
-// MARK: - Meeting transcript tab & content
-
-private struct TabButtonRepresentable: NSViewRepresentable {
-    let isOpen: Bool
-    let action: () -> Void
-
-    func makeNSView(context: Context) -> TabButtonNSView {
-        let view = TabButtonNSView()
-        view.action = action
-        view.isOpen = isOpen
-        return view
-    }
-
-    func updateNSView(_ nsView: TabButtonNSView, context: Context) {
-        nsView.isOpen = isOpen
-        nsView.action = action
-        nsView.needsDisplay = true
-    }
-}
-
-private final class TabButtonNSView: NSView {
-    var isOpen = false
-    var action: (() -> Void)?
-    private var cursorTrackingArea: NSTrackingArea?
-
-    override init(frame: NSRect) {
-        super.init(frame: frame)
-        wantsLayer = true
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let old = cursorTrackingArea { removeTrackingArea(old) }
-        let area = NSTrackingArea(
-            rect: bounds,
-            options: [.cursorUpdate, .activeAlways],
-            owner: self
-        )
-        addTrackingArea(area)
-        cursorTrackingArea = area
-    }
-
-    override func cursorUpdate(with event: NSEvent) {
-        NSCursor.pointingHand.set()
-    }
-
-    override func draw(_ dirtyRect: NSRect) {
-        let radius: CGFloat = 6
-        let path = CGMutablePath()
-        path.move(to: CGPoint(x: bounds.minX, y: bounds.minY))
-        path.addLine(to: CGPoint(x: bounds.minX, y: bounds.maxY - radius))
-        path.addQuadCurve(to: CGPoint(x: bounds.minX + radius, y: bounds.maxY),
-                          control: CGPoint(x: bounds.minX, y: bounds.maxY))
-        path.addLine(to: CGPoint(x: bounds.maxX - radius, y: bounds.maxY))
-        path.addQuadCurve(to: CGPoint(x: bounds.maxX, y: bounds.maxY - radius),
-                          control: CGPoint(x: bounds.maxX, y: bounds.maxY))
-        path.addLine(to: CGPoint(x: bounds.maxX, y: bounds.minY))
-        path.closeSubpath()
-
-        let nsPath = NSBezierPath(cgPath: path)
-        NSColor.controlBackgroundColor.withAlphaComponent(0.6).setFill()
-        nsPath.fill()
-
-        // Chevron
-        let name = isOpen ? "chevron.down" : "chevron.up"
-        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .bold)
-            .applying(.init(paletteColors: [.secondaryLabelColor]))
-        if let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
-            .withSymbolConfiguration(config) {
-            let size = image.size
-            let point = NSPoint(x: (bounds.width - size.width) / 2,
-                                y: (bounds.height - size.height) / 2)
-            image.draw(at: point, from: .zero, operation: .sourceOver, fraction: 1)
-        }
-    }
-
-    override func mouseDown(with event: NSEvent) {
-        action?()
-    }
-}
-
-private struct MeetingTranscriptContent: View {
-    let viewModel: RecordingViewModel
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            ScrollView {
-                if viewModel.entries.isEmpty && viewModel.volatileText.isEmpty {
-                    Text("En attente de transcription…")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                } else {
-                    BubbleListView(
-                        entries: viewModel.entries.map(\.text),
-                        volatileText: viewModel.volatileText,
-                        autoScroll: true
-                    )
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: 300)
-        .background(.background)
-    }
-}

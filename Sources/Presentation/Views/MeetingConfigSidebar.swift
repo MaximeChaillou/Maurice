@@ -31,6 +31,7 @@ struct MeetingConfigSidebar: View {
                 }
             }
             .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
 
             Spacer(minLength: 0)
 
@@ -38,8 +39,6 @@ struct MeetingConfigSidebar: View {
                 addActionButton
             }
         }
-        .frame(width: 320)
-        .glassEffect(.regular, in: .rect(cornerRadius: 12))
         .onAppear { availableSkills = MeetingSkillConfig.availableSkills() }
     }
 
