@@ -12,6 +12,8 @@ struct FolderContentView: View {
     @State var viewModel: FolderContentViewModel
 
     @State private var showConfigSidebar: Bool = false
+    @State private var folderToDelete: FolderItem?
+    @State private var entryDeleteAction: EntryDeleteAction?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -65,9 +67,35 @@ struct FolderContentView: View {
                     .padding(.vertical, 2)
                     .tag(folder.name)
                     .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            folderToDelete = folder
+                        } label: {
+                            Label("Supprimer", systemImage: "trash")
+                        }
+                    }
                 }
             }
             .scrollContentBackground(.hidden)
+            .alert(
+                "Supprimer le dossier ?",
+                isPresented: Binding(
+                    get: { folderToDelete != nil },
+                    set: { if !$0 { folderToDelete = nil } }
+                )
+            ) {
+                Button("Annuler", role: .cancel) { folderToDelete = nil }
+                Button("Supprimer", role: .destructive) {
+                    if let folder = folderToDelete {
+                        viewModel.deleteFolder(folder)
+                        folderToDelete = nil
+                    }
+                }
+            } message: {
+                if let folder = folderToDelete {
+                    Text("Le dossier « \(folder.name) » et tout son contenu seront supprimés définitivement.")
+                }
+            }
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
@@ -195,9 +223,71 @@ struct FolderContentView: View {
             if showSkillConfig, skillRunner != nil {
                 configToggleButton
             }
+
+            entryActionsMenu(for: entry)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+        .alert(
+            "Supprimer ?",
+            isPresented: Binding(
+                get: { entryDeleteAction != nil },
+                set: { if !$0 { entryDeleteAction = nil } }
+            )
+        ) {
+            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
+            Button("Supprimer", role: .destructive) {
+                if let action = entryDeleteAction {
+                    switch action {
+                    case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
+                    case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
+                    case .both(let e): viewModel.deleteDateEntry(e)
+                    }
+                    entryDeleteAction = nil
+                }
+            }
+        } message: {
+            if let action = entryDeleteAction {
+                Text(action.message)
+            }
+        }
+    }
+
+    private func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
+        Menu {
+            if entry.hasNote {
+                Button(role: .destructive) {
+                    entryDeleteAction = .note(entry)
+                } label: {
+                    Label("Supprimer la note", systemImage: "doc.text")
+                }
+            }
+            if entry.hasTranscript {
+                Button(role: .destructive) {
+                    entryDeleteAction = .transcript(entry)
+                } label: {
+                    Label("Supprimer le transcript", systemImage: "waveform")
+                }
+            }
+            if entry.hasNote && entry.hasTranscript {
+                Divider()
+                Button(role: .destructive) {
+                    entryDeleteAction = .both(entry)
+                } label: {
+                    Label("Tout supprimer", systemImage: "trash")
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: .circle)
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .frame(width: 32, height: 32)
     }
 
     // MARK: - File list mode
@@ -294,6 +384,26 @@ struct FolderItem: Identifiable {
     var dateEntries: [MeetingDateEntry] = []
     var id: String { name }
     var fileCount: Int { max(files.count, dateEntries.count) }
+}
+
+enum EntryDeleteAction {
+    case note(MeetingDateEntry)
+    case transcript(MeetingDateEntry)
+    case both(MeetingDateEntry)
+
+    var entry: MeetingDateEntry {
+        switch self {
+        case .note(let e), .transcript(let e), .both(let e): e
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .note: "La note du \(entry.dateString) sera supprimée définitivement."
+        case .transcript: "Le transcript du \(entry.dateString) sera supprimé définitivement."
+        case .both: "La note et le transcript du \(entry.dateString) seront supprimés définitivement."
+        }
+    }
 }
 
 struct MeetingDateEntry: Identifiable {

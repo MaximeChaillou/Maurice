@@ -3,6 +3,7 @@ import SwiftUI
 struct BubbleView: View {
     let text: String
     var style: Style = .final
+    var timestamp: String?
 
     enum Style {
         case final
@@ -17,6 +18,7 @@ struct BubbleView: View {
             .padding(.vertical, 8)
             .foregroundStyle(style == .volatile ? .secondary : .primary)
             .modifier(BubbleBackgroundModifier(style: style))
+            .help(timestamp ?? "")
     }
 }
 

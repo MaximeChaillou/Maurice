@@ -35,6 +35,15 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         timeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         let header = "Maurice Transcript — \(timeFormatter.string(from: startDate))\n\n"
 
+        // Create a note file if none exists for this date in a meeting folder
+        if subdirectory != nil {
+            let noteFileName = "\(dayFormatter.string(from: startDate)).md"
+            let noteURL = targetDir.appendingPathComponent(noteFileName)
+            if !FileManager.default.fileExists(atPath: noteURL.path) {
+                FileManager.default.createFile(atPath: noteURL.path, contents: nil)
+            }
+        }
+
         if FileManager.default.fileExists(atPath: url.path) {
             // Append to existing transcript with separator
             let handle = try FileHandle(forWritingTo: url)
@@ -144,15 +153,32 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
 
         let date = parseDateFromHeader(header) ?? Date.distantPast
 
-        let entries: [TranscriptLine] = lines.dropFirst()
-            .compactMap { line in
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-                if trimmed.isEmpty || trimmed.hasPrefix("[") { return nil }
-                if trimmed.hasPrefix("Maurice Transcript") || trimmed == "---" {
-                    return .separator(trimmed)
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+
+        var currentTimestamp: String?
+        var entries: [TranscriptLine] = []
+
+        for line in lines.dropFirst() {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty { continue }
+            if trimmed.hasPrefix("["), let closeBracket = trimmed.firstIndex(of: "]") {
+                let inside = trimmed[trimmed.index(after: trimmed.startIndex)..<closeBracket]
+                let parts = inside.split(separator: ":")
+                if parts.count == 2,
+                   let minutes = Int(parts[0]),
+                   let seconds = Int(parts[1]) {
+                    let entryDate = date.addingTimeInterval(Double(minutes * 60 + seconds))
+                    currentTimestamp = timeFormatter.string(from: entryDate)
                 }
-                return .text(trimmed)
+                continue
             }
+            if trimmed.hasPrefix("Maurice Transcript") || trimmed == "---" {
+                entries.append(.separator(trimmed))
+                continue
+            }
+            entries.append(.text(trimmed, timestamp: currentTimestamp))
+        }
 
         var name = url.deletingPathExtension().lastPathComponent
         if name.hasPrefix("transcription_") {

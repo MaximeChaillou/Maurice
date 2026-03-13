@@ -61,6 +61,22 @@ final class FolderContentViewModel {
         return name
     }
 
+    func deleteFolder(_ folder: FolderItem) {
+        try? FileManager.default.removeItem(at: folder.url)
+        if selectedFolder == folder.name { selectedFolder = nil }
+        loadFolders()
+    }
+
+    func deleteDateEntry(_ entry: MeetingDateEntry, noteOnly: Bool = false, transcriptOnly: Bool = false) {
+        if !transcriptOnly, let note = entry.noteFile {
+            try? FileManager.default.removeItem(at: note.url)
+        }
+        if !noteOnly, let transcript = entry.transcript {
+            try? FileManager.default.removeItem(at: transcript.url)
+        }
+        loadFolders()
+    }
+
     func selectFileAtIndex(in folder: FolderItem) {
         let sorted = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
         guard !sorted.isEmpty else { return }

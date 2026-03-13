@@ -10,6 +10,6 @@ struct StoredTranscript: Identifiable, Sendable {
 }
 
 enum TranscriptLine: Sendable, Equatable {
-    case text(String)
+    case text(String, timestamp: String? = nil)
     case separator(String)
 }

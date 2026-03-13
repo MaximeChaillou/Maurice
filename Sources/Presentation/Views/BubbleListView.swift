@@ -22,8 +22,8 @@ struct BubbleListView: View {
             LazyVStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(entries.enumerated()), id: \.offset) { _, entry in
                     switch entry {
-                    case .text(let text):
-                        BubbleView(text: text, style: .final)
+                    case .text(let text, let timestamp):
+                        BubbleView(text: text, style: .final, timestamp: timestamp)
                             .bubbleScrollTransition()
                     case .separator(let text):
                         if text == "---" {
