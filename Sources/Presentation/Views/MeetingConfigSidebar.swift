@@ -22,6 +22,8 @@ struct MeetingConfigSidebar: View {
             Divider()
 
             List {
+                iconSection
+
                 actionsSection
 
                 if isAddingAction || editingAction != nil {
@@ -53,6 +55,56 @@ struct MeetingConfigSidebar: View {
                 .foregroundStyle(.secondary)
         }
         .padding(12)
+    }
+
+    // MARK: - Icon
+
+    @State private var iconText: String = ""
+    @FocusState private var iconFieldFocused: Bool
+
+    private var iconSection: some View {
+        Section("Icône") {
+            HStack(spacing: 8) {
+                TextField("", text: $iconText)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 44)
+                    .multilineTextAlignment(.center)
+                    .focused($iconFieldFocused)
+                    .onAppear {
+                        iconText = config.icon(for: folderName) ?? ""
+                    }
+                    .onChange(of: iconText) {
+                        // Keep only the first emoji/character
+                        let trimmed = String(iconText.prefix(1))
+                        if trimmed != iconText { iconText = trimmed }
+                        config.setIcon(trimmed.isEmpty ? nil : trimmed, for: folderName)
+                        config.save()
+                    }
+
+                Button {
+                    iconFieldFocused = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        NSApp.orderFrontCharacterPalette(nil)
+                    }
+                } label: {
+                    Image(systemName: "face.smiling")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                if !iconText.isEmpty {
+                    Button(role: .destructive) {
+                        iconText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Spacer()
+            }
+        }
     }
 
     // MARK: - Actions list

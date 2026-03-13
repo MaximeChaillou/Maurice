@@ -90,9 +90,12 @@ struct MauriceApp: App {
             return
         }
 
-        // Context: meeting active > new meeting
+        // Context: meeting active > person 1-1 active > new meeting
         if coordinator.activeTab == .meeting, let folder = meetingViewModel.selectedFolder {
             recordingViewModel.subdirectory = folder
+        } else if coordinator.activeTab == .people,
+                  let person = peopleViewModel.selectedFolder {
+            recordingViewModel.subdirectory = "People/\(person)/1-1"
         } else {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
@@ -122,10 +125,9 @@ struct MauriceApp: App {
                 viewModel: meetingViewModel
             )
         case .people:
-            FolderContentView(
-                emptyIcon: "person.2",
-                emptyTitle: "Aucune personne sélectionnée",
+            PeopleView(
                 markdownTheme: appTheme.markdown,
+                recordingViewModel: recordingViewModel,
                 skillRunner: skillRunner,
                 viewModel: peopleViewModel
             )

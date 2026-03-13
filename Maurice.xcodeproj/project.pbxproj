@@ -53,6 +53,8 @@
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 		MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */; };
 		DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */; };
+		PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */; };
+		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
 		SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV11SV12SV13SV14SV15SV16 /* SearchView.swift */; };
 		F3A4B5C6D7E8F9A0B1C2D3E4 /* RecordingControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */; };
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
@@ -110,6 +112,8 @@
 		FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModel.swift; sourceTree = "<group>"; };
 		NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinator.swift; sourceTree = "<group>"; };
 		FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
+		PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
+		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
 		MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingTranscriptsView.swift; sourceTree = "<group>"; };
@@ -276,6 +280,8 @@
 				2233445566778899001122BB /* ThemedMarkdownView.swift */,
 				50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */,
 				WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */,
+				PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */,
+				PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -506,6 +512,8 @@
 				MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */,
 				DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */,
 				SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */,
+				PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */,
+				PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,

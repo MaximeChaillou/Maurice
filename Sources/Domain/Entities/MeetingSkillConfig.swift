@@ -36,13 +36,24 @@ struct SkillAction: Identifiable, Codable, Hashable {
 
 struct MeetingSkillConfig: PersistentCodable {
     var folderActions: [String: [SkillAction]]
+    var folderIcons: [String: String]
 
     init() {
         self.folderActions = [:]
+        self.folderIcons = [:]
     }
 
-    init(folderActions: [String: [SkillAction]]) {
+    init(folderActions: [String: [SkillAction]], folderIcons: [String: String] = [:]) {
         self.folderActions = folderActions
+        self.folderIcons = folderIcons
+    }
+
+    func icon(for folderName: String) -> String? {
+        folderIcons[folderName]
+    }
+
+    mutating func setIcon(_ icon: String?, for folderName: String) {
+        folderIcons[folderName] = icon
     }
 
     func actions(for folderName: String) -> [SkillAction] {

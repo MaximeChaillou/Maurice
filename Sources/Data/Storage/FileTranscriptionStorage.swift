@@ -24,7 +24,8 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
 
         let targetDir: URL
         if let sub = subdirectory {
-            targetDir = AppSettings.meetingsDirectory.appendingPathComponent(sub, isDirectory: true)
+            let base = sub.hasPrefix("People/") ? AppSettings.rootDirectory : AppSettings.meetingsDirectory
+            targetDir = base.appendingPathComponent(sub, isDirectory: true)
             try FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
         } else {
             targetDir = directory

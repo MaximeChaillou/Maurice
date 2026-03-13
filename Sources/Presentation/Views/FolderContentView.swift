@@ -57,9 +57,14 @@ struct FolderContentView: View {
             List(selection: $viewModel.selectedFolder) {
                 ForEach(viewModel.folders) { folder in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(folder.name)
-                            .font(.body)
-                            .lineLimit(1)
+                        HStack(spacing: 4) {
+                            if let icon = viewModel.skillConfig.icon(for: folder.name) {
+                                Text(icon)
+                            }
+                            Text(folder.name)
+                                .lineLimit(1)
+                        }
+                        .font(.body)
                         Text("\(folder.fileCount) fichier\(folder.fileCount > 1 ? "s" : "")")
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -179,9 +184,31 @@ struct FolderContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: viewModel.fileIndex) {
-            // Reset toggle when navigating to a new date
-            showTranscripts = false
+        .onChange(of: viewModel.fileIndex) { showTranscripts = false }
+        .alert(
+            "Supprimer ?",
+            isPresented: Binding(
+                get: { entryDeleteAction != nil },
+                set: { if !$0 { entryDeleteAction = nil } }
+            )
+        ) {
+            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
+            Button("Supprimer", role: .destructive) {
+                if let action = entryDeleteAction {
+                    performEntryDelete(action)
+                    entryDeleteAction = nil
+                }
+            }
+        } message: {
+            if let action = entryDeleteAction { Text(action.message) }
+        }
+    }
+
+    private func performEntryDelete(_ action: EntryDeleteAction) {
+        switch action {
+        case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
+        case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
+        case .both(let e): viewModel.deleteDateEntry(e)
         }
     }
 
@@ -216,41 +243,12 @@ struct FolderContentView: View {
             .buttonStyle(.plain)
             .disabled(viewModel.fileIndex <= 0)
 
-            if navigateByDate {
-                transcriptToggleButton(for: entry)
-            }
-
-            if showSkillConfig, skillRunner != nil {
-                configToggleButton
-            }
-
+            if navigateByDate { transcriptToggleButton(for: entry) }
+            if showSkillConfig, skillRunner != nil { configToggleButton }
             entryActionsMenu(for: entry)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .alert(
-            "Supprimer ?",
-            isPresented: Binding(
-                get: { entryDeleteAction != nil },
-                set: { if !$0 { entryDeleteAction = nil } }
-            )
-        ) {
-            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
-            Button("Supprimer", role: .destructive) {
-                if let action = entryDeleteAction {
-                    switch action {
-                    case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
-                    case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
-                    case .both(let e): viewModel.deleteDateEntry(e)
-                    }
-                    entryDeleteAction = nil
-                }
-            }
-        } message: {
-            if let action = entryDeleteAction {
-                Text(action.message)
-            }
-        }
     }
 
     private func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
@@ -289,10 +287,12 @@ struct FolderContentView: View {
         .menuIndicator(.hidden)
         .frame(width: 32, height: 32)
     }
+}
 
-    // MARK: - File list mode
+// MARK: - File list & toggles
 
-    private func fileListDetail(for folder: FolderItem) -> some View {
+extension FolderContentView {
+    func fileListDetail(for folder: FolderItem) -> some View {
         HStack(spacing: 0) {
             fileList(for: folder)
                 .frame(width: 220)
@@ -314,7 +314,7 @@ struct FolderContentView: View {
         }
     }
 
-    private func fileList(for folder: FolderItem) -> some View {
+    func fileList(for folder: FolderItem) -> some View {
         List(selection: $viewModel.selectedFile) {
             ForEach(folder.files) { file in
                 VStack(alignment: .leading, spacing: 4) {
@@ -333,9 +333,7 @@ struct FolderContentView: View {
         .scrollContentBackground(.hidden)
     }
 
-    // MARK: - Transcript toggle
-
-    private func transcriptToggleButton(for entry: MeetingDateEntry) -> some View {
+    func transcriptToggleButton(for entry: MeetingDateEntry) -> some View {
         let canToggle = entry.hasNote && entry.hasTranscript
         return Button {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -358,9 +356,7 @@ struct FolderContentView: View {
         )
     }
 
-    // MARK: - Config sidebar toggle
-
-    private var configToggleButton: some View {
+    var configToggleButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
                 showConfigSidebar.toggle()
