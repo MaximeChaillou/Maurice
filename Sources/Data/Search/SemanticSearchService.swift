@@ -1,7 +1,7 @@
 import Foundation
 import NaturalLanguage
 
-struct IndexedDocument {
+struct IndexedDocument: Sendable {
     let name: String
     let context: String
     let icon: String
@@ -13,7 +13,7 @@ struct IndexedDocument {
     let modificationDate: Date
 }
 
-enum IndexedDocumentKind {
+enum IndexedDocumentKind: Sendable {
     case meeting(String)
     case person(String)
     case task
@@ -23,8 +23,8 @@ enum IndexedDocumentKind {
 final class SemanticSearchService {
     private var documents: [IndexedDocument] = []
     private var isIndexing = false
-    private let embeddingFr: NLEmbedding?
-    private let embeddingEn: NLEmbedding?
+    nonisolated(unsafe) private let embeddingFr: NLEmbedding?
+    nonisolated(unsafe) private let embeddingEn: NLEmbedding?
 
     private static var indexFileURL: URL {
         AppSettings.rootDirectory.appendingPathComponent(".search_index.json")
@@ -41,10 +41,24 @@ final class SemanticSearchService {
     func rebuildIndex() {
         guard !isIndexing, isAvailable else { return }
         isIndexing = true
-        defer { isIndexing = false }
 
+        let existing = documents
+        let embFr = embeddingFr
+        let embEn = embeddingEn
+
+        Task {
+            let docs = await Self.performIndexing(existing: existing, embeddingFr: embFr, embeddingEn: embEn)
+            documents = docs
+            saveIndexToDisk()
+            isIndexing = false
+        }
+    }
+
+    nonisolated private static func performIndexing(
+        existing: [IndexedDocument], embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?
+    ) async -> [IndexedDocument] {
         let existingByURL = Dictionary(
-            documents.map { ($0.sourceURL.absoluteString, $0) },
+            existing.map { ($0.sourceURL.absoluteString, $0) },
             uniquingKeysWith: { _, new in new }
         )
 
@@ -56,6 +70,7 @@ final class SemanticSearchService {
                 icon: "calendar",
                 kind: { .meeting($0) }
             ),
+            embeddingFr: embeddingFr, embeddingEn: embeddingEn,
             existing: existingByURL,
             into: &docs
         )
@@ -66,25 +81,37 @@ final class SemanticSearchService {
                 icon: "person",
                 kind: { .person($0) }
             ),
+            embeddingFr: embeddingFr, embeddingEn: embeddingEn,
             existing: existingByURL,
             into: &docs
         )
-        indexTasks(existing: existingByURL, into: &docs)
-        documents = docs
-        saveIndexToDisk()
+        indexTasks(embeddingFr: embeddingFr, embeddingEn: embeddingEn, existing: existingByURL, into: &docs)
+        return docs
     }
 
-    func search(query: String, limit: Int = 20) -> [SemanticSearchResult] {
+    func search(query: String, limit: Int = 20) async -> [SemanticSearchResult] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.count >= 2 else { return [] }
 
-        let queryFr = embeddingFr.flatMap { averageVector(for: trimmed, using: $0) }
-        let queryEn = embeddingEn.flatMap { averageVector(for: trimmed, using: $0) }
+        // Pre-compute query vectors on main actor (fast), then score on background
+        let docs = documents
+        let queryFr = embeddingFr.flatMap { Self.averageVector(for: trimmed, using: $0) }
+        let queryEn = embeddingEn.flatMap { Self.averageVector(for: trimmed, using: $0) }
         guard queryFr != nil || queryEn != nil else { return [] }
-        let queryLower = trimmed.lowercased()
+
+        return await Self.scoreDocuments(
+            query: trimmed, docs: docs, queryFr: queryFr, queryEn: queryEn, limit: limit
+        )
+    }
+
+    nonisolated private static func scoreDocuments(
+        query: String, docs: [IndexedDocument],
+        queryFr: [Double]?, queryEn: [Double]?, limit: Int
+    ) async -> [SemanticSearchResult] {
+        let queryLower = query.lowercased()
 
         var results: [SemanticSearchResult] = []
-        for doc in documents {
+        for doc in docs {
             let scoreFr = queryFr.map { cosineSimilarity($0, doc.embeddingFr) } ?? 0
             let scoreEn = queryEn.map { cosineSimilarity($0, doc.embeddingEn) } ?? 0
             let semanticScore = max(scoreFr, scoreEn)
@@ -94,10 +121,9 @@ final class SemanticSearchService {
             let nameBoost: Double = hasNameMatch ? 0.2 : 0
             let score = semanticScore + exactBoost + nameBoost
 
-            // Without any exact match, require a higher semantic score
             let threshold: Double = (hasExactMatch || hasNameMatch) ? 0.35 : 0.5
             if score > threshold {
-                let snippet = Self.extractSnippet(from: doc.content, query: queryLower)
+                let snippet = extractSnippet(from: doc.content, query: queryLower)
                 results.append(SemanticSearchResult(
                     name: doc.name,
                     context: doc.context,
@@ -105,7 +131,7 @@ final class SemanticSearchService {
                     kind: doc.kind,
                     score: score,
                     snippet: snippet,
-                    query: trimmed
+                    query: query
                 ))
             }
         }
@@ -116,7 +142,7 @@ final class SemanticSearchService {
 
     // MARK: - Word vector averaging
 
-    private func averageVector(for text: String, using emb: NLEmbedding) -> [Double]? {
+    nonisolated private static func averageVector(for text: String, using emb: NLEmbedding) -> [Double]? {
         let tokenizer = NLTokenizer(unit: .word)
         tokenizer.string = text
         var vectors: [[Double]] = []
@@ -138,14 +164,9 @@ final class SemanticSearchService {
 
     // MARK: - Indexing
 
-    private struct IndexScope {
-        let directory: URL
-        let label: String
-        let icon: String
-        let kind: (String) -> IndexedDocumentKind
-    }
-
-    private func dualVectors(for text: String) -> (fr: [Double], en: [Double])? {
+    nonisolated private static func dualVectors(
+        for text: String, embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?
+    ) -> (fr: [Double], en: [Double])? {
         let vecFr = embeddingFr.flatMap { averageVector(for: text, using: $0) } ?? []
         let vecEn = embeddingEn.flatMap { averageVector(for: text, using: $0) } ?? []
         guard !vecFr.isEmpty || !vecEn.isEmpty else { return nil }
@@ -157,8 +178,9 @@ final class SemanticSearchService {
         )
     }
 
-    private func indexDirectory(
+    nonisolated private static func indexDirectory(
         _ scope: IndexScope,
+        embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?,
         existing: [String: IndexedDocument],
         into docs: inout [IndexedDocument]
     ) {
@@ -168,7 +190,7 @@ final class SemanticSearchService {
             let folderDate = modificationDate(for: folderURL)
             if let cached = existing[folderURL.absoluteString], cached.modificationDate >= folderDate {
                 docs.append(cached)
-            } else if let vecs = dualVectors(for: folder.name) {
+            } else if let vecs = dualVectors(for: folder.name, embeddingFr: embeddingFr, embeddingEn: embeddingEn) {
                 docs.append(IndexedDocument(
                     name: folder.name,
                     context: scope.label,
@@ -193,7 +215,9 @@ final class SemanticSearchService {
                 guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
                 let text = "\(fileName) \(content)"
                 let truncated = String(text.prefix(500))
-                guard let vecs = dualVectors(for: truncated) else { continue }
+                guard let vecs = dualVectors(for: truncated, embeddingFr: embeddingFr, embeddingEn: embeddingEn) else {
+                    continue
+                }
                 docs.append(IndexedDocument(
                     name: fileName,
                     context: "\(scope.label) — \(folder.name)",
@@ -209,7 +233,8 @@ final class SemanticSearchService {
         }
     }
 
-    private func indexTasks(
+    nonisolated private static func indexTasks(
+        embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?,
         existing: [String: IndexedDocument],
         into docs: inout [IndexedDocument]
     ) {
@@ -221,7 +246,7 @@ final class SemanticSearchService {
         }
         guard let content = try? String(contentsOf: url, encoding: .utf8) else { return }
         let truncated = String(content.prefix(500))
-        guard let vecs = dualVectors(for: truncated) else { return }
+        guard let vecs = dualVectors(for: truncated, embeddingFr: embeddingFr, embeddingEn: embeddingEn) else { return }
         docs.append(IndexedDocument(
             name: "Taches",
             context: "Fichier de taches",
@@ -235,7 +260,7 @@ final class SemanticSearchService {
         ))
     }
 
-    private func modificationDate(for url: URL) -> Date {
+    nonisolated private static func modificationDate(for url: URL) -> Date {
         (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
     }
 
@@ -287,7 +312,7 @@ final class SemanticSearchService {
 
     // MARK: - Snippet
 
-    private static func extractSnippet(from content: String, query: String, radius: Int = 60) -> String {
+    nonisolated private static func extractSnippet(from content: String, query: String, radius: Int = 60) -> String {
         let lower = content.lowercased()
         let words = query.split(separator: " ").map(String.init)
 
@@ -323,7 +348,7 @@ final class SemanticSearchService {
 
     // MARK: - Math
 
-    private func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
+    nonisolated private static func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
         guard vectorA.count == vectorB.count, !vectorA.isEmpty else { return 0 }
         var dot = 0.0
         var normA = 0.0
@@ -337,6 +362,15 @@ final class SemanticSearchService {
         guard denom > 0 else { return 0 }
         return dot / denom
     }
+}
+
+// MARK: - Index scope
+
+private struct IndexScope {
+    let directory: URL
+    let label: String
+    let icon: String
+    let kind: (String) -> IndexedDocumentKind
 }
 
 // MARK: - Persistence models
@@ -381,7 +415,7 @@ private extension IndexedDocumentKind {
     }
 }
 
-struct SemanticSearchResult {
+struct SemanticSearchResult: Sendable {
     let name: String
     let context: String
     let icon: String

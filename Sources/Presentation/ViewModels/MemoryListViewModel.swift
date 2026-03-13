@@ -18,13 +18,16 @@ final class MemoryListViewModel {
     }
 
     func load() {
-        let contents = DirectoryScanner.scan(at: navigation.currentDirectory, fileExtension: "md")
+        let dir = navigation.currentDirectory
+        Task {
+            let contents = await DirectoryScanner.scanAsync(at: dir, fileExtension: "md")
 
-        folders = contents.folders
-        files = contents.files
-            .map { MemoryFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
-                              folder: nil, date: $0.date, url: $0.url) }
-            .sorted { $0.date > $1.date }
+            folders = contents.folders
+            files = contents.files
+                .map { MemoryFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
+                                  folder: nil, date: $0.date, url: $0.url) }
+                .sorted { $0.date > $1.date }
+        }
     }
 
     func navigateInto(_ folder: Folder) {

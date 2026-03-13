@@ -128,21 +128,28 @@ struct PersonDetailView: View {
     // MARK: - File operations
 
     private func loadSubfolders() {
-        evaluationsFiles = scanSubfolder("evaluations")
-        objectifsFiles = scanSubfolder("objectifs")
+        let url = personURL
+        Task {
+            let evals = await Self.scanSubfolder("evaluations", in: url)
+            let objs = await Self.scanSubfolder("objectifs", in: url)
+            evaluationsFiles = evals
+            objectifsFiles = objs
+        }
     }
 
-    private func scanSubfolder(_ name: String) -> [FolderFile] {
+    private static func scanSubfolder(_ name: String, in personURL: URL) async -> [FolderFile] {
         let dir = personURL.appendingPathComponent(name, isDirectory: true)
-        return DirectoryScanner.scan(at: dir, fileExtension: "md").files
-            .map {
-                FolderFile(
-                    id: $0.url,
-                    name: $0.url.deletingPathExtension().lastPathComponent,
-                    date: $0.date, url: $0.url
-                )
-            }
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+        return await Task.detached {
+            DirectoryScanner.scan(at: dir, fileExtension: "md").files
+                .map {
+                    FolderFile(
+                        id: $0.url,
+                        name: $0.url.deletingPathExtension().lastPathComponent,
+                        date: $0.date, url: $0.url
+                    )
+                }
+                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
+        }.value
     }
 
     private func createSubfolderFile(subfolder: String, isAdding: Binding<Bool>) {
@@ -181,46 +188,55 @@ struct PersonOneOnOneView: View {
     let personURL: URL
     var markdownTheme: MarkdownTheme = MarkdownTheme()
 
+    @State private var entries: [MeetingDateEntry] = []
     @State private var showTranscripts = false
     @State private var index: Int = 0
     @State private var entryDeleteAction: EntryDeleteAction?
 
     var body: some View {
-        let entries = loadEntries()
         if entries.isEmpty {
             ContentUnavailableView(
                 "Aucun 1-1",
                 systemImage: "person.2",
                 description: Text("Lancez un enregistrement pour créer un 1-1.")
             )
+            .onAppear { loadEntries() }
         } else {
             dateNavigation(entries: entries)
+                .onAppear { loadEntries() }
         }
     }
 
-    private func loadEntries() -> [MeetingDateEntry] {
+    private func loadEntries() {
         let dir = personURL.appendingPathComponent("1-1", isDirectory: true)
-        let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
-        let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
-        let storage = FileTranscriptionStorage()
-        var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
+        Task {
+            let result = await Task.detached {
+                let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
+                let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
+                let storage = FileTranscriptionStorage()
+                var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
 
-        for file in mdFiles {
-            let datePrefix = file.url.deletingPathExtension().lastPathComponent
-            let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
-            dateMap[datePrefix, default: (nil, nil)].note = folderFile
+                for file in mdFiles {
+                    let datePrefix = file.url.deletingPathExtension().lastPathComponent
+                    let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
+                    dateMap[datePrefix, default: (nil, nil)].note = folderFile
+                }
+                for file in transcriptFiles {
+                    let datePrefix = file.url.deletingPathExtension().lastPathComponent
+                    if let parsed = storage.parseTranscriptFile(at: file.url) {
+                        dateMap[datePrefix, default: (nil, nil)].transcript = parsed
+                    }
+                }
+                return dateMap.map { key, value in
+                    let date = value.note?.date ?? value.transcript?.date ?? Date.distantPast
+                    return MeetingDateEntry(dateString: key, date: date, noteFile: value.note, transcript: value.transcript)
+                }
+                .sorted { (a: MeetingDateEntry, b: MeetingDateEntry) in
+                    a.dateString.localizedStandardCompare(b.dateString) == .orderedDescending
+                }
+            }.value
+            entries = result
         }
-        for file in transcriptFiles {
-            let datePrefix = file.url.deletingPathExtension().lastPathComponent
-            if let parsed = storage.parseTranscriptFile(at: file.url) {
-                dateMap[datePrefix, default: (nil, nil)].transcript = parsed
-            }
-        }
-        return dateMap.map { key, value in
-            let date = value.note?.date ?? value.transcript?.date ?? Date.distantPast
-            return MeetingDateEntry(dateString: key, date: date, noteFile: value.note, transcript: value.transcript)
-        }
-        .sorted { $0.dateString.localizedStandardCompare($1.dateString) == .orderedDescending }
     }
 
     private func dateNavigation(entries: [MeetingDateEntry]) -> some View {
@@ -357,189 +373,6 @@ struct PersonOneOnOneView: View {
         case .both:
             if let note = entry.noteFile { try? FileManager.default.removeItem(at: note.url) }
             if let t = entry.transcript { try? FileManager.default.removeItem(at: t.url) }
-        }
-    }
-}
-
-// MARK: - Subfolder Navigation View
-
-struct SubfolderNavigationView: View {
-    let files: [FolderFile]
-    @Binding var index: Int
-    @Binding var isAdding: Bool
-    @Binding var newFileName: String
-    let addLabel: String
-    let emptyTitle: String
-    let emptyIcon: String
-    var markdownTheme: MarkdownTheme = MarkdownTheme()
-    var skillRunner: SkillRunner?
-    var subfolderURL: URL?
-    var onCreate: () -> Void
-    var onDelete: (FolderFile) -> Void
-
-    @State private var fileToDelete: FolderFile?
-    @State private var showImport = false
-
-    var body: some View {
-        VStack(spacing: 0) {
-            if files.isEmpty && !isAdding {
-                emptyState
-            } else if isAdding {
-                Spacer()
-                addForm
-                Spacer()
-            } else {
-                fileContent
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .alert(
-            "Supprimer ?",
-            isPresented: Binding(
-                get: { fileToDelete != nil },
-                set: { if !$0 { fileToDelete = nil } }
-            )
-        ) {
-            Button("Annuler", role: .cancel) { fileToDelete = nil }
-            Button("Supprimer", role: .destructive) {
-                if let file = fileToDelete { onDelete(file); fileToDelete = nil }
-            }
-        } message: {
-            if let file = fileToDelete {
-                Text("« \(file.name) » sera supprimé définitivement.")
-            }
-        }
-    }
-
-    private var emptyState: some View {
-        VStack {
-            Spacer()
-            ContentUnavailableView(emptyTitle, systemImage: emptyIcon)
-            Spacer()
-            Divider()
-            HStack(spacing: 8) {
-                Button { isAdding = true } label: {
-                    Label(addLabel, systemImage: "plus")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
-                if let runner = skillRunner, let folderURL = subfolderURL {
-                    Button { showImport = true } label: {
-                        Label("Importer", systemImage: "square.and.arrow.down")
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .popover(isPresented: $showImport) {
-                        ImportDocumentView(
-                            targetPath: folderURL.appendingPathComponent("import.md").path,
-                            runner: runner,
-                            onDismiss: { showImport = false }
-                        )
-                    }
-                }
-            }
-            .padding(8)
-        }
-    }
-
-    @ViewBuilder
-    private var fileContent: some View {
-        let safeIndex = min(index, files.count - 1)
-        let file = files[max(safeIndex, 0)]
-
-        header(for: file)
-        Divider()
-        FolderFileEditorView(file: file, markdownTheme: markdownTheme).id(file.id)
-    }
-
-    private func header(for file: FolderFile) -> some View {
-        HStack {
-            Button {
-                if index < files.count - 1 { index += 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
-            }
-            .buttonStyle(.plain)
-            .disabled(index >= files.count - 1)
-
-            Spacer()
-            Text(file.name).font(.headline)
-            Spacer()
-
-            Button {
-                if index > 0 { index -= 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
-            }
-            .buttonStyle(.plain)
-            .disabled(index <= 0)
-
-            Button { isAdding = true } label: {
-                Image(systemName: "plus")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
-            }
-            .buttonStyle(.plain)
-
-            if let runner = skillRunner, let folderURL = subfolderURL {
-                Button { showImport = true } label: {
-                    Image(systemName: "square.and.arrow.down")
-                        .frame(width: 32, height: 32)
-                        .contentShape(Circle())
-                        .glassEffect(.regular.interactive(), in: .circle)
-                }
-                .buttonStyle(.plain)
-                .help("Importer un fichier ou un lien")
-                .popover(isPresented: $showImport) {
-                    ImportDocumentView(
-                        targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
-                        runner: runner,
-                        onDismiss: { showImport = false }
-                    )
-                }
-            }
-
-            Menu {
-                Button(role: .destructive) { fileToDelete = file } label: {
-                    Label("Supprimer", systemImage: "trash")
-                }
-            } label: {
-                Image(systemName: "ellipsis")
-                    .font(.body)
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .circle)
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .frame(width: 32, height: 32)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    private var addForm: some View {
-        VStack(spacing: 12) {
-            Text(addLabel).font(.headline)
-            HStack(spacing: 8) {
-                TextField("Nom (ex: 2025-S2)", text: $newFileName)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 200)
-                    .onSubmit { onCreate() }
-                    .onExitCommand { isAdding = false; newFileName = "" }
-                Button("Créer") { onCreate() }
-                    .disabled(newFileName.trimmingCharacters(in: .whitespaces).isEmpty)
-                Button("Annuler", role: .cancel) { isAdding = false; newFileName = "" }
-            }
         }
     }
 }

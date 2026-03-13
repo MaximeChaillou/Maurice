@@ -51,8 +51,7 @@
 		FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */; };
 		FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */; };
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
-		MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */; };
-		DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */; };
+		SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */; };
 		PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */; };
 		IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */; };
 		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
@@ -119,8 +118,7 @@
 		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
-		MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingTranscriptsView.swift; sourceTree = "<group>"; };
-		DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTranscriptsView.swift; sourceTree = "<group>"; };
+		SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubfolderNavigationView.swift; sourceTree = "<group>"; };
 		SV11SV12SV13SV14SV15SV16 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchService.swift; sourceTree = "<group>"; };
 		A4B5C6D7E8F9A0B1C2D3E4F5 /* RecordingControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingControlBar.swift; sourceTree = "<group>"; };
@@ -278,8 +276,7 @@
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
 				D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */,
-				MT11MT12MT13MT14MT15MT16 /* MeetingTranscriptsView.swift */,
-				DT11DT12DT13DT14DT15DT16 /* DateTranscriptsView.swift */,
+				SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* MarkdownLayoutManager.swift */,
 				2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */,
@@ -523,8 +520,7 @@
 				FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */,
 				FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */,
 				WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */,
-				MT01MT02MT03MT04MT05MT06 /* MeetingTranscriptsView.swift in Sources */,
-				DT01DT02DT03DT04DT05DT06 /* DateTranscriptsView.swift in Sources */,
+				SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */,
 				SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */,
 				SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */,
 				PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */,

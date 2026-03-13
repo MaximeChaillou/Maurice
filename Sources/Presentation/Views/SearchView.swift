@@ -97,21 +97,25 @@ struct SearchView: View {
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
-            search()
+            await search()
         }
     }
 
-    private func search() {
+    private func search() async {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard term.count >= 2 else { results = []; return }
 
-        // Always run exact substring search
-        let exact = exactSearch(term: term)
+        // Run exact search on background thread
+        let exact = await Task.detached {
+            ExactSearchEngine.search(term: term)
+        }.value
+
+        guard !Task.isCancelled else { return }
 
         // Add semantic results if available
         var semantic: [SearchResult] = []
         if searchService.isAvailable {
-            semantic = searchService.search(query: term).map { sr in
+            semantic = await searchService.search(query: term).map { sr in
                 let kind: SearchResult.Kind = switch sr.kind {
                 case .meeting(let name): .meeting(name)
                 case .person(let name): .person(name)
@@ -124,6 +128,8 @@ struct SearchView: View {
             }
         }
 
+        guard !Task.isCancelled else { return }
+
         // Merge: exact matches first, then semantic (deduplicated)
         var seen = Set(exact.map { "\($0.name)|\($0.context)" })
         var merged = exact
@@ -134,102 +140,6 @@ struct SearchView: View {
             }
         }
         results = merged
-    }
-
-    // MARK: - Exact substring search
-
-    private func exactSearch(term: String) -> [SearchResult] {
-        let termLower = term.lowercased()
-        var found: [SearchResult] = []
-        let meetings = SearchScope(
-            directory: AppSettings.meetingsDirectory,
-            label: "Réunion",
-            icon: "calendar",
-            kind: { .meeting($0) }
-        )
-        let people = SearchScope(
-            directory: AppSettings.peopleDirectory,
-            label: "Personne",
-            icon: "person",
-            kind: { .person($0) }
-        )
-        searchDirectory(meetings, term: termLower, query: term, into: &found)
-        searchDirectory(people, term: termLower, query: term, into: &found)
-        searchTasks(term: termLower, query: term, into: &found)
-        return found
-    }
-
-    private struct SearchScope {
-        let directory: URL
-        let label: String
-        let icon: String
-        let kind: (String) -> SearchResult.Kind
-    }
-
-    private func searchDirectory(_ scope: SearchScope, term: String, query: String, into found: inout [SearchResult]) {
-        let contents = DirectoryScanner.scan(at: scope.directory)
-        for folder in contents.folders {
-            if folder.name.lowercased().contains(term) {
-                found.append(SearchResult(
-                    name: folder.name,
-                    context: scope.label,
-                    icon: scope.icon,
-                    kind: scope.kind(folder.name),
-                    snippet: "",
-                    query: query
-                ))
-            }
-            let files = DirectoryScanner.scan(at: folder.url, fileExtension: "md").files
-            for file in files {
-                let fileName = file.url.deletingPathExtension().lastPathComponent
-                let content = try? String(contentsOf: file.url, encoding: .utf8)
-                let nameMatch = fileName.lowercased().contains(term)
-                let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
-                if nameMatch || contentMatch {
-                    let ctx = "\(scope.label) — \(folder.name)"
-                    let snippet = Self.extractSnippet(from: content ?? "", term: term)
-                    found.append(SearchResult(
-                        name: fileName,
-                        context: ctx,
-                        icon: "doc.text",
-                        kind: scope.kind(folder.name),
-                        snippet: snippet,
-                        query: query
-                    ))
-                }
-            }
-        }
-    }
-
-    private func searchTasks(term: String, query: String, into found: inout [SearchResult]) {
-        if let content = try? String(contentsOf: AppSettings.tasksFileURL, encoding: .utf8),
-           content.lowercased().contains(term) {
-            let snippet = Self.extractSnippet(from: content, term: term)
-            found.append(SearchResult(
-                name: "Tâches",
-                context: "Fichier de tâches",
-                icon: "checklist",
-                kind: .task,
-                snippet: snippet,
-                query: query
-            ))
-        }
-    }
-
-    private static func extractSnippet(from content: String, term: String, radius: Int = 60) -> String {
-        let lower = content.lowercased()
-        guard let range = lower.range(of: term) else { return "" }
-        let matchOffset = content.distance(from: content.startIndex, to: range.lowerBound)
-        let startOffset = max(0, matchOffset - radius)
-        let endOffset = min(content.count, matchOffset + term.count + radius)
-        let startIdx = content.index(content.startIndex, offsetBy: startOffset)
-        let endIdx = content.index(content.startIndex, offsetBy: endOffset)
-        var snippet = String(content[startIdx..<endIdx])
-            .replacingOccurrences(of: "\n", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        if startOffset > 0 { snippet = "…" + snippet }
-        if endOffset < content.count { snippet += "…" }
-        return snippet
     }
 
     private func openResult(_ result: SearchResult) {
@@ -281,5 +191,103 @@ private struct SearchResult: Identifiable {
             }
         }
         return attributed
+    }
+}
+
+// MARK: - Exact search engine (nonisolated for background execution)
+
+private enum ExactSearchEngine {
+    struct SearchScope {
+        let directory: URL
+        let label: String
+        let icon: String
+        let kind: (String) -> SearchResult.Kind
+    }
+
+    static func search(term: String) -> [SearchResult] {
+        let termLower = term.lowercased()
+        var found: [SearchResult] = []
+        let meetings = SearchScope(
+            directory: AppSettings.meetingsDirectory,
+            label: "Réunion",
+            icon: "calendar",
+            kind: { .meeting($0) }
+        )
+        let people = SearchScope(
+            directory: AppSettings.peopleDirectory,
+            label: "Personne",
+            icon: "person",
+            kind: { .person($0) }
+        )
+        searchDirectory(meetings, term: termLower, query: term, into: &found)
+        searchDirectory(people, term: termLower, query: term, into: &found)
+        searchTasks(term: termLower, query: term, into: &found)
+        return found
+    }
+
+    static func searchDirectory(_ scope: SearchScope, term: String, query: String, into found: inout [SearchResult]) {
+        let contents = DirectoryScanner.scan(at: scope.directory)
+        for folder in contents.folders {
+            if folder.name.lowercased().contains(term) {
+                found.append(SearchResult(
+                    name: folder.name,
+                    context: scope.label,
+                    icon: scope.icon,
+                    kind: scope.kind(folder.name),
+                    snippet: "",
+                    query: query
+                ))
+            }
+            let files = DirectoryScanner.scan(at: folder.url, fileExtension: "md").files
+            for file in files {
+                let fileName = file.url.deletingPathExtension().lastPathComponent
+                let content = try? String(contentsOf: file.url, encoding: .utf8)
+                let nameMatch = fileName.lowercased().contains(term)
+                let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
+                if nameMatch || contentMatch {
+                    let ctx = "\(scope.label) — \(folder.name)"
+                    let snippet = extractSnippet(from: content ?? "", term: term)
+                    found.append(SearchResult(
+                        name: fileName,
+                        context: ctx,
+                        icon: "doc.text",
+                        kind: scope.kind(folder.name),
+                        snippet: snippet,
+                        query: query
+                    ))
+                }
+            }
+        }
+    }
+
+    static func searchTasks(term: String, query: String, into found: inout [SearchResult]) {
+        if let content = try? String(contentsOf: AppSettings.tasksFileURL, encoding: .utf8),
+           content.lowercased().contains(term) {
+            let snippet = extractSnippet(from: content, term: term)
+            found.append(SearchResult(
+                name: "Tâches",
+                context: "Fichier de tâches",
+                icon: "checklist",
+                kind: .task,
+                snippet: snippet,
+                query: query
+            ))
+        }
+    }
+
+    static func extractSnippet(from content: String, term: String, radius: Int = 60) -> String {
+        let lower = content.lowercased()
+        guard let range = lower.range(of: term) else { return "" }
+        let matchOffset = content.distance(from: content.startIndex, to: range.lowerBound)
+        let startOffset = max(0, matchOffset - radius)
+        let endOffset = min(content.count, matchOffset + term.count + radius)
+        let startIdx = content.index(content.startIndex, offsetBy: startOffset)
+        let endIdx = content.index(content.startIndex, offsetBy: endOffset)
+        var snippet = String(content[startIdx..<endIdx])
+            .replacingOccurrences(of: "\n", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if startOffset > 0 { snippet = "…" + snippet }
+        if endOffset < content.count { snippet += "…" }
+        return snippet
     }
 }

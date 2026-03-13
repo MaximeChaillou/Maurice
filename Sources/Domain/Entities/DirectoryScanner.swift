@@ -1,7 +1,7 @@
 import Foundation
 
 enum DirectoryScanner {
-    struct Contents {
+    struct Contents: Sendable {
         let folders: [Folder]
         let files: [(url: URL, date: Date)]
     }
@@ -32,5 +32,11 @@ enum DirectoryScanner {
         folders.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
         return Contents(folders: folders, files: files)
+    }
+
+    static func scanAsync(at directory: URL, fileExtension: String? = nil) async -> Contents {
+        await Task.detached {
+            scan(at: directory, fileExtension: fileExtension)
+        }.value
     }
 }

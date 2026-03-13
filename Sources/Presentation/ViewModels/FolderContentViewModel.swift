@@ -24,17 +24,30 @@ final class FolderContentViewModel {
     }
 
     func loadFolders() {
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-
-        let contents = DirectoryScanner.scan(at: directory)
-
-        folders = contents.folders.compactMap { folder in
-            let files = scanFiles(in: folder.url)
-            let dateEntries = scanDateEntries(in: folder.url)
-            guard !files.isEmpty || !dateEntries.isEmpty else { return nil }
-            return FolderItem(name: folder.name, url: folder.url, files: files, dateEntries: dateEntries)
+        Task {
+            await loadFoldersAsync()
         }
-        .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private func loadFoldersAsync() async {
+        let dir = directory
+        let result = await Task.detached {
+            let fm = FileManager.default
+            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+
+            let contents = DirectoryScanner.scan(at: dir)
+            let storage = FileTranscriptionStorage()
+
+            return contents.folders.compactMap { folder -> FolderItem? in
+                let files = Self.scanFiles(in: folder.url)
+                let dateEntries = Self.scanDateEntries(in: folder.url, storage: storage)
+                guard !files.isEmpty || !dateEntries.isEmpty else { return nil }
+                return FolderItem(name: folder.name, url: folder.url, files: files, dateEntries: dateEntries)
+            }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        }.value
+
+        folders = result
     }
 
     func createFolder() {
@@ -84,19 +97,17 @@ final class FolderContentViewModel {
         selectedFile = sorted[idx].url
     }
 
-    private func scanFiles(in dir: URL) -> [FolderFile] {
+    nonisolated private static func scanFiles(in dir: URL) -> [FolderFile] {
         DirectoryScanner.scan(at: dir, fileExtension: "md").files
             .map { FolderFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
                               date: $0.date, url: $0.url) }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
     }
 
-    private func scanDateEntries(in dir: URL) -> [MeetingDateEntry] {
+    nonisolated private static func scanDateEntries(in dir: URL, storage: FileTranscriptionStorage) -> [MeetingDateEntry] {
         let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
         let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
-        let storage = FileTranscriptionStorage()
 
-        // Group by date prefix (YYYY-MM-DD)
         var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
 
         for file in mdFiles {
