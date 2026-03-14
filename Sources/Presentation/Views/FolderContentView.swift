@@ -13,6 +13,10 @@ struct FolderContentView: View {
 
     @State private var showConfigSidebar: Bool = false
     @State private var folderToDelete: FolderItem?
+    @State private var folderToRename: FolderItem?
+    @State private var renameText = ""
+    @State private var folderToLink: FolderItem?
+    @State private var linkEventName = ""
     @State private var entryDeleteAction: EntryDeleteAction?
 
     var body: some View {
@@ -26,13 +30,17 @@ struct FolderContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             if showConfigSidebar,
-               let folderName = viewModel.selectedFolder,
+               let folder = viewModel.currentFolder,
                let runner = skillRunner {
                 Divider()
                 MeetingConfigSidebar(
-                    folderName: folderName,
-                    config: $viewModel.skillConfig,
-                    runner: runner
+                    folderName: folder.name,
+                    folderURL: folder.url,
+                    config: $viewModel.meetingConfig,
+                    runner: runner,
+                    onRename: { newName in
+                        viewModel.renameFolder(folder, to: newName)
+                    }
                 )
                 .frame(width: 320)
                 .transition(.move(edge: .trailing).combined(with: .opacity))
@@ -58,7 +66,7 @@ struct FolderContentView: View {
                 ForEach(viewModel.folders) { folder in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 4) {
-                            if let icon = viewModel.skillConfig.icon(for: folder.name) {
+                            if let icon = MeetingConfig.load(from: folder.url).icon {
                                 Text(icon)
                             }
                             Text(folder.name)
@@ -72,6 +80,25 @@ struct FolderContentView: View {
                     .padding(.vertical, 2)
                     .tag(folder.name)
                     .listRowBackground(Color.clear)
+                    .contextMenu {
+                        Button {
+                            renameText = folder.name
+                            folderToRename = folder
+                        } label: {
+                            Label("Renommer", systemImage: "pencil")
+                        }
+                        Button {
+                            folderToLink = folder
+                        } label: {
+                            Label("Lier un événement Calendar", systemImage: "calendar.badge.plus")
+                        }
+                        Divider()
+                        Button(role: .destructive) {
+                            folderToDelete = folder
+                        } label: {
+                            Label("Supprimer", systemImage: "trash")
+                        }
+                    }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             folderToDelete = folder
@@ -101,12 +128,41 @@ struct FolderContentView: View {
                     Text("Le dossier « \(folder.name) » et tout son contenu seront supprimés définitivement.")
                 }
             }
+            .alert(
+                "Renommer la réunion",
+                isPresented: Binding(
+                    get: { folderToRename != nil },
+                    set: { if !$0 { folderToRename = nil } }
+                )
+            ) {
+                TextField("Nouveau nom", text: $renameText)
+                Button("Annuler", role: .cancel) { folderToRename = nil }
+                Button("Renommer") {
+                    if let folder = folderToRename {
+                        viewModel.renameFolder(folder, to: renameText)
+                        folderToRename = nil
+                    }
+                }
+            }
+            .sheet(isPresented: Binding(
+                get: { folderToLink != nil },
+                set: { if !$0 { folderToLink = nil } }
+            )) {
+                if let folder = folderToLink {
+                    CalendarLinkSheet(folder: folder) {
+                        folderToLink = nil
+                    }
+                }
+            }
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
-                if navigateByDate, let folder = viewModel.currentFolder {
-                    viewModel.fileIndex = 0
-                    viewModel.selectFileAtIndex(in: folder)
+                if let folder = viewModel.currentFolder {
+                    viewModel.meetingConfig = MeetingConfig.load(from: folder.url)
+                    if navigateByDate {
+                        viewModel.fileIndex = 0
+                        viewModel.selectFileAtIndex(in: folder)
+                    }
                 }
             }
 
@@ -449,5 +505,63 @@ struct FolderFileEditorView: View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
             .onAppear { bodyText = file.content }
             .onChange(of: bodyText) { file.save(content: bodyText) }
+    }
+}
+
+// MARK: - Calendar link sheet
+
+struct CalendarLinkSheet: View {
+    let folder: FolderItem
+    var onDismiss: () -> Void
+
+    @State private var config = MeetingConfig()
+    @State private var eventName = ""
+
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("Événement Calendar lié")
+                    .font(.headline)
+                Spacer()
+                Button("Fermer") { onDismiss() }
+                    .keyboardShortcut(.cancelAction)
+            }
+
+            HStack(spacing: 8) {
+                Image(systemName: "calendar")
+                    .foregroundStyle(.secondary)
+                TextField("Nom de l'événement Calendar", text: $eventName)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit { saveLink() }
+                if !eventName.isEmpty {
+                    Button {
+                        eventName = ""
+                        saveLink()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Text("L'enregistrement démarrera automatiquement dans ce dossier quand un événement Calendar porte ce nom.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+        }
+        .padding()
+        .frame(width: 450, height: 180)
+        .onAppear {
+            config = MeetingConfig.load(from: folder.url)
+            eventName = config.calendarEventName ?? ""
+        }
+    }
+
+    private func saveLink() {
+        let trimmed = eventName.trimmingCharacters(in: .whitespaces)
+        config.calendarEventName = trimmed.isEmpty ? nil : trimmed
+        config.save(to: folder.url)
     }
 }

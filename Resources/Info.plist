@@ -24,5 +24,9 @@
 	<string>Maurice needs access to your microphone to transcribe meetings.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Maurice needs speech recognition to transcribe meetings.</string>
+	<key>GoogleClientID</key>
+	<string>$(GOOGLE_CLIENT_ID)</string>
+	<key>GoogleClientSecret</key>
+	<string>$(GOOGLE_CLIENT_SECRET)</string>
 </dict>
 </plist>

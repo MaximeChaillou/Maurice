@@ -2,6 +2,7 @@ import SwiftUI
 
 enum SettingsSection: String, CaseIterable, Identifiable {
     case general = "Général"
+    case calendar = "Google Calendar"
     case background = "Arrière-plan"
     case appearance = "Markdown style"
     case skills = "Skills"
@@ -12,6 +13,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .general: "folder"
+        case .calendar: "calendar.badge.clock"
         case .background: "paintpalette"
         case .appearance: "paintbrush"
         case .skills: "terminal"
@@ -22,6 +24,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
 
 struct SettingsView: View {
     @Binding var appTheme: AppTheme
+    var calendarViewModel: GoogleCalendarViewModel?
     var onRootDirectoryChanged: (() -> Void)?
     @State private var selectedSection: SettingsSection? = .general
 
@@ -50,6 +53,10 @@ struct SettingsView: View {
         switch selectedSection {
         case .general:
             GeneralSettingsView(onRootDirectoryChanged: onRootDirectoryChanged)
+        case .calendar:
+            if let calendarViewModel {
+                GoogleCalendarSettingsView(viewModel: calendarViewModel)
+            }
         case .background:
             BackgroundSettingsView(appTheme: $appTheme)
         case .appearance:

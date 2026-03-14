@@ -34,60 +34,7 @@ struct SkillAction: Identifiable, Codable, Hashable {
     }
 }
 
-struct MeetingSkillConfig: PersistentCodable {
-    var folderActions: [String: [SkillAction]]
-    var folderIcons: [String: String]
-
-    init() {
-        self.folderActions = [:]
-        self.folderIcons = [:]
-    }
-
-    init(folderActions: [String: [SkillAction]], folderIcons: [String: String] = [:]) {
-        self.folderActions = folderActions
-        self.folderIcons = folderIcons
-    }
-
-    func icon(for folderName: String) -> String? {
-        folderIcons[folderName]
-    }
-
-    mutating func setIcon(_ icon: String?, for folderName: String) {
-        folderIcons[folderName] = icon
-    }
-
-    func actions(for folderName: String) -> [SkillAction] {
-        folderActions[folderName] ?? []
-    }
-
-    mutating func addAction(_ action: SkillAction, to folderName: String) {
-        var current = folderActions[folderName] ?? []
-        current.append(action)
-        folderActions[folderName] = current
-    }
-
-    mutating func removeAction(id: UUID, from folderName: String) {
-        var current = folderActions[folderName] ?? []
-        current.removeAll { $0.id == id }
-        folderActions[folderName] = current
-    }
-
-    mutating func updateAction(id: UUID, buttonName: String, skillFilename: String, in folderName: String) {
-        guard var current = folderActions[folderName],
-              let index = current.firstIndex(where: { $0.id == id })
-        else { return }
-        current[index] = SkillAction(id: id, buttonName: buttonName, skillFilename: skillFilename)
-        folderActions[folderName] = current
-    }
-
-    // MARK: - Persistence
-
-    static var persistenceURL: URL {
-        AppSettings.rootDirectory.appendingPathComponent("meeting-skills.json")
-    }
-
-    // MARK: - Available skills
-
+enum MeetingSkillConfig {
     static func availableSkills() -> [SkillFile] {
         let dir = AppSettings.claudeCommandsDirectory
         let fm = FileManager.default

@@ -26,5 +26,8 @@ Pods/
 # ML Models (too large for git)
 Resources/Models/
 
+# Local credentials
+Local.xcconfig
+
 # Debug
 *.hprof

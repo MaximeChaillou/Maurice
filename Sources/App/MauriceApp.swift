@@ -12,6 +12,8 @@ struct MauriceApp: App {
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
+    @State private var showHome = true
+    @State private var calendarViewModel = GoogleCalendarViewModel()
 
     init() {
         let storage = FileTranscriptionStorage()
@@ -32,14 +34,26 @@ struct MauriceApp: App {
                     .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
 
                 VStack(spacing: 0) {
-                    FloatingTabBar(activeTab: $coordinator.activeTab, onSearchTap: { showSearch = true })
+                    FloatingTabBar(
+                        activeTab: $coordinator.activeTab,
+                        isHomeActive: showHome,
+                        onHomeTap: { showHome = true },
+                        onTabTap: { showHome = false },
+                        onSearchTap: { showSearch = true }
+                    )
                         .padding(.top, 12)
                         .padding(.bottom, 8)
 
-                    tabContent
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .glassEffect(.regular, in: .rect(cornerRadius: 12))
-                        .padding(.horizontal, 16)
+                    Group {
+                        if showHome {
+                            HomeView(calendarViewModel: calendarViewModel)
+                        } else {
+                            tabContent
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
+                    .padding(.horizontal, 16)
 
                     FloatingActionBar(
                         viewModel: recordingViewModel,
@@ -114,7 +128,7 @@ struct MauriceApp: App {
         }
 
         Window("Réglages", id: "settings") {
-            SettingsView(appTheme: $appTheme) {
+            SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel) {
                 memoryListViewModel.reloadDirectory()
                 transcriptListViewModel.load()
                 appTheme = AppTheme.load()
@@ -149,22 +163,81 @@ struct MauriceApp: App {
             return
         }
 
-        // Context: meeting active > person 1-1 active > new meeting
-        if coordinator.activeTab == .meeting, let folder = meetingViewModel.selectedFolder {
-            recordingViewModel.subdirectory = folder
-        } else if coordinator.activeTab == .people,
-                  let person = peopleViewModel.selectedFolder {
-            recordingViewModel.subdirectory = "People/\(person)/1-1"
-        } else {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd HH:mm"
-            let name = "Enregistrement \(formatter.string(from: Date()))"
-            let created = meetingViewModel.createFolderWithName(name)
-            recordingViewModel.subdirectory = created
-            coordinator.activeTab = .meeting
-        }
+        // Priority: Google Calendar > context (displayed meeting) > new meeting
+        Task {
+            if let event = await calendarViewModel.currentEvent() {
+                if let linked = findLinkedFolder(for: event) {
+                    recordingViewModel.subdirectory = linked
+                } else {
+                    let created = meetingViewModel.createFolderWithName(event.summary)
+                    writeFrontmatter(for: event, in: created)
+                    recordingViewModel.subdirectory = created
+                }
+                coordinator.activeTab = .meeting
+            } else if coordinator.activeTab == .meeting, let folder = meetingViewModel.selectedFolder {
+                recordingViewModel.subdirectory = folder
+            } else if coordinator.activeTab == .people,
+                      let person = peopleViewModel.selectedFolder {
+                recordingViewModel.subdirectory = "People/\(person)/1-1"
+            } else {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd HH:mm"
+                let name = "Enregistrement \(formatter.string(from: Date()))"
+                let created = meetingViewModel.createFolderWithName(name)
+                recordingViewModel.subdirectory = created
+                coordinator.activeTab = .meeting
+            }
 
-        recordingViewModel.toggleRecording()
+            recordingViewModel.toggleRecording()
+        }
+    }
+
+    private func findLinkedFolder(for event: GoogleCalendarEvent) -> String? {
+        let fm = FileManager.default
+        let meetingsDir = AppSettings.meetingsDirectory
+        guard let folders = try? fm.contentsOfDirectory(at: meetingsDir, includingPropertiesForKeys: nil) else {
+            return nil
+        }
+        for folder in folders where folder.hasDirectoryPath {
+            let config = MeetingConfig.load(from: folder)
+            if let linkedName = config.calendarEventName,
+               linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
+                return folder.lastPathComponent
+            }
+        }
+        return nil
+    }
+
+    private func writeFrontmatter(for event: GoogleCalendarEvent, in folderName: String) {
+        let folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let fileName = formatter.string(from: Date()) + ".md"
+        let fileURL = folderURL.appendingPathComponent(fileName)
+
+        guard FileManager.default.fileExists(atPath: fileURL.path),
+              let existing = try? String(contentsOf: fileURL, encoding: .utf8),
+              existing.isEmpty else { return }
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+
+        var yaml = "---\n"
+        yaml += "title: \(event.summary)\n"
+        yaml += "date: \(timeFormatter.string(from: event.start))\n"
+        if !event.attendees.isEmpty {
+            yaml += "participants:\n"
+            for attendee in event.attendees {
+                if let name = attendee.displayName {
+                    yaml += "  - \(name) (\(attendee.email))\n"
+                } else {
+                    yaml += "  - \(attendee.email)\n"
+                }
+            }
+        }
+        yaml += "---\n\n"
+
+        try? yaml.write(to: fileURL, atomically: true, encoding: .utf8)
     }
 
     // MARK: - Tab content

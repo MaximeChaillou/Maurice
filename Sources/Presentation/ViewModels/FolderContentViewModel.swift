@@ -12,7 +12,7 @@ final class FolderContentViewModel {
     var fileIndex: Int = 0
     var isAddingFolder = false
     var newFolderName = ""
-    var skillConfig: MeetingSkillConfig = MeetingSkillConfig.load()
+    var meetingConfig: MeetingConfig = MeetingConfig()
 
     var currentFolder: FolderItem? {
         guard let name = selectedFolder else { return nil }
@@ -72,6 +72,22 @@ final class FolderContentViewModel {
         loadFolders()
         selectedFolder = name
         return name
+    }
+
+    @discardableResult
+    func renameFolder(_ folder: FolderItem, to newName: String) -> Bool {
+        let trimmed = newName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != folder.name else { return false }
+        let newURL = directory.appendingPathComponent(trimmed, isDirectory: true)
+        guard !FileManager.default.fileExists(atPath: newURL.path) else { return false }
+        do {
+            try FileManager.default.moveItem(at: folder.url, to: newURL)
+            if selectedFolder == folder.name { selectedFolder = trimmed }
+            loadFolders()
+            return true
+        } catch {
+            return false
+        }
     }
 
     func deleteFolder(_ folder: FolderItem) {

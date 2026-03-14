@@ -2,17 +2,20 @@ import SwiftUI
 
 struct MeetingConfigSidebar: View {
     let folderName: String
-    @Binding var config: MeetingSkillConfig
+    let folderURL: URL
+    @Binding var config: MeetingConfig
     var runner: SkillRunner
+    var onRename: ((String) -> Void)?
 
     @State private var availableSkills: [SkillFile] = []
     @State private var isAddingAction = false
     @State private var editingAction: SkillAction?
     @State private var formName = ""
     @State private var formSkill: String?
+    @State private var editedName: String = ""
 
     private var actions: [SkillAction] {
-        config.actions(for: folderName)
+        config.actions
     }
 
     var body: some View {
@@ -22,6 +25,10 @@ struct MeetingConfigSidebar: View {
             Divider()
 
             List {
+                meetingSection
+
+                calendarLinkSection
+
                 iconSection
 
                 actionsSection
@@ -41,7 +48,13 @@ struct MeetingConfigSidebar: View {
                 addActionButton
             }
         }
-        .onAppear { availableSkills = MeetingSkillConfig.availableSkills() }
+        .onAppear {
+            availableSkills = MeetingSkillConfig.availableSkills()
+            editedName = folderName
+        }
+        .onChange(of: folderName) {
+            editedName = folderName
+        }
     }
 
     // MARK: - Header
@@ -55,6 +68,61 @@ struct MeetingConfigSidebar: View {
                 .foregroundStyle(.secondary)
         }
         .padding(12)
+    }
+
+    // MARK: - Meeting name
+
+    private var meetingSection: some View {
+        Section("Réunion") {
+            HStack(spacing: 8) {
+                TextField("Nom", text: $editedName)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit { submitRename() }
+                if editedName != folderName {
+                    Button("Renommer") { submitRename() }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                }
+            }
+        }
+    }
+
+    private func submitRename() {
+        let trimmed = editedName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != folderName else { return }
+        onRename?(trimmed)
+    }
+
+    // MARK: - Calendar link
+
+    private var calendarLinkSection: some View {
+        Section("Événement Calendar lié") {
+            HStack(spacing: 8) {
+                TextField("Nom de l'événement", text: calendarBinding)
+                    .textFieldStyle(.roundedBorder)
+                if config.calendarEventName != nil {
+                    Button {
+                        config.calendarEventName = nil
+                        config.save(to: folderURL)
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private var calendarBinding: Binding<String> {
+        Binding(
+            get: { config.calendarEventName ?? "" },
+            set: { newValue in
+                let trimmed = newValue.trimmingCharacters(in: .whitespaces)
+                config.calendarEventName = trimmed.isEmpty ? nil : trimmed
+                config.save(to: folderURL)
+            }
+        )
     }
 
     // MARK: - Icon
@@ -71,14 +139,13 @@ struct MeetingConfigSidebar: View {
                     .multilineTextAlignment(.center)
                     .focused($iconFieldFocused)
                     .onAppear {
-                        iconText = config.icon(for: folderName) ?? ""
+                        iconText = config.icon ?? ""
                     }
                     .onChange(of: iconText) {
-                        // Keep only the first emoji/character
                         let trimmed = String(iconText.prefix(1))
                         if trimmed != iconText { iconText = trimmed }
-                        config.setIcon(trimmed.isEmpty ? nil : trimmed, for: folderName)
-                        config.save()
+                        config.icon = trimmed.isEmpty ? nil : trimmed
+                        config.save(to: folderURL)
                     }
 
                 Button {
@@ -115,8 +182,8 @@ struct MeetingConfigSidebar: View {
                 actionRow(action)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
-                            config.removeAction(id: action.id, from: folderName)
-                            config.save()
+                            config.removeAction(id: action.id)
+                            config.save(to: folderURL)
                         } label: {
                             Label("Supprimer", systemImage: "trash")
                         }
@@ -184,12 +251,12 @@ struct MeetingConfigSidebar: View {
                 Button(editingAction != nil ? "Enregistrer" : "Ajouter") {
                     guard let skill = formSkill, !formName.isEmpty else { return }
                     if let existing = editingAction {
-                        config.updateAction(id: existing.id, buttonName: formName, skillFilename: skill, in: folderName)
+                        config.updateAction(id: existing.id, buttonName: formName, skillFilename: skill)
                     } else {
                         let action = SkillAction(buttonName: formName, skillFilename: skill)
-                        config.addAction(action, to: folderName)
+                        config.addAction(action)
                     }
-                    config.save()
+                    config.save(to: folderURL)
                     resetForm()
                 }
                 .disabled(formSkill == nil || formName.isEmpty)

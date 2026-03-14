@@ -8,6 +8,9 @@ private struct TabItem {
 
 struct FloatingTabBar: View {
     @Binding var activeTab: AppTab
+    var isHomeActive: Bool = false
+    var onHomeTap: () -> Void = {}
+    var onTabTap: () -> Void = {}
     var onSearchTap: () -> Void = {}
 
     @Namespace private var tabNamespace
@@ -20,12 +23,31 @@ struct FloatingTabBar: View {
 
     var body: some View {
         HStack(spacing: 8) {
+            Button {
+                onHomeTap()
+            } label: {
+                Image(systemName: "house")
+                    .font(.system(size: 12, weight: .medium))
+                    .frame(width: 40, height: 40)
+                    .background {
+                        if isHomeActive {
+                            Circle()
+                                .fill(.white.opacity(0.15))
+                        }
+                    }
+                    .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(isHomeActive ? .primary : .secondary)
+            .glassEffect(.regular, in: .circle)
+
             HStack(spacing: 4) {
                 ForEach(tabs, id: \.tab) { item in
                     Button {
                         withAnimation(.spring(duration: 0.3, bounce: 0.15)) {
                             activeTab = item.tab
                         }
+                        onTabTap()
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: item.icon)
@@ -36,7 +58,7 @@ struct FloatingTabBar: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background {
-                            if activeTab == item.tab {
+                            if !isHomeActive && activeTab == item.tab {
                                 Capsule()
                                     .fill(.white.opacity(0.15))
                                     .matchedGeometryEffect(id: "activeTab", in: tabNamespace)
@@ -45,7 +67,7 @@ struct FloatingTabBar: View {
                         .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(activeTab == item.tab ? .primary : .secondary)
+                    .foregroundStyle(!isHomeActive && activeTab == item.tab ? .primary : .secondary)
                 }
             }
             .padding(4)
