@@ -49,4 +49,8 @@ enum MeetingSkillConfig {
             .map { SkillFile(filename: $0.lastPathComponent) }
             .sorted { $0.name < $1.name }
     }
+
+    static func availableSkillsAsync() async -> [SkillFile] {
+        await Task.detached { availableSkills() }.value
+    }
 }

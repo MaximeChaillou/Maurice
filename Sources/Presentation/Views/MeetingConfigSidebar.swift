@@ -49,8 +49,10 @@ struct MeetingConfigSidebar: View {
             }
         }
         .onAppear {
-            availableSkills = MeetingSkillConfig.availableSkills()
             editedName = folderName
+            Task {
+                availableSkills = await MeetingSkillConfig.availableSkillsAsync()
+            }
         }
         .onChange(of: folderName) {
             editedName = folderName
@@ -103,7 +105,7 @@ struct MeetingConfigSidebar: View {
                 if config.calendarEventName != nil {
                     Button {
                         config.calendarEventName = nil
-                        config.save(to: folderURL)
+                        config.saveAsync(to: folderURL)
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.secondary)
@@ -120,7 +122,7 @@ struct MeetingConfigSidebar: View {
             set: { newValue in
                 let trimmed = newValue.trimmingCharacters(in: .whitespaces)
                 config.calendarEventName = trimmed.isEmpty ? nil : trimmed
-                config.save(to: folderURL)
+                config.saveAsync(to: folderURL)
             }
         )
     }
@@ -145,7 +147,7 @@ struct MeetingConfigSidebar: View {
                         let trimmed = String(iconText.prefix(1))
                         if trimmed != iconText { iconText = trimmed }
                         config.icon = trimmed.isEmpty ? nil : trimmed
-                        config.save(to: folderURL)
+                        config.saveAsync(to: folderURL)
                     }
 
                 Button {
@@ -183,7 +185,7 @@ struct MeetingConfigSidebar: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             config.removeAction(id: action.id)
-                            config.save(to: folderURL)
+                            config.saveAsync(to: folderURL)
                         } label: {
                             Label("Supprimer", systemImage: "trash")
                         }
@@ -256,7 +258,7 @@ struct MeetingConfigSidebar: View {
                         let action = SkillAction(buttonName: formName, skillFilename: skill)
                         config.addAction(action)
                     }
-                    config.save(to: folderURL)
+                    config.saveAsync(to: folderURL)
                     resetForm()
                 }
                 .disabled(formSkill == nil || formName.isEmpty)

@@ -178,16 +178,25 @@ private struct ClaudeMDView: View {
     }
 
     private func loadContent() {
-        guard let data = try? Data(contentsOf: claudeMDURL),
-              let text = String(data: data, encoding: .utf8) else {
-            content = "# CLAUDE.md\n\nFichier non trouvé."
-            return
+        let url = claudeMDURL
+        Task {
+            let text = await Task.detached {
+                guard let data = try? Data(contentsOf: url),
+                      let str = String(data: data, encoding: .utf8) else {
+                    return "# CLAUDE.md\n\nFichier non trouvé."
+                }
+                return str
+            }.value
+            content = text
         }
-        content = text
     }
 
     private func saveContent() {
-        try? content.data(using: .utf8)?.write(to: claudeMDURL, options: .atomic)
+        let text = content
+        let url = claudeMDURL
+        Task.detached {
+            try? text.data(using: .utf8)?.write(to: url, options: .atomic)
+        }
     }
 }
 
@@ -278,7 +287,13 @@ private struct SkillsSettingsView: View {
         }
         .onChange(of: selectedSkill) {
             if let skill = selectedSkill {
-                editorContent = (try? String(contentsOf: skill.url, encoding: .utf8)) ?? ""
+                let url = skill.url
+                Task {
+                    let text = await Task.detached {
+                        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                    }.value
+                    editorContent = text
+                }
             }
         }
     }
@@ -319,7 +334,11 @@ private struct SkillsSettingsView: View {
             }
             .onChange(of: editorContent) {
                 if let skill = selectedSkill {
-                    try? Data(editorContent.utf8).write(to: skill.url, options: .atomic)
+                    let text = editorContent
+                    let url = skill.url
+                    Task.detached {
+                        try? Data(text.utf8).write(to: url, options: .atomic)
+                    }
                 }
             }
         } else {
@@ -334,7 +353,10 @@ private struct SkillsSettingsView: View {
     // MARK: - Actions
 
     private func loadSkills() {
-        skills = MeetingSkillConfig.availableSkills()
+        Task {
+            let result = await MeetingSkillConfig.availableSkillsAsync()
+            skills = result
+        }
     }
 
     private func createSkill() {

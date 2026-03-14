@@ -216,28 +216,30 @@ struct PeopleView: View {
         guard !name.isEmpty else { return }
 
         let personURL = viewModel.directory.appendingPathComponent(name, isDirectory: true)
-        let fm = FileManager.default
-
-        try? fm.createDirectory(at: personURL, withIntermediateDirectories: true)
-        for sub in ["1-1", "evaluations", "objectifs"] {
-            try? fm.createDirectory(
-                at: personURL.appendingPathComponent(sub, isDirectory: true),
-                withIntermediateDirectories: true
-            )
-        }
-
-        let profilURL = personURL.appendingPathComponent("profil.md")
-        if !fm.fileExists(atPath: profilURL.path) {
-            try? "# \(name)\n".write(to: profilURL, atomically: true, encoding: .utf8)
-        }
-        let ficheURL = personURL.appendingPathComponent("fiche-de-poste.md")
-        if !fm.fileExists(atPath: ficheURL.path) {
-            fm.createFile(atPath: ficheURL.path, contents: nil)
-        }
-
         viewModel.newFolderName = ""
         viewModel.isAddingFolder = false
-        viewModel.loadFolders()
-        viewModel.selectedFolder = name
+
+        Task {
+            await Task.detached {
+                let fm = FileManager.default
+                try? fm.createDirectory(at: personURL, withIntermediateDirectories: true)
+                for sub in ["1-1", "evaluations", "objectifs"] {
+                    try? fm.createDirectory(
+                        at: personURL.appendingPathComponent(sub, isDirectory: true),
+                        withIntermediateDirectories: true
+                    )
+                }
+                let profilURL = personURL.appendingPathComponent("profil.md")
+                if !fm.fileExists(atPath: profilURL.path) {
+                    try? "# \(name)\n".write(to: profilURL, atomically: true, encoding: .utf8)
+                }
+                let ficheURL = personURL.appendingPathComponent("fiche-de-poste.md")
+                if !fm.fileExists(atPath: ficheURL.path) {
+                    fm.createFile(atPath: ficheURL.path, contents: nil)
+                }
+            }.value
+            viewModel.loadFolders()
+            viewModel.selectedFolder = name
+        }
     }
 }

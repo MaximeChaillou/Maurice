@@ -15,10 +15,20 @@ struct TasksView: View {
     }
 
     private func load() {
-        content = (try? String(contentsOf: fileURL, encoding: .utf8)) ?? ""
+        let url = fileURL
+        Task {
+            let text = await Task.detached {
+                (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+            }.value
+            content = text
+        }
     }
 
     private func save() {
-        try? content.write(to: fileURL, atomically: true, encoding: .utf8)
+        let text = content
+        let url = fileURL
+        Task.detached {
+            try? text.write(to: url, atomically: true, encoding: .utf8)
+        }
     }
 }

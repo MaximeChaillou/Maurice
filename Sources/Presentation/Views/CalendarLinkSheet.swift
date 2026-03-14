@@ -44,14 +44,16 @@ struct CalendarLinkSheet: View {
         .padding()
         .frame(width: 450, height: 180)
         .onAppear {
-            config = MeetingConfig.load(from: folder.url)
-            eventName = config.calendarEventName ?? ""
+            Task {
+                config = await MeetingConfig.loadAsync(from: folder.url)
+                eventName = config.calendarEventName ?? ""
+            }
         }
     }
 
     private func saveLink() {
         let trimmed = eventName.trimmingCharacters(in: .whitespaces)
         config.calendarEventName = trimmed.isEmpty ? nil : trimmed
-        config.save(to: folder.url)
+        config.saveAsync(to: folder.url)
     }
 }

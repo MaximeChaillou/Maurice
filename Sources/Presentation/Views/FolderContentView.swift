@@ -66,7 +66,7 @@ struct FolderContentView: View {
                 ForEach(viewModel.folders) { folder in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 4) {
-                            if let icon = MeetingConfig.load(from: folder.url).icon {
+                            if let icon = folder.icon {
                                 Text(icon)
                             }
                             Text(folder.name)
@@ -158,7 +158,13 @@ struct FolderContentView: View {
                 viewModel.selectedFile = nil
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
                 if let folder = viewModel.currentFolder {
-                    viewModel.meetingConfig = MeetingConfig.load(from: folder.url)
+                    let url = folder.url
+                    Task {
+                        let config = await Task.detached {
+                            MeetingConfig.load(from: url)
+                        }.value
+                        viewModel.meetingConfig = config
+                    }
                     if navigateByDate {
                         viewModel.fileIndex = 0
                         viewModel.selectFileAtIndex(in: folder)
@@ -426,47 +432,6 @@ extension FolderContentView {
     }
 }
 
-// MARK: - Models
-struct FolderItem: Identifiable {
-    let name: String, url: URL, files: [FolderFile]
-    var dateEntries: [MeetingDateEntry] = []
-    var id: String { name }
-    var fileCount: Int { max(files.count, dateEntries.count) }
-}
-enum EntryDeleteAction {
-    case note(MeetingDateEntry)
-    case transcript(MeetingDateEntry)
-    case both(MeetingDateEntry)
-
-    var entry: MeetingDateEntry {
-        switch self {
-        case .note(let e), .transcript(let e), .both(let e): e
-        }
-    }
-
-    var message: String {
-        switch self {
-        case .note: "La note du \(entry.dateString) sera supprimée définitivement."
-        case .transcript: "Le transcript du \(entry.dateString) sera supprimé définitivement."
-        case .both: "La note et le transcript du \(entry.dateString) seront supprimés définitivement."
-        }
-    }
-}
-struct MeetingDateEntry: Identifiable {
-    let dateString: String
-    let date: Date
-    let noteFile: FolderFile?
-    let transcript: StoredTranscript?
-    var id: String { dateString }
-    var hasNote: Bool { noteFile != nil }
-    var hasTranscript: Bool { transcript != nil }
-}
-struct FolderFile: Identifiable, Hashable {
-    let id: URL, name: String, date: Date, url: URL
-    var content: String { (try? String(contentsOf: url, encoding: .utf8)) ?? "" }
-    func save(content: String) { try? content.write(to: url, atomically: true, encoding: .utf8) }
-}
-
 private struct FolderFileDetailView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
@@ -494,7 +459,21 @@ struct FolderFileEditorView: View {
 
     var body: some View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
-            .onAppear { bodyText = file.content }
-            .onChange(of: bodyText) { file.save(content: bodyText) }
+            .onAppear {
+                let url = file.url
+                Task {
+                    let text = await Task.detached {
+                        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                    }.value
+                    bodyText = text
+                }
+            }
+            .onChange(of: bodyText) {
+                let text = bodyText
+                let url = file.url
+                Task.detached {
+                    try? text.write(to: url, atomically: true, encoding: .utf8)
+                }
+            }
     }
 }

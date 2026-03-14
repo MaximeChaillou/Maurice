@@ -21,6 +21,12 @@ Sources/
 └── Data/             # Stockage fichier, reconnaissance vocale
 ```
 
+## Code Quality
+
+- **Background threads** : Toujours déplacer le file I/O, le JSON encode/decode, le directory scanning et tout calcul lourd hors du main thread. Utiliser `Task.detached { }` pour le travail fire-and-forget (ex: saves), et `Task { await Task.detached { ... }.value }` pour charger des données puis mettre à jour l'UI. Ne jamais bloquer le main thread.
+- **SwiftLint** : Toujours corriger tous les warnings et erreurs SwiftLint. Lancer `swiftlint lint --config .swiftlint.yml` et résoudre chaque problème avant de considérer une tâche terminée.
+- **Réutilisation du code** : Réutiliser au maximum le code existant. Avant de créer une nouvelle fonction, vérifier s'il existe déjà une implémentation similaire dans le projet. Extraire les patterns communs en méthodes/extensions partagées plutôt que dupliquer du code.
+
 ## Conventions
 
 - Langue de l'interface : français

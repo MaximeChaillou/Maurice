@@ -267,52 +267,63 @@ final class SemanticSearchService {
     // MARK: - Persistence
 
     private func saveIndexToDisk() {
-        let entries = documents.map { doc in
-            StoredEntry(
-                name: doc.name,
-                context: doc.context,
-                icon: doc.icon,
-                kindType: doc.kind.typeString,
-                kindValue: doc.kind.valueString,
-                content: String(doc.content.prefix(500)),
-                embeddingFr: doc.embeddingFr,
-                embeddingEn: doc.embeddingEn,
-                sourceURL: doc.sourceURL.absoluteString,
-                modificationDate: doc.modificationDate
-            )
+        let docs = documents
+        let url = Self.indexFileURL
+        Task.detached {
+            let entries = docs.map { doc in
+                StoredEntry(
+                    name: doc.name,
+                    context: doc.context,
+                    icon: doc.icon,
+                    kindType: doc.kind.typeString,
+                    kindValue: doc.kind.valueString,
+                    content: String(doc.content.prefix(500)),
+                    embeddingFr: doc.embeddingFr,
+                    embeddingEn: doc.embeddingEn,
+                    sourceURL: doc.sourceURL.absoluteString,
+                    modificationDate: doc.modificationDate
+                )
+            }
+            guard let data = try? JSONEncoder().encode(entries) else { return }
+            try? data.write(to: url, options: .atomic)
         }
-        guard let data = try? JSONEncoder().encode(entries) else { return }
-        try? data.write(to: Self.indexFileURL, options: .atomic)
     }
 
     private func loadIndexFromDisk() {
-        guard let data = try? Data(contentsOf: Self.indexFileURL),
-              let entries = try? JSONDecoder().decode([StoredEntry].self, from: data) else { return }
-
         let dimFr = embeddingFr?.dimension ?? 0
         let dimEn = embeddingEn?.dimension ?? 0
-        documents = entries.compactMap { entry in
-            guard let kind = IndexedDocumentKind(typeString: entry.kindType, value: entry.kindValue),
-                  let url = URL(string: entry.sourceURL),
-                  entry.embeddingFr.count == dimFr,
-                  entry.embeddingEn.count == dimEn else { return nil }
-            return IndexedDocument(
-                name: entry.name,
-                context: entry.context,
-                icon: entry.icon,
-                kind: kind,
-                content: entry.content,
-                embeddingFr: entry.embeddingFr,
-                embeddingEn: entry.embeddingEn,
-                sourceURL: url,
-                modificationDate: entry.modificationDate
-            )
+        let url = Self.indexFileURL
+        Task {
+            let docs = await Task.detached {
+                guard let data = try? Data(contentsOf: url),
+                      let entries = try? JSONDecoder().decode([StoredEntry].self, from: data) else { return [IndexedDocument]() }
+                return entries.compactMap { entry -> IndexedDocument? in
+                    guard let kind = IndexedDocumentKind(typeString: entry.kindType, value: entry.kindValue),
+                          let sourceURL = URL(string: entry.sourceURL),
+                          entry.embeddingFr.count == dimFr,
+                          entry.embeddingEn.count == dimEn else { return nil }
+                    return IndexedDocument(
+                        name: entry.name,
+                        context: entry.context,
+                        icon: entry.icon,
+                        kind: kind,
+                        content: entry.content,
+                        embeddingFr: entry.embeddingFr,
+                        embeddingEn: entry.embeddingEn,
+                        sourceURL: sourceURL,
+                        modificationDate: entry.modificationDate
+                    )
+                }
+            }.value
+            documents = docs
         }
     }
+}
 
-    // MARK: - Snippet
+// MARK: - Snippet & Math helpers
 
-    nonisolated private static func extractSnippet(from content: String, query: String, radius: Int = 60) -> String {
+extension SemanticSearchService {
+    nonisolated static func extractSnippet(from content: String, query: String, radius: Int = 60) -> String {
         let lower = content.lowercased()
         let words = query.split(separator: " ").map(String.init)
 
@@ -346,9 +357,7 @@ final class SemanticSearchService {
         return snippet
     }
 
-    // MARK: - Math
-
-    nonisolated private static func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
+    nonisolated static func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
         guard vectorA.count == vectorB.count, !vectorA.isEmpty else { return 0 }
         var dot = 0.0
         var normA = 0.0

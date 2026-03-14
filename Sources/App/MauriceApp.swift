@@ -73,7 +73,7 @@ struct MauriceApp: App {
                     transcriptListViewModel.load()
                 }
             }
-            .onChange(of: appTheme) { appTheme.save() }
+            .onChange(of: appTheme) { appTheme.saveAsync() }
             .onReceive(NotificationCenter.default.publisher(for: .skillRunnerDidFinish)) { _ in
                 transcriptListViewModel.load()
                 memoryListViewModel.reloadDirectory()

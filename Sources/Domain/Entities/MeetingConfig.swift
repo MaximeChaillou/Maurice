@@ -21,10 +21,23 @@ struct MeetingConfig: Codable {
         return (try? JSONDecoder().decode(MeetingConfig.self, from: data)) ?? MeetingConfig()
     }
 
+    static func loadAsync(from folderURL: URL) async -> MeetingConfig {
+        await Task.detached { load(from: folderURL) }.value
+    }
+
     func save(to folderURL: URL) {
         let url = folderURL.appendingPathComponent(Self.fileName)
         guard let data = try? JSONEncoder().encode(self) else { return }
         try? data.write(to: url, options: .atomic)
+    }
+
+    func saveAsync(to folderURL: URL) {
+        let copy = self
+        Task.detached {
+            let url = folderURL.appendingPathComponent(Self.fileName)
+            guard let data = try? JSONEncoder().encode(copy) else { return }
+            try? data.write(to: url, options: .atomic)
+        }
     }
 
     // MARK: - Actions
