@@ -47,11 +47,10 @@ struct MauriceApp: App {
                     )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                }
-                .overlay(alignment: .bottomTrailing) {
-                    AskButton(runner: skillRunner)
-                        .padding(.trailing, 32)
-                        .padding(.bottom, 12)
+                    .overlay(alignment: .trailing) {
+                        AskButton(runner: skillRunner)
+                            .padding(.horizontal, 20)
+                    }
                 }
             }
             .onAppear { transcriptListViewModel.load() }
