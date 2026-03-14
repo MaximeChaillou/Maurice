@@ -109,6 +109,9 @@ struct MauriceApp: App {
                 }
                 .keyboardShortcut("f", modifiers: .command)
             }
+            CommandMenu("Mémoire") {
+                MemoryMenuButton()
+            }
         }
 
         Window("Réglages", id: "settings") {
@@ -120,6 +123,22 @@ struct MauriceApp: App {
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
         }
         .defaultSize(width: 800, height: 600)
+        .windowResizability(.contentMinSize)
+
+        Window("Mémoire", id: "memory") {
+            ZStack {
+                WaveBackground(hue: appTheme.memoryTabHue)
+
+                MemoryContentView(
+                    viewModel: memoryListViewModel,
+                    markdownTheme: appTheme.markdown
+                )
+                .glassEffect(.regular, in: .rect(cornerRadius: 12))
+                .padding(16)
+            }
+            .frame(minWidth: 500, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
+        }
+        .defaultSize(width: 800, height: 550)
         .windowResizability(.contentMinSize)
     }
 
@@ -186,5 +205,16 @@ private struct SettingsMenuButton: View {
             openWindow(id: "settings")
         }
         .keyboardShortcut(",", modifiers: .command)
+    }
+}
+
+private struct MemoryMenuButton: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Ouvrir la mémoire") {
+            openWindow(id: "memory")
+        }
+        .keyboardShortcut("m", modifiers: [.command, .shift])
     }
 }
