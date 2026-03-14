@@ -36,7 +36,7 @@ enum GoogleCalendarService {
 
         let authURL = components.url!
         await MainActor.run {
-            NSWorkspace.shared.open(authURL)
+            _ = NSWorkspace.shared.open(authURL)
         }
 
         let code = try await waitForAuthCode()

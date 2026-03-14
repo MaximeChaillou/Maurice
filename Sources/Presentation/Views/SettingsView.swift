@@ -6,6 +6,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
     case background = "Arrière-plan"
     case appearance = "Markdown style"
     case skills = "Skills"
+    case mcp = "MCP Servers"
     case claudeMD = "CLAUDE.md"
 
     var id: String { rawValue }
@@ -17,6 +18,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .background: "paintpalette"
         case .appearance: "paintbrush"
         case .skills: "terminal"
+        case .mcp: "server.rack"
         case .claudeMD: "doc.text"
         }
     }
@@ -63,6 +65,8 @@ struct SettingsView: View {
             MarkdownThemeSettingsView(theme: $appTheme.markdown)
         case .skills:
             SkillsSettingsView(markdownTheme: appTheme.markdown)
+        case .mcp:
+            MCPServersView()
         case .claudeMD:
             ClaudeMDView(markdownTheme: appTheme.markdown)
         case .none:

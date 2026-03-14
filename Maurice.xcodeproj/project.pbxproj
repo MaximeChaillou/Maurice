@@ -75,6 +75,8 @@
 		14E493CCBBE943E380570FF4 /* GoogleCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */; };
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		51DEC22F18B344008A8D0541 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */; };
+		02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */; };
+		E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CF845207422686E623CC /* CalendarLinkSheet.swift */; };
 		015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */; };
 /* End PBXBuildFile section */
 
@@ -150,6 +152,8 @@
 		9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarSettingsView.swift; sourceTree = "<group>"; };
 		LOCALXCCONFIG00000000000A /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
 		ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPServersView.swift; sourceTree = "<group>"; };
+		48A9CF845207422686E623CC /* CalendarLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLinkSheet.swift; sourceTree = "<group>"; };
 		994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -296,6 +300,7 @@
 				AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */,
 				8812AF3486581942678C1ABE /* BlockEditField.swift */,
 				04267207A548186DD8535FA2 /* BubbleListView.swift */,
+				48A9CF845207422686E623CC /* CalendarLinkSheet.swift */,
 				D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */,
 				0CCE5D26DA608CC61EE9377C /* BubbleView.swift */,
 				E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */,
@@ -306,6 +311,7 @@
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
 				9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */,
 				ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */,
+				CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */,
 				D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSidebar.swift */,
 				SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */,
@@ -520,6 +526,8 @@
 				14E493CCBBE943E380570FF4 /* GoogleCalendarViewModel.swift in Sources */,
 				66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */,
 				51DEC22F18B344008A8D0541 /* HomeView.swift in Sources */,
+				02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */,
+				E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */,
 				015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */,
 				6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */,
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,

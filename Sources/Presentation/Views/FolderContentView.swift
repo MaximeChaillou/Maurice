@@ -16,8 +16,8 @@ struct FolderContentView: View {
     @State private var folderToRename: FolderItem?
     @State private var renameText = ""
     @State private var folderToLink: FolderItem?
-    @State private var linkEventName = ""
     @State private var entryDeleteAction: EntryDeleteAction?
+    @State private var showTranscripts = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -214,12 +214,10 @@ struct FolderContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-
-    // MARK: - Navigate by date mode
-
-    @State private var showTranscripts = false
-
-    private func dateNavigationDetail(for folder: FolderItem) -> some View {
+}
+// MARK: - Date navigation
+extension FolderContentView {
+    func dateNavigationDetail(for folder: FolderItem) -> some View {
         let entries = folder.dateEntries
         let safeIndex = min(viewModel.fileIndex, entries.count - 1)
         let entry = entries[max(safeIndex, 0)]
@@ -268,7 +266,7 @@ struct FolderContentView: View {
         }
     }
 
-    private func dateNavigationHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
+    func dateNavigationHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
         HStack {
             Button {
                 if viewModel.fileIndex < totalEntries - 1 { viewModel.fileIndex += 1 }
@@ -307,7 +305,7 @@ struct FolderContentView: View {
         .padding(.vertical, 8)
     }
 
-    private func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
+    func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
         Menu {
             if entry.hasNote {
                 Button(role: .destructive) {
@@ -346,7 +344,6 @@ struct FolderContentView: View {
 }
 
 // MARK: - File list & toggles
-
 extension FolderContentView {
     func fileListDetail(for folder: FolderItem) -> some View {
         HStack(spacing: 0) {
@@ -430,14 +427,12 @@ extension FolderContentView {
 }
 
 // MARK: - Models
-
 struct FolderItem: Identifiable {
     let name: String, url: URL, files: [FolderFile]
     var dateEntries: [MeetingDateEntry] = []
     var id: String { name }
     var fileCount: Int { max(files.count, dateEntries.count) }
 }
-
 enum EntryDeleteAction {
     case note(MeetingDateEntry)
     case transcript(MeetingDateEntry)
@@ -457,7 +452,6 @@ enum EntryDeleteAction {
         }
     }
 }
-
 struct MeetingDateEntry: Identifiable {
     let dateString: String
     let date: Date
@@ -467,14 +461,11 @@ struct MeetingDateEntry: Identifiable {
     var hasNote: Bool { noteFile != nil }
     var hasTranscript: Bool { transcript != nil }
 }
-
 struct FolderFile: Identifiable, Hashable {
     let id: URL, name: String, date: Date, url: URL
     var content: String { (try? String(contentsOf: url, encoding: .utf8)) ?? "" }
     func save(content: String) { try? content.write(to: url, atomically: true, encoding: .utf8) }
 }
-
-// MARK: - Detail views
 
 private struct FolderFileDetailView: View {
     let file: FolderFile
@@ -505,63 +496,5 @@ struct FolderFileEditorView: View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
             .onAppear { bodyText = file.content }
             .onChange(of: bodyText) { file.save(content: bodyText) }
-    }
-}
-
-// MARK: - Calendar link sheet
-
-struct CalendarLinkSheet: View {
-    let folder: FolderItem
-    var onDismiss: () -> Void
-
-    @State private var config = MeetingConfig()
-    @State private var eventName = ""
-
-    var body: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text("Événement Calendar lié")
-                    .font(.headline)
-                Spacer()
-                Button("Fermer") { onDismiss() }
-                    .keyboardShortcut(.cancelAction)
-            }
-
-            HStack(spacing: 8) {
-                Image(systemName: "calendar")
-                    .foregroundStyle(.secondary)
-                TextField("Nom de l'événement Calendar", text: $eventName)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit { saveLink() }
-                if !eventName.isEmpty {
-                    Button {
-                        eventName = ""
-                        saveLink()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            Text("L'enregistrement démarrera automatiquement dans ce dossier quand un événement Calendar porte ce nom.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-        .padding()
-        .frame(width: 450, height: 180)
-        .onAppear {
-            config = MeetingConfig.load(from: folder.url)
-            eventName = config.calendarEventName ?? ""
-        }
-    }
-
-    private func saveLink() {
-        let trimmed = eventName.trimmingCharacters(in: .whitespaces)
-        config.calendarEventName = trimmed.isEmpty ? nil : trimmed
-        config.save(to: folder.url)
     }
 }
