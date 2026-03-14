@@ -122,6 +122,7 @@ private struct MemoryDetailView: View {
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     @State private var bodyText: String = ""
     @State private var cachedFrontmatter: String = ""
+    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -162,9 +163,14 @@ private struct MemoryDetailView: View {
         let text = bodyText
         let fm = cachedFrontmatter
         let url = file.url
+        let errorState = errorState
         Task.detached {
-            let full = fm.isEmpty ? text : fm + "\n\n" + text
-            try? full.write(to: url, atomically: true, encoding: .utf8)
+            do {
+                let full = fm.isEmpty ? text : fm + "\n\n" + text
+                try full.write(to: url, atomically: true, encoding: .utf8)
+            } catch {
+                await errorState?.show("Impossible de sauvegarder : \(error.localizedDescription)")
+            }
         }
     }
 }

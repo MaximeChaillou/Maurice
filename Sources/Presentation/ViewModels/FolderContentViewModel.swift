@@ -13,6 +13,7 @@ final class FolderContentViewModel {
     var isAddingFolder = false
     var newFolderName = ""
     var meetingConfig: MeetingConfig = MeetingConfig()
+    var errorMessage: String?
 
     var currentFolder: FolderItem? {
         guard let name = selectedFolder else { return nil }
@@ -61,14 +62,17 @@ final class FolderContentViewModel {
 
     @discardableResult
     func createFolderWithName(_ name: String) -> String {
-        let folderURL = directory.appendingPathComponent(name, isDirectory: true)
-        try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        let dir = directory
+        Task.detached {
+            let folderURL = dir.appendingPathComponent(name, isDirectory: true)
+            try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let fileName = formatter.string(from: Date()) + ".md"
-        let fileURL = folderURL.appendingPathComponent(fileName)
-        FileManager.default.createFile(atPath: fileURL.path, contents: nil)
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let fileName = formatter.string(from: Date()) + ".md"
+            let fileURL = folderURL.appendingPathComponent(fileName)
+            FileManager.default.createFile(atPath: fileURL.path, contents: nil)
+        }
 
         loadFolders()
         selectedFolder = name
@@ -92,17 +96,25 @@ final class FolderContentViewModel {
     }
 
     func deleteFolder(_ folder: FolderItem) {
-        try? FileManager.default.removeItem(at: folder.url)
-        if selectedFolder == folder.name { selectedFolder = nil }
+        do {
+            try FileManager.default.removeItem(at: folder.url)
+            if selectedFolder == folder.name { selectedFolder = nil }
+        } catch {
+            errorMessage = "Impossible de supprimer « \(folder.name) » : \(error.localizedDescription)"
+        }
         loadFolders()
     }
 
     func deleteDateEntry(_ entry: MeetingDateEntry, noteOnly: Bool = false, transcriptOnly: Bool = false) {
-        if !transcriptOnly, let note = entry.noteFile {
-            try? FileManager.default.removeItem(at: note.url)
-        }
-        if !noteOnly, let transcript = entry.transcript {
-            try? FileManager.default.removeItem(at: transcript.url)
+        do {
+            if !transcriptOnly, let note = entry.noteFile {
+                try FileManager.default.removeItem(at: note.url)
+            }
+            if !noteOnly, let transcript = entry.transcript {
+                try FileManager.default.removeItem(at: transcript.url)
+            }
+        } catch {
+            errorMessage = "Impossible de supprimer : \(error.localizedDescription)"
         }
         loadFolders()
     }

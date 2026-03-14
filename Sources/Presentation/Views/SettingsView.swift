@@ -156,6 +156,7 @@ private struct GeneralSettingsView: View {
 private struct ClaudeMDView: View {
     var markdownTheme: MarkdownTheme
     @State private var content: String = ""
+    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     private var claudeMDURL: URL {
         AppSettings.rootDirectory.appendingPathComponent("CLAUDE.md")
@@ -194,8 +195,13 @@ private struct ClaudeMDView: View {
     private func saveContent() {
         let text = content
         let url = claudeMDURL
+        let errorState = errorState
         Task.detached {
-            try? text.data(using: .utf8)?.write(to: url, options: .atomic)
+            do {
+                try text.data(using: .utf8)?.write(to: url, options: .atomic)
+            } catch {
+                await errorState?.show("Impossible de sauvegarder CLAUDE.md : \(error.localizedDescription)")
+            }
         }
     }
 }
@@ -211,6 +217,7 @@ private struct SkillsSettingsView: View {
     @State private var isAddingSkill = false
     @State private var newSkillName = ""
     @State private var skillToDelete: SkillFile?
+    @State private var errorMessage: String?
 
     var body: some View {
         HSplitView {
@@ -221,6 +228,14 @@ private struct SkillsSettingsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear { loadSkills() }
+        .alert("Erreur", isPresented: Binding(
+            get: { errorMessage != nil },
+            set: { if !$0 { errorMessage = nil } }
+        )) {
+            Button("OK") { errorMessage = nil }
+        } message: {
+            if let msg = errorMessage { Text(msg) }
+        }
         .alert(
             "Supprimer le skill ?",
             isPresented: Binding(
@@ -336,8 +351,15 @@ private struct SkillsSettingsView: View {
                 if let skill = selectedSkill {
                     let text = editorContent
                     let url = skill.url
+                    let errorMessage = $errorMessage
                     Task.detached {
-                        try? Data(text.utf8).write(to: url, options: .atomic)
+                        do {
+                            try Data(text.utf8).write(to: url, options: .atomic)
+                        } catch {
+                            await MainActor.run {
+                                errorMessage.wrappedValue = "Impossible de sauvegarder : \(error.localizedDescription)"
+                            }
+                        }
                     }
                 }
             }
@@ -378,7 +400,11 @@ private struct SkillsSettingsView: View {
     }
 
     private func deleteSkill(_ skill: SkillFile) {
-        try? FileManager.default.removeItem(at: skill.url)
+        do {
+            try FileManager.default.removeItem(at: skill.url)
+        } catch {
+            errorMessage = "Impossible de supprimer « \(skill.name) » : \(error.localizedDescription)"
+        }
         if selectedSkill == skill { selectedSkill = nil }
         skillToDelete = nil
         loadSkills()

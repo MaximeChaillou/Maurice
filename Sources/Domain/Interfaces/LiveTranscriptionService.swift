@@ -1,6 +1,6 @@
 import Foundation
 
-protocol LiveTranscriptionService: Sendable {
+protocol LiveTranscriptionService: AnyObject, Sendable {
     func prepare(onStateChange: @escaping @Sendable (PreparationState) -> Void) async throws
     func startTranscription() async throws -> AsyncStream<TranscriptionEvent>
     func startTranscription(fromFileURL fileURL: URL) async throws -> AsyncStream<TranscriptionEvent>

@@ -135,7 +135,13 @@ final class RecordingViewModel {
                 if let url = liveFileURL {
                     let useCase = useCase
                     Task.detached {
-                        try? useCase.appendEntry(entry, to: url)
+                        do {
+                            try useCase.appendEntry(entry, to: url)
+                        } catch {
+                            Task { @MainActor in
+                                self.errorMessage = "Erreur d'écriture : \(error.localizedDescription)"
+                            }
+                        }
                     }
                 }
             case .volatile(let text):

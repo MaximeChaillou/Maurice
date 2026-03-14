@@ -2,14 +2,20 @@ import AppKit
 
 // MARK: - Cached Regexes
 
-// swiftlint:disable force_try
-private enum MarkdownRegex {
-    static let bold = try! NSRegularExpression(pattern: "\\*\\*(.+?)\\*\\*")
-    static let italic = try! NSRegularExpression(pattern: "(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)")
-    static let inlineCode = try! NSRegularExpression(pattern: "(?<!`)`(?!`)(.+?)(?<!`)`(?!`)")
-    static let strikethrough = try! NSRegularExpression(pattern: "~~(.+?)~~")
+private func regex(_ pattern: String) -> NSRegularExpression {
+    do {
+        return try NSRegularExpression(pattern: pattern)
+    } catch {
+        fatalError("Invalid regex pattern: \(pattern) — \(error)")
+    }
 }
-// swiftlint:enable force_try
+
+private enum MarkdownRegex {
+    static let bold = regex("\\*\\*(.+?)\\*\\*")
+    static let italic = regex("(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)")
+    static let inlineCode = regex("(?<!`)`(?!`)(.+?)(?<!`)`(?!`)")
+    static let strikethrough = regex("~~(.+?)~~")
+}
 
 // MARK: - Block & Inline Styling
 
@@ -31,12 +37,22 @@ extension MarkdownCoordinator {
 
     // MARK: - Block-level styling
 
-    // swiftlint:disable:next function_parameter_count
-    func styleMarkdownLine(
-        storage: NSTextStorage, line: String, trimmed: String,
-        range: NSRange, offset: Int, active: Bool
-    ) {
-        let leading = line.prefix(while: { $0 == " " || $0 == "\t" }).count
+    struct LineContext {
+        let storage: NSTextStorage
+        let line: String
+        let trimmed: String
+        let range: NSRange
+        let offset: Int
+        let active: Bool
+    }
+
+    func styleMarkdownLine(_ ctx: LineContext) {
+        let storage = ctx.storage
+        let trimmed = ctx.trimmed
+        let range = ctx.range
+        let offset = ctx.offset
+        let active = ctx.active
+        let leading = ctx.line.prefix(while: { $0 == " " || $0 == "\t" }).count
 
         if trimmed.hasPrefix("### ") || trimmed.hasPrefix("## ") || trimmed.hasPrefix("# ") {
             styleHeading(storage: storage, trimmed: trimmed, range: range, offset: offset, active: active)
@@ -230,45 +246,49 @@ extension MarkdownCoordinator {
 
     // MARK: - Inline markdown styling
 
+    struct InlineStyle {
+        let regex: NSRegularExpression
+        let markerLen: Int
+        let trait: NSFontTraitMask
+        let color: NSColor
+    }
+
     func styleInlineMarkdown(storage: NSTextStorage, range: NSRange) {
         guard let textView else { return }
         let lineText = (textView.string as NSString).substring(with: range)
 
-        styleInlinePattern(
-            storage: storage, lineText: lineText, baseOffset: range.location,
-            regex: MarkdownRegex.bold, markerLen: 2,
-            trait: .boldFontMask, color: theme.boldColor.nsColor
-        )
-        styleInlinePattern(
-            storage: storage, lineText: lineText, baseOffset: range.location,
-            regex: MarkdownRegex.italic, markerLen: 1,
-            trait: .italicFontMask, color: theme.italicColor.nsColor
-        )
+        let styles: [InlineStyle] = [
+            InlineStyle(regex: MarkdownRegex.bold, markerLen: 2,
+                        trait: .boldFontMask, color: theme.boldColor.nsColor),
+            InlineStyle(regex: MarkdownRegex.italic, markerLen: 1,
+                        trait: .italicFontMask, color: theme.italicColor.nsColor)
+        ]
+        for style in styles {
+            styleInlinePattern(storage: storage, lineText: lineText, baseOffset: range.location, style: style)
+        }
         styleInlineCode(storage: storage, lineText: lineText, baseOffset: range.location)
         styleInlineStrikethrough(storage: storage, lineText: lineText, baseOffset: range.location)
     }
 
-    // swiftlint:disable:next function_parameter_count
     private func styleInlinePattern(
         storage: NSTextStorage, lineText: String, baseOffset: Int,
-        regex: NSRegularExpression, markerLen: Int, trait: NSFontTraitMask,
-        color: NSColor
+        style: InlineStyle
     ) {
         let nsLine = lineText as NSString
-        for match in regex.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
+        for match in style.regex.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
             let full = match.range
-            hideRange(NSRange(location: baseOffset + full.location, length: markerLen))
-            hideRange(NSRange(location: baseOffset + full.location + full.length - markerLen, length: markerLen))
+            hideRange(NSRange(location: baseOffset + full.location, length: style.markerLen))
+            hideRange(NSRange(location: baseOffset + full.location + full.length - style.markerLen, length: style.markerLen))
             let contentRange = NSRange(
-                location: baseOffset + full.location + markerLen,
-                length: full.length - markerLen * 2
+                location: baseOffset + full.location + style.markerLen,
+                length: full.length - style.markerLen * 2
             )
             if contentRange.length > 0 {
                 let cur = storage.attribute(.font, at: contentRange.location, effectiveRange: nil) as? NSFont
                     ?? resolveFont(size: theme.baseFontSize)
                 storage.addAttributes([
-                    .font: NSFontManager.shared.convert(cur, toHaveTrait: trait),
-                    .foregroundColor: color
+                    .font: NSFontManager.shared.convert(cur, toHaveTrait: style.trait),
+                    .foregroundColor: style.color
                 ], range: contentRange)
             }
         }

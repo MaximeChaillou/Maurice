@@ -42,6 +42,14 @@ struct PeopleView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear { viewModel.loadFolders() }
+        .alert("Erreur", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK") { viewModel.errorMessage = nil }
+        } message: {
+            if let msg = viewModel.errorMessage { Text(msg) }
+        }
         .onChange(of: viewModel.selectedFolder) {
             selectedSection = .profil
             updateRecordingSubdirectory()

@@ -18,6 +18,7 @@ struct PersonDetailView: View {
     @State private var showImportFiche = false
     @State private var showImportEvaluation = false
     @State private var showImportObjectif = false
+    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
         sectionContent
@@ -172,7 +173,11 @@ struct PersonDetailView: View {
     }
 
     private func deleteSubfolderFile(_ file: FolderFile, subfolder: String) {
-        try? FileManager.default.removeItem(at: file.url)
+        do {
+            try FileManager.default.removeItem(at: file.url)
+        } catch {
+            errorState?.show("Impossible de supprimer « \(file.name) » : \(error.localizedDescription)")
+        }
         loadSubfolders()
         if subfolder == "evaluations" {
             evaluationIndex = min(evaluationIndex, max(evaluationsFiles.count - 1, 0))
@@ -192,6 +197,7 @@ struct PersonOneOnOneView: View {
     @State private var showTranscripts = false
     @State private var index: Int = 0
     @State private var entryDeleteAction: EntryDeleteAction?
+    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
         if entries.isEmpty {
@@ -365,14 +371,18 @@ struct PersonOneOnOneView: View {
 
     private func performDelete(_ action: EntryDeleteAction) {
         let entry = action.entry
-        switch action {
-        case .note:
-            if let note = entry.noteFile { try? FileManager.default.removeItem(at: note.url) }
-        case .transcript:
-            if let t = entry.transcript { try? FileManager.default.removeItem(at: t.url) }
-        case .both:
-            if let note = entry.noteFile { try? FileManager.default.removeItem(at: note.url) }
-            if let t = entry.transcript { try? FileManager.default.removeItem(at: t.url) }
+        do {
+            switch action {
+            case .note:
+                if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
+            case .transcript:
+                if let transcript = entry.transcript { try FileManager.default.removeItem(at: transcript.url) }
+            case .both:
+                if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
+                if let transcript = entry.transcript { try FileManager.default.removeItem(at: transcript.url) }
+            }
+        } catch {
+            errorState?.show("Impossible de supprimer : \(error.localizedDescription)")
         }
     }
 }

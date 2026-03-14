@@ -47,6 +47,14 @@ struct FolderContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showConfigSidebar)
+        .alert("Erreur", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK") { viewModel.errorMessage = nil }
+        } message: {
+            if let msg = viewModel.errorMessage { Text(msg) }
+        }
         .onAppear { viewModel.loadFolders() }
         .onChange(of: skillRunner?.isRunning) {
             if skillRunner?.isRunning == false {
@@ -456,6 +464,7 @@ struct FolderFileEditorView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     @State private var bodyText: String = ""
+    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
@@ -471,8 +480,13 @@ struct FolderFileEditorView: View {
             .onChange(of: bodyText) {
                 let text = bodyText
                 let url = file.url
+                let errorState = errorState
                 Task.detached {
-                    try? text.write(to: url, atomically: true, encoding: .utf8)
+                    do {
+                        try text.write(to: url, atomically: true, encoding: .utf8)
+                    } catch {
+                        await errorState?.show("Impossible de sauvegarder : \(error.localizedDescription)")
+                    }
                 }
             }
     }

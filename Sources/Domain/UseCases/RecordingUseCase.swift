@@ -1,7 +1,7 @@
 import Foundation
 
 final class RecordingUseCase: Sendable {
-    nonisolated(unsafe) private var transcription: LiveTranscriptionService
+    private let transcription: LiveTranscriptionService
     let storage: TranscriptionStorage
 
     init(transcription: LiveTranscriptionService, storage: TranscriptionStorage) {

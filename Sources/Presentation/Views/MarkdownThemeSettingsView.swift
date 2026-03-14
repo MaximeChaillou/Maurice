@@ -49,12 +49,15 @@ struct MarkdownThemeSettingsView: View {
 
     private var headingsSection: some View {
         Section("Titres") {
-            headingRow("H1", color: $theme.h1Color, size: $theme.h1FontSize, sizeRange: 16...48,
-                        bold: $theme.h1Bold, italic: $theme.h1Italic, underline: $theme.h1Underline)
-            headingRow("H2", color: $theme.h2Color, size: $theme.h2FontSize, sizeRange: 14...40,
-                        bold: $theme.h2Bold, italic: $theme.h2Italic, underline: $theme.h2Underline)
-            headingRow("H3", color: $theme.h3Color, size: $theme.h3FontSize, sizeRange: 12...36,
-                        bold: $theme.h3Bold, italic: $theme.h3Italic, underline: $theme.h3Underline)
+            headingRow("H1", bindings: HeadingBindings(
+                color: $theme.h1Color, size: $theme.h1FontSize, sizeRange: 16...48,
+                bold: $theme.h1Bold, italic: $theme.h1Italic, underline: $theme.h1Underline))
+            headingRow("H2", bindings: HeadingBindings(
+                color: $theme.h2Color, size: $theme.h2FontSize, sizeRange: 14...40,
+                bold: $theme.h2Bold, italic: $theme.h2Italic, underline: $theme.h2Underline))
+            headingRow("H3", bindings: HeadingBindings(
+                color: $theme.h3Color, size: $theme.h3FontSize, sizeRange: 12...36,
+                bold: $theme.h3Bold, italic: $theme.h3Italic, underline: $theme.h3Underline))
         }
     }
 
@@ -104,23 +107,28 @@ struct MarkdownThemeSettingsView: View {
         }
     }
 
-    // swiftlint:disable:next function_parameter_count
-    private func headingRow(
-        _ label: String, color: Binding<CodableColor>, size: Binding<CGFloat>,
-        sizeRange: ClosedRange<CGFloat>, bold: Binding<Bool>, italic: Binding<Bool>, underline: Binding<Bool>
-    ) -> some View {
+    private struct HeadingBindings {
+        let color: Binding<CodableColor>
+        let size: Binding<CGFloat>
+        let sizeRange: ClosedRange<CGFloat>
+        let bold: Binding<Bool>
+        let italic: Binding<Bool>
+        let underline: Binding<Bool>
+    }
+
+    private func headingRow(_ label: String, bindings: HeadingBindings) -> some View {
         HStack(spacing: 36) {
             Text(label).frame(width: 24, alignment: .leading)
             HStack(spacing: 6) {
-                Slider(value: size, in: sizeRange, step: 1)
-                Text("\(Int(size.wrappedValue)) pt")
+                Slider(value: bindings.size, in: bindings.sizeRange, step: 1)
+                Text("\(Int(bindings.size.wrappedValue)) pt")
                     .monospacedDigit()
                     .frame(width: 44, alignment: .trailing)
             }
             Spacer()
-            styleToggles(bold: bold, italic: italic, underline: underline)
+            styleToggles(bold: bindings.bold, italic: bindings.italic, underline: bindings.underline)
                 .frame(width: togglesWidth, alignment: .trailing)
-            colorPicker(color)
+            colorPicker(bindings.color)
                 .frame(width: pickerWidth, alignment: .trailing)
         }
     }

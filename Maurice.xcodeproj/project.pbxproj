@@ -35,6 +35,7 @@
 		C43D56B55FED9A0119945A45 /* SpeechAnalyzerLiveTranscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52EFA5ED4B2C7F4923342C0E /* SpeechAnalyzerLiveTranscription.swift */; };
 		CB96682306A18B310F44649E /* MauriceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */; };
 		CD76B81A865FCEE5175E2574 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */; };
+		RC01RC02RC03RC04RC05RC06 /* RecordingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC11RC12RC13RC14RC15RC16 /* RecordingCoordinator.swift */; };
 		E1EE8116314F840B3C8FE1A0 /* BubbleScrollTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */; };
 		E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D460FADEF7D4E0DC91E90DD0 /* LiveTranscriptionService.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* MarkdownCoordinator+Styling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */; };
@@ -55,6 +56,7 @@
 		SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */; };
 		PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */; };
 		IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */; };
+		EB01EB02EB03EB04EB05EB06 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */; };
 		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
 		SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV11SV12SV13SV14SV15SV16 /* SearchView.swift */; };
 		SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */; };
@@ -103,6 +105,7 @@
 		AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
 		AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEvent.swift; sourceTree = "<group>"; };
 		BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
+		RC11RC12RC13RC14RC15RC16 /* RecordingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingCoordinator.swift; sourceTree = "<group>"; };
 		C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTranscriptionStorage.swift; sourceTree = "<group>"; };
 		C77A2B4E42762CB9B33B85A0 /* AudioLevelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLevelBuffer.swift; sourceTree = "<group>"; };
 		D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleScrollTransition.swift; sourceTree = "<group>"; };
@@ -127,6 +130,7 @@
 		FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
 		PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocumentView.swift; sourceTree = "<group>"; };
+		EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
 		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
@@ -262,6 +266,7 @@
 				F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
 				NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */,
+				RC11RC12RC13RC14RC15RC16 /* RecordingCoordinator.swift */,
 				BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */,
 				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
 				4EF01F9CF20F47DD9403B154 /* TranscriptListViewModel.swift */,
@@ -306,6 +311,7 @@
 				D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */,
 				0CCE5D26DA608CC61EE9377C /* BubbleView.swift */,
 				E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */,
+				EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */,
 				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
 				5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */,
 				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
@@ -550,6 +556,7 @@
 				68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */,
 				F3A4B5C6D7E8F9A0B1C2D3E4 /* RecordingControlBar.swift in Sources */,
 				22443CA3296F2DA4F031A2E4 /* RecordingView.swift in Sources */,
+				RC01RC02RC03RC04RC05RC06 /* RecordingCoordinator.swift in Sources */,
 				CD76B81A865FCEE5175E2574 /* RecordingViewModel.swift in Sources */,
 				C43D56B55FED9A0119945A45 /* SpeechAnalyzerLiveTranscription.swift in Sources */,
 				189A198050B6E9C085345576 /* StoredTranscript.swift in Sources */,
@@ -580,6 +587,7 @@
 				PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */,
 				PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */,
 				IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */,
+				EB01EB02EB03EB04EB05EB06 /* ErrorBanner.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,

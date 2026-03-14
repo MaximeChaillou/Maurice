@@ -245,10 +245,10 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
             if codeLines.contains(i) {
                 styleCodeLine(storage: storage, trimmed: trimmed, range: range, active: active)
             } else {
-                styleMarkdownLine(
+                styleMarkdownLine(LineContext(
                     storage: storage, line: line, trimmed: trimmed,
                     range: range, offset: offset, active: active
-                )
+                ))
                 if !active && tableRowContexts[offset] == nil {
                     styleInlineMarkdown(storage: storage, range: range)
                 }

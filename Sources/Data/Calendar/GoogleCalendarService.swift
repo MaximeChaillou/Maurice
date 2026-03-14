@@ -53,14 +53,13 @@ enum GoogleCalendarService {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let body = [
-            "code=\(code)",
-            "client_id=\(clientID)",
-            "client_secret=\(clientSecret)",
-            "redirect_uri=\(redirectURI)",
-            "grant_type=authorization_code"
-        ].joined(separator: "&")
-        request.httpBody = body.data(using: .utf8)
+        request.httpBody = formEncodedBody([
+            ("code", code),
+            ("client_id", clientID),
+            ("client_secret", clientSecret),
+            ("redirect_uri", redirectURI),
+            ("grant_type", "authorization_code")
+        ])
 
         let (data, _) = try await URLSession.shared.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
@@ -84,13 +83,12 @@ enum GoogleCalendarService {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let body = [
-            "refresh_token=\(refreshToken)",
-            "client_id=\(clientID)",
-            "client_secret=\(clientSecret)",
-            "grant_type=refresh_token"
-        ].joined(separator: "&")
-        request.httpBody = body.data(using: .utf8)
+        request.httpBody = formEncodedBody([
+            ("refresh_token", refreshToken),
+            ("client_id", clientID),
+            ("client_secret", clientSecret),
+            ("grant_type", "refresh_token")
+        ])
 
         let (data, _) = try await URLSession.shared.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
@@ -325,6 +323,16 @@ enum GoogleCalendarService {
     private static func sanitizeFolderName(_ name: String) -> String {
         let invalid = CharacterSet(charactersIn: "/:\\")
         return name.components(separatedBy: invalid).joined(separator: "-")
+    }
+
+    private static func formEncodedBody(_ params: [(String, String)]) -> Data? {
+        let allowed = CharacterSet.urlQueryAllowed.subtracting(CharacterSet(charactersIn: "+&="))
+        return params.map { key, value in
+            let encodedValue = value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
+            return "\(key)=\(encodedValue)"
+        }
+        .joined(separator: "&")
+        .data(using: .utf8)
     }
 }
 

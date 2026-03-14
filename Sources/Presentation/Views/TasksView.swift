@@ -3,6 +3,7 @@ import SwiftUI
 struct TasksView: View {
     var markdownTheme: MarkdownTheme
     @State private var content: String = ""
+    @Environment(ErrorState.self) private var errorState: ErrorState?
     private let fileURL = AppSettings.tasksFileURL
 
     var body: some View {
@@ -27,8 +28,13 @@ struct TasksView: View {
     private func save() {
         let text = content
         let url = fileURL
+        let errorState = errorState
         Task.detached {
-            try? text.write(to: url, atomically: true, encoding: .utf8)
+            do {
+                try text.write(to: url, atomically: true, encoding: .utf8)
+            } catch {
+                await errorState?.show("Impossible de sauvegarder les tâches : \(error.localizedDescription)")
+            }
         }
     }
 }
