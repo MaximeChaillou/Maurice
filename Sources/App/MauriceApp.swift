@@ -48,8 +48,12 @@ struct MauriceApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                WaveBackground(hue: appTheme.hue(for: coordinator.activeTab))
-                    .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
+                WaveBackground(
+                    hue: appTheme.hue(for: coordinator.activeTab),
+                    saturation: showHome ? 0 : 1
+                )
+                .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
+                .animation(.easeInOut(duration: 0.6), value: showHome)
 
                 VStack(spacing: 0) {
                     FloatingTabBar(

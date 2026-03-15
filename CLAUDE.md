@@ -27,6 +27,10 @@ Sources/
 - **SwiftLint** : Toujours corriger tous les warnings et erreurs SwiftLint. Lancer `swiftlint lint --config .swiftlint.yml` et résoudre chaque problème avant de considérer une tâche terminée. Ne jamais utiliser `// swiftlint:disable` pour contourner une règle — toujours corriger le code sous-jacent (extraire des structs, refactorer les paramètres, etc.).
 - **Réutilisation du code** : Réutiliser au maximum le code existant. Avant de créer une nouvelle fonction, vérifier s'il existe déjà une implémentation similaire dans le projet. Extraire les patterns communs en méthodes/extensions partagées plutôt que dupliquer du code.
 
+## UI
+
+- **Liquid Glass** : Utiliser le style Liquid Glass (macOS 26) pour tous les éléments d'interface — `.glassEffect()`, boutons, barres, panneaux. Préférer les matériaux translucides et les formes arrondies.
+
 ## Conventions
 
 - Langue de l'interface : français
