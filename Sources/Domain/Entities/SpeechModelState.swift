@@ -1,6 +1,6 @@
 import Foundation
 
-enum PreparationState: Sendable {
+enum SpeechModelState: Sendable {
     case idle
     case downloading(progress: Double)
     case loading

@@ -4,12 +4,12 @@ import Observation
 @Observable
 @MainActor
 final class MemoryListViewModel {
-    let navigation: DirectoryNavigation
+    let navigation: FolderNavigationStack
     private(set) var folders: [Folder] = []
     private(set) var files: [MemoryFile] = []
 
     init() {
-        self.navigation = DirectoryNavigation(rootDirectory: AppSettings.memoryDirectory)
+        self.navigation = FolderNavigationStack(rootDirectory: AppSettings.memoryDirectory)
     }
 
     func reloadDirectory() {

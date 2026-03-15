@@ -14,13 +14,13 @@ struct MauriceApp: App {
     @State private var showSearch = false
     @State private var showHome = true
     @State private var calendarViewModel = GoogleCalendarViewModel()
-    @State private var recordingCoordinator: RecordingCoordinator
+    @State private var recordingContext: RecordingContext
 
     init() {
         let storage = FileTranscriptionStorage()
 
         let useCase = RecordingUseCase(
-            transcription: SpeechAnalyzerLiveTranscription(),
+            transcription: SpeechRecognitionService(),
             storage: storage
         )
 
@@ -36,7 +36,7 @@ struct MauriceApp: App {
         _calendarViewModel = State(initialValue: calVM)
         _meetingViewModel = State(initialValue: meetVM)
         _peopleViewModel = State(initialValue: pplVM)
-        _recordingCoordinator = State(initialValue: RecordingCoordinator(
+        _recordingContext = State(initialValue: RecordingContext(
             recordingViewModel: recVM,
             calendarViewModel: calVM,
             meetingViewModel: meetVM,
@@ -79,7 +79,7 @@ struct MauriceApp: App {
 
                     FloatingActionBar(
                         viewModel: recordingViewModel,
-                        onRecordTap: { recordingCoordinator.handleRecordTap() }
+                        onRecordTap: { recordingContext.handleRecordTap() }
                     )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)

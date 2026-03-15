@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MeetingConfigSidebar: View {
+struct MeetingConfigSheet: View {
     let folderName: String
     let folderURL: URL
     @Binding var config: MeetingConfig

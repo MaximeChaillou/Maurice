@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 final class TranscriptListViewModel {
     private let storage: TranscriptionStorage
-    let navigation: DirectoryNavigation
+    let navigation: FolderNavigationStack
 
     private(set) var folders: [Folder] = []
     private(set) var transcripts: [StoredTranscript] = []
@@ -12,7 +12,7 @@ final class TranscriptListViewModel {
 
     init(storage: TranscriptionStorage) {
         self.storage = storage
-        self.navigation = DirectoryNavigation(rootDirectory: AppSettings.transcriptsDirectory)
+        self.navigation = FolderNavigationStack(rootDirectory: AppSettings.transcriptsDirectory)
     }
 
     func load() {

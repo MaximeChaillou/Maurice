@@ -29,7 +29,7 @@ struct FolderContentView: View {
         .sheet(isPresented: $showConfigSidebar) {
             if let folder = viewModel.currentFolder,
                let runner = skillRunner {
-                MeetingConfigSidebar(
+                MeetingConfigSheet(
                     folderName: folder.name,
                     folderURL: folder.url,
                     config: $viewModel.meetingConfig,

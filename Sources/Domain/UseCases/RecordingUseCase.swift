@@ -9,7 +9,7 @@ final class RecordingUseCase: Sendable {
         self.storage = storage
     }
 
-    func prepare(onStateChange: @escaping @Sendable (PreparationState) -> Void) async throws {
+    func prepare(onStateChange: @escaping @Sendable (SpeechModelState) -> Void) async throws {
         try await transcription.prepare(onStateChange: onStateChange)
     }
 

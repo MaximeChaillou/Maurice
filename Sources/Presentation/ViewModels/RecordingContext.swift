@@ -2,7 +2,7 @@ import Foundation
 
 @Observable
 @MainActor
-final class RecordingCoordinator {
+final class RecordingContext {
     private let recordingViewModel: RecordingViewModel
     private let calendarViewModel: GoogleCalendarViewModel
     private let meetingViewModel: FolderContentViewModel

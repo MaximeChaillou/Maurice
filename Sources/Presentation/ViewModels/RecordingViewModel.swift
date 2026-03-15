@@ -8,7 +8,7 @@ final class RecordingViewModel {
     private(set) var entries: [TranscriptionEntry] = []
     private(set) var volatileText: String = ""
     private(set) var isRecording = false
-    private(set) var preparationState: PreparationState = .idle
+    private(set) var preparationState: SpeechModelState = .idle
     private(set) var errorMessage: String?
 
     var subdirectory: String?

@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 @Observable
-final class DirectoryNavigation {
+final class FolderNavigationStack {
     let rootDirectory: URL
     private(set) var directoryStack: [Folder] = []
 

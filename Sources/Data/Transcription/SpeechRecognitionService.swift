@@ -3,9 +3,9 @@ import Accelerate
 import os
 import Speech
 
-private let logger = Logger(subsystem: "com.maxime.maurice", category: "SpeechAnalyzer")
+private let logger = Logger(subsystem: "com.maxime.maurice", category: "SpeechRecognition")
 
-final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecked Sendable {
+final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Sendable {
     private let locale: Locale
 
     /// Lock protecting state shared between the audio callback thread and async methods.
@@ -31,7 +31,7 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
         self.locale = locale
     }
 
-    func prepare(onStateChange: @escaping @Sendable (PreparationState) -> Void) async throws {
+    func prepare(onStateChange: @escaping @Sendable (SpeechModelState) -> Void) async throws {
         onStateChange(.loading)
 
         let transcriber = SpeechTranscriber(
@@ -55,13 +55,13 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
 
     func startTranscription() async throws -> AsyncStream<TranscriptionEvent> {
         guard let transcriber else {
-            throw SpeechAnalyzerError.notPrepared
+            throw SpeechRecognitionError.notPrepared
         }
 
         let modules: [any SpeechModule] = [transcriber]
 
         guard let analyzerFormat = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules) else {
-            throw SpeechAnalyzerError.audioFormatError
+            throw SpeechRecognitionError.audioFormatError
         }
 
         let (inputStream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
@@ -112,13 +112,13 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
 
     func startTranscription(fromFileURL fileURL: URL) async throws -> AsyncStream<TranscriptionEvent> {
         guard let transcriber else {
-            throw SpeechAnalyzerError.notPrepared
+            throw SpeechRecognitionError.notPrepared
         }
 
         let modules: [any SpeechModule] = [transcriber]
 
         guard let analyzerFormat = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: modules) else {
-            throw SpeechAnalyzerError.audioFormatError
+            throw SpeechRecognitionError.audioFormatError
         }
 
         let (inputStream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
@@ -198,12 +198,12 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
 
     private func startFileCapture(fileURL: URL, analyzerFormat: AVAudioFormat) throws {
         guard let audioFile = try? AVAudioFile(forReading: fileURL) else {
-            throw SpeechAnalyzerError.fileReadError
+            throw SpeechRecognitionError.fileReadError
         }
 
         let fileFormat = audioFile.processingFormat
         guard let converter = AVAudioConverter(from: fileFormat, to: analyzerFormat) else {
-            throw SpeechAnalyzerError.audioFormatError
+            throw SpeechRecognitionError.audioFormatError
         }
 
         let readBufferSize: AVAudioFrameCount = 1024
@@ -282,7 +282,7 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
         let nativeFormat = inputNode.outputFormat(forBus: 0)
 
         guard let converter = AVAudioConverter(from: nativeFormat, to: analyzerFormat) else {
-            throw SpeechAnalyzerError.audioFormatError
+            throw SpeechRecognitionError.audioFormatError
         }
 
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: nativeFormat) { [weak self] pcmBuffer, _ in
@@ -323,7 +323,7 @@ final class SpeechAnalyzerLiveTranscription: LiveTranscriptionService, @unchecke
     }
 }
 
-enum SpeechAnalyzerError: Error, LocalizedError {
+enum SpeechRecognitionError: Error, LocalizedError {
     case notPrepared
     case audioFormatError
     case fileReadError
