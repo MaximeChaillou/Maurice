@@ -12,224 +12,241 @@ struct MeetingConfigSidebar: View {
     @State private var editingAction: SkillAction?
     @State private var formName = ""
     @State private var formSkill: String?
-    @State private var editedName: String = ""
+    @State private var formParameter = ""
+    @State private var actionToDelete: SkillAction?
 
-    private var actions: [SkillAction] {
-        config.actions
+    // Local copies of config fields
+    @State private var editedName: String = ""
+    @State private var iconText: String = ""
+    @State private var calendarText: String = ""
+    @State private var localActions: [SkillAction] = []
+
+    @FocusState private var iconFieldFocused: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    private var showActionSheet: Bool {
+        isAddingAction || editingAction != nil
+    }
+
+    private var hasChanges: Bool {
+        let nameChanged = editedName.trimmingCharacters(in: .whitespaces) != folderName
+        let iconChanged = (iconText.isEmpty ? nil : iconText) != config.icon
+        let calTrimmed = calendarText.trimmingCharacters(in: .whitespaces)
+        let calChanged = (calTrimmed.isEmpty ? nil : calTrimmed) != config.calendarEventName
+        let actionsChanged = localActions != config.actions
+        return nameChanged || iconChanged || calChanged || actionsChanged
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
+        VStack(spacing: 0) {
+            Text("Configuration")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+
+            ScrollView {
+                Form {
+                    meetingSection
+                    calendarLinkSection
+                    actionsSection
+                }
+                .formStyle(.grouped)
+            }
 
             Divider()
 
-            List {
-                meetingSection
-
-                calendarLinkSection
-
-                iconSection
-
-                actionsSection
-
-                if isAddingAction || editingAction != nil {
-                    Section {
-                        actionForm
-                    }
-                }
+            HStack {
+                Button("Annuler") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+                Spacer()
+                Button("Enregistrer") { save() }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
             }
-            .listStyle(.sidebar)
-            .scrollContentBackground(.hidden)
-
-            Spacer(minLength: 0)
-
-            if !isAddingAction && editingAction == nil {
-                addActionButton
-            }
+            .padding(12)
         }
         .onAppear {
             editedName = folderName
+            iconText = config.icon ?? ""
+            calendarText = config.calendarEventName ?? ""
+            localActions = config.actions
             Task {
                 availableSkills = await MeetingSkillConfig.availableSkillsAsync()
             }
         }
-        .onChange(of: folderName) {
-            editedName = folderName
+        .sheet(isPresented: Binding(
+            get: { showActionSheet },
+            set: { if !$0 { resetForm() } }
+        )) {
+            actionFormSheet
         }
     }
 
-    // MARK: - Header
+    // MARK: - Save
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text("Configuration")
-                .font(.headline)
-            Text(folderName)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+    private func save() {
+        // Rename folder if needed
+        let trimmedName = editedName.trimmingCharacters(in: .whitespaces)
+        if !trimmedName.isEmpty, trimmedName != folderName {
+            onRename?(trimmedName)
         }
-        .padding(12)
+
+        // Update config
+        config.icon = iconText.isEmpty ? nil : iconText
+        let calTrimmed = calendarText.trimmingCharacters(in: .whitespaces)
+        config.calendarEventName = calTrimmed.isEmpty ? nil : calTrimmed
+        config.actions = localActions
+        config.saveAsync(to: folderURL)
+
+        dismiss()
     }
 
     // MARK: - Meeting name
 
     private var meetingSection: some View {
         Section("Réunion") {
-            HStack(spacing: 8) {
-                TextField("Nom", text: $editedName)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit { submitRename() }
-                if editedName != folderName {
-                    Button("Renommer") { submitRename() }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.small)
+            LabeledContent {
+                HStack(spacing: 6) {
+                    Button {
+                        iconFieldFocused = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            NSApp.orderFrontCharacterPalette(nil)
+                        }
+                    } label: {
+                        ZStack {
+                            Text(iconText.isEmpty ? "📁" : iconText)
+                                .font(.title3)
+
+                            TextField("", text: $iconText)
+                                .focused($iconFieldFocused)
+                                .opacity(0)
+                                .frame(width: 1, height: 1)
+                                .onChange(of: iconText) {
+                                    if let last = iconText.last {
+                                        let single = String(last)
+                                        if single != iconText { iconText = single }
+                                    }
+                                    if !iconText.isEmpty {
+                                        iconFieldFocused = false
+                                    }
+                                }
+                        }
+                        .frame(width: 28, height: 28)
+                        .background(.quaternary, in: .rect(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+
+                    TextField("", text: $editedName)
+                        .textFieldStyle(.roundedBorder)
                 }
+            } label: {
+                Text("Nom")
             }
         }
-    }
-
-    private func submitRename() {
-        let trimmed = editedName.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty, trimmed != folderName else { return }
-        onRename?(trimmed)
     }
 
     // MARK: - Calendar link
 
     private var calendarLinkSection: some View {
-        Section("Événement Calendar lié") {
-            HStack(spacing: 8) {
-                TextField("Nom de l'événement", text: calendarBinding)
-                    .textFieldStyle(.roundedBorder)
-                if config.calendarEventName != nil {
-                    Button {
-                        config.calendarEventName = nil
-                        config.saveAsync(to: folderURL)
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
+        Section("Événement Google Calendar lié") {
+            TextField("Nom de l'événement", text: $calendarText)
+                .textFieldStyle(.roundedBorder)
         }
     }
 
-    private var calendarBinding: Binding<String> {
-        Binding(
-            get: { config.calendarEventName ?? "" },
-            set: { newValue in
-                let trimmed = newValue.trimmingCharacters(in: .whitespaces)
-                config.calendarEventName = trimmed.isEmpty ? nil : trimmed
-                config.saveAsync(to: folderURL)
-            }
-        )
-    }
-
-    // MARK: - Icon
-
-    @State private var iconText: String = ""
-    @FocusState private var iconFieldFocused: Bool
-
-    private var iconSection: some View {
-        Section("Icône") {
-            HStack(spacing: 8) {
-                TextField("", text: $iconText)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 44)
-                    .multilineTextAlignment(.center)
-                    .focused($iconFieldFocused)
-                    .onAppear {
-                        iconText = config.icon ?? ""
-                    }
-                    .onChange(of: iconText) {
-                        let trimmed = String(iconText.prefix(1))
-                        if trimmed != iconText { iconText = trimmed }
-                        config.icon = trimmed.isEmpty ? nil : trimmed
-                        config.saveAsync(to: folderURL)
-                    }
-
-                Button {
-                    iconFieldFocused = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        NSApp.orderFrontCharacterPalette(nil)
-                    }
-                } label: {
-                    Image(systemName: "face.smiling")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
-                if !iconText.isEmpty {
-                    Button(role: .destructive) {
-                        iconText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Spacer()
-            }
-        }
-    }
-
-    // MARK: - Actions list
+    // MARK: - Actions
 
     private var actionsSection: some View {
-        Section("Actions") {
-            ForEach(actions) { action in
-                actionRow(action)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            config.removeAction(id: action.id)
-                            config.saveAsync(to: folderURL)
-                        } label: {
-                            Label("Supprimer", systemImage: "trash")
+        Section {
+            if localActions.isEmpty {
+                Text("Aucune action configurée")
+                    .foregroundStyle(.secondary)
+                    .font(.callout)
+            } else {
+                ForEach(localActions) { action in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(action.buttonName)
+                                .lineLimit(1)
+                            if let param = action.parameter, !param.isEmpty {
+                                Text(param)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
+
+                        Spacer()
 
                         Button {
                             editingAction = action
                             formName = action.buttonName
                             formSkill = action.skillFilename
+                            formParameter = action.parameter ?? ""
                             isAddingAction = false
                         } label: {
-                            Label("Modifier", systemImage: "pencil")
+                            Image(systemName: "pencil")
+                                .foregroundStyle(.secondary)
                         }
-                        .tint(.orange)
+                        .buttonStyle(.plain)
+
+                        Button(role: .destructive) {
+                            actionToDelete = action
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red.opacity(0.7))
+                        }
+                        .buttonStyle(.plain)
                     }
+                }
+            }
+        } header: {
+            HStack {
+                Text("Actions")
+                Spacer()
+                Button {
+                    editingAction = nil
+                    formName = ""
+                    formSkill = nil
+                    formParameter = ""
+                    isAddingAction = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .alert(
+            "Supprimer l'action ?",
+            isPresented: Binding(
+                get: { actionToDelete != nil },
+                set: { if !$0 { actionToDelete = nil } }
+            )
+        ) {
+            Button("Annuler", role: .cancel) { actionToDelete = nil }
+            Button("Supprimer", role: .destructive) {
+                if let action = actionToDelete {
+                    localActions.removeAll { $0.id == action.id }
+                    actionToDelete = nil
+                }
+            }
+        } message: {
+            if let action = actionToDelete {
+                Text("L'action « \(action.buttonName) » sera supprimée.")
             }
         }
     }
 
-    private func actionRow(_ action: SkillAction) -> some View {
-        ActionRowView(
-            action: action,
-            isRunning: runner.isRunning && runner.actionID == action.id
-        ) {
-            guard !runner.isRunning else { return }
-            runner.actionID = action.id
-            runner.run(
-                skillFilename: action.skillFilename,
-                buttonName: action.buttonName,
-                workingDirectory: AppSettings.rootDirectory
-            )
-        }
-    }
-
-    // MARK: - Action form (add / edit)
+    // MARK: - Action form sheet
 
     private var formTitle: String {
         editingAction != nil ? "Modifier l'action" : "Nouvelle action"
     }
 
-    private var actionForm: some View {
-        VStack(alignment: .leading, spacing: 8) {
+    private var actionFormSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
             Text(formTitle)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .font(.headline)
 
             TextField("Nom du bouton", text: $formName)
                 .textFieldStyle(.roundedBorder)
@@ -243,106 +260,49 @@ struct MeetingConfigSidebar: View {
                 }
             }
 
+            TextField("Paramètre (optionnel)", text: $formParameter)
+                .textFieldStyle(.roundedBorder)
+
             HStack {
                 Button("Annuler") {
                     resetForm()
                 }
+                .keyboardShortcut(.cancelAction)
 
                 Spacer()
 
                 Button(editingAction != nil ? "Enregistrer" : "Ajouter") {
                     guard let skill = formSkill, !formName.isEmpty else { return }
+                    let param = formParameter.trimmingCharacters(in: .whitespaces)
+                    let paramValue: String? = param.isEmpty ? nil : param
                     if let existing = editingAction {
-                        config.updateAction(id: existing.id, buttonName: formName, skillFilename: skill)
+                        if let idx = localActions.firstIndex(where: { $0.id == existing.id }) {
+                            localActions[idx] = SkillAction(
+                                id: existing.id, buttonName: formName,
+                                skillFilename: skill, parameter: paramValue
+                            )
+                        }
                     } else {
-                        let action = SkillAction(buttonName: formName, skillFilename: skill)
-                        config.addAction(action)
+                        localActions.append(
+                            SkillAction(buttonName: formName, skillFilename: skill, parameter: paramValue)
+                        )
                     }
-                    config.saveAsync(to: folderURL)
                     resetForm()
                 }
                 .disabled(formSkill == nil || formName.isEmpty)
                 .buttonStyle(.borderedProminent)
-                .controlSize(.small)
+                .keyboardShortcut(.defaultAction)
             }
         }
-        .padding(.vertical, 4)
-    }
-
-    // MARK: - Add button
-
-    private var addActionButton: some View {
-        VStack(spacing: 0) {
-            Divider()
-            Button {
-                editingAction = nil
-                formName = ""
-                formSkill = nil
-                isAddingAction = true
-            } label: {
-                Label("Ajouter une action", systemImage: "plus")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.regular)
-            .padding(12)
-        }
+        .padding(20)
+        .frame(width: 320)
     }
 
     private func resetForm() {
         formName = ""
         formSkill = nil
+        formParameter = ""
         isAddingAction = false
         editingAction = nil
-    }
-}
-
-// MARK: - Action row with hover
-
-private struct ActionRowView: View {
-    let action: SkillAction
-    let isRunning: Bool
-    let onTap: () -> Void
-
-    @State private var isHovered = false
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 8) {
-                if isRunning {
-                    ProgressView()
-                        .controlSize(.small)
-                } else {
-                    Image(systemName: "play.fill")
-                        .font(.caption2)
-                        .foregroundStyle(Color.accentColor)
-                }
-
-                Text(action.buttonName)
-                    .lineLimit(1)
-
-                Spacer()
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .padding(.vertical, 2)
-        .padding(.horizontal, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isHovered ? Color.accentColor.opacity(0.1) : Color.clear)
-        )
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovered = hovering
-            }
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-        }
-        .disabled(isRunning)
-        .help(action.skillFilename)
     }
 }

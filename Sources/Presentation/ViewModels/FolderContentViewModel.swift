@@ -119,6 +119,18 @@ final class FolderContentViewModel {
         loadFolders()
     }
 
+    func updateCurrentFolderIcon(_ icon: String?) {
+        guard let name = selectedFolder,
+              let idx = folders.firstIndex(where: { $0.name == name }) else { return }
+        folders[idx] = FolderItem(
+            name: folders[idx].name,
+            url: folders[idx].url,
+            files: folders[idx].files,
+            dateEntries: folders[idx].dateEntries,
+            icon: icon
+        )
+    }
+
     func selectFileAtIndex(in folder: FolderItem) {
         let sorted = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
         guard !sorted.isEmpty else { return }

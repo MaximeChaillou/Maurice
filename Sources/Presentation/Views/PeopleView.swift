@@ -84,6 +84,24 @@ struct PeopleView: View {
 
     private var personList: some View {
         VStack(spacing: 0) {
+            HStack {
+                Text("Personnes")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    viewModel.isAddingFolder = true
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.body)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+
+            Divider()
+
             List(selection: $viewModel.selectedFolder) {
                 ForEach(viewModel.folders) { folder in
                     Text(folder.name)
@@ -121,41 +139,16 @@ struct PeopleView: View {
                     Text("La personne « \(folder.name) » et tout son contenu seront supprimés.")
                 }
             }
-
-            Divider()
-
-            if viewModel.isAddingFolder {
-                addPersonForm
-            } else {
-                Button {
-                    viewModel.isAddingFolder = true
-                } label: {
-                    Label("Nouvelle personne", systemImage: "plus")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .padding(8)
-            }
         }
-    }
-
-    private var addPersonForm: some View {
-        HStack(spacing: 8) {
-            TextField("Nom de la personne", text: $viewModel.newFolderName)
-                .textFieldStyle(.roundedBorder)
-                .onSubmit { createPerson() }
-                .onExitCommand {
-                    viewModel.isAddingFolder = false
-                    viewModel.newFolderName = ""
-                }
-            Button("OK") { createPerson() }
-                .disabled(viewModel.newFolderName.trimmingCharacters(in: .whitespaces).isEmpty)
-            Button("Annuler", role: .cancel) {
-                viewModel.isAddingFolder = false
-                viewModel.newFolderName = ""
-            }
+        .sheet(isPresented: $viewModel.isAddingFolder) {
+            AddItemSheet(
+                title: "Nouvelle personne",
+                placeholder: "Nom de la personne",
+                text: $viewModel.newFolderName,
+                onCreate: { createPerson() },
+                onCancel: { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
+            )
         }
-        .padding(8)
     }
 
     // MARK: - Section list

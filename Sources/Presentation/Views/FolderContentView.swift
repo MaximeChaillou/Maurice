@@ -13,9 +13,6 @@ struct FolderContentView: View {
 
     @State private var showConfigSidebar: Bool = false
     @State private var folderToDelete: FolderItem?
-    @State private var folderToRename: FolderItem?
-    @State private var renameText = ""
-    @State private var folderToLink: FolderItem?
     @State private var entryDeleteAction: EntryDeleteAction?
     @State private var showTranscripts = false
 
@@ -28,11 +25,10 @@ struct FolderContentView: View {
 
             detailPane
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            if showConfigSidebar,
-               let folder = viewModel.currentFolder,
+        }
+        .sheet(isPresented: $showConfigSidebar) {
+            if let folder = viewModel.currentFolder,
                let runner = skillRunner {
-                Divider()
                 MeetingConfigSidebar(
                     folderName: folder.name,
                     folderURL: folder.url,
@@ -42,11 +38,12 @@ struct FolderContentView: View {
                         viewModel.renameFolder(folder, to: newName)
                     }
                 )
-                .frame(width: 320)
-                .transition(.move(edge: .trailing).combined(with: .opacity))
+                .frame(width: 400, height: 500)
+                .onDisappear {
+                    viewModel.updateCurrentFolderIcon(viewModel.meetingConfig.icon)
+                }
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: showConfigSidebar)
         .alert("Erreur", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
@@ -70,6 +67,24 @@ struct FolderContentView: View {
 
     private var folderList: some View {
         VStack(spacing: 0) {
+            HStack {
+                Text("Réunions")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    viewModel.isAddingFolder = true
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.body)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+
+            Divider()
+
             List(selection: $viewModel.selectedFolder) {
                 ForEach(viewModel.folders) { folder in
                     VStack(alignment: .leading, spacing: 4) {
@@ -89,18 +104,22 @@ struct FolderContentView: View {
                     .tag(folder.name)
                     .listRowBackground(Color.clear)
                     .contextMenu {
-                        Button {
-                            renameText = folder.name
-                            folderToRename = folder
-                        } label: {
-                            Label("Renommer", systemImage: "pencil")
+                        if showSkillConfig {
+                            Button {
+                                viewModel.selectedFolder = folder.name
+                                let url = folder.url
+                                Task {
+                                    let cfg = await Task.detached {
+                                        MeetingConfig.load(from: url)
+                                    }.value
+                                    viewModel.meetingConfig = cfg
+                                    showConfigSidebar = true
+                                }
+                            } label: {
+                                Label("Configurer", systemImage: "gearshape")
+                            }
+                            Divider()
                         }
-                        Button {
-                            folderToLink = folder
-                        } label: {
-                            Label("Lier un événement Calendar", systemImage: "calendar.badge.plus")
-                        }
-                        Divider()
                         Button(role: .destructive) {
                             folderToDelete = folder
                         } label: {
@@ -136,32 +155,6 @@ struct FolderContentView: View {
                     Text("Le dossier « \(folder.name) » et tout son contenu seront supprimés définitivement.")
                 }
             }
-            .alert(
-                "Renommer la réunion",
-                isPresented: Binding(
-                    get: { folderToRename != nil },
-                    set: { if !$0 { folderToRename = nil } }
-                )
-            ) {
-                TextField("Nouveau nom", text: $renameText)
-                Button("Annuler", role: .cancel) { folderToRename = nil }
-                Button("Renommer") {
-                    if let folder = folderToRename {
-                        viewModel.renameFolder(folder, to: renameText)
-                        folderToRename = nil
-                    }
-                }
-            }
-            .sheet(isPresented: Binding(
-                get: { folderToLink != nil },
-                set: { if !$0 { folderToLink = nil } }
-            )) {
-                if let folder = folderToLink {
-                    CalendarLinkSheet(folder: folder) {
-                        folderToLink = nil
-                    }
-                }
-            }
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
@@ -179,30 +172,15 @@ struct FolderContentView: View {
                     }
                 }
             }
-
-            Divider()
-
-            if viewModel.isAddingFolder {
-                HStack(spacing: 8) {
-                    TextField("Nom de la réunion", text: $viewModel.newFolderName)
-                        .textFieldStyle(.roundedBorder)
-                        .onSubmit { viewModel.createFolder() }
-                        .onExitCommand { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
-                    Button("OK") { viewModel.createFolder() }
-                        .disabled(viewModel.newFolderName.trimmingCharacters(in: .whitespaces).isEmpty)
-                    Button("Annuler", role: .cancel) { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
-                }
-                .padding(8)
-            } else {
-                Button {
-                    viewModel.isAddingFolder = true
-                } label: {
-                    Label("Nouvelle réunion", systemImage: "plus")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .padding(8)
-            }
+        }
+        .sheet(isPresented: $viewModel.isAddingFolder) {
+            AddItemSheet(
+                title: "Nouvelle réunion",
+                placeholder: "Nom de la réunion",
+                text: $viewModel.newFolderName,
+                onCreate: { viewModel.createFolder() },
+                onCancel: { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
+            )
         }
     }
 
@@ -281,39 +259,51 @@ extension FolderContentView {
     }
 
     func dateNavigationHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
-        HStack {
-            Button {
-                if viewModel.fileIndex < totalEntries - 1 { viewModel.fileIndex += 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
+        VStack(spacing: 4) {
+            // Line 1: Navigation
+            HStack {
+                Button {
+                    if viewModel.fileIndex < totalEntries - 1 { viewModel.fileIndex += 1 }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Circle())
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .interactiveHover()
+                .disabled(viewModel.fileIndex >= totalEntries - 1)
+
+                Spacer()
+
+                Text(entry.date, format: .dateTime.day().month(.wide).year())
+                    .font(.headline)
+
+                Spacer()
+
+                Button {
+                    if viewModel.fileIndex > 0 { viewModel.fileIndex -= 1 }
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Circle())
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .interactiveHover()
+                .disabled(viewModel.fileIndex <= 0)
             }
-            .buttonStyle(.plain)
-            .disabled(viewModel.fileIndex >= totalEntries - 1)
 
-            Spacer()
-
-            Text(entry.date, format: .dateTime.day().month(.wide).year())
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                if viewModel.fileIndex > 0 { viewModel.fileIndex -= 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
+            // Line 2: Actions
+            HStack(spacing: 8) {
+                Spacer()
+                if navigateByDate { transcriptToggleButton(for: entry) }
+                if showSkillConfig, skillRunner != nil {
+                    runActionsMenu
+                    configToggleButton
+                }
+                entryActionsMenu(for: entry)
             }
-            .buttonStyle(.plain)
-            .disabled(viewModel.fileIndex <= 0)
-
-            if navigateByDate { transcriptToggleButton(for: entry) }
-            if showSkillConfig, skillRunner != nil { configToggleButton }
-            entryActionsMenu(for: entry)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -350,10 +340,10 @@ extension FolderContentView {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .frame(width: 32, height: 32)
+        .interactiveHover()
     }
 }
 
@@ -411,10 +401,10 @@ extension FolderContentView {
                 .font(.body)
                 .frame(width: 32, height: 32)
                 .contentShape(Circle())
-                .glassEffect(.regular.interactive(), in: .circle)
                 .opacity(canToggle ? 1.0 : 0.3)
         }
         .buttonStyle(.plain)
+        .interactiveHover()
         .disabled(!canToggle)
         .help(
             !canToggle
@@ -423,71 +413,59 @@ extension FolderContentView {
         )
     }
 
+    @ViewBuilder
+    var runActionsMenu: some View {
+        let actions = viewModel.meetingConfig.actions
+        if let runner = skillRunner, !actions.isEmpty {
+            Menu {
+                ForEach(actions) { action in
+                    Button {
+                        guard !runner.isRunning else { return }
+                        runner.actionID = action.id
+                        runner.run(
+                            skillFilename: action.skillFilename,
+                            buttonName: action.buttonName,
+                            parameter: action.parameter,
+                            workingDirectory: AppSettings.rootDirectory
+                        )
+                    } label: {
+                        Label(action.buttonName, systemImage: "play.fill")
+                    }
+                    .disabled(runner.isRunning)
+                }
+            } label: {
+                ZStack {
+                    if let runner = skillRunner, runner.isRunning {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Image(systemName: "play.fill")
+                            .font(.body)
+                    }
+                }
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .frame(width: 32, height: 32)
+            .interactiveHover()
+            .help("Lancer une action")
+        }
+    }
+
     var configToggleButton: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                showConfigSidebar.toggle()
-            }
+            showConfigSidebar = true
         } label: {
-            Image(systemName: showConfigSidebar ? "sidebar.trailing" : "gearshape")
+            Image(systemName: "gearshape")
                 .font(.body)
                 .frame(width: 32, height: 32)
                 .contentShape(Circle())
-                .glassEffect(.regular.interactive(), in: .circle)
         }
         .buttonStyle(.plain)
+        .interactiveHover()
         .help("Configurer les skills")
-    }
-}
-
-private struct FolderFileDetailView: View {
-    let file: FolderFile
-    var markdownTheme: MarkdownTheme = MarkdownTheme()
-    @State private var bodyText: String = ""
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Text(file.name)
-                .font(.headline)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-
-            Divider()
-
-            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct FolderFileEditorView: View {
-    let file: FolderFile
-    var markdownTheme: MarkdownTheme = MarkdownTheme()
-    @State private var bodyText: String = ""
-    @Environment(ErrorState.self) private var errorState: ErrorState?
-
-    var body: some View {
-        ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
-            .onAppear {
-                let url = file.url
-                Task {
-                    let text = await Task.detached {
-                        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                    }.value
-                    bodyText = text
-                }
-            }
-            .onChange(of: bodyText) {
-                let text = bodyText
-                let url = file.url
-                let errorState = errorState
-                Task.detached {
-                    do {
-                        try text.write(to: url, atomically: true, encoding: .utf8)
-                    } catch {
-                        await errorState?.show("Impossible de sauvegarder : \(error.localizedDescription)")
-                    }
-                }
-            }
     }
 }

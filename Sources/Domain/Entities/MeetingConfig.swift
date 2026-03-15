@@ -50,8 +50,8 @@ struct MeetingConfig: Codable {
         actions.removeAll { $0.id == id }
     }
 
-    mutating func updateAction(id: UUID, buttonName: String, skillFilename: String) {
+    mutating func updateAction(id: UUID, buttonName: String, skillFilename: String, parameter: String? = nil) {
         guard let index = actions.firstIndex(where: { $0.id == id }) else { return }
-        actions[index] = SkillAction(id: id, buttonName: buttonName, skillFilename: skillFilename)
+        actions[index] = SkillAction(id: id, buttonName: buttonName, skillFilename: skillFilename, parameter: parameter)
     }
 }

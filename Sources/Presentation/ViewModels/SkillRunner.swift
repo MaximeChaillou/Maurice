@@ -42,11 +42,17 @@ final class SkillRunner {
         ]
     }
 
-    func run(skillFilename: String, buttonName: String, workingDirectory: URL) {
+    func run(skillFilename: String, buttonName: String, parameter: String? = nil, workingDirectory: URL) {
         skillLabel = buttonName
         let commandName = skillFilename.replacingOccurrences(of: ".md", with: "")
+        let prompt: String
+        if let param = parameter, !param.isEmpty {
+            prompt = "/\(commandName) \(param)"
+        } else {
+            prompt = "/\(commandName)"
+        }
         launchClaude(
-            prompt: "/\(commandName)",
+            prompt: prompt,
             extraArgs: ["--permission-mode", "acceptEdits"] + Self.mauricePermissions,
             workingDirectory: workingDirectory
         )

@@ -26,11 +26,13 @@ struct SkillAction: Identifiable, Codable, Hashable {
     var id: UUID
     var buttonName: String
     var skillFilename: String
+    var parameter: String?
 
-    init(id: UUID = UUID(), buttonName: String, skillFilename: String) {
+    init(id: UUID = UUID(), buttonName: String, skillFilename: String, parameter: String? = nil) {
         self.id = id
         self.buttonName = buttonName
         self.skillFilename = skillFilename
+        self.parameter = parameter
     }
 }
 
