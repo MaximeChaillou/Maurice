@@ -39,9 +39,6 @@ struct AskButton: View {
         VStack(spacing: 0) {
             if isExpanded && showResponse {
                 responsePanel
-            }
-
-            if isExpanded && showResponse {
                 Divider()
             }
 
@@ -86,6 +83,17 @@ struct AskButton: View {
                 ProgressView()
                     .controlSize(.small)
                     .padding(.trailing, isExpanded ? 4 : 0)
+
+                Button {
+                    runner.stop()
+                } label: {
+                    Image(systemName: "stop.circle.fill")
+                        .font(.system(size: 15))
+                        .foregroundStyle(.white)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, isExpanded ? 4 : 0)
             }
 
             Button {
@@ -130,7 +138,7 @@ struct AskButton: View {
                 }
                 .padding(12)
             }
-            .frame(maxHeight: 300)
+            .frame(maxHeight: 450)
             .overlay(alignment: .topTrailing) {
                 if !conversationLines.isEmpty {
                     Button {
