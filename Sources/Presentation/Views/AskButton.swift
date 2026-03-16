@@ -79,23 +79,6 @@ struct AskButton: View {
                     .onExitCommand { collapse() }
             }
 
-            if runner.isRunning {
-                ProgressView()
-                    .controlSize(.small)
-                    .padding(.trailing, isExpanded ? 4 : 0)
-
-                Button {
-                    runner.stop()
-                } label: {
-                    Image(systemName: "stop.circle.fill")
-                        .font(.system(size: 15))
-                        .foregroundStyle(.white)
-                        .contentShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing, isExpanded ? 4 : 0)
-            }
-
             Button {
                 withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
                     if isExpanded {
@@ -114,6 +97,26 @@ struct AskButton: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
+            .overlay(alignment: .leading) {
+                if runner.isRunning && isExpanded {
+                    HStack(spacing: 6) {
+                        Button {
+                            runner.stop()
+                        } label: {
+                            Image(systemName: "stop.circle.fill")
+                                .font(.system(size: 15))
+                                .foregroundStyle(.white)
+                                .contentShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                    .offset(x: -50)
+                    .transition(.opacity)
+                }
+            }
         }
         .frame(height: 56)
     }
@@ -264,7 +267,6 @@ struct AskButton: View {
     }
 
     private func collapseAndReset() {
-        runner.stop()
         isExpanded = false
         searchText = ""
     }

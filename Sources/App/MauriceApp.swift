@@ -87,7 +87,7 @@ struct MauriceApp: App {
                 .overlay(alignment: .bottomTrailing) {
                     AskButton(runner: skillRunner)
                         .padding(.horizontal, 36)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 25)
                 }
             }
             .onAppear { transcriptListViewModel.load() }
