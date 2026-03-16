@@ -7,11 +7,11 @@ final class MarkdownThemeTests: XCTestCase {
 
     func testDefaultInit() {
         let theme = MarkdownTheme()
-        XCTAssertEqual(theme.fontName, "System")
-        XCTAssertEqual(theme.baseFontSize, 14)
+        XCTAssertEqual(theme.fontName, "Helvetica Neue")
+        XCTAssertEqual(theme.baseFontSize, 16)
         XCTAssertEqual(theme.h1FontSize, 26)
-        XCTAssertEqual(theme.h2FontSize, 20)
-        XCTAssertEqual(theme.h3FontSize, 17)
+        XCTAssertEqual(theme.h2FontSize, 22)
+        XCTAssertEqual(theme.h3FontSize, 18)
         XCTAssertTrue(theme.h1Bold)
         XCTAssertFalse(theme.h1Italic)
         XCTAssertFalse(theme.h1Underline)
@@ -24,7 +24,7 @@ final class MarkdownThemeTests: XCTestCase {
         XCTAssertFalse(theme.quoteBold)
         XCTAssertTrue(theme.quoteItalic)
         XCTAssertFalse(theme.quoteUnderline)
-        XCTAssertEqual(theme.maxContentWidth, 700)
+        XCTAssertEqual(theme.maxContentWidth, 890)
     }
 
     // MARK: - Codable roundtrip
@@ -68,32 +68,7 @@ final class MarkdownThemeTests: XCTestCase {
         let json = "{}".data(using: .utf8)!
         let decoded = try JSONDecoder().decode(MarkdownTheme.self, from: json)
         let defaults = MarkdownTheme()
-        XCTAssertEqual(decoded.fontName, defaults.fontName)
-        XCTAssertEqual(decoded.baseFontSize, defaults.baseFontSize)
-        XCTAssertEqual(decoded.h1FontSize, defaults.h1FontSize)
-        XCTAssertEqual(decoded.h1Bold, defaults.h1Bold)
-        XCTAssertEqual(decoded.h1Italic, defaults.h1Italic)
-        XCTAssertEqual(decoded.h1Underline, defaults.h1Underline)
-        XCTAssertEqual(decoded.h2FontSize, defaults.h2FontSize)
-        XCTAssertEqual(decoded.h2Bold, defaults.h2Bold)
-        XCTAssertEqual(decoded.h2Italic, defaults.h2Italic)
-        XCTAssertEqual(decoded.h2Underline, defaults.h2Underline)
-        XCTAssertEqual(decoded.h3FontSize, defaults.h3FontSize)
-        XCTAssertEqual(decoded.h3Bold, defaults.h3Bold)
-        XCTAssertEqual(decoded.h3Italic, defaults.h3Italic)
-        XCTAssertEqual(decoded.h3Underline, defaults.h3Underline)
-        XCTAssertEqual(decoded.quoteBold, defaults.quoteBold)
-        XCTAssertEqual(decoded.quoteItalic, defaults.quoteItalic)
-        XCTAssertEqual(decoded.quoteUnderline, defaults.quoteUnderline)
-        XCTAssertEqual(decoded.maxContentWidth, defaults.maxContentWidth)
-        XCTAssertEqual(decoded.bodyColor, defaults.bodyColor)
-        XCTAssertEqual(decoded.boldColor, defaults.boldColor)
-        XCTAssertEqual(decoded.italicColor, defaults.italicColor)
-        XCTAssertEqual(decoded.quoteColor, defaults.quoteColor)
-        XCTAssertEqual(decoded.codeColor, defaults.codeColor)
-        XCTAssertEqual(decoded.codeBackgroundColor, defaults.codeBackgroundColor)
-        XCTAssertEqual(decoded.dividerColor, defaults.dividerColor)
-        XCTAssertEqual(decoded.backgroundColor, defaults.backgroundColor)
+        XCTAssertEqual(decoded, defaults)
     }
 
     func testDecodePartialJSON() throws {
@@ -104,8 +79,8 @@ final class MarkdownThemeTests: XCTestCase {
         XCTAssertEqual(decoded.fontName, "Courier")
         XCTAssertEqual(decoded.baseFontSize, 18)
         XCTAssertFalse(decoded.h1Bold)
-        // Rest should be defaults
-        XCTAssertEqual(decoded.h1FontSize, 26)
+        // Overridden values above, rest should be defaults
+        XCTAssertEqual(decoded.h2FontSize, 22)
         XCTAssertTrue(decoded.h2Bold)
     }
 
@@ -129,27 +104,26 @@ final class MarkdownThemeTests: XCTestCase {
     // MARK: - AppTheme Save / Load roundtrip
 
     func testAppThemeSaveAndLoad() {
+        let url = AppTheme.persistenceURL
+        let backup = try? Data(contentsOf: url)
+        defer { if let backup { try? backup.write(to: url, options: .atomic) } }
+
         var appTheme = AppTheme.load()
         appTheme.markdown.fontName = "TestFont_SaveLoad"
         appTheme.save()
 
         let loaded = AppTheme.load()
         XCTAssertEqual(loaded.markdown.fontName, "TestFont_SaveLoad")
-
-        // Restore defaults
-        let defaults = AppTheme()
-        defaults.save()
     }
 
     func testAppThemeLoadMissingFileReturnsDefault() {
         let url = AppTheme.persistenceURL
         let backup = try? Data(contentsOf: url)
+        defer { if let backup { try? backup.write(to: url, options: .atomic) } }
+
         try? FileManager.default.removeItem(at: url)
 
         let loaded = AppTheme.load()
-        XCTAssertEqual(loaded.markdown.fontName, "System")
-
-        // Restore
-        if let backup { try? backup.write(to: url) }
+        XCTAssertEqual(loaded.markdown.fontName, "Helvetica Neue")
     }
 }

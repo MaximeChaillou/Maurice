@@ -228,7 +228,7 @@ final class MarkdownStylingIntegrationTests: XCTestCase {
         let (coord, tv, _) = makeCoordinator(text: text)
         coord.applyMarkdownStyling()
         let font = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
-        XCTAssertEqual(font?.pointSize, 20)
+        XCTAssertEqual(font?.pointSize, 22)
     }
 
     @MainActor
@@ -237,7 +237,7 @@ final class MarkdownStylingIntegrationTests: XCTestCase {
         let (coord, tv, _) = makeCoordinator(text: text)
         coord.applyMarkdownStyling()
         let font = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
-        XCTAssertEqual(font?.pointSize, 17)
+        XCTAssertEqual(font?.pointSize, 18)
     }
 
     @MainActor

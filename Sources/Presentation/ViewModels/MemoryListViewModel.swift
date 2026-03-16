@@ -8,8 +8,8 @@ final class MemoryListViewModel {
     private(set) var folders: [Folder] = []
     private(set) var files: [MemoryFile] = []
 
-    init() {
-        self.navigation = FolderNavigationStack(rootDirectory: AppSettings.memoryDirectory)
+    init(rootDirectory: URL = AppSettings.memoryDirectory) {
+        self.navigation = FolderNavigationStack(rootDirectory: rootDirectory)
     }
 
     func reloadDirectory() {

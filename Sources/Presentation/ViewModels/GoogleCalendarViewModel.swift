@@ -15,7 +15,15 @@ final class GoogleCalendarViewModel {
     private var cachedCurrentDate: Date?
     private let cacheDuration: TimeInterval = 60
 
-    init() {
+    private let calendarService: CalendarServiceProtocol
+    private let tokenStore: TokenStoreProtocol
+
+    init(
+        calendarService: CalendarServiceProtocol = DefaultCalendarService(),
+        tokenStore: TokenStoreProtocol = DefaultTokenStore()
+    ) {
+        self.calendarService = calendarService
+        self.tokenStore = tokenStore
         loadConnectionState()
     }
 
@@ -26,10 +34,10 @@ final class GoogleCalendarViewModel {
 
         Task {
             do {
-                let tokens = try await GoogleCalendarService.startOAuthFlow()
-                GoogleOAuthTokenStore.save(tokens)
+                let tokens = try await calendarService.startOAuthFlow()
+                tokenStore.save(tokens)
 
-                let email = try await GoogleCalendarService.fetchUserEmail(accessToken: tokens.accessToken)
+                let email = try await calendarService.fetchUserEmail(accessToken: tokens.accessToken)
                 connectedEmail = email
                 isConnected = true
             } catch {
@@ -40,7 +48,7 @@ final class GoogleCalendarViewModel {
     }
 
     func disconnect() {
-        GoogleOAuthTokenStore.clear()
+        tokenStore.clear()
         isConnected = false
         connectedEmail = nil
         errorMessage = nil
@@ -52,7 +60,7 @@ final class GoogleCalendarViewModel {
             return cached
         }
         guard let tokens = await validTokens() else { return [] }
-        let events = (try? await GoogleCalendarService.fetchUpcomingEvents(
+        let events = (try? await calendarService.fetchUpcomingEvents(
             accessToken: tokens.accessToken, limit: limit
         )) ?? []
         cachedUpcoming = events
@@ -66,18 +74,18 @@ final class GoogleCalendarViewModel {
             return cached
         }
         guard let tokens = await validTokens() else { return nil }
-        let event = try? await GoogleCalendarService.fetchCurrentEvent(accessToken: tokens.accessToken)
+        let event = try? await calendarService.fetchCurrentEvent(accessToken: tokens.accessToken)
         cachedCurrent = .some(event)
         cachedCurrentDate = Date()
         return event
     }
 
-    private func validTokens() async -> GoogleTokens? {
-        guard var tokens = GoogleOAuthTokenStore.load() else { return nil }
+    func validTokens() async -> GoogleTokens? {
+        guard var tokens = tokenStore.load() else { return nil }
         if tokens.expiresAt < Date() {
             do {
-                tokens = try await GoogleCalendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
-                GoogleOAuthTokenStore.save(tokens)
+                tokens = try await calendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
+                tokenStore.save(tokens)
             } catch {
                 return nil
             }
@@ -86,7 +94,7 @@ final class GoogleCalendarViewModel {
     }
 
     private func loadConnectionState() {
-        guard var tokens = GoogleOAuthTokenStore.load() else {
+        guard var tokens = tokenStore.load() else {
             isConnected = false
             return
         }
@@ -97,15 +105,15 @@ final class GoogleCalendarViewModel {
             // Refresh if expired
             if tokens.expiresAt < Date() {
                 do {
-                    tokens = try await GoogleCalendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
-                    GoogleOAuthTokenStore.save(tokens)
+                    tokens = try await calendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
+                    tokenStore.save(tokens)
                 } catch {
                     disconnect()
                     return
                 }
             }
 
-            if let email = try? await GoogleCalendarService.fetchUserEmail(accessToken: tokens.accessToken) {
+            if let email = try? await calendarService.fetchUserEmail(accessToken: tokens.accessToken) {
                 connectedEmail = email
             }
         }

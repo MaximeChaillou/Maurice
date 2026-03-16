@@ -5,9 +5,9 @@ struct AppTheme: PersistentCodable, Equatable {
 
     // MARK: - Tab background colors (stored as hue, 0...1)
 
-    var meetingTabHue: Double = 0.60
-    var peopleTabHue: Double = 0.75
-    var taskTabHue: Double = 0.35
+    var meetingTabHue: Double = 0.5718
+    var peopleTabHue: Double = 0.4604
+    var taskTabHue: Double = 0.7501
     var searchTabHue: Double = 0.52
     var memoryTabHue: Double = 0.85
 

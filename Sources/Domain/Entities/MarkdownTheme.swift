@@ -3,61 +3,61 @@ import SwiftUI
 struct MarkdownTheme: Codable, Equatable {
     // MARK: - Background
 
-    var backgroundColor: CodableColor = CodableColor(.clear)
+    var backgroundColor: CodableColor = CodableColor(red: 0.1099, green: 0.1298, blue: 0.1549, alpha: 0.6049)
 
     // MARK: - Typography
 
-    var fontName: String = "System"
-    var baseFontSize: CGFloat = 14
+    var fontName: String = "Helvetica Neue"
+    var baseFontSize: CGFloat = 16
 
     // MARK: - Body text
 
-    var bodyColor: CodableColor = CodableColor(.labelColor)
+    var bodyColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
 
     // MARK: - Headings
 
-    var h1Color: CodableColor = CodableColor(.labelColor)
+    var h1Color: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
     var h1FontSize: CGFloat = 26
     var h1Bold: Bool = true
     var h1Italic: Bool = false
     var h1Underline: Bool = false
 
-    var h2Color: CodableColor = CodableColor(.labelColor)
-    var h2FontSize: CGFloat = 20
+    var h2Color: CodableColor = CodableColor(red: 0.1821, green: 0.4999, blue: 0.9470)
+    var h2FontSize: CGFloat = 22
     var h2Bold: Bool = true
     var h2Italic: Bool = false
     var h2Underline: Bool = false
 
-    var h3Color: CodableColor = CodableColor(.labelColor)
-    var h3FontSize: CGFloat = 17
+    var h3Color: CodableColor = CodableColor(red: 0.4855, green: 0.5008, blue: 0.9454)
+    var h3FontSize: CGFloat = 18
     var h3Bold: Bool = true
     var h3Italic: Bool = false
     var h3Underline: Bool = false
 
     // MARK: - Bold & italic
 
-    var boldColor: CodableColor = CodableColor(.labelColor)
-    var italicColor: CodableColor = CodableColor(.labelColor)
+    var boldColor: CodableColor = CodableColor(red: 0.8563, green: 0.5481, blue: 0.8177)
+    var italicColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
 
     // MARK: - Blockquotes
 
-    var quoteColor: CodableColor = CodableColor(.secondaryLabelColor)
+    var quoteColor: CodableColor = CodableColor(red: 0.2449, green: 0.7068, blue: 0.7484)
     var quoteBold: Bool = false
     var quoteItalic: Bool = true
     var quoteUnderline: Bool = false
 
     // MARK: - Code
 
-    var codeColor: CodableColor = CodableColor(.labelColor)
-    var codeBackgroundColor: CodableColor = CodableColor(.quaternaryLabelColor)
+    var codeColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
+    var codeBackgroundColor: CodableColor = CodableColor(red: 1, green: 1, blue: 1, alpha: 0.4012)
 
     // MARK: - Links / dividers
 
-    var dividerColor: CodableColor = CodableColor(.separatorColor)
+    var dividerColor: CodableColor = CodableColor(red: 0.3584, green: 0.4181, blue: 0.4885)
 
     // MARK: - Layout
 
-    var maxContentWidth: CGFloat = 700
+    var maxContentWidth: CGFloat = 890
 
     // MARK: - Codable
 

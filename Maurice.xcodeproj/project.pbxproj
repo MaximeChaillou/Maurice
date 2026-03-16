@@ -74,6 +74,12 @@
 		T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T101A102B103C104D105E106F /* CodableColorTests.swift */; };
 		T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T202A203B204C205D206E207F /* MarkdownThemeTests.swift */; };
 		T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T303A304B305C306D307E308F /* MarkdownStylingTests.swift */; };
+		VM01T001B001C001D001E001 /* TranscriptListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM01F001B001C001D001E001 /* TranscriptListViewModelTests.swift */; };
+		VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */; };
+		VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */; };
+		VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */; };
+		VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */; };
+		CS01B001C001D001E001F001 /* CalendarServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CS01F001C001D001E001F001 /* CalendarServiceProtocol.swift */; };
 		9005CB0D7E7A47ACA1723D96 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */; };
 		93A497FBDC9A461BBDC1B558 /* GoogleOAuthTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834D3E4E2FB74AA39316D24B /* GoogleOAuthTokenStore.swift */; };
 		8A763B6F00264839B4F3CAD8 /* GoogleCalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81AD12FE79304C27BE1C622E /* GoogleCalendarService.swift */; };
@@ -155,6 +161,12 @@
 		T101A102B103C104D105E106F /* CodableColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColorTests.swift; sourceTree = "<group>"; };
 		T202A203B204C205D206E207F /* MarkdownThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeTests.swift; sourceTree = "<group>"; };
 		T303A304B305C306D307E308F /* MarkdownStylingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStylingTests.swift; sourceTree = "<group>"; };
+		VM01F001B001C001D001E001 /* TranscriptListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptListViewModelTests.swift; sourceTree = "<group>"; };
+		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
+		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
+		VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModelTests.swift; sourceTree = "<group>"; };
+		VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModelTests.swift; sourceTree = "<group>"; };
+		CS01F001C001D001E001F001 /* CalendarServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarServiceProtocol.swift; sourceTree = "<group>"; };
 		TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MauriceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		834D3E4E2FB74AA39316D24B /* GoogleOAuthTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleOAuthTokenStore.swift; sourceTree = "<group>"; };
@@ -205,8 +217,13 @@
 			isa = PBXGroup;
 			children = (
 				T101A102B103C104D105E106F /* CodableColorTests.swift */,
+				VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */,
+				VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */,
 				T303A304B305C306D307E308F /* MarkdownStylingTests.swift */,
 				T202A203B204C205D206E207F /* MarkdownThemeTests.swift */,
+				VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */,
+				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
+				VM01F001B001C001D001E001 /* TranscriptListViewModelTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -248,6 +265,7 @@
 		67AB44D4E68896FDCF1C8876 /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				CS01F001C001D001E001F001 /* CalendarServiceProtocol.swift */,
 				D460FADEF7D4E0DC91E90DD0 /* LiveTranscriptionService.swift */,
 				14241F0FA37147C8A3048475 /* TranscriptionStorage.swift */,
 			);
@@ -603,6 +621,7 @@
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,
+				CS01B001C001D001E001F001 /* CalendarServiceProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,6 +632,11 @@
 				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
 				T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */,
 				T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */,
+				VM01T001B001C001D001E001 /* TranscriptListViewModelTests.swift in Sources */,
+				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
+				VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */,
+				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
+				VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
