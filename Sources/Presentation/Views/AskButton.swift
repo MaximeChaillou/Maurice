@@ -60,6 +60,16 @@ struct AskButton: View {
                         isExpanded = true
                     }
                 }
+            } else {
+                syncRunnerOutput()
+            }
+        }
+        .onChange(of: runner.outputLines.count) {
+            syncRunnerOutput()
+        }
+        .onChange(of: isExpanded) {
+            if isExpanded {
+                syncRunnerOutput()
             }
         }
     }
