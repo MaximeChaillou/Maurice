@@ -8,15 +8,15 @@ struct PersonDetailView: View {
     var recordingViewModel: RecordingViewModel?
     var skillRunner: SkillRunner?
 
-    @State private var evaluationsFiles: [FolderFile] = []
+    @State private var assessmentFiles: [FolderFile] = []
     @State private var objectifsFiles: [FolderFile] = []
-    @State private var evaluationIndex: Int = 0
+    @State private var assessmentIndex: Int = 0
     @State private var objectifIndex: Int = 0
-    @State private var isAddingEvaluation = false
+    @State private var isAddingAssessment = false
     @State private var isAddingObjectif = false
     @State private var newFileName = ""
-    @State private var showImportFiche = false
-    @State private var showImportEvaluation = false
+    @State private var showImportJobDesc = false
+    @State private var showImportAssessment = false
     @State private var showImportObjectif = false
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
@@ -33,22 +33,22 @@ struct PersonDetailView: View {
     @ViewBuilder
     private var sectionContent: some View {
         switch activeSection {
-        case .profil:
-            markdownFileEditor(fileName: "profil.md")
-        case .ficheDePoste:
-            ficheDePosteSection
+        case .profile:
+            markdownFileEditor(fileName: "profile.md")
+        case .jobDescription:
+            jobDescriptionSection
         case .oneOnOne:
             PersonOneOnOneView(personURL: personURL, markdownTheme: markdownTheme)
-        case .evaluations:
+        case .assessment:
             SubfolderNavigationView(
-                files: evaluationsFiles, index: $evaluationIndex,
-                isAdding: $isAddingEvaluation, newFileName: $newFileName,
+                files: assessmentFiles, index: $assessmentIndex,
+                isAdding: $isAddingAssessment, newFileName: $newFileName,
                 addLabel: "Nouvelle évaluation", emptyTitle: "Aucune évaluation",
                 emptyIcon: "checkmark.seal", markdownTheme: markdownTheme,
                 skillRunner: skillRunner,
-                subfolderURL: personURL.appendingPathComponent("evaluations", isDirectory: true),
-                onCreate: { createSubfolderFile(subfolder: "evaluations", isAdding: $isAddingEvaluation) },
-                onDelete: { deleteSubfolderFile($0, subfolder: "evaluations") }
+                subfolderURL: personURL.appendingPathComponent("assessment", isDirectory: true),
+                onCreate: { createSubfolderFile(subfolder: "assessment", isAdding: $isAddingAssessment) },
+                onDelete: { deleteSubfolderFile($0, subfolder: "assessment") }
             )
         case .objectifs:
             SubfolderNavigationView(
@@ -64,11 +64,11 @@ struct PersonDetailView: View {
         }
     }
 
-    // MARK: - Fiche de poste with import
+    // MARK: - Job description with import
 
     @ViewBuilder
-    private var ficheDePosteSection: some View {
-        let fileURL = personURL.appendingPathComponent("fiche-de-poste.md")
+    private var jobDescriptionSection: some View {
+        let fileURL = personURL.appendingPathComponent("job-description.md")
         let file = FolderFile(
             id: fileURL,
             name: fileURL.deletingPathExtension().lastPathComponent,
@@ -82,7 +82,7 @@ struct PersonDetailView: View {
                 HStack {
                     Spacer()
                     Button {
-                        showImportFiche = true
+                        showImportJobDesc = true
                     } label: {
                         Image(systemName: "square.and.arrow.down")
                             .frame(width: 32, height: 32)
@@ -91,11 +91,11 @@ struct PersonDetailView: View {
                     }
                     .buttonStyle(.plain)
                     .help("Importer un fichier ou un lien")
-                    .popover(isPresented: $showImportFiche) {
+                    .popover(isPresented: $showImportJobDesc) {
                         ImportDocumentView(
                             targetPath: fileURL.path,
                             runner: runner,
-                            onDismiss: { showImportFiche = false }
+                            onDismiss: { showImportJobDesc = false }
                         )
                     }
                 }
@@ -107,7 +107,7 @@ struct PersonDetailView: View {
 
             FolderFileEditorView(file: file, markdownTheme: markdownTheme)
         }
-        .id("fiche-de-poste.md")
+        .id("job-description.md")
     }
 
     // MARK: - Markdown file editor
@@ -131,9 +131,9 @@ struct PersonDetailView: View {
     private func loadSubfolders() {
         let url = personURL
         Task {
-            let evals = await Self.scanSubfolder("evaluations", in: url)
+            let evals = await Self.scanSubfolder("assessment", in: url)
             let objs = await Self.scanSubfolder("objectifs", in: url)
-            evaluationsFiles = evals
+            assessmentFiles = evals
             objectifsFiles = objs
         }
     }
@@ -165,8 +165,8 @@ struct PersonDetailView: View {
         newFileName = ""
         isAdding.wrappedValue = false
         loadSubfolders()
-        if subfolder == "evaluations" {
-            evaluationIndex = 0
+        if subfolder == "assessment" {
+            assessmentIndex = 0
         } else {
             objectifIndex = 0
         }
@@ -179,8 +179,8 @@ struct PersonDetailView: View {
             errorState?.show("Impossible de supprimer « \(file.name) » : \(error.localizedDescription)")
         }
         loadSubfolders()
-        if subfolder == "evaluations" {
-            evaluationIndex = min(evaluationIndex, max(evaluationsFiles.count - 1, 0))
+        if subfolder == "assessment" {
+            assessmentIndex = min(assessmentIndex, max(assessmentFiles.count - 1, 0))
         } else {
             objectifIndex = min(objectifIndex, max(objectifsFiles.count - 1, 0))
         }

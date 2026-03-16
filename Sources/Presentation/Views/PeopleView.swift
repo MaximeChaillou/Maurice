@@ -1,20 +1,20 @@
 import SwiftUI
 
 enum PersonSection: String, CaseIterable, Identifiable {
-    case profil = "Profil"
-    case ficheDePoste = "Fiche de poste"
+    case profile = "Profile"
+    case jobDescription = "Job description"
     case oneOnOne = "1-1"
-    case evaluations = "Évaluations"
+    case assessment = "Assessment"
     case objectifs = "Objectifs"
 
     var id: String { rawValue }
 
     var icon: String {
         switch self {
-        case .profil: "person.text.rectangle"
-        case .ficheDePoste: "doc.text"
+        case .profile: "person.text.rectangle"
+        case .jobDescription: "doc.text"
         case .oneOnOne: "person.2"
-        case .evaluations: "checkmark.seal"
+        case .assessment: "checkmark.seal"
         case .objectifs: "target"
         }
     }
@@ -28,7 +28,7 @@ struct PeopleView: View {
     @State var viewModel: FolderContentViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var selectedSection: PersonSection = .profil
+    @State private var selectedSection: PersonSection = .profile
 
     var body: some View {
         HStack(spacing: 0) {
@@ -51,7 +51,7 @@ struct PeopleView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onChange(of: viewModel.selectedFolder) {
-            selectedSection = .profil
+            selectedSection = .profile
             updateRecordingSubdirectory()
         }
         .onChange(of: selectedSection) {
@@ -224,19 +224,19 @@ struct PeopleView: View {
             await Task.detached {
                 let fm = FileManager.default
                 try? fm.createDirectory(at: personURL, withIntermediateDirectories: true)
-                for sub in ["1-1", "evaluations", "objectifs"] {
+                for sub in ["1-1", "assessment", "objectifs"] {
                     try? fm.createDirectory(
                         at: personURL.appendingPathComponent(sub, isDirectory: true),
                         withIntermediateDirectories: true
                     )
                 }
-                let profilURL = personURL.appendingPathComponent("profil.md")
-                if !fm.fileExists(atPath: profilURL.path) {
-                    try? "# \(name)\n".write(to: profilURL, atomically: true, encoding: .utf8)
+                let profileURL = personURL.appendingPathComponent("profile.md")
+                if !fm.fileExists(atPath: profileURL.path) {
+                    try? "# \(name)\n".write(to: profileURL, atomically: true, encoding: .utf8)
                 }
-                let ficheURL = personURL.appendingPathComponent("fiche-de-poste.md")
-                if !fm.fileExists(atPath: ficheURL.path) {
-                    fm.createFile(atPath: ficheURL.path, contents: nil)
+                let jobDescURL = personURL.appendingPathComponent("job-description.md")
+                if !fm.fileExists(atPath: jobDescURL.path) {
+                    fm.createFile(atPath: jobDescURL.path, contents: nil)
                 }
             }.value
             viewModel.loadFolders()
