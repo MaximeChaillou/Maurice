@@ -15,6 +15,7 @@ struct MauriceApp: App {
     @State private var showHome = true
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
+    private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
     init() {
         let storage = FileTranscriptionStorage()
@@ -90,17 +91,22 @@ struct MauriceApp: App {
                         .padding(.bottom, 25)
                 }
             }
-            .onAppear { transcriptListViewModel.load() }
+            .onAppear {
+                transcriptListViewModel.load()
+                fileWatcher.start()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+                meetingViewModel.loadFolders()
+                peopleViewModel.loadFolders()
+                transcriptListViewModel.load()
+                memoryListViewModel.reloadDirectory()
+            }
             .onChange(of: recordingViewModel.isRecording) {
                 if !recordingViewModel.isRecording {
                     transcriptListViewModel.load()
                 }
             }
             .onChange(of: appTheme) { appTheme.saveAsync() }
-            .onReceive(NotificationCenter.default.publisher(for: .skillRunnerDidFinish)) { _ in
-                transcriptListViewModel.load()
-                memoryListViewModel.reloadDirectory()
-            }
             .overlay {
                 if showSearch {
                     Color.black.opacity(0.3)

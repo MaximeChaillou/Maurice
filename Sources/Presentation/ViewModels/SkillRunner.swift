@@ -2,6 +2,7 @@ import Foundation
 
 extension Notification.Name {
     static let skillRunnerDidFinish = Notification.Name("skillRunnerDidFinish")
+    static let fileSystemDidChange = Notification.Name("fileSystemDidChange")
 }
 
 enum SkillOutputKind {

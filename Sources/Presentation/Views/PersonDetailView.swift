@@ -25,7 +25,7 @@ struct PersonDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear { loadSubfolders() }
             .onChange(of: activeSection) { loadSubfolders() }
-            .onReceive(NotificationCenter.default.publisher(for: .skillRunnerDidFinish)) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
                 loadSubfolders()
             }
     }
@@ -223,8 +223,8 @@ struct PersonOneOnOneView: View {
             }
         }
         .onAppear { loadEntries(); loadConfig() }
-        .onChange(of: skillRunner?.isRunning) {
-            if skillRunner?.isRunning == false { loadEntries() }
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            loadEntries()
         }
         .sheet(isPresented: $showConfigSheet) {
             if let runner = skillRunner {

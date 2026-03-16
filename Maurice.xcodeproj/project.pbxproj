@@ -22,6 +22,7 @@
 		353A6FD06F4DC65BEC7EDDE2 /* MemoryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */; };
 		394DDF521823D93365BDBA2D /* BlockEditField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8812AF3486581942678C1ABE /* BlockEditField.swift */; };
 		3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */; };
+		FW01FW02FW03FW04FW05FW06 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FW11FW12FW13FW14FW15FW16 /* FileWatcher.swift */; };
 		59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14241F0FA37147C8A3048475 /* TranscriptionStorage.swift */; };
 		6071ADB5BD2B81A0FB03B264 /* TranscriptionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */; };
 		6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444945559552A66796B66A73 /* Assets.xcassets */; };
@@ -109,6 +110,7 @@
 		BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
 		RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingContext.swift; sourceTree = "<group>"; };
 		C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTranscriptionStorage.swift; sourceTree = "<group>"; };
+		FW11FW12FW13FW14FW15FW16 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
 		C77A2B4E42762CB9B33B85A0 /* AudioLevelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLevelBuffer.swift; sourceTree = "<group>"; };
 		D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleScrollTransition.swift; sourceTree = "<group>"; };
 		D3BB87B902BB488323B85563 /* StoredTranscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTranscript.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 			isa = PBXGroup;
 			children = (
 				C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */,
+				FW11FW12FW13FW14FW15FW16 /* FileWatcher.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -534,6 +537,7 @@
 				E1EE8116314F840B3C8FE1A0 /* BubbleScrollTransition.swift in Sources */,
 				C38E3C07DF3155E5019E2EC1 /* BubbleView.swift in Sources */,
 				3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */,
+				FW01FW02FW03FW04FW05FW06 /* FileWatcher.swift in Sources */,
 				9005CB0D7E7A47ACA1723D96 /* KeychainHelper.swift in Sources */,
 				93A497FBDC9A461BBDC1B558 /* GoogleOAuthTokenStore.swift in Sources */,
 				8A763B6F00264839B4F3CAD8 /* GoogleCalendarService.swift in Sources */,

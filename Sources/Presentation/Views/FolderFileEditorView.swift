@@ -23,20 +23,14 @@ struct FolderFileEditorView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     @State private var bodyText: String = ""
+    @State private var lastSaveDate = Date.distantPast
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
-            .onAppear {
-                let url = file.url
-                Task {
-                    let text = await Task.detached {
-                        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                    }.value
-                    bodyText = text
-                }
-            }
+            .onAppear { loadFile() }
             .onChange(of: bodyText) {
+                lastSaveDate = Date()
                 let text = bodyText
                 let url = file.url
                 let errorState = errorState
@@ -48,5 +42,21 @@ struct FolderFileEditorView: View {
                     }
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+                guard Date().timeIntervalSince(lastSaveDate) > 2.0 else { return }
+                loadFile()
+            }
+    }
+
+    private func loadFile() {
+        let url = file.url
+        Task {
+            let text = await Task.detached {
+                (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+            }.value
+            if text != bodyText {
+                bodyText = text
+            }
+        }
     }
 }

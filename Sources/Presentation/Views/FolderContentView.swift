@@ -53,12 +53,10 @@ struct FolderContentView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onAppear { viewModel.loadFolders() }
-        .onChange(of: skillRunner?.isRunning) {
-            if skillRunner?.isRunning == false {
-                viewModel.loadFolders()
-                if let folder = viewModel.currentFolder {
-                    viewModel.selectFileAtIndex(in: folder)
-                }
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            viewModel.loadFolders()
+            if let folder = viewModel.currentFolder {
+                viewModel.selectFileAtIndex(in: folder)
             }
         }
     }

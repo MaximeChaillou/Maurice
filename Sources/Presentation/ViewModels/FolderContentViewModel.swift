@@ -39,14 +39,15 @@ final class FolderContentViewModel {
             let contents = DirectoryScanner.scan(at: dir)
             let storage = FileTranscriptionStorage()
 
-            return contents.folders.compactMap { folder -> FolderItem? in
+            return contents.folders.map { folder in
                 let files = Self.scanFiles(in: folder.url)
                 let dateEntries = Self.scanDateEntries(in: folder.url, storage: storage)
-                guard !files.isEmpty || !dateEntries.isEmpty else { return nil }
                 let icon = MeetingConfig.load(from: folder.url).icon
                 return FolderItem(name: folder.name, url: folder.url, files: files, dateEntries: dateEntries, icon: icon)
             }
-            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+            .sorted { (a: FolderItem, b: FolderItem) in
+                a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+            }
         }.value
 
         folders = result
