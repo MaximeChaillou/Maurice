@@ -440,12 +440,16 @@ extension MarkdownCoordinator {
         let line = nsText.substring(with: lineRange)
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ") || trimmed.hasPrefix("- [ ] ") else { return }
+        let isChecked = trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ")
+            || trimmed.hasPrefix("- [x]\u{00A0}") || trimmed.hasPrefix("- [X]\u{00A0}")
+        let isUnchecked = trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("- [\u{00A0}] ")
+            || trimmed.hasPrefix("- [ ]\u{00A0}") || trimmed.hasPrefix("- [\u{00A0}]\u{00A0}")
+        guard isChecked || isUnchecked else { return }
 
         let bracketContent = charIndex + 3
         let replaceRange = NSRange(location: bracketContent, length: 1)
 
-        if trimmed.hasPrefix("- [ ] ") {
+        if isUnchecked {
             storage.replaceCharacters(in: replaceRange, with: "x")
         } else {
             storage.replaceCharacters(in: replaceRange, with: " ")

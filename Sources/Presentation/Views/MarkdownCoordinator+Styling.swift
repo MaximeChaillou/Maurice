@@ -58,9 +58,11 @@ extension MarkdownCoordinator {
             styleHeading(storage: storage, trimmed: trimmed, range: range, offset: offset, active: active)
         } else if trimmed.hasPrefix("> ") {
             styleBlockquote(storage: storage, range: range, offset: offset, leading: leading, active: active)
-        } else if trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ") {
+        } else if trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ")
+                    || trimmed.hasPrefix("- [x]\u{00A0}") || trimmed.hasPrefix("- [X]\u{00A0}") {
             styleCheckedItem(storage: storage, range: range, offset: offset, leading: leading, active: active)
-        } else if trimmed.hasPrefix("- [ ] ") {
+        } else if trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("- [\u{00A0}] ")
+                    || trimmed.hasPrefix("- [ ]\u{00A0}") || trimmed.hasPrefix("- [\u{00A0}]\u{00A0}") {
             styleUncheckedItem(storage: storage, range: range, offset: offset, leading: leading, active: active)
         } else if trimmed.hasPrefix("- ") {
             styleBullet(storage: storage, range: range, offset: offset, leading: leading, active: active)
