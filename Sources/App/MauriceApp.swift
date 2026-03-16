@@ -141,6 +141,7 @@ struct MauriceApp: App {
             .withErrorBanner()
         }
         .defaultSize(width: 1100, height: 700)
+        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .appSettings) {
                 SettingsMenuButton()
