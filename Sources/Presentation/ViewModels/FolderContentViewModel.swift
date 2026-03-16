@@ -169,8 +169,13 @@ final class FolderContentViewModel {
             }
         }
 
+        let dateParser = DateFormatter()
+        dateParser.dateFormat = "yyyy-MM-dd"
+        dateParser.locale = Locale(identifier: "en_US_POSIX")
+
         return dateMap.map { key, value in
-            let date = value.note?.date ?? value.transcript?.date ?? Date.distantPast
+            let date = dateParser.date(from: key)
+                ?? value.note?.date ?? value.transcript?.date ?? Date.distantPast
             return MeetingDateEntry(
                 dateString: key,
                 date: date,
