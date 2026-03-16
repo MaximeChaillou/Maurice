@@ -12,7 +12,6 @@ struct MauriceApp: App {
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
-    @State private var showHome = true
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
@@ -51,24 +50,24 @@ struct MauriceApp: App {
             ZStack {
                 WaveBackground(
                     hue: appTheme.hue(for: coordinator.activeTab),
-                    saturation: showHome ? 0 : 1
+                    saturation: coordinator.showHome ? 0 : 1
                 )
                 .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
-                .animation(.easeInOut(duration: 0.6), value: showHome)
+                .animation(.easeInOut(duration: 0.6), value: coordinator.showHome)
 
                 VStack(spacing: 0) {
                     FloatingTabBar(
                         activeTab: $coordinator.activeTab,
-                        isHomeActive: showHome,
-                        onHomeTap: { showHome = true },
-                        onTabTap: { showHome = false },
+                        isHomeActive: coordinator.showHome,
+                        onHomeTap: { coordinator.showHome = true },
+                        onTabTap: { coordinator.showHome = false },
                         onSearchTap: { showSearch = true }
                     )
                         .padding(.top, 12)
                         .padding(.bottom, 8)
 
                     Group {
-                        if showHome {
+                        if coordinator.showHome {
                             HomeView(calendarViewModel: calendarViewModel)
                         } else {
                             tabContent

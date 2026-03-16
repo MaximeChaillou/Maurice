@@ -119,36 +119,35 @@ final class MarkdownThemeTests: XCTestCase {
         XCTAssertNotEqual(a, b)
     }
 
-    // MARK: - Persistence URL
+    // MARK: - AppTheme persistence URL
 
-    func testPersistenceURL() {
-        let url = MarkdownTheme.persistenceURL
+    func testAppThemePersistenceURL() {
+        let url = AppTheme.persistenceURL
         XCTAssertTrue(url.lastPathComponent == "theme.json")
     }
 
-    // MARK: - Save / Load roundtrip (PersistentCodable)
+    // MARK: - AppTheme Save / Load roundtrip
 
-    func testSaveAndLoad() {
-        var theme = MarkdownTheme()
-        theme.fontName = "TestFont_SaveLoad"
-        theme.save()
+    func testAppThemeSaveAndLoad() {
+        var appTheme = AppTheme.load()
+        appTheme.markdown.fontName = "TestFont_SaveLoad"
+        appTheme.save()
 
-        let loaded = MarkdownTheme.load()
-        XCTAssertEqual(loaded.fontName, "TestFont_SaveLoad")
+        let loaded = AppTheme.load()
+        XCTAssertEqual(loaded.markdown.fontName, "TestFont_SaveLoad")
 
         // Restore defaults
-        var defaults = MarkdownTheme()
+        let defaults = AppTheme()
         defaults.save()
     }
 
-    func testLoadMissingFileReturnsDefault() {
-        // Temporarily break the file
-        let url = MarkdownTheme.persistenceURL
+    func testAppThemeLoadMissingFileReturnsDefault() {
+        let url = AppTheme.persistenceURL
         let backup = try? Data(contentsOf: url)
         try? FileManager.default.removeItem(at: url)
 
-        let loaded = MarkdownTheme.load()
-        XCTAssertEqual(loaded.fontName, "System")
+        let loaded = AppTheme.load()
+        XCTAssertEqual(loaded.markdown.fontName, "System")
 
         // Restore
         if let backup { try? backup.write(to: url) }

@@ -9,6 +9,7 @@ enum AppTab: String, CaseIterable {
 @MainActor @Observable
 final class NavigationCoordinator {
     var activeTab: AppTab = .meeting
+    var showHome: Bool = true
 
     // Per-tab selection (preserves open file when switching tabs)
     var selectedMeeting: String?

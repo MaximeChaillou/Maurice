@@ -34,12 +34,13 @@ final class RecordingContext {
             if let event = await calendarViewModel.currentEvent() {
                 if let linked = await findLinkedFolder(for: event) {
                     recordingViewModel.subdirectory = linked
+                    navigateToSubdirectory(linked)
                 } else {
                     let created = meetingViewModel.createFolderWithName(event.summary)
                     await writeFrontmatter(for: event, in: created)
                     recordingViewModel.subdirectory = created
+                    navigateToMeeting(created)
                 }
-                navigationCoordinator.activeTab = .meeting
             } else if navigationCoordinator.activeTab == .meeting,
                       let folder = meetingViewModel.selectedFolder {
                 recordingViewModel.subdirectory = folder
@@ -52,10 +53,34 @@ final class RecordingContext {
                 let name = "Enregistrement \(formatter.string(from: Date()))"
                 let created = meetingViewModel.createFolderWithName(name)
                 recordingViewModel.subdirectory = created
-                navigationCoordinator.activeTab = .meeting
+                navigateToMeeting(created)
             }
 
+            navigationCoordinator.showHome = false
+
             recordingViewModel.toggleRecording()
+        }
+    }
+
+    // MARK: - Navigation
+
+    private func navigateToMeeting(_ folderName: String) {
+        navigationCoordinator.activeTab = .meeting
+        meetingViewModel.loadFolders()
+        meetingViewModel.selectedFolder = folderName
+    }
+
+    private func navigateToSubdirectory(_ subdirectory: String) {
+        if subdirectory.hasPrefix("People/") {
+            let parts = subdirectory.split(separator: "/")
+            if parts.count >= 2 {
+                let personName = String(parts[1])
+                navigationCoordinator.activeTab = .people
+                peopleViewModel.loadFolders()
+                peopleViewModel.selectedFolder = personName
+            }
+        } else {
+            navigateToMeeting(subdirectory)
         }
     }
 
