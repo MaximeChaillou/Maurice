@@ -5,7 +5,7 @@ final class FileWatcher {
     private let path: String
     private let debounceInterval: TimeInterval
 
-    init(path: String, debounceInterval: TimeInterval = 1.0) {
+    init(path: String, debounceInterval: TimeInterval = 2.0) {
         self.path = path
         self.debounceInterval = debounceInterval
     }

@@ -12,6 +12,7 @@ struct MauriceApp: App {
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
+    @State private var lastFileSystemReload = Date.distantPast
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
@@ -95,6 +96,9 @@ struct MauriceApp: App {
                 fileWatcher.start()
             }
             .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+                let now = Date()
+                guard now.timeIntervalSince(lastFileSystemReload) > 2.0 else { return }
+                lastFileSystemReload = now
                 meetingViewModel.loadFolders()
                 peopleViewModel.loadFolders()
                 transcriptListViewModel.load()
