@@ -185,6 +185,9 @@ enum GoogleCalendarService {
             let end = parseEventDate(endDict)
             guard let start, let end else { continue }
 
+            let organizerEmail = (item["organizer"] as? [String: Any])?["email"] as? String
+            if organizerEmail == "invite@pictarine.com" { continue }
+
             let attendees = parseAcceptedAttendees(item)
             events.append(GoogleCalendarEvent(id: id, summary: summary, start: start, end: end, attendees: attendees))
             if events.count >= limit { break }
