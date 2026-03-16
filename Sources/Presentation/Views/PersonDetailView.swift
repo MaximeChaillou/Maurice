@@ -38,7 +38,11 @@ struct PersonDetailView: View {
         case .jobDescription:
             jobDescriptionSection
         case .oneOnOne:
-            PersonOneOnOneView(personURL: personURL, markdownTheme: markdownTheme)
+            PersonOneOnOneView(
+                personURL: personURL,
+                markdownTheme: markdownTheme,
+                skillRunner: skillRunner
+            )
         case .assessment:
             SubfolderNavigationView(
                 files: assessmentFiles, index: $assessmentIndex,
@@ -192,34 +196,62 @@ struct PersonDetailView: View {
 struct PersonOneOnOneView: View {
     let personURL: URL
     var markdownTheme: MarkdownTheme = MarkdownTheme()
+    var skillRunner: SkillRunner?
 
     @State private var entries: [MeetingDateEntry] = []
-    @State private var showTranscripts = false
+    @State private var meetingConfig = MeetingConfig()
     @State private var index: Int = 0
+    @State private var showTranscripts = false
+    @State private var showConfigSheet = false
     @State private var entryDeleteAction: EntryDeleteAction?
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
+    private var oneOnOneDir: URL {
+        personURL.appendingPathComponent("1-1", isDirectory: true)
+    }
+
     var body: some View {
-        if entries.isEmpty {
-            ContentUnavailableView(
-                "Aucun 1-1",
-                systemImage: "person.2",
-                description: Text("Lancez un enregistrement pour créer un 1-1.")
-            )
-            .onAppear { loadEntries() }
-        } else {
-            dateNavigation(entries: entries)
-                .onAppear { loadEntries() }
+        Group {
+            if entries.isEmpty {
+                ContentUnavailableView(
+                    "Aucun 1-1",
+                    systemImage: "person.2",
+                    description: Text("Lancez un enregistrement pour créer un 1-1.")
+                )
+            } else {
+                dateNavigationDetail
+            }
+        }
+        .onAppear { loadEntries(); loadConfig() }
+        .onChange(of: skillRunner?.isRunning) {
+            if skillRunner?.isRunning == false { loadEntries() }
+        }
+        .sheet(isPresented: $showConfigSheet) {
+            if let runner = skillRunner {
+                MeetingConfigSheet(
+                    folderName: "1-1",
+                    folderURL: oneOnOneDir,
+                    config: $meetingConfig,
+                    runner: runner
+                )
+                .frame(width: 400, height: 500)
+            }
         }
     }
 
+    // MARK: - Data loading
+
     private func loadEntries() {
-        let dir = personURL.appendingPathComponent("1-1", isDirectory: true)
+        let dir = oneOnOneDir
         Task {
             let result = await Task.detached {
                 let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
                 let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
                 let storage = FileTranscriptionStorage()
+                let dateParser = DateFormatter()
+                dateParser.dateFormat = "yyyy-MM-dd"
+                dateParser.locale = Locale(identifier: "en_US_POSIX")
+
                 var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
 
                 for file in mdFiles {
@@ -234,7 +266,8 @@ struct PersonOneOnOneView: View {
                     }
                 }
                 return dateMap.map { key, value in
-                    let date = value.note?.date ?? value.transcript?.date ?? Date.distantPast
+                    let date = dateParser.date(from: key)
+                        ?? value.note?.date ?? value.transcript?.date ?? Date.distantPast
                     return MeetingDateEntry(dateString: key, date: date, noteFile: value.note, transcript: value.transcript)
                 }
                 .sorted { (a: MeetingDateEntry, b: MeetingDateEntry) in
@@ -245,84 +278,101 @@ struct PersonOneOnOneView: View {
         }
     }
 
-    private func dateNavigation(entries: [MeetingDateEntry]) -> some View {
+    private func loadConfig() {
+        let dir = oneOnOneDir
+        Task {
+            meetingConfig = await Task.detached { MeetingConfig.load(from: dir) }.value
+        }
+    }
+
+    // MARK: - Date navigation
+
+    private var dateNavigationDetail: some View {
         let safeIndex = min(index, entries.count - 1)
         let entry = entries[max(safeIndex, 0)]
 
         return VStack(spacing: 0) {
             dateHeader(entry: entry, totalEntries: entries.count)
-                .alert(
-                    "Supprimer ?",
-                    isPresented: Binding(
-                        get: { entryDeleteAction != nil },
-                        set: { if !$0 { entryDeleteAction = nil } }
-                    )
-                ) {
-                    Button("Annuler", role: .cancel) { entryDeleteAction = nil }
-                    Button("Supprimer", role: .destructive) {
-                        if let action = entryDeleteAction {
-                            performDelete(action)
-                            entryDeleteAction = nil
-                        }
-                    }
-                } message: {
-                    if let action = entryDeleteAction { Text(action.message) }
-                }
-
             Divider()
-            entryContent(for: entry)
+
+            if showTranscripts, let transcript = entry.transcript {
+                TranscriptDetailView(transcript: transcript).id(transcript.id)
+            } else if let file = entry.noteFile {
+                FolderFileEditorView(file: file, markdownTheme: markdownTheme).id(file.id)
+            } else if let transcript = entry.transcript {
+                TranscriptDetailView(transcript: transcript).id(transcript.id)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: index) { showTranscripts = false }
+        .alert(
+            "Supprimer ?",
+            isPresented: Binding(
+                get: { entryDeleteAction != nil },
+                set: { if !$0 { entryDeleteAction = nil } }
+            )
+        ) {
+            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
+            Button("Supprimer", role: .destructive) {
+                if let action = entryDeleteAction {
+                    performDelete(action)
+                    entryDeleteAction = nil
+                }
+            }
+        } message: {
+            if let action = entryDeleteAction { Text(action.message) }
+        }
     }
 
     private func dateHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
-        HStack {
-            Button {
-                if index < totalEntries - 1 { index += 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
+        VStack(spacing: 4) {
+            HStack {
+                Button {
+                    if index < totalEntries - 1 { index += 1 }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Circle())
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .interactiveHover()
+                .disabled(index >= totalEntries - 1)
+
+                Spacer()
+                Text(entry.date, format: .dateTime.day().month(.wide).year()).font(.headline)
+                Spacer()
+
+                Button {
+                    if index > 0 { index -= 1 }
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Circle())
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .buttonStyle(.plain)
+                .interactiveHover()
+                .disabled(index <= 0)
             }
-            .buttonStyle(.plain)
-            .disabled(index >= totalEntries - 1)
 
-            Spacer()
-            Text(entry.date, format: .dateTime.day().month(.wide).year()).font(.headline)
-            Spacer()
-
-            Button {
-                if index > 0 { index -= 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
+            HStack(spacing: 8) {
+                Spacer()
+                transcriptToggleButton(for: entry)
+                if skillRunner != nil {
+                    runActionsMenu
+                    configToggleButton
+                }
+                entryActionsMenu(for: entry)
             }
-            .buttonStyle(.plain)
-            .disabled(index <= 0)
-
-            transcriptToggle(for: entry)
-            entryMenu(for: entry)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
 
-    @ViewBuilder
-    private func entryContent(for entry: MeetingDateEntry) -> some View {
-        if showTranscripts, let transcript = entry.transcript {
-            TranscriptDetailView(transcript: transcript).id(transcript.id)
-        } else if let file = entry.noteFile {
-            FolderFileEditorView(file: file, markdownTheme: markdownTheme).id(file.id)
-        } else if let transcript = entry.transcript {
-            TranscriptDetailView(transcript: transcript).id(transcript.id)
-        }
-    }
+    // MARK: - Actions
 
-    private func transcriptToggle(for entry: MeetingDateEntry) -> some View {
+    private func transcriptToggleButton(for entry: MeetingDateEntry) -> some View {
         let canToggle = entry.hasNote && entry.hasTranscript
         return Button {
             withAnimation(.easeInOut(duration: 0.2)) { showTranscripts.toggle() }
@@ -331,14 +381,66 @@ struct PersonOneOnOneView: View {
                 .font(.body)
                 .frame(width: 32, height: 32)
                 .contentShape(Circle())
-                .glassEffect(.regular.interactive(), in: .circle)
                 .opacity(canToggle ? 1.0 : 0.3)
         }
         .buttonStyle(.plain)
+        .interactiveHover()
         .disabled(!canToggle)
     }
 
-    private func entryMenu(for entry: MeetingDateEntry) -> some View {
+    @ViewBuilder
+    private var runActionsMenu: some View {
+        let actions = meetingConfig.actions
+        if let runner = skillRunner, !actions.isEmpty {
+            Menu {
+                ForEach(actions) { action in
+                    Button {
+                        guard !runner.isRunning else { return }
+                        runner.actionID = action.id
+                        runner.run(
+                            skillFilename: action.skillFilename,
+                            buttonName: action.buttonName,
+                            parameter: action.parameter,
+                            workingDirectory: AppSettings.rootDirectory
+                        )
+                    } label: {
+                        Label(action.buttonName, systemImage: "play.fill")
+                    }
+                    .disabled(runner.isRunning)
+                }
+            } label: {
+                ZStack {
+                    if let runner = skillRunner, runner.isRunning {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Image(systemName: "play.fill").font(.body)
+                    }
+                }
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .frame(width: 32, height: 32)
+            .interactiveHover()
+        }
+    }
+
+    private var configToggleButton: some View {
+        Button {
+            showConfigSheet = true
+        } label: {
+            Image(systemName: "gearshape")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .interactiveHover()
+    }
+
+    private func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
         Menu {
             if entry.hasNote {
                 Button(role: .destructive) { entryDeleteAction = .note(entry) } label: {
@@ -363,10 +465,10 @@ struct PersonOneOnOneView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .frame(width: 32, height: 32)
+        .interactiveHover()
     }
 
     private func performDelete(_ action: EntryDeleteAction) {
@@ -384,5 +486,6 @@ struct PersonOneOnOneView: View {
         } catch {
             errorState?.show("Impossible de supprimer : \(error.localizedDescription)")
         }
+        loadEntries()
     }
 }

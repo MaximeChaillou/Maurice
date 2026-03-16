@@ -129,26 +129,39 @@ enum GoogleCalendarService {
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
         let items = json["items"] as? [[String: Any]] ?? []
 
+        // Collect all current/upcoming events, then pick the best match
+        var candidates: [(event: GoogleCalendarEvent, start: Date)] = []
+
         for item in items {
             guard let summary = item["summary"] as? String,
                   let id = item["id"] as? String,
                   let startDict = item["start"] as? [String: Any],
                   let endDict = item["end"] as? [String: Any] else { continue }
 
+            // Skip all-day events
+            if startDict["date"] != nil { continue }
+
+            let organizerEmail = (item["organizer"] as? [String: Any])?["email"] as? String
+            if organizerEmail == "invite@pictarine.com" { continue }
+
             let start = parseEventDate(startDict)
             let end = parseEventDate(endDict)
 
             guard let start, let end else { continue }
 
-            // Event must have started (up to 5 min in the future) and not yet ended
+            // Event must have started (or start within 5 min) and not yet ended
             if start <= fiveMinutesFromNow && end > now {
                 let sanitized = sanitizeFolderName(summary)
                 let attendees = parseAcceptedAttendees(item)
-                return GoogleCalendarEvent(id: id, summary: sanitized, start: start, end: end, attendees: attendees)
+                let event = GoogleCalendarEvent(id: id, summary: sanitized, start: start, end: end, attendees: attendees)
+                candidates.append((event, start))
             }
         }
 
-        return nil
+        // Prefer the event with the closest start time to now
+        return candidates
+            .min { abs($0.start.timeIntervalSince(now)) < abs($1.start.timeIntervalSince(now)) }?
+            .event
     }
 
     static func fetchUpcomingEvents(accessToken: String, limit: Int = 5) async throws -> [GoogleCalendarEvent] {

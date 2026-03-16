@@ -64,19 +64,33 @@ final class RecordingContext {
     nonisolated private func findLinkedFolder(for event: GoogleCalendarEvent) async -> String? {
         await Task.detached {
             let fm = FileManager.default
+
+            // Search in Meetings
             let meetingsDir = AppSettings.meetingsDirectory
-            guard let folders = try? fm.contentsOfDirectory(
-                at: meetingsDir, includingPropertiesForKeys: nil
-            ) else {
-                return nil
-            }
-            for folder in folders where folder.hasDirectoryPath {
-                let config = MeetingConfig.load(from: folder)
-                if let linkedName = config.calendarEventName,
-                   linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
-                    return folder.lastPathComponent
+            if let folders = try? fm.contentsOfDirectory(at: meetingsDir, includingPropertiesForKeys: nil) {
+                for folder in folders where folder.hasDirectoryPath {
+                    let config = MeetingConfig.load(from: folder)
+                    if let linkedName = config.calendarEventName,
+                       linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
+                        return folder.lastPathComponent
+                    }
                 }
             }
+
+            // Search in People/*/1-1
+            let peopleDir = AppSettings.peopleDirectory
+            if let people = try? fm.contentsOfDirectory(at: peopleDir, includingPropertiesForKeys: nil) {
+                for person in people where person.hasDirectoryPath {
+                    let oneOnOneDir = person.appendingPathComponent("1-1", isDirectory: true)
+                    guard fm.fileExists(atPath: oneOnOneDir.path) else { continue }
+                    let config = MeetingConfig.load(from: oneOnOneDir)
+                    if let linkedName = config.calendarEventName,
+                       linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
+                        return "People/\(person.lastPathComponent)/1-1"
+                    }
+                }
+            }
+
             return nil
         }.value
     }
