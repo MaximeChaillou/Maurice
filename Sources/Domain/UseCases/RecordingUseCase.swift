@@ -22,10 +22,6 @@ final class RecordingUseCase: Sendable {
         try await transcription.startTranscription()
     }
 
-    func startRecording(fromFileURL fileURL: URL) async throws -> AsyncStream<TranscriptionEvent> {
-        try await transcription.startTranscription(fromFileURL: fileURL)
-    }
-
     func beginLiveSession(startDate: Date, subdirectory: String? = nil) throws -> URL {
         try storage.beginLiveSession(startDate: startDate, subdirectory: subdirectory)
     }

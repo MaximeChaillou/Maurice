@@ -66,35 +66,43 @@ struct MarkdownTheme: Codable, Equatable {
     init(from decoder: Decoder) throws {
         let defaults = MarkdownTheme()
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        backgroundColor = try c.decodeIfPresent(CodableColor.self, forKey: .backgroundColor) ?? defaults.backgroundColor
-        fontName = try c.decodeIfPresent(String.self, forKey: .fontName) ?? defaults.fontName
-        baseFontSize = try c.decodeIfPresent(CGFloat.self, forKey: .baseFontSize) ?? defaults.baseFontSize
-        bodyColor = try c.decodeIfPresent(CodableColor.self, forKey: .bodyColor) ?? defaults.bodyColor
-        h1Color = try c.decodeIfPresent(CodableColor.self, forKey: .h1Color) ?? defaults.h1Color
-        h1FontSize = try c.decodeIfPresent(CGFloat.self, forKey: .h1FontSize) ?? defaults.h1FontSize
-        h1Bold = try c.decodeIfPresent(Bool.self, forKey: .h1Bold) ?? defaults.h1Bold
-        h1Italic = try c.decodeIfPresent(Bool.self, forKey: .h1Italic) ?? defaults.h1Italic
-        h1Underline = try c.decodeIfPresent(Bool.self, forKey: .h1Underline) ?? defaults.h1Underline
-        h2Color = try c.decodeIfPresent(CodableColor.self, forKey: .h2Color) ?? defaults.h2Color
-        h2FontSize = try c.decodeIfPresent(CGFloat.self, forKey: .h2FontSize) ?? defaults.h2FontSize
-        h2Bold = try c.decodeIfPresent(Bool.self, forKey: .h2Bold) ?? defaults.h2Bold
-        h2Italic = try c.decodeIfPresent(Bool.self, forKey: .h2Italic) ?? defaults.h2Italic
-        h2Underline = try c.decodeIfPresent(Bool.self, forKey: .h2Underline) ?? defaults.h2Underline
-        h3Color = try c.decodeIfPresent(CodableColor.self, forKey: .h3Color) ?? defaults.h3Color
-        h3FontSize = try c.decodeIfPresent(CGFloat.self, forKey: .h3FontSize) ?? defaults.h3FontSize
-        h3Bold = try c.decodeIfPresent(Bool.self, forKey: .h3Bold) ?? defaults.h3Bold
-        h3Italic = try c.decodeIfPresent(Bool.self, forKey: .h3Italic) ?? defaults.h3Italic
-        h3Underline = try c.decodeIfPresent(Bool.self, forKey: .h3Underline) ?? defaults.h3Underline
-        boldColor = try c.decodeIfPresent(CodableColor.self, forKey: .boldColor) ?? defaults.boldColor
-        italicColor = try c.decodeIfPresent(CodableColor.self, forKey: .italicColor) ?? defaults.italicColor
-        quoteColor = try c.decodeIfPresent(CodableColor.self, forKey: .quoteColor) ?? defaults.quoteColor
-        quoteBold = try c.decodeIfPresent(Bool.self, forKey: .quoteBold) ?? defaults.quoteBold
-        quoteItalic = try c.decodeIfPresent(Bool.self, forKey: .quoteItalic) ?? defaults.quoteItalic
-        quoteUnderline = try c.decodeIfPresent(Bool.self, forKey: .quoteUnderline) ?? defaults.quoteUnderline
-        codeColor = try c.decodeIfPresent(CodableColor.self, forKey: .codeColor) ?? defaults.codeColor
-        codeBackgroundColor = try c.decodeIfPresent(CodableColor.self, forKey: .codeBackgroundColor) ?? defaults.codeBackgroundColor
-        dividerColor = try c.decodeIfPresent(CodableColor.self, forKey: .dividerColor) ?? defaults.dividerColor
-        maxContentWidth = try c.decodeIfPresent(CGFloat.self, forKey: .maxContentWidth) ?? defaults.maxContentWidth
+        backgroundColor = try c.valueOrDefault(forKey: .backgroundColor, default: defaults.backgroundColor)
+        fontName = try c.valueOrDefault(forKey: .fontName, default: defaults.fontName)
+        baseFontSize = try c.valueOrDefault(forKey: .baseFontSize, default: defaults.baseFontSize)
+        bodyColor = try c.valueOrDefault(forKey: .bodyColor, default: defaults.bodyColor)
+        h1Color = try c.valueOrDefault(forKey: .h1Color, default: defaults.h1Color)
+        h1FontSize = try c.valueOrDefault(forKey: .h1FontSize, default: defaults.h1FontSize)
+        h1Bold = try c.valueOrDefault(forKey: .h1Bold, default: defaults.h1Bold)
+        h1Italic = try c.valueOrDefault(forKey: .h1Italic, default: defaults.h1Italic)
+        h1Underline = try c.valueOrDefault(forKey: .h1Underline, default: defaults.h1Underline)
+        h2Color = try c.valueOrDefault(forKey: .h2Color, default: defaults.h2Color)
+        h2FontSize = try c.valueOrDefault(forKey: .h2FontSize, default: defaults.h2FontSize)
+        h2Bold = try c.valueOrDefault(forKey: .h2Bold, default: defaults.h2Bold)
+        h2Italic = try c.valueOrDefault(forKey: .h2Italic, default: defaults.h2Italic)
+        h2Underline = try c.valueOrDefault(forKey: .h2Underline, default: defaults.h2Underline)
+        h3Color = try c.valueOrDefault(forKey: .h3Color, default: defaults.h3Color)
+        h3FontSize = try c.valueOrDefault(forKey: .h3FontSize, default: defaults.h3FontSize)
+        h3Bold = try c.valueOrDefault(forKey: .h3Bold, default: defaults.h3Bold)
+        h3Italic = try c.valueOrDefault(forKey: .h3Italic, default: defaults.h3Italic)
+        h3Underline = try c.valueOrDefault(forKey: .h3Underline, default: defaults.h3Underline)
+        boldColor = try c.valueOrDefault(forKey: .boldColor, default: defaults.boldColor)
+        italicColor = try c.valueOrDefault(forKey: .italicColor, default: defaults.italicColor)
+        quoteColor = try c.valueOrDefault(forKey: .quoteColor, default: defaults.quoteColor)
+        quoteBold = try c.valueOrDefault(forKey: .quoteBold, default: defaults.quoteBold)
+        quoteItalic = try c.valueOrDefault(forKey: .quoteItalic, default: defaults.quoteItalic)
+        quoteUnderline = try c.valueOrDefault(forKey: .quoteUnderline, default: defaults.quoteUnderline)
+        codeColor = try c.valueOrDefault(forKey: .codeColor, default: defaults.codeColor)
+        codeBackgroundColor = try c.valueOrDefault(forKey: .codeBackgroundColor, default: defaults.codeBackgroundColor)
+        dividerColor = try c.valueOrDefault(forKey: .dividerColor, default: defaults.dividerColor)
+        maxContentWidth = try c.valueOrDefault(forKey: .maxContentWidth, default: defaults.maxContentWidth)
+    }
+}
+
+// MARK: - Defensive Decoding Helper
+
+extension KeyedDecodingContainer {
+    func valueOrDefault<T: Decodable>(forKey key: Key, default defaultValue: T) throws -> T {
+        try decodeIfPresent(T.self, forKey: key) ?? defaultValue
     }
 }
 

@@ -48,9 +48,7 @@ final class RecordingContext {
                       let person = peopleViewModel.selectedFolder {
                 recordingViewModel.subdirectory = "People/\(person)/1-1"
             } else {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy-MM-dd HH:mm"
-                let name = "Enregistrement \(formatter.string(from: Date()))"
+                let name = "Enregistrement \(DateFormatters.dayAndTime.string(from: Date()))"
                 let created = meetingViewModel.createFolderWithName(name)
                 recordingViewModel.subdirectory = created
                 navigateToMeeting(created)
@@ -123,17 +121,14 @@ final class RecordingContext {
     nonisolated private func writeFrontmatter(for event: GoogleCalendarEvent, in folderName: String) async {
         await Task.detached {
             let folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
-            let fileName = formatter.string(from: Date()) + ".md"
+            let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
             let fileURL = folderURL.appendingPathComponent(fileName)
 
             guard FileManager.default.fileExists(atPath: fileURL.path),
                   let existing = try? String(contentsOf: fileURL, encoding: .utf8),
                   existing.isEmpty else { return }
 
-            let timeFormatter = DateFormatter()
-            timeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+            let timeFormatter = DateFormatters.dayAndTime
 
             var yaml = "---\n"
             yaml += "title: \(event.summary)\n"

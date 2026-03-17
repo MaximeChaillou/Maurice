@@ -2,6 +2,8 @@ import Foundation
 
 enum AppSettings {
     private static let rootDirectoryKey = "rootDirectory"
+    private static let onboardingCompletedKey = "onboardingCompleted"
+    private static let transcriptionLanguageKey = "transcriptionLanguage"
 
     static var rootDirectory: URL {
         get {
@@ -20,8 +22,14 @@ enum AppSettings {
         return documents.appendingPathComponent("Maurice", isDirectory: true)
     }()
 
-    static var transcriptsDirectory: URL {
-        rootDirectory.appendingPathComponent("Transcripts", isDirectory: true)
+    static var onboardingCompleted: Bool {
+        get { UserDefaults.standard.bool(forKey: onboardingCompletedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: onboardingCompletedKey) }
+    }
+
+    static var transcriptionLanguage: String {
+        get { UserDefaults.standard.string(forKey: transcriptionLanguageKey) ?? "fr-FR" }
+        set { UserDefaults.standard.set(newValue, forKey: transcriptionLanguageKey) }
     }
 
     static var memoryDirectory: URL {
@@ -37,16 +45,28 @@ enum AppSettings {
     }
 
     static var tasksFileURL: URL {
-        rootDirectory.appendingPathComponent("tasks.md")
+        rootDirectory.appendingPathComponent("Tasks.md")
     }
 
     static var claudeCommandsDirectory: URL {
         rootDirectory.appendingPathComponent(".claude/commands", isDirectory: true)
     }
 
+    static var claudeMDURL: URL {
+        rootDirectory.appendingPathComponent("CLAUDE.md")
+    }
+
+    private static var mauriceConfigDirectory: URL {
+        rootDirectory.appendingPathComponent(".maurice", isDirectory: true)
+    }
+
     static var themeFileURL: URL {
-        let dir = rootDirectory
+        let dir = mauriceConfigDirectory
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("theme.json")
+    }
+
+    static var searchIndexURL: URL {
+        mauriceConfigDirectory.appendingPathComponent("search_index.json")
     }
 }

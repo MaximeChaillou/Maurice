@@ -4,7 +4,7 @@ import Observation
 @Observable
 @MainActor
 final class FolderContentViewModel {
-    let directory: URL
+    private(set) var directory: URL
 
     private(set) var folders: [FolderItem] = []
     var selectedFolder: String?
@@ -22,6 +22,14 @@ final class FolderContentViewModel {
 
     init(directory: URL) {
         self.directory = directory
+    }
+
+    func resetDirectory(_ newDirectory: URL) {
+        directory = newDirectory
+        selectedFolder = nil
+        selectedFile = nil
+        folders = []
+        loadFolders()
     }
 
     func loadFolders() {
@@ -68,9 +76,7 @@ final class FolderContentViewModel {
             let folderURL = dir.appendingPathComponent(name, isDirectory: true)
             try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
-            let fileName = formatter.string(from: Date()) + ".md"
+            let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
             let fileURL = folderURL.appendingPathComponent(fileName)
             FileManager.default.createFile(atPath: fileURL.path, contents: nil)
         }
@@ -147,43 +153,6 @@ final class FolderContentViewModel {
     }
 
     nonisolated private static func scanDateEntries(in dir: URL, storage: FileTranscriptionStorage) -> [MeetingDateEntry] {
-        let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
-        let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
-
-        var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
-
-        for file in mdFiles {
-            let datePrefix = file.url.deletingPathExtension().lastPathComponent
-            let folderFile = FolderFile(
-                id: file.url,
-                name: datePrefix,
-                date: file.date,
-                url: file.url
-            )
-            dateMap[datePrefix, default: (nil, nil)].note = folderFile
-        }
-
-        for file in transcriptFiles {
-            let datePrefix = file.url.deletingPathExtension().lastPathComponent
-            if let parsed = storage.parseTranscriptFile(at: file.url) {
-                dateMap[datePrefix, default: (nil, nil)].transcript = parsed
-            }
-        }
-
-        let dateParser = DateFormatter()
-        dateParser.dateFormat = "yyyy-MM-dd"
-        dateParser.locale = Locale(identifier: "en_US_POSIX")
-
-        return dateMap.map { key, value in
-            let date = dateParser.date(from: key)
-                ?? value.note?.date ?? value.transcript?.date ?? Date.distantPast
-            return MeetingDateEntry(
-                dateString: key,
-                date: date,
-                noteFile: value.note,
-                transcript: value.transcript
-            )
-        }
-        .sorted { $0.dateString.localizedStandardCompare($1.dateString) == .orderedDescending }
+        MeetingDateEntry.scan(in: dir, storage: storage)
     }
 }

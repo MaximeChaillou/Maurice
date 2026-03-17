@@ -33,3 +33,47 @@ extension PersistentCodable {
         }
     }
 }
+
+// MARK: - Folder-relative persistence
+
+protocol FolderPersistentCodable: Codable, Sendable {
+    static var fileName: String { get }
+    init()
+}
+
+extension FolderPersistentCodable {
+    static func load(from folderURL: URL) -> Self {
+        let url = folderURL.appendingPathComponent(fileName)
+        guard let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(Self.self, from: data)
+        else { return Self() }
+        return decoded
+    }
+
+    static func loadAsync(from folderURL: URL) async -> Self {
+        let name = fileName
+        return await Task.detached {
+            let url = folderURL.appendingPathComponent(name)
+            guard let data = try? Data(contentsOf: url),
+                  let decoded = try? JSONDecoder().decode(Self.self, from: data)
+            else { return Self() }
+            return decoded
+        }.value
+    }
+
+    func save(to folderURL: URL) {
+        let url = folderURL.appendingPathComponent(Self.fileName)
+        guard let data = try? JSONEncoder().encode(self) else { return }
+        try? data.write(to: url, options: .atomic)
+    }
+
+    func saveAsync(to folderURL: URL) {
+        let copy = self
+        let name = Self.fileName
+        Task.detached {
+            let url = folderURL.appendingPathComponent(name)
+            guard let data = try? JSONEncoder().encode(copy) else { return }
+            try? data.write(to: url, options: .atomic)
+        }
+    }
+}

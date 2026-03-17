@@ -113,7 +113,6 @@ private struct GeneralSettingsView: View {
 
             Section {
                 VStack(alignment: .leading, spacing: 6) {
-                    pathRow("Transcripts", path: AppSettings.transcriptsDirectory.path)
                     pathRow("Mémoire", path: AppSettings.memoryDirectory.path)
                     pathRow("Thème", path: AppSettings.themeFileURL.path)
                 }
@@ -155,59 +154,12 @@ private struct GeneralSettingsView: View {
 
 private struct ClaudeMDView: View {
     var markdownTheme: MarkdownTheme
-    @State private var content: String = ""
-    @State private var loadedContent: String = ""
-    @Environment(ErrorState.self) private var errorState: ErrorState?
-
-    private var claudeMDURL: URL {
-        AppSettings.rootDirectory.appendingPathComponent("CLAUDE.md")
-    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Text("CLAUDE.md")
-                .font(.headline)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-
-            Divider()
-
-            ThemedMarkdownView(content: $content, theme: markdownTheme)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear { loadContent() }
-        .onChange(of: content) {
-            guard content != loadedContent else { return }
-            saveContent()
-        }
-    }
-
-    private func loadContent() {
-        let url = claudeMDURL
-        Task {
-            let text = await Task.detached {
-                guard let data = try? Data(contentsOf: url),
-                      let str = String(data: data, encoding: .utf8) else {
-                    return "# CLAUDE.md\n\nFichier non trouvé."
-                }
-                return str
-            }.value
-            loadedContent = text
-            content = text
-        }
-    }
-
-    private func saveContent() {
-        let text = content
-        let url = claudeMDURL
-        let errorState = errorState
-        Task.detached {
-            do {
-                try text.data(using: .utf8)?.write(to: url, options: .atomic)
-            } catch {
-                await errorState?.show("Impossible de sauvegarder CLAUDE.md : \(error.localizedDescription)")
-            }
-        }
+        FolderFileDetailView(
+            file: FolderFile(url: AppSettings.claudeMDURL),
+            markdownTheme: markdownTheme
+        )
     }
 }
 

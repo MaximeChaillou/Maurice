@@ -13,7 +13,7 @@ final class MemoryListViewModel {
     }
 
     func reloadDirectory() {
-        navigation.reset()
+        navigation.reset(to: AppSettings.memoryDirectory)
         load()
     }
 

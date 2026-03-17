@@ -8,7 +8,6 @@ struct AppTheme: PersistentCodable, Equatable {
     var meetingTabHue: Double = 0.5718
     var peopleTabHue: Double = 0.4604
     var taskTabHue: Double = 0.7501
-    var searchTabHue: Double = 0.52
     var memoryTabHue: Double = 0.85
 
     func hue(for tab: AppTab) -> Double {
@@ -34,11 +33,10 @@ struct AppTheme: PersistentCodable, Equatable {
     init(from decoder: Decoder) throws {
         let defaults = AppTheme()
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        markdown = try c.decodeIfPresent(MarkdownTheme.self, forKey: .markdown) ?? defaults.markdown
-        meetingTabHue = try c.decodeIfPresent(Double.self, forKey: .meetingTabHue) ?? defaults.meetingTabHue
-        peopleTabHue = try c.decodeIfPresent(Double.self, forKey: .peopleTabHue) ?? defaults.peopleTabHue
-        taskTabHue = try c.decodeIfPresent(Double.self, forKey: .taskTabHue) ?? defaults.taskTabHue
-        searchTabHue = try c.decodeIfPresent(Double.self, forKey: .searchTabHue) ?? defaults.searchTabHue
+        markdown = try c.valueOrDefault(forKey: .markdown, default: defaults.markdown)
+        meetingTabHue = try c.valueOrDefault(forKey: .meetingTabHue, default: defaults.meetingTabHue)
+        peopleTabHue = try c.valueOrDefault(forKey: .peopleTabHue, default: defaults.peopleTabHue)
+        taskTabHue = try c.valueOrDefault(forKey: .taskTabHue, default: defaults.taskTabHue)
     }
 
     // MARK: - Persistence

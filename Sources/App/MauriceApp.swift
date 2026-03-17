@@ -3,7 +3,6 @@ import SwiftUI
 @main
 struct MauriceApp: App {
     @State private var recordingViewModel: RecordingViewModel
-    @State private var transcriptListViewModel: TranscriptListViewModel
     @State private var memoryListViewModel = MemoryListViewModel()
     @State private var skillRunner = SkillRunner()
     @State private var coordinator = NavigationCoordinator()
@@ -12,6 +11,7 @@ struct MauriceApp: App {
     @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
+    @State private var showOnboarding = !AppSettings.onboardingCompleted
     @State private var lastFileSystemReload = Date.distantPast
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
@@ -32,7 +32,6 @@ struct MauriceApp: App {
         let pplVM = FolderContentViewModel(directory: AppSettings.peopleDirectory)
 
         _recordingViewModel = State(initialValue: recVM)
-        _transcriptListViewModel = State(initialValue: TranscriptListViewModel(storage: storage))
         _coordinator = State(initialValue: nav)
         _calendarViewModel = State(initialValue: calVM)
         _meetingViewModel = State(initialValue: meetVM)
@@ -92,7 +91,6 @@ struct MauriceApp: App {
                 }
             }
             .onAppear {
-                transcriptListViewModel.load()
                 fileWatcher.start()
             }
             .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
@@ -101,12 +99,12 @@ struct MauriceApp: App {
                 lastFileSystemReload = now
                 meetingViewModel.loadFolders()
                 peopleViewModel.loadFolders()
-                transcriptListViewModel.load()
                 memoryListViewModel.load()
             }
             .onChange(of: recordingViewModel.isRecording) {
                 if !recordingViewModel.isRecording {
-                    transcriptListViewModel.load()
+                    meetingViewModel.loadFolders()
+                    peopleViewModel.loadFolders()
                 }
             }
             .onChange(of: appTheme) { appTheme.saveAsync() }
@@ -142,6 +140,13 @@ struct MauriceApp: App {
                 }
             }
             .animation(.spring(duration: 0.3, bounce: 0.15), value: showSearch)
+            .sheet(isPresented: $showOnboarding) {
+                OnboardingView {
+                    showOnboarding = false
+                    reloadAfterDirectoryChange()
+                }
+                .interactiveDismissDisabled()
+            }
             .withErrorBanner()
         }
         .defaultSize(width: 1100, height: 700)
@@ -163,9 +168,7 @@ struct MauriceApp: App {
 
         Window("Réglages", id: "settings") {
             SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel) {
-                memoryListViewModel.reloadDirectory()
-                transcriptListViewModel.load()
-                appTheme = AppTheme.load()
+                reloadAfterDirectoryChange()
             }
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
             .withErrorBanner()
@@ -189,6 +192,15 @@ struct MauriceApp: App {
         }
         .defaultSize(width: 800, height: 550)
         .windowResizability(.contentMinSize)
+    }
+
+    // MARK: - Reload after directory change
+
+    private func reloadAfterDirectoryChange() {
+        meetingViewModel.resetDirectory(AppSettings.meetingsDirectory)
+        peopleViewModel.resetDirectory(AppSettings.peopleDirectory)
+        memoryListViewModel.reloadDirectory()
+        appTheme = AppTheme.load()
     }
 
     // MARK: - Tab content

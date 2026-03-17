@@ -27,7 +27,7 @@ final class SemanticSearchService {
     nonisolated(unsafe) private let embeddingEn: NLEmbedding?
 
     private static var indexFileURL: URL {
-        AppSettings.rootDirectory.appendingPathComponent(".search_index.json")
+        AppSettings.searchIndexURL
     }
 
     init() {

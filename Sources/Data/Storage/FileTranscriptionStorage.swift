@@ -4,41 +4,37 @@ import os
 private let logger = Logger(subsystem: "com.maxime.maurice", category: "Storage")
 
 final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
-    private var directory: URL {
-        let dir = AppSettings.transcriptsDirectory
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
+    static let headerPrefix = "Maurice Transcript"
+    static let headerSeparator = " — "
+
+    static func formatTimestamp(_ seconds: TimeInterval) -> String {
+        let mm = String(format: "%02d", Int(seconds) / 60)
+        let ss = String(format: "%02d", Int(seconds) % 60)
+        return "[\(mm):\(ss)]"
     }
 
-    func save(_ transcription: Transcription) async throws {
-        let text = formatTranscript(transcription)
-        let fileName = formatFileName(for: transcription)
-        let url = directory.appendingPathComponent(fileName)
-        try text.write(to: url, atomically: true, encoding: .utf8)
+    static func header(for date: Date) -> String {
+        "\(headerPrefix)\(headerSeparator)\(DateFormatters.dayAndTime.string(from: date))"
     }
 
     func beginLiveSession(startDate: Date, subdirectory: String? = nil) throws -> URL {
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateFormat = "yyyy-MM-dd"
-        let fileName = "\(dayFormatter.string(from: startDate)).transcript"
+        let fileName = "\(DateFormatters.dayOnly.string(from: startDate)).transcript"
 
-        let targetDir: URL
+        let base: URL
         if let sub = subdirectory {
-            let base = sub.hasPrefix("People/") ? AppSettings.rootDirectory : AppSettings.meetingsDirectory
-            targetDir = base.appendingPathComponent(sub, isDirectory: true)
-            try FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
+            base = sub.hasPrefix("People/") ? AppSettings.rootDirectory : AppSettings.meetingsDirectory
         } else {
-            targetDir = directory
+            base = AppSettings.meetingsDirectory
         }
+        let targetDir = subdirectory.map { base.appendingPathComponent($0, isDirectory: true) } ?? base
+        try FileManager.default.createDirectory(at: targetDir, withIntermediateDirectories: true)
         let url = targetDir.appendingPathComponent(fileName)
 
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        let header = "Maurice Transcript — \(timeFormatter.string(from: startDate))\n\n"
+        let header = Self.header(for: startDate) + "\n\n"
 
         // Create a note file if none exists for this date in a meeting folder
         if subdirectory != nil {
-            let noteFileName = "\(dayFormatter.string(from: startDate)).md"
+            let noteFileName = "\(DateFormatters.dayOnly.string(from: startDate)).md"
             let noteURL = targetDir.appendingPathComponent(noteFileName)
             if !FileManager.default.fileExists(atPath: noteURL.path) {
                 FileManager.default.createFile(atPath: noteURL.path, contents: nil)
@@ -65,45 +61,10 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         defer { try? handle.close() }
         handle.seekToEndOfFile()
 
-        let currentMinute = Int(entry.timestamp) / 60
-        let mm = String(format: "%02d", currentMinute)
-        let ss = String(format: "%02d", Int(entry.timestamp) % 60)
-        let line = "[\(mm):\(ss)]\n\(entry.text)\n\n"
+        let line = "\(Self.formatTimestamp(entry.timestamp))\n\(entry.text)\n\n"
 
         guard let data = line.data(using: .utf8) else { return }
         try handle.write(contentsOf: data)
-    }
-
-    private func formatTranscript(_ transcription: Transcription) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-
-        var lines: [String] = []
-        lines.append("Maurice Transcript — \(dateFormatter.string(from: transcription.startDate))")
-        lines.append("")
-
-        var lastMinute = -1
-
-        for entry in transcription.entries {
-            let currentMinute = Int(entry.timestamp) / 60
-
-            if currentMinute != lastMinute {
-                if lastMinute >= 0 { lines.append("") }
-                let mm = String(format: "%02d", currentMinute)
-                let ss = String(format: "%02d", Int(entry.timestamp) % 60)
-                lines.append("[\(mm):\(ss)]")
-                lastMinute = currentMinute
-            }
-
-            lines.append(entry.text)
-        }
-
-        lines.append("")
-        return lines.joined(separator: "\n")
-    }
-
-    func list() async throws -> [StoredTranscript] {
-        listDirectory(directory).transcripts
     }
 
     func listDirectory(_ url: URL) -> TranscriptDirectoryContents {
@@ -150,12 +111,9 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         }
 
         let lines = content.components(separatedBy: "\n")
-        guard let header = lines.first, header.hasPrefix("Maurice Transcript") else { return nil }
+        guard let header = lines.first, header.hasPrefix(Self.headerPrefix) else { return nil }
 
         let date = parseDateFromHeader(header) ?? Date.distantPast
-
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "HH:mm"
 
         var currentTimestamp: String?
         var entries: [TranscriptLine] = []
@@ -170,11 +128,11 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
                    let minutes = Int(parts[0]),
                    let seconds = Int(parts[1]) {
                     let entryDate = date.addingTimeInterval(Double(minutes * 60 + seconds))
-                    currentTimestamp = timeFormatter.string(from: entryDate)
+                    currentTimestamp = DateFormatters.timeOnly.string(from: entryDate)
                 }
                 continue
             }
-            if trimmed.hasPrefix("Maurice Transcript") || trimmed == "---" {
+            if trimmed.hasPrefix(Self.headerPrefix) || trimmed == "---" {
                 entries.append(.separator(trimmed))
                 continue
             }
@@ -191,18 +149,9 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
     }
 
     private func parseDateFromHeader(_ header: String) -> Date? {
-        guard let dashRange = header.range(of: " — ") else { return nil }
+        guard let dashRange = header.range(of: Self.headerSeparator) else { return nil }
         let dateString = String(header[dashRange.upperBound...])
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        return formatter.date(from: dateString)
-    }
-
-    private func formatFileName(for transcription: Transcription) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let dateString = formatter.string(from: transcription.startDate)
-        return "transcription_\(dateString).txt"
+        return DateFormatters.dayAndTime.date(from: dateString)
     }
 }
 

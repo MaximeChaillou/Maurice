@@ -139,10 +139,6 @@ final class SkillRunner {
         }
     }
 
-    func send(_ text: String) {
-        // stream-json + -p is non-interactive, input not supported
-    }
-
     func stop() {
         process?.terminate()
     }

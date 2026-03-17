@@ -120,62 +120,11 @@ struct MemoryContentView: View {
 private struct MemoryDetailView: View {
     let file: MemoryFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    @State private var bodyText: String = ""
-    @State private var loadedBody: String = ""
-    @State private var cachedFrontmatter: String = ""
-    @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
-        VStack(spacing: 0) {
-            Text(file.name)
-                .font(.headline)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-
-            Divider()
-
-            ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear { loadFile() }
-        .onChange(of: bodyText) {
-            guard bodyText != loadedBody else { return }
-            saveFile()
-        }
-    }
-
-    private func loadFile() {
-        let url = file.url
-        Task {
-            let (body, frontmatter) = await Task.detached {
-                let raw = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                guard raw.hasPrefix("---") else { return (raw, "") }
-                let lines = raw.components(separatedBy: "\n")
-                guard let closeIndex = lines.dropFirst().firstIndex(of: "---") else { return (raw, "") }
-                let fm = lines[0...closeIndex].joined(separator: "\n")
-                let body = lines.dropFirst(closeIndex + 1)
-                    .joined(separator: "\n")
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
-                return (body, fm)
-            }.value
-            cachedFrontmatter = frontmatter
-            loadedBody = body
-            bodyText = body
-        }
-    }
-
-    private func saveFile() {
-        let text = bodyText
-        let fm = cachedFrontmatter
-        let url = file.url
-        let errorState = errorState
-        Task.detached {
-            do {
-                let full = fm.isEmpty ? text : fm + "\n\n" + text
-                try full.write(to: url, atomically: true, encoding: .utf8)
-            } catch {
-                await errorState?.show("Impossible de sauvegarder : \(error.localizedDescription)")
-            }
-        }
+        FolderFileDetailView(
+            file: FolderFile(url: file.url),
+            markdownTheme: markdownTheme
+        )
     }
 }

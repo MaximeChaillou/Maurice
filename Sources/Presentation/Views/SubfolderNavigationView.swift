@@ -30,22 +30,12 @@ struct SubfolderNavigationView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .alert(
+        .deletionAlert(
             "Supprimer ?",
-            isPresented: Binding(
-                get: { fileToDelete != nil },
-                set: { if !$0 { fileToDelete = nil } }
-            )
-        ) {
-            Button("Annuler", role: .cancel) { fileToDelete = nil }
-            Button("Supprimer", role: .destructive) {
-                if let file = fileToDelete { onDelete(file); fileToDelete = nil }
-            }
-        } message: {
-            if let file = fileToDelete {
-                Text("« \(file.name) » sera supprimé définitivement.")
-            }
-        }
+            item: $fileToDelete,
+            message: { "« \($0.name) » sera supprimé définitivement." },
+            onDelete: { onDelete($0) }
+        )
     }
 
     private var emptyState: some View {

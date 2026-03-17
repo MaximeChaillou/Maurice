@@ -1,9 +1,11 @@
 import Foundation
 
-struct MeetingConfig: Codable {
+struct MeetingConfig: FolderPersistentCodable {
     var icon: String?
     var calendarEventName: String?
     var actions: [SkillAction]
+
+    static let fileName = ".config.json"
 
     init(icon: String? = nil, calendarEventName: String? = nil, actions: [SkillAction] = []) {
         self.icon = icon
@@ -11,33 +13,8 @@ struct MeetingConfig: Codable {
         self.actions = actions
     }
 
-    // MARK: - Persistence (per-folder)
-
-    private static let fileName = ".config.json"
-
-    static func load(from folderURL: URL) -> MeetingConfig {
-        let url = folderURL.appendingPathComponent(fileName)
-        guard let data = try? Data(contentsOf: url) else { return MeetingConfig() }
-        return (try? JSONDecoder().decode(MeetingConfig.self, from: data)) ?? MeetingConfig()
-    }
-
-    static func loadAsync(from folderURL: URL) async -> MeetingConfig {
-        await Task.detached { load(from: folderURL) }.value
-    }
-
-    func save(to folderURL: URL) {
-        let url = folderURL.appendingPathComponent(Self.fileName)
-        guard let data = try? JSONEncoder().encode(self) else { return }
-        try? data.write(to: url, options: .atomic)
-    }
-
-    func saveAsync(to folderURL: URL) {
-        let copy = self
-        Task.detached {
-            let url = folderURL.appendingPathComponent(Self.fileName)
-            guard let data = try? JSONEncoder().encode(copy) else { return }
-            try? data.write(to: url, options: .atomic)
-        }
+    init() {
+        self.init(icon: nil, calendarEventName: nil, actions: [])
     }
 
     // MARK: - Actions

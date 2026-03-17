@@ -22,10 +22,6 @@ final class MockLiveTranscriptionService: LiveTranscriptionService, @unchecked S
         return stream
     }
 
-    func startTranscription(fromFileURL fileURL: URL) async throws -> AsyncStream<TranscriptionEvent> {
-        try await startTranscription()
-    }
-
     func stopTranscription() async {
         stopCalled = true
     }
@@ -35,8 +31,6 @@ final class StubTranscriptionStorage: TranscriptionStorage, @unchecked Sendable 
     var liveSessionURL = URL(fileURLWithPath: "/tmp/test-live.transcript")
     var appendedEntries: [TranscriptionEntry] = []
 
-    func save(_ transcription: Transcription) async throws {}
-
     func beginLiveSession(startDate: Date, subdirectory: String?) throws -> URL {
         liveSessionURL
     }
@@ -44,8 +38,6 @@ final class StubTranscriptionStorage: TranscriptionStorage, @unchecked Sendable 
     func appendEntry(_ entry: TranscriptionEntry, to fileURL: URL) throws {
         appendedEntries.append(entry)
     }
-
-    func list() async throws -> [StoredTranscript] { [] }
 
     func listDirectory(_ url: URL) async throws -> TranscriptDirectoryContents {
         TranscriptDirectoryContents(folders: [], transcripts: [])
@@ -274,29 +266,6 @@ final class RecordingViewModelTests: XCTestCase {
 
         XCTAssertEqual(vm.volatileText, "")
         XCTAssertEqual(vm.entries.count, 1)
-    }
-
-    // MARK: - simulateFromFile
-
-    func testSimulateFromFileWhileRecordingDoesNothing() async throws {
-        let service = MockLiveTranscriptionService()
-        let (vm, _, _) = makeSUT(service: service)
-
-        let stream = AsyncStream<TranscriptionEvent> { continuation in
-            Task {
-                try? await Task.sleep(for: .seconds(5))
-                continuation.finish()
-            }
-        }
-        service.streamToReturn = stream
-
-        vm.toggleRecording()
-        try await Task.sleep(for: .milliseconds(300))
-        XCTAssertTrue(vm.isRecording)
-
-        vm.simulateFromFile()
-        // Should not change state or produce error about "already recording"
-        XCTAssertTrue(vm.isRecording)
     }
 
     // MARK: - Subdirectory

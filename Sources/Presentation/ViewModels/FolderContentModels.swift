@@ -36,10 +36,51 @@ struct MeetingDateEntry: Identifiable {
     var id: String { dateString }
     var hasNote: Bool { noteFile != nil }
     var hasTranscript: Bool { transcript != nil }
+
+    static func scan(in dir: URL, storage: FileTranscriptionStorage = FileTranscriptionStorage()) -> [MeetingDateEntry] {
+        let mdFiles = DirectoryScanner.scan(at: dir, fileExtension: "md").files
+        let transcriptFiles = DirectoryScanner.scan(at: dir, fileExtension: "transcript").files
+
+        var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
+
+        for file in mdFiles {
+            let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
+            dateMap[datePrefix, default: (nil, nil)].note = folderFile
+        }
+
+        for file in transcriptFiles {
+            let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            if let parsed = storage.parseTranscriptFile(at: file.url) {
+                dateMap[datePrefix, default: (nil, nil)].transcript = parsed
+            }
+        }
+
+        let dateParser = DateFormatters.dayPOSIX
+
+        return dateMap.map { key, value in
+            let date = dateParser.date(from: key)
+                ?? value.note?.date ?? value.transcript?.date ?? Date.distantPast
+            return MeetingDateEntry(dateString: key, date: date, noteFile: value.note, transcript: value.transcript)
+        }
+        .sorted { $0.dateString.localizedStandardCompare($1.dateString) == .orderedDescending }
+    }
 }
 
 struct FolderFile: Identifiable, Hashable {
     let id: URL, name: String, date: Date, url: URL
     var content: String { (try? String(contentsOf: url, encoding: .utf8)) ?? "" }
     func save(content: String) { try? content.write(to: url, atomically: true, encoding: .utf8) }
+
+    init(id: URL, name: String, date: Date, url: URL) {
+        self.id = id; self.name = name; self.date = date; self.url = url
+    }
+
+    init(url: URL) {
+        self.id = url
+        self.name = url.deletingPathExtension().lastPathComponent
+        self.date = (try? FileManager.default.attributesOfItem(
+            atPath: url.path)[.modificationDate] as? Date) ?? Date()
+        self.url = url
+    }
 }

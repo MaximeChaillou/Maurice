@@ -3,7 +3,7 @@ import Observation
 
 @Observable
 final class FolderNavigationStack {
-    let rootDirectory: URL
+    private(set) var rootDirectory: URL
     private(set) var directoryStack: [Folder] = []
 
     var currentDirectory: URL {
@@ -28,6 +28,11 @@ final class FolderNavigationStack {
     }
 
     func reset() {
+        directoryStack.removeAll()
+    }
+
+    func reset(to newRoot: URL) {
+        rootDirectory = newRoot
         directoryStack.removeAll()
     }
 }

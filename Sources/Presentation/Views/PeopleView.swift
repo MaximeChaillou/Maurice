@@ -120,25 +120,12 @@ struct PeopleView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .alert(
+            .deletionAlert(
                 "Supprimer la personne ?",
-                isPresented: Binding(
-                    get: { folderToDelete != nil },
-                    set: { if !$0 { folderToDelete = nil } }
-                )
-            ) {
-                Button("Annuler", role: .cancel) { folderToDelete = nil }
-                Button("Supprimer", role: .destructive) {
-                    if let folder = folderToDelete {
-                        viewModel.deleteFolder(folder)
-                        folderToDelete = nil
-                    }
-                }
-            } message: {
-                if let folder = folderToDelete {
-                    Text("La personne « \(folder.name) » et tout son contenu seront supprimés.")
-                }
-            }
+                item: $folderToDelete,
+                message: { "La personne « \($0.name) » et tout son contenu seront supprimés." },
+                onDelete: { viewModel.deleteFolder($0) }
+            )
         }
         .sheet(isPresented: $viewModel.isAddingFolder) {
             AddItemSheet(

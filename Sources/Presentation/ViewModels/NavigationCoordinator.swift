@@ -10,9 +10,4 @@ enum AppTab: String, CaseIterable {
 final class NavigationCoordinator {
     var activeTab: AppTab = .meeting
     var showHome: Bool = true
-
-    // Per-tab selection (preserves open file when switching tabs)
-    var selectedMeeting: String?
-    var selectedPerson: String?
-    var meetingFileIndex: Int = 0
 }

@@ -134,25 +134,12 @@ struct FolderContentView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .alert(
+            .deletionAlert(
                 "Supprimer le dossier ?",
-                isPresented: Binding(
-                    get: { folderToDelete != nil },
-                    set: { if !$0 { folderToDelete = nil } }
-                )
-            ) {
-                Button("Annuler", role: .cancel) { folderToDelete = nil }
-                Button("Supprimer", role: .destructive) {
-                    if let folder = folderToDelete {
-                        viewModel.deleteFolder(folder)
-                        folderToDelete = nil
-                    }
-                }
-            } message: {
-                if let folder = folderToDelete {
-                    Text("Le dossier « \(folder.name) » et tout son contenu seront supprimés définitivement.")
-                }
-            }
+                item: $folderToDelete,
+                message: { "Le dossier « \($0.name) » et tout son contenu seront supprimés définitivement." },
+                onDelete: { viewModel.deleteFolder($0) }
+            )
             .onChange(of: viewModel.selectedFolder) {
                 viewModel.selectedFile = nil
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
@@ -213,139 +200,34 @@ extension FolderContentView {
         let entry = entries[max(safeIndex, 0)]
 
         return VStack(spacing: 0) {
-            dateNavigationHeader(entry: entry, totalEntries: entries.count)
+            DateNavigationHeader(
+                entry: entry,
+                totalEntries: entries.count,
+                index: $viewModel.fileIndex,
+                showTranscripts: $showTranscripts,
+                config: showSkillConfig ? viewModel.meetingConfig : nil,
+                skillRunner: skillRunner,
+                showConfigAction: showSkillConfig ? { showConfigSidebar = true } : nil,
+                entryDeleteAction: $entryDeleteAction
+            )
             Divider()
-
-            if showTranscripts, let transcript = entry.transcript {
-                TranscriptDetailView(transcript: transcript)
-                    .id(transcript.id)
-            } else if let file = entry.noteFile {
-                FolderFileEditorView(file: file, markdownTheme: markdownTheme)
-                    .id(file.id)
-            } else if let transcript = entry.transcript {
-                TranscriptDetailView(transcript: transcript)
-                    .id(transcript.id)
-            }
+            DateEntryContentView(
+                entry: entry, markdownTheme: markdownTheme, showTranscripts: $showTranscripts
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: viewModel.fileIndex) { showTranscripts = false }
-        .alert(
-            "Supprimer ?",
-            isPresented: Binding(
-                get: { entryDeleteAction != nil },
-                set: { if !$0 { entryDeleteAction = nil } }
-            )
-        ) {
-            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
-            Button("Supprimer", role: .destructive) {
-                if let action = entryDeleteAction {
-                    performEntryDelete(action)
-                    entryDeleteAction = nil
-                }
-            }
-        } message: {
-            if let action = entryDeleteAction { Text(action.message) }
-        }
-    }
-
-    private func performEntryDelete(_ action: EntryDeleteAction) {
-        switch action {
-        case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
-        case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
-        case .both(let e): viewModel.deleteDateEntry(e)
-        }
-    }
-
-    func dateNavigationHeader(entry: MeetingDateEntry, totalEntries: Int) -> some View {
-        VStack(spacing: 4) {
-            // Line 1: Navigation
-            HStack {
-                Button {
-                    if viewModel.fileIndex < totalEntries - 1 { viewModel.fileIndex += 1 }
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .frame(width: 32, height: 32)
-                        .contentShape(Circle())
-                        .glassEffect(.regular.interactive(), in: .circle)
-                }
-                .buttonStyle(.plain)
-                .interactiveHover()
-                .disabled(viewModel.fileIndex >= totalEntries - 1)
-
-                Spacer()
-
-                Text(entry.date, format: .dateTime.day().month(.wide).year())
-                    .font(.headline)
-
-                Spacer()
-
-                Button {
-                    if viewModel.fileIndex > 0 { viewModel.fileIndex -= 1 }
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .frame(width: 32, height: 32)
-                        .contentShape(Circle())
-                        .glassEffect(.regular.interactive(), in: .circle)
-                }
-                .buttonStyle(.plain)
-                .interactiveHover()
-                .disabled(viewModel.fileIndex <= 0)
-            }
-
-            // Line 2: Actions
-            HStack(spacing: 8) {
-                Spacer()
-                if navigateByDate { transcriptToggleButton(for: entry) }
-                if showSkillConfig, skillRunner != nil {
-                    runActionsMenu
-                    configToggleButton
-                }
-                entryActionsMenu(for: entry)
+        .entryDeleteAlert(action: $entryDeleteAction) { action in
+            switch action {
+            case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
+            case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
+            case .both(let e): viewModel.deleteDateEntry(e)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    func entryActionsMenu(for entry: MeetingDateEntry) -> some View {
-        Menu {
-            if entry.hasNote {
-                Button(role: .destructive) {
-                    entryDeleteAction = .note(entry)
-                } label: {
-                    Label("Supprimer la note", systemImage: "doc.text")
-                }
-            }
-            if entry.hasTranscript {
-                Button(role: .destructive) {
-                    entryDeleteAction = .transcript(entry)
-                } label: {
-                    Label("Supprimer le transcript", systemImage: "waveform")
-                }
-            }
-            if entry.hasNote && entry.hasTranscript {
-                Divider()
-                Button(role: .destructive) {
-                    entryDeleteAction = .both(entry)
-                } label: {
-                    Label("Tout supprimer", systemImage: "trash")
-                }
-            }
-        } label: {
-            Image(systemName: "ellipsis")
-                .font(.body)
-                .frame(width: 32, height: 32)
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .frame(width: 32, height: 32)
-        .interactiveHover()
     }
 }
 
-// MARK: - File list & toggles
+// MARK: - File list
 extension FolderContentView {
     func fileListDetail(for folder: FolderItem) -> some View {
         HStack(spacing: 0) {
@@ -386,84 +268,5 @@ extension FolderContentView {
             }
         }
         .scrollContentBackground(.hidden)
-    }
-
-    func transcriptToggleButton(for entry: MeetingDateEntry) -> some View {
-        let canToggle = entry.hasNote && entry.hasTranscript
-        return Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                showTranscripts.toggle()
-            }
-        } label: {
-            Image(systemName: showTranscripts ? "doc.text" : "waveform")
-                .font(.body)
-                .frame(width: 32, height: 32)
-                .contentShape(Circle())
-                .opacity(canToggle ? 1.0 : 0.3)
-        }
-        .buttonStyle(.plain)
-        .interactiveHover()
-        .disabled(!canToggle)
-        .help(
-            !canToggle
-                ? (entry.hasNote ? "Pas de transcript" : "Pas de note")
-                : (showTranscripts ? "Afficher les notes" : "Afficher les transcripts")
-        )
-    }
-
-    @ViewBuilder
-    var runActionsMenu: some View {
-        let actions = viewModel.meetingConfig.actions
-        if let runner = skillRunner, !actions.isEmpty {
-            Menu {
-                ForEach(actions) { action in
-                    Button {
-                        guard !runner.isRunning else { return }
-                        runner.actionID = action.id
-                        runner.run(
-                            skillFilename: action.skillFilename,
-                            buttonName: action.buttonName,
-                            parameter: action.parameter,
-                            workingDirectory: AppSettings.rootDirectory
-                        )
-                    } label: {
-                        Label(action.buttonName, systemImage: "play.fill")
-                    }
-                    .disabled(runner.isRunning)
-                }
-            } label: {
-                ZStack {
-                    if let runner = skillRunner, runner.isRunning {
-                        ProgressView()
-                            .controlSize(.small)
-                    } else {
-                        Image(systemName: "play.fill")
-                            .font(.body)
-                    }
-                }
-                .frame(width: 32, height: 32)
-                .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .frame(width: 32, height: 32)
-            .interactiveHover()
-            .help("Lancer une action")
-        }
-    }
-
-    var configToggleButton: some View {
-        Button {
-            showConfigSidebar = true
-        } label: {
-            Image(systemName: "gearshape")
-                .font(.body)
-                .frame(width: 32, height: 32)
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-        .interactiveHover()
-        .help("Configurer les skills")
     }
 }

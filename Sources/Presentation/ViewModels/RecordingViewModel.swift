@@ -52,22 +52,7 @@ final class RecordingViewModel {
         }
     }
 
-    func simulateFromFile() {
-        guard !isRecording else { return }
-        guard let url = Bundle.main.url(forResource: "debug_sample", withExtension: "aiff") else {
-            errorMessage = "Fichier audio debug introuvable dans le bundle."
-            return
-        }
-        startRecording(fromFileURL: url)
-    }
-
     // MARK: - Recording
-
-    private func startRecording(fromFileURL fileURL: URL) {
-        launchPipeline { useCase in
-            try await useCase.startRecording(fromFileURL: fileURL)
-        }
-    }
 
     private func startRecording() {
         launchPipeline { useCase in

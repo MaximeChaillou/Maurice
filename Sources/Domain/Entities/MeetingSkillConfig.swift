@@ -47,7 +47,7 @@ enum MeetingSkillConfig {
         ) else { return [] }
 
         return items
-            .filter { $0.pathExtension == "md" }
+            .filter { $0.pathExtension == "md" && !$0.lastPathComponent.hasPrefix("maurice-") }
             .map { SkillFile(filename: $0.lastPathComponent) }
             .sorted { $0.name < $1.name }
     }

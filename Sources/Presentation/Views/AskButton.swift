@@ -167,6 +167,7 @@ struct AskButton: View {
                     .padding(8)
                 }
             }
+            .onAppear { scrollToBottom(proxy) }
             .onChange(of: conversationLines.count) {
                 scrollToBottom(proxy)
             }
@@ -182,6 +183,7 @@ struct AskButton: View {
             .onChange(of: runner.isRunning) {
                 if !runner.isRunning {
                     syncRunnerOutput()
+                    scrollToBottom(proxy)
                 }
             }
         }

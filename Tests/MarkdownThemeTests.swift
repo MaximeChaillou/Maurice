@@ -98,7 +98,8 @@ final class MarkdownThemeTests: XCTestCase {
 
     func testAppThemePersistenceURL() {
         let url = AppTheme.persistenceURL
-        XCTAssertTrue(url.lastPathComponent == "theme.json")
+        XCTAssertEqual(url.lastPathComponent, "theme.json")
+        XCTAssertTrue(url.deletingLastPathComponent().lastPathComponent == ".maurice")
     }
 
     // MARK: - AppTheme Save / Load roundtrip

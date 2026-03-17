@@ -77,19 +77,19 @@ struct HomeView: View {
     }
 
     private func formatEventTime(_ event: GoogleCalendarEvent) -> String {
-        let formatter = DateFormatter()
         let calendar = Calendar.current
 
         if calendar.isDateInToday(event.start) {
-            formatter.dateFormat = "HH:mm"
-            return "Aujourd'hui \(formatter.string(from: event.start)) – \(formatter.string(from: event.end))"
+            let t = DateFormatters.timeOnly
+            return "Aujourd'hui \(t.string(from: event.start)) – \(t.string(from: event.end))"
         } else if calendar.isDateInTomorrow(event.start) {
-            formatter.dateFormat = "HH:mm"
-            return "Demain \(formatter.string(from: event.start)) – \(formatter.string(from: event.end))"
+            let t = DateFormatters.timeOnly
+            return "Demain \(t.string(from: event.start)) – \(t.string(from: event.end))"
         } else {
-            formatter.dateFormat = "EEEE d MMM, HH:mm"
-            formatter.locale = Locale(identifier: "fr_FR")
-            return formatter.string(from: event.start)
+            let f = DateFormatter()
+            f.dateFormat = "EEEE d MMM, HH:mm"
+            f.locale = Locale(identifier: "fr_FR")
+            return f.string(from: event.start)
         }
     }
 

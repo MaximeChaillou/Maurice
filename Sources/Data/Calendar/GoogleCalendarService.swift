@@ -130,38 +130,16 @@ enum GoogleCalendarService {
         let items = json["items"] as? [[String: Any]] ?? []
 
         // Collect all current/upcoming events, then pick the best match
-        var candidates: [(event: GoogleCalendarEvent, start: Date)] = []
-
-        for item in items {
-            guard let summary = item["summary"] as? String,
-                  let id = item["id"] as? String,
-                  let startDict = item["start"] as? [String: Any],
-                  let endDict = item["end"] as? [String: Any] else { continue }
-
-            // Skip all-day events
-            if startDict["date"] != nil { continue }
-
-            let organizerEmail = (item["organizer"] as? [String: Any])?["email"] as? String
-            if organizerEmail == "invite@pictarine.com" { continue }
-
-            let start = parseEventDate(startDict)
-            let end = parseEventDate(endDict)
-
-            guard let start, let end else { continue }
-
-            // Event must have started (or start within 5 min) and not yet ended
-            if start <= fiveMinutesFromNow && end > now {
-                let sanitized = sanitizeFolderName(summary)
-                let attendees = parseAcceptedAttendees(item)
-                let event = GoogleCalendarEvent(id: id, summary: sanitized, start: start, end: end, attendees: attendees)
-                candidates.append((event, start))
-            }
-        }
+        let candidates = items.compactMap { parseCalendarItem($0) }
+            .filter { $0.start <= fiveMinutesFromNow && $0.end > now }
+            .map { GoogleCalendarEvent(
+                id: $0.id, summary: sanitizeFolderName($0.summary),
+                start: $0.start, end: $0.end, attendees: $0.attendees
+            ) }
 
         // Prefer the event with the closest start time to now
         return candidates
-            .min { abs($0.start.timeIntervalSince(now)) < abs($1.start.timeIntervalSince(now)) }?
-            .event
+            .min { abs($0.start.timeIntervalSince(now)) < abs($1.start.timeIntervalSince(now)) }
     }
 
     static func fetchUpcomingEvents(accessToken: String, limit: Int = 5) async throws -> [GoogleCalendarEvent] {
@@ -184,28 +162,7 @@ enum GoogleCalendarService {
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
         let items = json["items"] as? [[String: Any]] ?? []
 
-        var events: [GoogleCalendarEvent] = []
-        for item in items {
-            guard let summary = item["summary"] as? String,
-                  let id = item["id"] as? String,
-                  let startDict = item["start"] as? [String: Any],
-                  let endDict = item["end"] as? [String: Any] else { continue }
-
-            // Skip all-day events (they use "date" instead of "dateTime")
-            if startDict["date"] != nil { continue }
-
-            let start = parseEventDate(startDict)
-            let end = parseEventDate(endDict)
-            guard let start, let end else { continue }
-
-            let organizerEmail = (item["organizer"] as? [String: Any])?["email"] as? String
-            if organizerEmail == "invite@pictarine.com" { continue }
-
-            let attendees = parseAcceptedAttendees(item)
-            events.append(GoogleCalendarEvent(id: id, summary: summary, start: start, end: end, attendees: attendees))
-            if events.count >= limit { break }
-        }
-        return events
+        return Array(items.compactMap { parseCalendarItem($0) }.prefix(limit))
     }
 
     static func fetchUserEmail(accessToken: String) async throws -> String {
@@ -307,6 +264,27 @@ enum GoogleCalendarService {
         listener = nil
     }
 
+    // MARK: - Item Parsing
+
+    private static func parseCalendarItem(_ item: [String: Any]) -> GoogleCalendarEvent? {
+        guard let summary = item["summary"] as? String,
+              let id = item["id"] as? String,
+              let startDict = item["start"] as? [String: Any],
+              let endDict = item["end"] as? [String: Any] else { return nil }
+
+        // Skip all-day events
+        if startDict["date"] != nil { return nil }
+
+        let organizerEmail = (item["organizer"] as? [String: Any])?["email"] as? String
+        if organizerEmail == "invite@pictarine.com" { return nil }
+
+        guard let start = parseEventDate(startDict),
+              let end = parseEventDate(endDict) else { return nil }
+
+        let attendees = parseAcceptedAttendees(item)
+        return GoogleCalendarEvent(id: id, summary: summary, start: start, end: end, attendees: attendees)
+    }
+
     // MARK: - Helpers
 
     private static func parseEventDate(_ dict: [String: Any]) -> Date? {
@@ -318,9 +296,7 @@ enum GoogleCalendarService {
         }
         // All-day events use "date" field (yyyy-MM-dd)
         if let dateStr = dict["date"] as? String {
-            let dayFormatter = DateFormatter()
-            dayFormatter.dateFormat = "yyyy-MM-dd"
-            return dayFormatter.date(from: dateStr)
+            return DateFormatters.dayOnly.date(from: dateStr)
         }
         return nil
     }
