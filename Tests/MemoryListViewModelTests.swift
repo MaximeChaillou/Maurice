@@ -81,19 +81,17 @@ final class MemoryListViewModelTests: XCTestCase {
         XCTAssertEqual(vm.files.first?.name, "notes")
     }
 
-    func testLoadSortsByDateDescending() async throws {
-        // Create files with different dates by writing sequentially
-        createFile("old.md")
-        try await Task.sleep(for: .milliseconds(50))
-        createFile("new.md")
+    func testLoadSortsByNameAlphabetically() async throws {
+        createFile("zebra.md")
+        createFile("alpha.md")
 
         let vm = MemoryListViewModel(rootDirectory: tempDir)
         vm.load()
         try await Task.sleep(for: .milliseconds(300))
 
         XCTAssertEqual(vm.files.count, 2)
-        // Newest first
-        XCTAssertEqual(vm.files.first?.name, "new")
+        XCTAssertEqual(vm.files.first?.name, "alpha")
+        XCTAssertEqual(vm.files.last?.name, "zebra")
     }
 
     // MARK: - navigateInto / goBack

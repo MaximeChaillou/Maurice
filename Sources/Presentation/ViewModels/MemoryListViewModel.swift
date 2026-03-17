@@ -22,11 +22,13 @@ final class MemoryListViewModel {
         Task {
             let contents = await DirectoryScanner.scanAsync(at: dir, fileExtension: "md")
 
-            folders = contents.folders
+            folders = contents.folders.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
             files = contents.files
                 .map { MemoryFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
                                   folder: nil, date: $0.date, url: $0.url) }
-                .sorted { $0.date > $1.date }
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         }
     }
 

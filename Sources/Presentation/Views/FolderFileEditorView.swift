@@ -23,6 +23,7 @@ struct FolderFileEditorView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     @State private var bodyText: String = ""
+    @State private var loadedText: String = ""
     @State private var lastSaveDate = Date.distantPast
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
@@ -30,6 +31,7 @@ struct FolderFileEditorView: View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
             .onAppear { loadFile() }
             .onChange(of: bodyText) {
+                guard bodyText != loadedText else { return }
                 lastSaveDate = Date()
                 let text = bodyText
                 let url = file.url
@@ -55,6 +57,7 @@ struct FolderFileEditorView: View {
                 (try? String(contentsOf: url, encoding: .utf8)) ?? ""
             }.value
             if text != bodyText {
+                loadedText = text
                 bodyText = text
             }
         }

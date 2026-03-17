@@ -102,7 +102,7 @@ struct MauriceApp: App {
                 meetingViewModel.loadFolders()
                 peopleViewModel.loadFolders()
                 transcriptListViewModel.load()
-                memoryListViewModel.reloadDirectory()
+                memoryListViewModel.load()
             }
             .onChange(of: recordingViewModel.isRecording) {
                 if !recordingViewModel.isRecording {

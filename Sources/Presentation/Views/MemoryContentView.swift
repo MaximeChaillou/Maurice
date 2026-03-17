@@ -121,6 +121,7 @@ private struct MemoryDetailView: View {
     let file: MemoryFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     @State private var bodyText: String = ""
+    @State private var loadedBody: String = ""
     @State private var cachedFrontmatter: String = ""
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
@@ -137,7 +138,10 @@ private struct MemoryDetailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadFile() }
-        .onChange(of: bodyText) { saveFile() }
+        .onChange(of: bodyText) {
+            guard bodyText != loadedBody else { return }
+            saveFile()
+        }
     }
 
     private func loadFile() {
@@ -155,6 +159,7 @@ private struct MemoryDetailView: View {
                 return (body, fm)
             }.value
             cachedFrontmatter = frontmatter
+            loadedBody = body
             bodyText = body
         }
     }

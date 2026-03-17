@@ -156,6 +156,7 @@ private struct GeneralSettingsView: View {
 private struct ClaudeMDView: View {
     var markdownTheme: MarkdownTheme
     @State private var content: String = ""
+    @State private var loadedContent: String = ""
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
     private var claudeMDURL: URL {
@@ -175,7 +176,10 @@ private struct ClaudeMDView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadContent() }
-        .onChange(of: content) { saveContent() }
+        .onChange(of: content) {
+            guard content != loadedContent else { return }
+            saveContent()
+        }
     }
 
     private func loadContent() {
@@ -188,6 +192,7 @@ private struct ClaudeMDView: View {
                 }
                 return str
             }.value
+            loadedContent = text
             content = text
         }
     }
