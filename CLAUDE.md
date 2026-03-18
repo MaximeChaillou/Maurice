@@ -66,7 +66,7 @@ Sources/
 - Pour publier une release : `./Scripts/create_release.sh <version>` (build Release, zip, signature Sparkle, appcast, GitHub Release), puis commit et push `appcast.xml`.
 - Le Cask (`Casks/maurice.rb`) doit être mis à jour avec la nouvelle version et le SHA256 du zip.
 - L'app n'est **pas signée Apple** — les utilisateurs doivent débloquer Gatekeeper (`xattr -cr`).
-- Chaque release doit inclure un **changelog** listant les changements depuis la dernière version (nouvelles fonctionnalités, corrections, améliorations).
+- Chaque release doit inclure un **changelog en anglais** listant les changements depuis la dernière version (nouvelles fonctionnalités, corrections, améliorations).
 - Le numéro de version doit être mis à jour dans `MARKETING_VERSION` du `project.pbxproj` (4 occurrences) à chaque release. C'est cette valeur qui contrôle la version affichée dans l'app et utilisée par Sparkle.
 
 ## Settings & Configuration
