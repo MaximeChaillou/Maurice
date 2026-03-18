@@ -77,7 +77,7 @@ final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Senda
 
         // Prevent App Nap from interrupting audio capture
         activity = ProcessInfo.processInfo.beginActivity(
-            options: [.userInitiated, .idleSystemSleepDisabled],
+            options: [.userInitiated, .idleSystemSleepDisabled, .idleDisplaySleepDisabled],
             reason: "Recording audio transcription"
         )
 
