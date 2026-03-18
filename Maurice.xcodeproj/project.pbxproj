@@ -90,6 +90,18 @@
 		VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */; };
 		VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */; };
 		VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */; };
+		NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */; };
+		NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */; };
+		NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */; };
+		NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */; };
+		NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */; };
+		NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */; };
+		NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */; };
+		NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */; };
+		NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */; };
+		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
+		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
+		NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */; };
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 /* End PBXBuildFile section */
 
@@ -199,6 +211,18 @@
 		TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MauriceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		TP01TP02TP03TP04TP05TP06 /* Templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Templates; sourceTree = "<group>"; };
 		UC11UC12UC13UC14UC15UC16 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeTests.swift; sourceTree = "<group>"; };
+		NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerTests.swift; sourceTree = "<group>"; };
+		NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTranscriptionStorageTests.swift; sourceTree = "<group>"; };
+		NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderNavigationStackTests.swift; sourceTree = "<group>"; };
+		NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarServiceTests.swift; sourceTree = "<group>"; };
+		NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigTests.swift; sourceTree = "<group>"; };
+		NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingDateEntryTests.swift; sourceTree = "<group>"; };
+		NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodableTests.swift; sourceTree = "<group>"; };
+		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
+		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
+		NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunnerTests.swift; sourceTree = "<group>"; };
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
 		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
 		VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModelTests.swift; sourceTree = "<group>"; };
@@ -443,13 +467,25 @@
 		TG01AG02BG03CG04DG05EG06F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */,
+				NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */,
 				T101A102B103C104D105E106F /* CodableColorTests.swift */,
+				NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */,
+				NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */,
 				VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */,
+				NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */,
+				NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */,
 				VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */,
 				T303A304B305C306D307E308F /* MarkdownStylingTests.swift */,
 				T202A203B204C205D206E207F /* MarkdownThemeTests.swift */,
+				NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */,
+				NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */,
 				VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */,
+				NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */,
+				NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */,
 				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
+				NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */,
+				NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -677,13 +713,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */,
+				NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */,
 				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
+				NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */,
+				NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */,
+				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
+				NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */,
+				NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */,
+				VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */,
 				T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */,
 				T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */,
-				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
+				NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */,
+				NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */,
 				VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */,
-				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
-				VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */,
+				NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */,
+				NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */,
+				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
+				NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */,
+				NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

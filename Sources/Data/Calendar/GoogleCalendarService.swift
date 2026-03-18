@@ -266,7 +266,7 @@ enum GoogleCalendarService {
 
     // MARK: - Item Parsing
 
-    private static func parseCalendarItem(_ item: [String: Any]) -> GoogleCalendarEvent? {
+    static func parseCalendarItem(_ item: [String: Any]) -> GoogleCalendarEvent? {
         guard let summary = item["summary"] as? String,
               let id = item["id"] as? String,
               let startDict = item["start"] as? [String: Any],
@@ -287,7 +287,7 @@ enum GoogleCalendarService {
 
     // MARK: - Helpers
 
-    private static func parseEventDate(_ dict: [String: Any]) -> Date? {
+    static func parseEventDate(_ dict: [String: Any]) -> Date? {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
 
@@ -301,7 +301,7 @@ enum GoogleCalendarService {
         return nil
     }
 
-    private static func parseAcceptedAttendees(_ item: [String: Any]) -> [GoogleCalendarEvent.Attendee] {
+    static func parseAcceptedAttendees(_ item: [String: Any]) -> [GoogleCalendarEvent.Attendee] {
         guard let attendees = item["attendees"] as? [[String: Any]] else { return [] }
         return attendees.compactMap { entry in
             guard let email = entry["email"] as? String,
@@ -312,7 +312,7 @@ enum GoogleCalendarService {
         }
     }
 
-    private static func sanitizeFolderName(_ name: String) -> String {
+    static func sanitizeFolderName(_ name: String) -> String {
         let invalid = CharacterSet(charactersIn: "/:\\")
         return name.components(separatedBy: invalid).joined(separator: "-")
     }

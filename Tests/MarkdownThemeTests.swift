@@ -102,29 +102,20 @@ final class MarkdownThemeTests: XCTestCase {
         XCTAssertTrue(url.deletingLastPathComponent().lastPathComponent == ".maurice")
     }
 
-    // MARK: - AppTheme Save / Load roundtrip
+    // MARK: - AppTheme Codable roundtrip
 
-    func testAppThemeSaveAndLoad() {
-        let url = AppTheme.persistenceURL
-        let backup = try? Data(contentsOf: url)
-        defer { if let backup { try? backup.write(to: url, options: .atomic) } }
+    func testAppThemeCodableRoundtripPreservesMarkdown() throws {
+        var appTheme = AppTheme()
+        appTheme.markdown.fontName = "TestFont_Codable"
 
-        var appTheme = AppTheme.load()
-        appTheme.markdown.fontName = "TestFont_SaveLoad"
-        appTheme.save()
-
-        let loaded = AppTheme.load()
-        XCTAssertEqual(loaded.markdown.fontName, "TestFont_SaveLoad")
+        let data = try JSONEncoder().encode(appTheme)
+        let loaded = try JSONDecoder().decode(AppTheme.self, from: data)
+        XCTAssertEqual(loaded.markdown.fontName, "TestFont_Codable")
     }
 
-    func testAppThemeLoadMissingFileReturnsDefault() {
-        let url = AppTheme.persistenceURL
-        let backup = try? Data(contentsOf: url)
-        defer { if let backup { try? backup.write(to: url, options: .atomic) } }
-
-        try? FileManager.default.removeItem(at: url)
-
-        let loaded = AppTheme.load()
+    func testAppThemeDecodeEmptyJSONReturnsDefaultMarkdown() throws {
+        let json = "{}".data(using: .utf8)!
+        let loaded = try JSONDecoder().decode(AppTheme.self, from: json)
         XCTAssertEqual(loaded.markdown.fontName, "Helvetica Neue")
     }
 }

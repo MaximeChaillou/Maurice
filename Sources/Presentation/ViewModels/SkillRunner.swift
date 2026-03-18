@@ -34,7 +34,7 @@ final class SkillRunner {
     var actionID: UUID?
     private(set) var skillLabel: String?
 
-    private static var mauricePermissions: [String] {
+    static var mauricePermissions: [String] {
         let root = AppSettings.rootDirectory.path
         return [
             "--allowedTools", "Read(\(root)/**)",
@@ -254,7 +254,7 @@ final class SkillRunner {
         }
     }
 
-    private func formatToolCall(name: String, inputJSON: String) -> String {
+    func formatToolCall(name: String, inputJSON: String) -> String {
         guard let data = inputJSON.data(using: .utf8),
               let params = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else { return "[outil] \(name)" }
@@ -264,7 +264,7 @@ final class SkillRunner {
         return "[outil] \(name) — \(details)"
     }
 
-    private func toolSummary(name: String, params: [String: Any]) -> String {
+    func toolSummary(name: String, params: [String: Any]) -> String {
         let filePathTools: Set<String> = ["Read", "Edit", "Write"]
         if filePathTools.contains(name), let path = params["file_path"] as? String {
             return URL(fileURLWithPath: path).lastPathComponent
