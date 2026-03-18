@@ -84,6 +84,12 @@ struct SettingsView: View {
 private struct GeneralSettingsView: View {
     var onRootDirectoryChanged: (() -> Void)?
     @State private var rootDirectory: URL = AppSettings.rootDirectory
+    @State private var transcriptionLanguage: String = AppSettings.transcriptionLanguage
+
+    private let languages = [
+        ("fr-FR", "Français"),
+        ("en-US", "English"),
+    ]
 
     var body: some View {
         Form {
@@ -111,28 +117,18 @@ private struct GeneralSettingsView: View {
                 }
             }
 
-            Section {
-                VStack(alignment: .leading, spacing: 6) {
-                    pathRow("Mémoire", path: AppSettings.memoryDirectory.path)
-                    pathRow("Thème", path: AppSettings.themeFileURL.path)
+            Section("Transcription") {
+                Picker("Langue", selection: $transcriptionLanguage) {
+                    ForEach(languages, id: \.0) { code, name in
+                        Text(name).tag(code)
+                    }
                 }
-            } header: {
-                Text("Chemins dérivés")
+                .onChange(of: transcriptionLanguage) {
+                    AppSettings.transcriptionLanguage = transcriptionLanguage
+                }
             }
         }
         .formStyle(.grouped)
-    }
-
-    private func pathRow(_ label: String, path: String) -> some View {
-        HStack {
-            Text(label)
-                .frame(width: 80, alignment: .leading)
-            Text(path)
-                .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .truncationMode(.middle)
-        }
     }
 
     private func chooseFolder() {
