@@ -384,6 +384,6 @@ final class FolderContentViewModelTests: XCTestCase {
         let vm = FolderContentViewModel(directory: tempDir)
         XCTAssertNil(vm.meetingConfig.icon)
         XCTAssertNil(vm.meetingConfig.calendarEventName)
-        XCTAssertTrue(vm.meetingConfig.actions.isEmpty)
+        XCTAssertEqual(vm.meetingConfig.actions.count, MeetingConfig.defaultActions.count)
     }
 }
