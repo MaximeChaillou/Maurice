@@ -31,3 +31,4 @@ Local.xcconfig
 
 # Debug
 *.hprof
+.originals/

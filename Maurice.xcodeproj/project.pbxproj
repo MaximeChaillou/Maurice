@@ -427,6 +427,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 310FCBFFE9FDFD7D959B196E /* Build configuration list for PBXNativeTarget "Maurice" */;
 			buildPhases = (
+				DB01CC01CC01CC01CC01CC01 /* Debug Icon Overlay */,
 				5CBD73A549B5052F992653F2 /* SwiftLint */,
 				F7F4CA430F66D3518244E42F /* Sources */,
 				5B422D36B0F7D9A82AFC02B7 /* Resources */,
@@ -512,6 +513,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		DB01CC01CC01CC01CC01CC01 /* Debug Icon Overlay */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Debug Icon Overlay";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Scripts/debug_icon_overlay.sh\"\n";
+		};
 		5CBD73A549B5052F992653F2 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
