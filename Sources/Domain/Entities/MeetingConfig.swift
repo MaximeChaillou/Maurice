@@ -13,8 +13,12 @@ struct MeetingConfig: FolderPersistentCodable {
         self.actions = actions
     }
 
+    static let defaultActions: [SkillAction] = [
+        SkillAction(buttonName: "Résumé", skillFilename: "resume-meeting.md")
+    ]
+
     init() {
-        self.init(icon: nil, calendarEventName: nil, actions: [])
+        self.init(icon: nil, calendarEventName: nil, actions: Self.defaultActions)
     }
 
     // MARK: - Actions
