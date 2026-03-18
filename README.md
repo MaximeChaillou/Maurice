@@ -1,47 +1,47 @@
 # Maurice
 
-Application macOS de transcription audio avec édition Markdown.
+A macOS audio transcription app with Markdown editing.
 
 ## Installation
 
-### Via Homebrew (recommandé)
+### Via Homebrew (recommended)
 
 ```bash
 brew tap MaximeChaillou/maurice https://github.com/MaximeChaillou/Maurice
 brew install --cask maurice
 ```
 
-### Téléchargement manuel
+### Manual download
 
-Télécharger la dernière version depuis la page [Releases](https://github.com/MaximeChaillou/Maurice/releases).
+Download the latest version from the [Releases](https://github.com/MaximeChaillou/Maurice/releases) page.
 
-### Débloquer Gatekeeper
+### Bypass Gatekeeper
 
-Maurice n'est pas signé avec un compte Apple Developer. macOS bloquera l'application au premier lancement.
+Maurice is not signed with an Apple Developer account. macOS will block the app on first launch.
 
-**Méthode 1 — Clic droit :**
-1. Ouvrir le Finder et aller dans `/Applications`
-2. Faire **clic droit** (ou Ctrl+clic) sur Maurice.app
-3. Cliquer sur **Ouvrir**
-4. Confirmer dans la boîte de dialogue
+**Method 1 — Right-click:**
+1. Open Finder and go to `/Applications`
+2. **Right-click** (or Ctrl+click) on Maurice.app
+3. Click **Open**
+4. Confirm in the dialog
 
-**Méthode 2 — Terminal :**
+**Method 2 — Terminal:**
 
 ```bash
 xattr -cr /Applications/Maurice.app
 ```
 
-Cette commande supprime les attributs de quarantaine. Il suffit de la lancer une seule fois.
+This removes the quarantine attributes. You only need to run it once.
 
-## Fonctionnalités
+## Features
 
-- Transcription audio en temps réel (Speech Recognition)
-- Édition Markdown
-- Organisation par date
-- Système de mémoire et de tâches
-- Intégration de Claude Code
-- Interface Liquid Glass (macOS 26)
+- Real-time audio transcription (Speech Recognition)
+- Markdown editing
+- Organization by meeting and by person
+- Memory and task system
+- Claude Code integration
+- Liquid Glass interface (macOS 26)
 
-## Licence
+## License
 
 MIT
