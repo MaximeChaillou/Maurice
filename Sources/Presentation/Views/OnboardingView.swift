@@ -258,8 +258,9 @@ struct OnboardingView: View {
             try fm.createDirectory(at: dir, withIntermediateDirectories: true)
         }
 
-        try writeIfMissing(claudeMDTemplate, to: root.appendingPathComponent("CLAUDE.md"))
-        try writeIfMissing(convertSkillTemplate, to: root.appendingPathComponent(".claude/commands/maurice-convert-file-to-md.md"))
+        copyTemplateIfMissing("CLAUDE", to: root.appendingPathComponent("CLAUDE.md"))
+        copyTemplateIfMissing("maurice-convert-file-to-md", to: root.appendingPathComponent(".claude/commands/maurice-convert-file-to-md.md"))
+        copyTemplateIfMissing("resume-meeting", to: root.appendingPathComponent(".claude/commands/resume-meeting.md"))
         try writeIfMissing("[]", to: root.appendingPathComponent(".maurice/search_index.json"))
 
         let tasksURL = root.appendingPathComponent("Tasks.md")
@@ -279,43 +280,10 @@ struct OnboardingView: View {
         try content.write(to: url, atomically: true, encoding: .utf8)
     }
 
-    // MARK: - Templates
-
-    nonisolated private static let claudeMDTemplate = """
-    # Maurice
-
-    Fichier de configuration pour l'assistant IA.
-    Personnalisez ce fichier selon vos besoins.
-    """
-
-    nonisolated private static let convertSkillTemplate = """
-    Convertir un fichier local en markdown structuré.
-
-    # Contexte
-
-    Tu reçois un chemin de fichier local et un chemin cible où écrire le résultat en markdown.
-
-    Les arguments sont fournis sous la forme :
-    ```
-    source: <chemin_fichier_source>
-    target: <chemin_fichier_md_cible>
-    ```
-
-    # Instructions
-
-    1. **Lire la source** :
-       - Utilise l'outil Read pour lire le contenu du fichier (PDF, .docx, .txt, image, etc.).
-
-    2. **Convertir en markdown — COPIE FIDÈLE** :
-       - Tu dois faire une **copie exacte et intégrale** du texte source. Ne résume pas, ne reformule pas, ne simplifie pas, ne réorganise pas.
-       - Chaque phrase, chaque mot, chaque point de la source doit apparaître tel quel dans le résultat.
-       - Convertis uniquement le **formatage** en markdown (titres → #, listes → -, tableaux → |, gras → **, etc.).
-       - Garde la langue originale du document.
-
-    3. **Écrire le résultat** :
-       - Écris le markdown dans le fichier cible avec l'outil Write.
-       - Ne pas ajouter de métadonnées, commentaires, résumés ou notes personnelles. Uniquement le contenu source converti en markdown.
-
-    $ARGUMENTS
-    """
+    nonisolated private static func copyTemplateIfMissing(_ name: String, to url: URL) {
+        guard !FileManager.default.fileExists(atPath: url.path),
+              let sourceURL = Bundle.main.url(forResource: name, withExtension: "md", subdirectory: "Templates")
+        else { return }
+        try? FileManager.default.copyItem(at: sourceURL, to: url)
+    }
 }
