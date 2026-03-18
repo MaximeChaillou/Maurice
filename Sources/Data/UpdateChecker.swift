@@ -1,6 +1,7 @@
 import Foundation
 import Sparkle
 
+@MainActor
 final class UpdateChecker: ObservableObject {
     let updater: SPUUpdater
 

@@ -5,5 +5,17 @@
         <link>https://raw.githubusercontent.com/MaximeChaillou/Maurice/main/appcast.xml</link>
         <description>Mises à jour de Maurice</description>
         <language>fr</language>
+        <item>
+            <title>Version 1.0.0-beta.1</title>
+            <pubDate>Tue, 18 Mar 2026 08:00:00 +0100</pubDate>
+            <sparkle:version>1.0.0-beta.1</sparkle:version>
+            <sparkle:shortVersionString>1.0.0-beta.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://github.com/MaximeChaillou/Maurice/releases/download/v1.0.0-beta.1/Maurice-1.0.0-beta.1.zip"
+                length="0"
+                type="application/octet-stream"
+            />
+        </item>
     </channel>
 </rss>
