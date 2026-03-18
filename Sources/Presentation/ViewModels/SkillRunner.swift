@@ -39,7 +39,10 @@ final class SkillRunner {
         return [
             "--allowedTools", "Read(\(root)/**)",
             "--allowedTools", "Write(\(root)/**)",
-            "--allowedTools", "Edit(\(root)/**)"
+            "--allowedTools", "Edit(\(root)/**)",
+            "--allowedTools", "Glob(\(root)/**)",
+            "--allowedTools", "Grep(\(root)/**)",
+            "--allowedTools", "Bash(ls:*,mkdir:*,cat:*,mv:*,cp:*,rm:*)"
         ]
     }
 
@@ -54,7 +57,7 @@ final class SkillRunner {
         }
         launchClaude(
             prompt: prompt,
-            extraArgs: ["--permission-mode", "acceptEdits"] + Self.mauricePermissions,
+            extraArgs: ["--permission-mode", "bypassPermissions"] + Self.mauricePermissions,
             workingDirectory: workingDirectory
         )
     }
@@ -63,7 +66,7 @@ final class SkillRunner {
         skillLabel = nil
         launchClaude(
             prompt: prompt,
-            extraArgs: Self.mauricePermissions,
+            extraArgs: ["--permission-mode", "bypassPermissions"] + Self.mauricePermissions,
             workingDirectory: workingDirectory
         )
     }
@@ -76,7 +79,7 @@ final class SkillRunner {
         launchClaude(
             prompt: prompt,
             extraArgs: [
-                "--permission-mode", "acceptEdits",
+                "--permission-mode", "bypassPermissions",
                 "--allowedTools", "Read(\(sourceDir)/**)",
                 "--allowedTools", "Write(\(targetDir)/**)"
             ],
@@ -91,6 +94,7 @@ final class SkillRunner {
         outputLines = []
         lastAssistantLine = ""
         currentText = ""
+        appendLine("[commande] \(prompt)", kind: .system)
 
         let proc = Process()
         let pipe = Pipe()

@@ -27,7 +27,7 @@ struct DateNavigationHeader: View {
                 Spacer()
                 TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
                 if let config, let skillRunner {
-                    SkillActionsMenu(config: config, runner: skillRunner)
+                    SkillActionsMenu(config: config, runner: skillRunner, activeFilePath: entry.noteFile?.url.path ?? entry.transcript?.url.path)
                     if let showConfigAction {
                         GlassIconButton(icon: "gearshape", help: "Configurer les skills") {
                             showConfigAction()
@@ -114,6 +114,7 @@ struct TranscriptToggleButton: View {
 struct SkillActionsMenu: View {
     let config: MeetingConfig
     let runner: SkillRunner
+    var activeFilePath: String?
 
     var body: some View {
         let actions = config.actions
@@ -123,10 +124,12 @@ struct SkillActionsMenu: View {
                     Button {
                         guard !runner.isRunning else { return }
                         runner.actionID = action.id
+                        let filePrefix = activeFilePath.map { $0 + " " } ?? ""
+                        let fullParameter = filePrefix + (action.parameter ?? "")
                         runner.run(
                             skillFilename: action.skillFilename,
                             buttonName: action.buttonName,
-                            parameter: action.parameter,
+                            parameter: fullParameter.isEmpty ? nil : fullParameter,
                             workingDirectory: AppSettings.rootDirectory
                         )
                     } label: {
