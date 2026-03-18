@@ -39,6 +39,7 @@ Cette commande supprime les attributs de quarantaine. Il suffit de la lancer une
 - Édition Markdown
 - Organisation par date
 - Système de mémoire et de tâches
+- Intégration de Claude Code
 - Interface Liquid Glass (macOS 26)
 
 ## Licence
