@@ -24,6 +24,10 @@
 	<string>Maurice needs access to your microphone to transcribe meetings.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Maurice needs speech recognition to transcribe meetings.</string>
+	<key>SUPublicEDKey</key>
+	<string>bcNfZDpQ4cqnLqK0ek9s0HvP0aw801DMIwgdX4xQo6s=</string>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/MaximeChaillou/Maurice/main/appcast.xml</string>
 	<key>GoogleClientID</key>
 	<string>$(GOOGLE_CLIENT_ID)</string>
 	<key>GoogleClientSecret</key>

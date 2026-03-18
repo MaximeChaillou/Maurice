@@ -58,6 +58,16 @@ Sources/
 - Ne **jamais** installer de dépendance Ruby (xcodeproj gem, etc.) pour modifier le projet.
 - Pour ajouter des fichiers au projet Xcode, modifier directement le `project.pbxproj` (PBXFileReference, PBXGroup, PBXBuildFile, PBXSourcesBuildPhase).
 
+## Release & Distribution
+
+- Distribution via **Homebrew Cask** (`Casks/maurice.rb`) et **GitHub Releases**.
+- Mises à jour automatiques via **Sparkle** (clé EdDSA dans le Keychain, clé publique dans `Info.plist`).
+- Feed de mise à jour : `appcast.xml` à la racine du repo.
+- Pour publier une release : `./Scripts/create_release.sh <version>` (build Release, zip, signature Sparkle, appcast, GitHub Release), puis commit et push `appcast.xml`.
+- Le Cask (`Casks/maurice.rb`) doit être mis à jour avec la nouvelle version et le SHA256 du zip.
+- L'app n'est **pas signée Apple** — les utilisateurs doivent débloquer Gatekeeper (`xattr -cr`).
+- Chaque release doit inclure un **changelog** listant les changements depuis la dernière version (nouvelles fonctionnalités, corrections, améliorations).
+
 ## Settings & Configuration
 
 - Tous les chemins dérivent de `AppSettings.rootDirectory` — ne jamais hardcoder de chemins absolus.

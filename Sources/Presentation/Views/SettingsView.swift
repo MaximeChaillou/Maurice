@@ -85,6 +85,7 @@ private struct GeneralSettingsView: View {
     var onRootDirectoryChanged: (() -> Void)?
     @State private var rootDirectory: URL = AppSettings.rootDirectory
     @State private var transcriptionLanguage: String = AppSettings.transcriptionLanguage
+    @StateObject private var updateChecker = UpdateChecker()
 
     private let languages = [
         ("fr-FR", "Français"),
@@ -93,6 +94,25 @@ private struct GeneralSettingsView: View {
 
     var body: some View {
         Form {
+            Section("Mise à jour") {
+                HStack {
+                    Text("Version actuelle")
+                    Spacer()
+                    Text(updateChecker.currentVersion)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack {
+                    Toggle("Vérifier automatiquement", isOn: $updateChecker.automaticallyChecksForUpdates)
+
+                    Spacer()
+
+                    Button("Vérifier maintenant") {
+                        updateChecker.checkForUpdates()
+                    }
+                }
+            }
+
             Section("Dossier de données") {
                 HStack {
                     Text("Dossier racine")
