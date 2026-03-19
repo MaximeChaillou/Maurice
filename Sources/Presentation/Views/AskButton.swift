@@ -118,21 +118,16 @@ struct AskButton: View {
             .buttonStyle(.plain)
             .overlay(alignment: .leading) {
                 if runner.isRunning && isExpanded {
-                    HStack(spacing: 6) {
-                        Button {
-                            runner.stop()
-                        } label: {
-                            Image(systemName: "stop.circle.fill")
-                                .font(.system(size: 15))
-                                .foregroundStyle(.white)
-                                .contentShape(Circle())
-                        }
-                        .buttonStyle(.plain)
-
-                        ProgressView()
-                            .controlSize(.small)
+                    Button {
+                        runner.stop()
+                    } label: {
+                        Image(systemName: "stop.circle.fill")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.white)
+                            .contentShape(Circle())
                     }
-                    .offset(x: -50)
+                    .buttonStyle(.plain)
+                    .offset(x: -30)
                     .transition(.opacity)
                 }
             }

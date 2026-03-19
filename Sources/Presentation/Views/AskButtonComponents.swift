@@ -141,14 +141,15 @@ struct AskThinkingView: View {
                     .font(AskFont.caption)
                     .foregroundColor(
                         Color(
-                            red: 0.7 + 0.3 * glow,
-                            green: 0.25 * (1 - glow),
-                            blue: 0.25 * (1 - glow)
+                            red: 0.75 + 0.25 * glow,
+                            green: 0.35 + 0.15 * glow,
+                            blue: 0.15 * (1 - glow)
                         )
                     )
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 8)
         .opacity(breathOpacity)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
