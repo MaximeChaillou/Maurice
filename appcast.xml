@@ -6,6 +6,19 @@
         <description>Mises à jour de Maurice</description>
         <language>fr</language>
         <item>
+            <title>Version 1.0.0-beta.4</title>
+            <pubDate>Thu, 19 Mar 2026 21:45:57 +0100</pubDate>
+            <sparkle:version>1.0.0-beta.4</sparkle:version>
+            <sparkle:shortVersionString>1.0.0-beta.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://github.com/MaximeChaillou/Maurice/releases/download/v1.0.0-beta.4/Maurice-1.0.0-beta.4.zip"
+                sparkle:edSignature="BWy6M1zoUvV8i9tbNB2xzzLvGZfAEHjrwM1i4VpiUeyYBs1aQro8rVirf40iAVRCPqhZwQlFWzMLiOnmKVE9Bw=="
+                length="10863765"
+                type="application/octet-stream"
+            />
+        </item>
+        <item>
             <title>Version 1.0.0-beta.3</title>
             <pubDate>Tue, 18 Mar 2026 22:00:00 +0100</pubDate>
             <sparkle:version>1.0.0-beta.3</sparkle:version>
