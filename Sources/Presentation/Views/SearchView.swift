@@ -238,7 +238,7 @@ private enum ExactSearchEngine {
                     query: query
                 ))
             }
-            let files = DirectoryScanner.scan(at: folder.url, fileExtension: "md").files
+            let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
             for file in files {
                 let fileName = file.url.deletingPathExtension().lastPathComponent
                 let content = try? String(contentsOf: file.url, encoding: .utf8)

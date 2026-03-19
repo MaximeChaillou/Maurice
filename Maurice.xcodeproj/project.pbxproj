@@ -94,6 +94,8 @@
 		NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */; };
 		NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */; };
 		NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */; };
+		TR01TR02TR03TR04TR05TR06 /* DirectoryScannerRecursiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */; };
+		TR07TR08TR09TR10TR11TR12 /* AskButtonComponentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */; };
 		NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */; };
 		NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */; };
 		NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */; };
@@ -220,6 +222,8 @@
 		NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeTests.swift; sourceTree = "<group>"; };
 		NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerTests.swift; sourceTree = "<group>"; };
+		TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerRecursiveTests.swift; sourceTree = "<group>"; };
+		TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButtonComponentsTests.swift; sourceTree = "<group>"; };
 		NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTranscriptionStorageTests.swift; sourceTree = "<group>"; };
 		NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderNavigationStackTests.swift; sourceTree = "<group>"; };
 		NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarServiceTests.swift; sourceTree = "<group>"; };
@@ -493,7 +497,9 @@
 				NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */,
 				NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */,
 				T101A102B103C104D105E106F /* CodableColorTests.swift */,
+				TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */,
 				NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */,
+				TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */,
 				NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */,
 				VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */,
 				NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */,
@@ -744,7 +750,9 @@
 				NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */,
 				NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */,
 				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
+				TR07TR08TR09TR10TR11TR12 /* AskButtonComponentsTests.swift in Sources */,
 				NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */,
+				TR01TR02TR03TR04TR05TR06 /* DirectoryScannerRecursiveTests.swift in Sources */,
 				NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */,
 				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
 				NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */,

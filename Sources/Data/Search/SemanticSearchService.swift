@@ -204,7 +204,7 @@ final class SemanticSearchService {
                 ))
             }
 
-            let files = DirectoryScanner.scan(at: folder.url, fileExtension: "md").files
+            let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
             for file in files {
                 let fileDate = file.date
                 if let cached = existing[file.url.absoluteString], cached.modificationDate >= fileDate {
