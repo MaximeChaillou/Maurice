@@ -32,5 +32,7 @@
 	<string>https://raw.githubusercontent.com/MaximeChaillou/Maurice/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>bcNfZDpQ4cqnLqK0ek9s0HvP0aw801DMIwgdX4xQo6s=</string>
+	<key>ATSApplicationFontsPath</key>
+	<string>.</string>
 </dict>
 </plist>

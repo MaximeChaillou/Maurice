@@ -4,7 +4,7 @@ struct AskButton: View {
     var runner: SkillRunner
     @State private var isExpanded = false
     @State private var searchText = ""
-    @State private var conversationLines: [ConversationLine] = []
+    @State private var conversationLines: [AskConversationLine] = []
     @State private var lastSyncedCount = 0
     @FocusState private var isSearchFieldFocused: Bool
 
@@ -12,9 +12,9 @@ struct AskButton: View {
         !conversationLines.isEmpty || runner.isRunning || !runner.currentText.isEmpty
     }
 
-    private var groupedSegments: [ConversationSegment] {
-        var segments: [ConversationSegment] = []
-        var toolBuffer: [ConversationLine] = []
+    private var groupedSegments: [AskConversationSegment] {
+        var segments: [AskConversationSegment] = []
+        var toolBuffer: [AskConversationLine] = []
 
         func flushTools() {
             if !toolBuffer.isEmpty {
@@ -52,7 +52,9 @@ struct AskButton: View {
         .onChange(of: runner.isRunning) {
             if runner.isRunning {
                 if let label = runner.skillLabel {
-                    conversationLines.append(ConversationLine(text: "Exécution du skill « \(label) »…", kind: .user))
+                    conversationLines.append(AskConversationLine(
+                        text: "Exécution du skill « \(label) »…", kind: .system
+                    ))
                     lastSyncedCount = 0
                 }
                 if !isExpanded {
@@ -141,9 +143,15 @@ struct AskButton: View {
                         segmentView(segment)
                     }
 
+                    if runner.isRunning && runner.currentText.isEmpty
+                        && runner.outputLines.count <= lastSyncedCount {
+                        AskThinkingView()
+                            .id("thinking")
+                    }
+
                     if !runner.currentText.isEmpty {
                         Text(runner.currentText)
-                            .font(.system(.body, design: .monospaced))
+                            .font(AskFont.body)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .id("streaming")
@@ -192,22 +200,21 @@ struct AskButton: View {
     // MARK: - Segment views
 
     @ViewBuilder
-    private func segmentView(_ segment: ConversationSegment) -> some View {
+    private func segmentView(_ segment: AskConversationSegment) -> some View {
         switch segment {
         case .single(let line):
             conversationLineView(line)
         case .toolGroup(let lines):
-            ToolGroupView(lines: lines)
+            AskToolGroupView(lines: lines)
         }
     }
 
     @ViewBuilder
-    private func conversationLineView(_ line: ConversationLine) -> some View {
+    private func conversationLineView(_ line: AskConversationLine) -> some View {
         switch line.kind {
         case .user:
-            Text(line.text)
-                .font(.system(.body, design: .monospaced))
-                .fontWeight(.semibold)
+            Text("→ \(line.text)")
+                .font(AskFont.semiBold(size: 13))
                 .foregroundStyle(.primary)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -216,19 +223,19 @@ struct AskButton: View {
             assistantLineView(line.text)
         case .tool:
             Text(line.text)
-                .font(.system(.caption, design: .monospaced))
+                .font(AskFont.caption)
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         case .system:
             Text(line.text)
-                .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.primary)
+                .font(AskFont.caption)
+                .foregroundColor(.gray)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         case .error:
             Text(line.text)
-                .font(.system(.caption, design: .monospaced))
+                .font(AskFont.caption)
                 .foregroundStyle(.red)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -241,26 +248,25 @@ struct AskButton: View {
         let prompt = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty, !runner.isRunning else { return }
 
-        conversationLines.append(ConversationLine(text: prompt, kind: .user))
+        conversationLines.append(AskConversationLine(text: prompt, kind: .user))
         searchText = ""
 
         runner.runPrompt(prompt, workingDirectory: AppSettings.rootDirectory)
     }
 
     private func syncRunnerOutput() {
-        // Runner was reset (new run started) — reset sync counter
         if runner.outputLines.count < lastSyncedCount {
             lastSyncedCount = 0
         }
         let newLines = runner.outputLines.dropFirst(lastSyncedCount)
         for line in newLines {
-            let kind: ConversationLine.Kind = switch line.kind {
+            let kind: AskConversationLine.Kind = switch line.kind {
             case .assistant: .assistant
             case .tool: .tool
             case .system: .system
             case .error: .error
             }
-            conversationLines.append(ConversationLine(text: line.text, kind: kind))
+            conversationLines.append(AskConversationLine(text: line.text, kind: kind))
         }
         lastSyncedCount = runner.outputLines.count
     }
@@ -285,37 +291,29 @@ struct AskButton: View {
 
     @ViewBuilder
     private func assistantLineView(_ text: String) -> some View {
-        let heading = headingLevel(text)
+        let heading = InlineMarkdownParser.headingLevel(text)
         if heading.level > 0 {
-            Text(parseInlineMarkdown(heading.content))
-                .font(.system(headingStyle(heading.level), design: .monospaced).weight(.bold))
+            Text(InlineMarkdownParser.parse(heading.content))
+                .font(AskFont.bold(size: headingSize(heading.level)))
                 .foregroundStyle(.blue)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 10)
         } else {
-            Text(parseInlineMarkdown(text))
-                .font(.system(.body, design: .monospaced))
+            Text(InlineMarkdownParser.parse(text))
+                .font(AskFont.body)
                 .foregroundStyle(.blue)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
-    private func headingLevel(_ text: String) -> (level: Int, content: String) {
-        InlineMarkdownParser.headingLevel(text)
-    }
-
-    private func headingStyle(_ level: Int) -> Font.TextStyle {
+    private func headingSize(_ level: Int) -> CGFloat {
         switch level {
-        case 1: .title
-        case 2: .title2
-        default: .title3
+        case 1: 22
+        case 2: 18
+        default: 15
         }
-    }
-
-    private func parseInlineMarkdown(_ text: String) -> AttributedString {
-        InlineMarkdownParser.parse(text)
     }
 
     private func clearConversation() {
@@ -324,150 +322,5 @@ struct AskButton: View {
         runner.currentText = ""
         conversationLines = []
         lastSyncedCount = 0
-    }
-}
-
-// MARK: - Tool group (collapsible)
-
-private struct ToolGroupView: View {
-    let lines: [ConversationLine]
-    @State private var isOpen = false
-
-    private var summary: String {
-        let count = lines.count
-        return "\(count) outil\(count > 1 ? "s" : "") utilisé\(count > 1 ? "s" : "")"
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) { isOpen.toggle() }
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: isOpen ? "chevron.down" : "chevron.right")
-                        .font(.caption2)
-                    Text(summary)
-                        .font(.system(.caption, design: .monospaced))
-                }
-                .foregroundStyle(.secondary)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-
-            if isOpen {
-                VStack(alignment: .leading, spacing: 1) {
-                    ForEach(lines) { line in
-                        Text(line.text)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                .padding(.leading, 16)
-                .padding(.top, 2)
-            }
-        }
-    }
-}
-
-// MARK: - Inline Markdown parser
-
-private enum InlineMarkdownParser {
-    static func headingLevel(_ text: String) -> (level: Int, content: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespaces)
-        var level = 0
-        for char in trimmed {
-            if char == "#" { level += 1 } else { break }
-        }
-        guard level > 0, level <= 3, trimmed.dropFirst(level).first == " " else {
-            return (0, text)
-        }
-        return (level, String(trimmed.dropFirst(level + 1)))
-    }
-
-    static func parse(_ text: String) -> AttributedString {
-        parseBold(text[...])
-    }
-
-    private static func parseBold(_ remaining: Substring) -> AttributedString {
-        var result = AttributedString()
-        var rest = remaining
-
-        while !rest.isEmpty {
-            if let openRange = rest.range(of: "**") {
-                let before = rest[rest.startIndex..<openRange.lowerBound]
-                if !before.isEmpty { result.append(parseItalic(before)) }
-                let afterOpen = rest[openRange.upperBound...]
-                if let closeRange = afterOpen.range(of: "**") {
-                    var bold = parseItalic(afterOpen[afterOpen.startIndex..<closeRange.lowerBound])
-                    for run in bold.runs {
-                        bold[run.range].inlinePresentationIntent =
-                            (bold[run.range].inlinePresentationIntent ?? []).union(.stronglyEmphasized)
-                    }
-                    result.append(bold)
-                    rest = afterOpen[closeRange.upperBound...]
-                } else {
-                    result.append(AttributedString("**"))
-                    rest = afterOpen
-                }
-            } else {
-                result.append(parseItalic(rest))
-                break
-            }
-        }
-        return result
-    }
-
-    private static func parseItalic(_ remaining: Substring) -> AttributedString {
-        var result = AttributedString()
-        var rest = remaining
-
-        while !rest.isEmpty {
-            if let openRange = rest.range(of: "*") {
-                let before = rest[rest.startIndex..<openRange.lowerBound]
-                if !before.isEmpty { result.append(AttributedString(before)) }
-                let afterOpen = rest[openRange.upperBound...]
-                if let closeRange = afterOpen.range(of: "*") {
-                    var italic = AttributedString(afterOpen[afterOpen.startIndex..<closeRange.lowerBound])
-                    italic.inlinePresentationIntent = .emphasized
-                    result.append(italic)
-                    rest = afterOpen[closeRange.upperBound...]
-                } else {
-                    result.append(AttributedString("*"))
-                    rest = afterOpen
-                }
-            } else {
-                result.append(AttributedString(rest))
-                break
-            }
-        }
-        return result
-    }
-}
-
-// MARK: - Models
-
-private struct ConversationLine: Identifiable, Equatable {
-    let id = UUID()
-    let text: String
-    let kind: Kind
-
-    enum Kind {
-        case user, assistant, tool, system, error
-    }
-
-    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
-}
-
-private enum ConversationSegment {
-    case single(ConversationLine)
-    case toolGroup([ConversationLine])
-
-    var id: String {
-        switch self {
-        case .single(let line): line.id.uuidString
-        case .toolGroup(let lines): lines.first?.id.uuidString ?? UUID().uuidString
-        }
     }
 }

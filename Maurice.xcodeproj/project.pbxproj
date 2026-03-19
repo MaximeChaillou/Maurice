@@ -30,6 +30,7 @@
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
 		6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */; };
+		AC01AC02AC03AC04AC05AC06 /* AskButtonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */; };
 		6F1ADD8CF138F5975A4310C0 /* MemoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80051D6DB5639866EA2923C6 /* MemoryContentView.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
 		8A763B6F00264839B4F3CAD8 /* GoogleCalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81AD12FE79304C27BE1C622E /* GoogleCalendarService.swift */; };
@@ -103,6 +104,10 @@
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
 		NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */; };
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
+		FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */; };
+		FN02BF02BF02BF02BF02BF02 /* FiraCodeNerdFont-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */; };
+		FN03BF03BF03BF03BF03BF03 /* FiraCodeNerdFont-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */; };
+		FN04BF04BF04BF04BF04BF04 /* FiraCodeNerdFont-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN04FR04FR04FR04FR04FR04 /* FiraCodeNerdFont-Light.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +148,7 @@
 		52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
 		55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCase.swift; sourceTree = "<group>"; };
 		5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButton.swift; sourceTree = "<group>"; };
+		AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButtonComponents.swift; sourceTree = "<group>"; };
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MauriceApp.swift; sourceTree = "<group>"; };
 		6E435614E19D148F97CACBD6 /* SpeechModelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelState.swift; sourceTree = "<group>"; };
@@ -228,6 +234,10 @@
 		VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModelTests.swift; sourceTree = "<group>"; };
 		VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModelTests.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
+		FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Regular.ttf"; sourceTree = "<group>"; };
+		FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Bold.ttf"; sourceTree = "<group>"; };
+		FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-SemiBold.ttf"; sourceTree = "<group>"; };
+		FN04FR04FR04FR04FR04FR04 /* FiraCodeNerdFont-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,9 +376,21 @@
 			isa = PBXGroup;
 			children = (
 				444945559552A66796B66A73 /* Assets.xcassets */,
+				FN00GR00GR00GR00GR00GR00 /* Fonts */,
 				TP01TP02TP03TP04TP05TP06 /* Templates */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		FN00GR00GR00GR00GR00GR00 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */,
+				FN04FR04FR04FR04FR04FR04 /* FiraCodeNerdFont-Light.ttf */,
+				FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */,
+				FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		E77847455FB23CF8278D74E7 /* Views */ = {
@@ -383,6 +405,7 @@
 				EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */,
 				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
 				5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */,
+				AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */,
 				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
@@ -581,6 +604,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */,
+				FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */,
+				FN02BF02BF02BF02BF02BF02 /* FiraCodeNerdFont-Bold.ttf in Resources */,
+				FN03BF03BF03BF03BF03BF03 /* FiraCodeNerdFont-SemiBold.ttf in Resources */,
+				FN04BF04BF04BF04BF04BF04 /* FiraCodeNerdFont-Light.ttf in Resources */,
 				TP07TP08TP09TP10TP11TP12 /* Templates in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -654,6 +681,7 @@
 				E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */,
 				015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */,
 				6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */,
+				AC01AC02AC03AC04AC05AC06 /* AskButtonComponents.swift in Sources */,
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,
 				E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */,
 				18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */,
