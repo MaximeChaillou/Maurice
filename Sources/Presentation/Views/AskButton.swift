@@ -74,6 +74,13 @@ struct AskButton: View {
                 syncRunnerOutput()
             }
         }
+        .onKeyPress(characters: .init(charactersIn: "c"), phases: .down) { keyPress in
+            if keyPress.modifiers == .control && runner.isRunning {
+                runner.stop()
+                return .handled
+            }
+            return .ignored
+        }
     }
 
     // MARK: - Input bar
