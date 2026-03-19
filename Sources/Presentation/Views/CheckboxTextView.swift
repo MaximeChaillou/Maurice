@@ -28,6 +28,24 @@ class CheckboxTextView: NSTextView {
         textContainerInset = NSSize(width: hInset, height: 16)
     }
 
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        let flags = event.modifierFlags.intersection([.command, .shift, .option, .control])
+        if flags.contains(.command) {
+            switch event.charactersIgnoringModifiers?.lowercased() {
+            case "g":
+                let action: NSTextFinder.Action = flags.contains(.shift)
+                    ? .previousMatch : .nextMatch
+                let item = NSMenuItem()
+                item.tag = Int(action.rawValue)
+                performFindPanelAction(item)
+                return true
+            default:
+                break
+            }
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
     private var trackingArea: NSTrackingArea?
     private var isOverCheckbox = false
 
@@ -266,47 +284,6 @@ class CheckboxTextView: NSTextView {
         cancelCellEditing()
     }
 
-    // MARK: - Inline markdown styling for cell editor
-
-    static func styledCellString(
-        _ text: String, font: NSFont, color: NSColor,
-        boldColor: NSColor, italicColor: NSColor
-    ) -> NSAttributedString {
-        let baseAttrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: color]
-        let result = NSMutableAttributedString(string: text, attributes: baseAttrs)
-        let nsText = text as NSString
-        let markerColor = NSColor.tertiaryLabelColor
-
-        // Bold: **text**
-        if let boldRegex = try? NSRegularExpression(pattern: "\\*\\*(.+?)\\*\\*") {
-            for match in boldRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length)) {
-                let contentRange = match.range(at: 1)
-                let boldFont = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask)
-                result.addAttributes([.font: boldFont, .foregroundColor: boldColor], range: contentRange)
-                let openRange = NSRange(location: match.range.location, length: 2)
-                let closeRange = NSRange(location: match.range.location + match.range.length - 2, length: 2)
-                result.addAttribute(.foregroundColor, value: markerColor, range: openRange)
-                result.addAttribute(.foregroundColor, value: markerColor, range: closeRange)
-            }
-        }
-
-        // Italic: *text* (not preceded/followed by *)
-        if let italicRegex = try? NSRegularExpression(pattern: "(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)") {
-            for match in italicRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length)) {
-                let contentRange = match.range(at: 1)
-                let currentFont = result.attribute(.font, at: contentRange.location, effectiveRange: nil) as? NSFont ?? font
-                let italicFont = NSFontManager.shared.convert(currentFont, toHaveTrait: .italicFontMask)
-                result.addAttributes([.font: italicFont, .foregroundColor: italicColor], range: contentRange)
-                let openRange = NSRange(location: match.range.location, length: 1)
-                let closeRange = NSRange(location: match.range.location + match.range.length - 1, length: 1)
-                result.addAttribute(.foregroundColor, value: markerColor, range: openRange)
-                result.addAttribute(.foregroundColor, value: markerColor, range: closeRange)
-            }
-        }
-
-        return result
-    }
-
     // MARK: - Tab navigation
 
     private func navigateToCell(from ref: TableCellRef, forward: Bool) {
@@ -334,6 +311,47 @@ class CheckboxTextView: NSTextView {
             beginCellEditing(nextRef)
             return
         }
+    }
+}
+
+// MARK: - Inline markdown styling for cell editor
+
+extension CheckboxTextView {
+    static func styledCellString(
+        _ text: String, font: NSFont, color: NSColor,
+        boldColor: NSColor, italicColor: NSColor
+    ) -> NSAttributedString {
+        let baseAttrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: color]
+        let result = NSMutableAttributedString(string: text, attributes: baseAttrs)
+        let nsText = text as NSString
+        let markerColor = NSColor.tertiaryLabelColor
+        let fullRange = NSRange(location: 0, length: nsText.length)
+
+        if let boldRegex = try? NSRegularExpression(pattern: "\\*\\*(.+?)\\*\\*") {
+            for match in boldRegex.matches(in: text, range: fullRange) {
+                let boldFont = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask)
+                result.addAttributes([.font: boldFont, .foregroundColor: boldColor], range: match.range(at: 1))
+                result.addAttribute(.foregroundColor, value: markerColor,
+                                    range: NSRange(location: match.range.location, length: 2))
+                result.addAttribute(.foregroundColor, value: markerColor,
+                                    range: NSRange(location: match.range.location + match.range.length - 2, length: 2))
+            }
+        }
+
+        if let italicRegex = try? NSRegularExpression(pattern: "(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)") {
+            for match in italicRegex.matches(in: text, range: fullRange) {
+                let contentRange = match.range(at: 1)
+                let curFont = result.attribute(.font, at: contentRange.location, effectiveRange: nil) as? NSFont ?? font
+                let italicFont = NSFontManager.shared.convert(curFont, toHaveTrait: .italicFontMask)
+                result.addAttributes([.font: italicFont, .foregroundColor: italicColor], range: contentRange)
+                result.addAttribute(.foregroundColor, value: markerColor,
+                                    range: NSRange(location: match.range.location, length: 1))
+                result.addAttribute(.foregroundColor, value: markerColor,
+                                    range: NSRange(location: match.range.location + match.range.length - 1, length: 1))
+            }
+        }
+
+        return result
     }
 }
 

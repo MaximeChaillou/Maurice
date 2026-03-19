@@ -159,6 +159,10 @@ struct MauriceApp: App {
                 Button("Rechercher…") {
                     showSearch = true
                 }
+                .keyboardShortcut("f", modifiers: [.command, .shift])
+                Button("Rechercher dans le fichier…") {
+                    sendFindAction(.showFindInterface)
+                }
                 .keyboardShortcut("f", modifiers: .command)
             }
             CommandMenu("Mémoire") {
@@ -192,6 +196,14 @@ struct MauriceApp: App {
         }
         .defaultSize(width: 800, height: 550)
         .windowResizability(.contentMinSize)
+    }
+
+    // MARK: - Find actions
+
+    private func sendFindAction(_ action: NSTextFinder.Action) {
+        let item = NSMenuItem()
+        item.tag = Int(action.rawValue)
+        NSApp.sendAction(#selector(NSTextView.performFindPanelAction(_:)), to: nil, from: item)
     }
 
     // MARK: - Reload after directory change

@@ -23,6 +23,8 @@ struct MarkdownView: NSViewRepresentable {
             width: 0, height: CGFloat.greatestFiniteMagnitude
         )
         textView.allowsUndo = true
+        textView.usesFindBar = true
+        textView.isIncrementalSearchingEnabled = true
         textView.delegate = context.coordinator
 
         let layoutManager = HidingLayoutManager()
