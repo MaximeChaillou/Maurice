@@ -119,28 +119,27 @@ struct PeopleView: View {
 
             Divider()
 
-            List(selection: $viewModel.selectedPerson) {
-                ForEach(viewModel.categories) { category in
-                    Section(category.name) {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(viewModel.categories) { category in
+                        Text(category.name)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 12)
+                            .padding(.top, 12)
+                            .padding(.bottom, 4)
+
                         ForEach(category.people) { person in
-                            Text(person.name)
-                                .font(.body)
-                                .lineLimit(1)
-                                .padding(.vertical, 2)
-                                .tag(person.relativePath)
-                                .listRowBackground(Color.clear)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        folderToDelete = person
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
+                            PersonRow(
+                                name: person.name,
+                                isSelected: viewModel.selectedPerson == person.relativePath,
+                                onSelect: { viewModel.selectedPerson = person.relativePath },
+                                onDelete: { folderToDelete = person }
+                            )
                         }
                     }
                 }
             }
-            .scrollContentBackground(.hidden)
             .deletionAlert(
                 "Delete person?",
                 item: $folderToDelete,
@@ -286,6 +285,49 @@ struct PeopleView: View {
                 description: Text("Select a person from the list.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+}
+
+// MARK: - Person Row
+
+private struct PersonRow: View {
+    let name: String
+    let isSelected: Bool
+    let onSelect: () -> Void
+    let onDelete: () -> Void
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: onSelect) {
+            Text(name)
+                .font(.body)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+        }
+        .buttonStyle(.plain)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(isSelected ? .white.opacity(0.15) : (isHovered ? .white.opacity(0.08) : .clear))
+        )
+        .padding(.horizontal, 4)
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            isHovered = hovering
+            if hovering {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+        }
+        .contextMenu {
+            Button(role: .destructive) {
+                onDelete()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
         }
     }
 }
