@@ -8,20 +8,20 @@
         <item>
             <title>Version 1.0.0-beta.4</title>
             <pubDate>Thu, 19 Mar 2026 21:45:57 +0100</pubDate>
-            <sparkle:version>1.0.0-beta.4</sparkle:version>
+            <sparkle:version>4</sparkle:version>
             <sparkle:shortVersionString>1.0.0-beta.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <enclosure
                 url="https://github.com/MaximeChaillou/Maurice/releases/download/v1.0.0-beta.4/Maurice-1.0.0-beta.4.zip"
-                sparkle:edSignature="BWy6M1zoUvV8i9tbNB2xzzLvGZfAEHjrwM1i4VpiUeyYBs1aQro8rVirf40iAVRCPqhZwQlFWzMLiOnmKVE9Bw=="
-                length="10863765"
+                sparkle:edSignature="fmZ/7NFS/nFSjN+fDeRHV03uPpes6UHmx7PxPF7peCI+Jz0+xRbk9kW2X3coSVCoIqMqaSrx3lRCYEVGq1hpCw=="
+                length="10863789"
                 type="application/octet-stream"
             />
         </item>
         <item>
             <title>Version 1.0.0-beta.3</title>
             <pubDate>Tue, 18 Mar 2026 22:00:00 +0100</pubDate>
-            <sparkle:version>1.0.0-beta.3</sparkle:version>
+            <sparkle:version>3</sparkle:version>
             <sparkle:shortVersionString>1.0.0-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <enclosure
@@ -34,7 +34,7 @@
         <item>
             <title>Version 1.0.0-beta.2</title>
             <pubDate>Tue, 18 Mar 2026 21:30:00 +0100</pubDate>
-            <sparkle:version>1.0.0-beta.2</sparkle:version>
+            <sparkle:version>2</sparkle:version>
             <sparkle:shortVersionString>1.0.0-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <enclosure
@@ -47,7 +47,7 @@
         <item>
             <title>Version 1.0.0-beta.1</title>
             <pubDate>Tue, 18 Mar 2026 08:00:00 +0100</pubDate>
-            <sparkle:version>1.0.0-beta.1</sparkle:version>
+            <sparkle:version>1</sparkle:version>
             <sparkle:shortVersionString>1.0.0-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <enclosure
