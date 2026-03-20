@@ -108,9 +108,9 @@ struct MemoryContentView: View {
                 .id(file.id)
         } else {
             ContentUnavailableView(
-                "Aucun fichier sélectionné",
+                "No file selected",
                 systemImage: "brain.head.profile",
-                description: Text("Sélectionnez un fichier dans la liste.")
+                description: Text("Select a file from the list.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

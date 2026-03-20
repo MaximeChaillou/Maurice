@@ -19,7 +19,7 @@ struct MCPServersView: View {
                     HStack(spacing: 8) {
                         ProgressView()
                             .controlSize(.small)
-                        Text("Vérification des serveurs…")
+                        Text("Checking servers...")
                             .foregroundStyle(.secondary)
                     }
                 } else if let error = errorMessage {
@@ -27,9 +27,9 @@ struct MCPServersView: View {
                         .foregroundStyle(.red)
                         .font(.caption)
                 } else if servers.isEmpty {
-                    Text("Aucun serveur MCP détecté")
+                    Text("No MCP servers detected")
                         .foregroundStyle(.secondary)
-                    Text("Configurez des serveurs MCP dans .claude/settings.json pour étendre les capacités de l'assistant.")
+                    Text("Configure MCP servers in .claude/settings.json to extend the assistant's capabilities.")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 } else {
@@ -40,11 +40,11 @@ struct MCPServersView: View {
             }
 
             Section {
-                Button("Rafraîchir") {
+                Button("Refresh") {
                     Task { await loadServers() }
                 }
                 .disabled(isLoading)
-                .help("Rafraîchir l'état des serveurs")
+                .help("Refresh server status")
             }
         }
         .formStyle(.grouped)
@@ -59,7 +59,7 @@ struct MCPServersView: View {
                 Text(server.name)
                     .font(.body.weight(.medium))
                 Spacer()
-                Text(server.isConnected ? "Connecté" : "Déconnecté")
+                Text(server.isConnected ? "Connected" : "Disconnected")
                     .font(.caption)
                     .foregroundStyle(server.isConnected ? .green : .red)
             }
@@ -82,7 +82,7 @@ struct MCPServersView: View {
         if let output {
             servers = parseMCPList(output)
         } else {
-            errorMessage = "Impossible d'exécuter « claude mcp list ». Vérifiez que Claude Code est installé."
+            errorMessage = String(localized: "Unable to run 'claude mcp list'. Make sure Claude Code is installed.")
         }
 
         isLoading = false

@@ -26,10 +26,10 @@ struct MarkdownThemeSettingsView: View {
     // MARK: - Sections
 
     private var generalSection: some View {
-        Section("Général") {
-            colorRow("Arrière-plan", color: $theme.backgroundColor)
+        Section("General") {
+            colorRow("Background", color: $theme.backgroundColor)
 
-            Picker("Typographie", selection: $theme.fontName) {
+            Picker("Typography", selection: $theme.fontName) {
                 Text("System").tag("System")
                 Text("System Mono").tag("System Mono")
                 ForEach(availableFonts, id: \.self) { name in
@@ -37,18 +37,18 @@ struct MarkdownThemeSettingsView: View {
                 }
             }
 
-            fontSizeRow("Taille de base", size: $theme.baseFontSize, range: 10...24)
+            fontSizeRow("Base size", size: $theme.baseFontSize, range: 10...24)
         }
     }
 
     private var layoutSection: some View {
-        Section("Mise en page") {
-            fontSizeRow("Largeur max du contenu", size: $theme.maxContentWidth, range: 300...1200)
+        Section("Layout") {
+            fontSizeRow("Max content width", size: $theme.maxContentWidth, range: 300...1200)
         }
     }
 
     private var headingsSection: some View {
-        Section("Titres") {
+        Section("Headings") {
             headingRow("H1", bindings: HeadingBindings(
                 color: $theme.h1Color, size: $theme.h1FontSize, sizeRange: 16...48,
                 bold: $theme.h1Bold, italic: $theme.h1Italic, underline: $theme.h1Underline))
@@ -62,25 +62,25 @@ struct MarkdownThemeSettingsView: View {
     }
 
     private var textSection: some View {
-        Section("Texte") {
-            colorRow("Corps", color: $theme.bodyColor)
-            colorRow("Gras", color: $theme.boldColor)
-            colorRow("Italique", color: $theme.italicColor)
-            colorRow("Séparateur", color: $theme.dividerColor)
+        Section("Text") {
+            colorRow("Body", color: $theme.bodyColor)
+            colorRow("Bold", color: $theme.boldColor)
+            colorRow("Italic", color: $theme.italicColor)
+            colorRow("Divider", color: $theme.dividerColor)
         }
     }
 
     private var quoteSection: some View {
-        Section("Citations") {
-            styledRow("Citation", color: $theme.quoteColor,
+        Section("Quotes") {
+            styledRow("Quote", color: $theme.quoteColor,
                       bold: $theme.quoteBold, italic: $theme.quoteItalic, underline: $theme.quoteUnderline)
         }
     }
 
     private var codeSection: some View {
         Section("Code") {
-            colorRow("Texte", color: $theme.codeColor)
-            colorRow("Arrière-plan", color: $theme.codeBackgroundColor)
+            colorRow("Text", color: $theme.codeColor)
+            colorRow("Background", color: $theme.codeBackgroundColor)
         }
     }
 

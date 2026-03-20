@@ -53,7 +53,7 @@ struct AskButton: View {
             if runner.isRunning {
                 if let label = runner.skillLabel {
                     conversationLines.append(AskConversationLine(
-                        text: "Exécution du skill « \(label) »…", kind: .system
+                        text: String(localized: "Running skill '\(label)'..."), kind: .system
                     ))
                     lastSyncedCount = 0
                 }
@@ -88,7 +88,7 @@ struct AskButton: View {
     private var inputBar: some View {
         HStack(spacing: 0) {
             if isExpanded {
-                TextField("Demander à Claude...", text: $searchText)
+                TextField("Ask Claude...", text: $searchText)
                     .textFieldStyle(.plain)
                     .focused($isSearchFieldFocused)
                     .font(.title3)
@@ -116,7 +116,7 @@ struct AskButton: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
-            .help("Assistant IA")
+            .help("AI Assistant")
             .overlay(alignment: .leading) {
                 if runner.isRunning && isExpanded {
                     Button {
@@ -128,7 +128,7 @@ struct AskButton: View {
                             .contentShape(Circle())
                     }
                     .buttonStyle(.plain)
-                    .help("Arrêter (⌃C)")
+                    .help("Stop (⌃C)")
                     .offset(x: -30)
                     .transition(.opacity)
                 }
@@ -176,7 +176,7 @@ struct AskButton: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .help("Effacer la conversation")
+                    .help("Clear conversation")
                     .padding(8)
                 }
             }

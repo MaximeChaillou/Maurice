@@ -44,10 +44,10 @@ struct OnboardingView: View {
                 .font(.system(size: 64))
                 .foregroundStyle(.secondary)
 
-            Text("Bienvenue sur Maurice")
+            Text("Welcome to Maurice")
                 .font(.largeTitle.bold())
 
-            Text("Choisissez le dossier où Maurice stockera vos données.")
+            Text("Choose the folder where Maurice will store your data.")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -57,7 +57,7 @@ struct OnboardingView: View {
             Button {
                 step = .language
             } label: {
-                Text("Continuer")
+                Text("Continue")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -73,13 +73,13 @@ struct OnboardingView: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer()
-            Button("Modifier…") {
+            Button("Change...") {
                 let panel = NSOpenPanel()
                 panel.canChooseDirectories = true
                 panel.canChooseFiles = false
                 panel.canCreateDirectories = true
                 panel.directoryURL = rootDirectory.deletingLastPathComponent()
-                panel.prompt = "Choisir"
+                panel.prompt = String(localized: "Choose")
                 if panel.runModal() == .OK, let url = panel.url {
                     rootDirectory = url
                 }
@@ -98,17 +98,17 @@ struct OnboardingView: View {
                 .font(.system(size: 64))
                 .foregroundStyle(.secondary)
 
-            Text("Langue de transcription")
+            Text("Transcription language")
                 .font(.largeTitle.bold())
 
-            Text("Choisissez la langue principale pour la reconnaissance vocale.")
+            Text("Choose the main language for speech recognition.")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 16) {
                 languageCard(
-                    title: "Français",
+                    title: "French",
                     locale: "fr-FR",
                     flag: "🇫🇷"
                 )
@@ -120,7 +120,7 @@ struct OnboardingView: View {
             }
 
             HStack {
-                Button("Retour") {
+                Button("Back") {
                     step = .welcome
                 }
                 .buttonStyle(.bordered)
@@ -130,7 +130,7 @@ struct OnboardingView: View {
                     step = .creating
                     createStructure()
                 } label: {
-                    Text("Terminer")
+                    Text("Finish")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -172,7 +172,7 @@ struct OnboardingView: View {
                     .font(.system(size: 64))
                     .foregroundStyle(.red)
 
-                Text("Erreur")
+                Text("Error")
                     .font(.largeTitle.bold())
 
                 Text(errorMessage)
@@ -180,7 +180,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
-                Button("Réessayer") {
+                Button("Retry") {
                     self.errorMessage = nil
                     createStructure()
                 }
@@ -189,7 +189,7 @@ struct OnboardingView: View {
             } else if isCreating {
                 ProgressView()
                     .controlSize(.large)
-                Text("Création de l'arborescence…")
+                Text("Creating file structure...")
                     .font(.title3)
                     .foregroundStyle(.secondary)
             } else {
@@ -197,7 +197,7 @@ struct OnboardingView: View {
                     .font(.system(size: 64))
                     .foregroundStyle(.green)
 
-                Text("Maurice est prêt !")
+                Text("Maurice is ready!")
                     .font(.largeTitle.bold())
 
                 Text(rootDirectory.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
@@ -207,7 +207,7 @@ struct OnboardingView: View {
                 Button {
                     onComplete()
                 } label: {
-                    Text("Commencer")
+                    Text("Get started")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)

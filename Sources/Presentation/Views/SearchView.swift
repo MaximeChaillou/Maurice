@@ -16,7 +16,7 @@ struct SearchView: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                TextField("Rechercher…", text: $query)
+                TextField("Search...", text: $query)
                     .textFieldStyle(.plain)
                     .font(.title3)
                     .focused($isSearchFocused)
@@ -45,9 +45,9 @@ struct SearchView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if results.isEmpty {
                 ContentUnavailableView(
-                    "Recherche",
+                    "Search",
                     systemImage: "magnifyingglass",
-                    description: Text("Tapez un terme pour rechercher dans les réunions, personnes et tâches.")
+                    description: Text("Type a term to search meetings, people, and tasks.")
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -209,13 +209,13 @@ private enum ExactSearchEngine {
         var found: [SearchResult] = []
         let meetings = SearchScope(
             directory: AppSettings.meetingsDirectory,
-            label: "Réunion",
+            label: "Meeting",
             icon: "calendar",
             kind: { .meeting($0) }
         )
         let people = SearchScope(
             directory: AppSettings.peopleDirectory,
-            label: "Personne",
+            label: "Person",
             icon: "person",
             kind: { .person($0) }
         )
@@ -254,7 +254,7 @@ private enum ExactSearchEngine {
                 let relativePath = "\(category.name)/\(person.name)"
                 let personScope = SearchScope(
                     directory: scope.directory,
-                    label: "Personne",
+                    label: "Person",
                     icon: "person",
                     kind: { _ in .person(relativePath) }
                 )
@@ -307,8 +307,8 @@ private enum ExactSearchEngine {
            content.lowercased().contains(term) {
             let snippet = extractSnippet(from: content, term: term)
             found.append(SearchResult(
-                name: "Tâches",
-                context: "Fichier de tâches",
+                name: "Tasks",
+                context: "Task file",
                 icon: "checklist",
                 kind: .task,
                 snippet: snippet,

@@ -5,7 +5,7 @@ enum PersonSection: String, CaseIterable, Identifiable {
     case jobDescription = "Job description"
     case oneOnOne = "1-1"
     case assessment = "Assessment"
-    case objectifs = "Objectifs"
+    case objectifs = "Goals"
 
     var id: String { rawValue }
 
@@ -16,6 +16,16 @@ enum PersonSection: String, CaseIterable, Identifiable {
         case .oneOnOne: "person.2"
         case .assessment: "checkmark.seal"
         case .objectifs: "target"
+        }
+    }
+
+    var localizedName: String {
+        switch self {
+        case .profile: String(localized: "Profile")
+        case .jobDescription: String(localized: "Job description")
+        case .oneOnOne: "1-1"
+        case .assessment: String(localized: "Assessment")
+        case .objectifs: String(localized: "Goals")
         }
     }
 }
@@ -43,7 +53,7 @@ struct PeopleView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear { viewModel.loadFolders() }
-        .alert("Erreur", isPresented: Binding(
+        .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
@@ -86,7 +96,7 @@ struct PeopleView: View {
     private var personList: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Personnes")
+                Text("People")
                     .font(.headline)
                 Spacer()
                 Button {
@@ -102,7 +112,7 @@ struct PeopleView: View {
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .help("Ajouter une personne")
+                .help("Add a person")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -123,7 +133,7 @@ struct PeopleView: View {
                                     Button(role: .destructive) {
                                         folderToDelete = person
                                     } label: {
-                                        Label("Supprimer", systemImage: "trash")
+                                        Label("Delete", systemImage: "trash")
                                     }
                                 }
                         }
@@ -132,9 +142,9 @@ struct PeopleView: View {
             }
             .scrollContentBackground(.hidden)
             .deletionAlert(
-                "Supprimer la personne ?",
+                "Delete person?",
                 item: $folderToDelete,
-                message: { "La personne \u{00AB} \($0.name) \u{00BB} et tout son contenu seront supprim\u{00E9}s." },
+                message: { String(localized: "The person '\($0.name)' and all their content will be deleted.") },
                 onDelete: { viewModel.deletePerson($0) }
             )
         }
@@ -143,8 +153,8 @@ struct PeopleView: View {
         }
         .sheet(isPresented: $viewModel.isAddingCategory) {
             AddItemSheet(
-                title: "Nouvelle cat\u{00E9}gorie",
-                placeholder: "Nom de la cat\u{00E9}gorie",
+                title: "New category",
+                placeholder: "Category name",
                 text: $viewModel.newCategoryName,
                 onCreate: {
                     viewModel.createCategory(name: viewModel.newCategoryName)
@@ -163,7 +173,7 @@ struct PeopleView: View {
 
     private var addPersonSheet: some View {
         VStack(spacing: 0) {
-            Text("Nouvelle personne")
+            Text("New person")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 16)
@@ -172,10 +182,10 @@ struct PeopleView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 12) {
-                TextField("Nom de la personne", text: $viewModel.newFolderName)
+                TextField("Person name", text: $viewModel.newFolderName)
                     .textFieldStyle(.roundedBorder)
 
-                Picker("Cat\u{00E9}gorie", selection: $selectedCategory) {
+                Picker("Category", selection: $selectedCategory) {
                     ForEach(viewModel.categoryNames, id: \.self) { name in
                         Text(name).tag(name)
                     }
@@ -185,7 +195,7 @@ struct PeopleView: View {
                     viewModel.isAddingFolder = false
                     viewModel.isAddingCategory = true
                 } label: {
-                    Label("Nouvelle cat\u{00E9}gorie", systemImage: "folder.badge.plus")
+                    Label("New category", systemImage: "folder.badge.plus")
                 }
             }
             .padding(16)
@@ -193,13 +203,13 @@ struct PeopleView: View {
             Divider()
 
             HStack {
-                Button("Annuler") {
+                Button("Cancel") {
                     viewModel.isAddingFolder = false
                     viewModel.newFolderName = ""
                 }
                 .keyboardShortcut(.cancelAction)
                 Spacer()
-                Button("Cr\u{00E9}er") {
+                Button("Create") {
                     viewModel.createPerson(name: viewModel.newFolderName, inCategory: selectedCategory)
                     viewModel.newFolderName = ""
                     viewModel.isAddingFolder = false
@@ -238,7 +248,7 @@ struct PeopleView: View {
 
             List(selection: $selectedSection) {
                 ForEach(PersonSection.allCases) { section in
-                    Label(section.rawValue, systemImage: section.icon)
+                    Label(section.localizedName, systemImage: section.icon)
                         .foregroundStyle(.white)
                         .tag(section)
                         .listRowBackground(Color.clear)
@@ -264,16 +274,16 @@ struct PeopleView: View {
             .id(person.relativePath)
         } else if viewModel.categories.isEmpty {
             ContentUnavailableView(
-                "Aucune personne",
+                "No people",
                 systemImage: "person.2",
-                description: Text("Ajoutez des personnes pour organiser vos notes de 1-1, évaluations et objectifs.")
+                description: Text("Add people to organize your 1-1 notes, assessments, and goals.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ContentUnavailableView(
-                "Aucune personne sélectionnée",
+                "No person selected",
                 systemImage: "person.2",
-                description: Text("Sélectionnez une personne dans la liste.")
+                description: Text("Select a person from the list.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

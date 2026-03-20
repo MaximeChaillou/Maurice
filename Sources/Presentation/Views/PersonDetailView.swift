@@ -47,7 +47,7 @@ struct PersonDetailView: View {
             SubfolderNavigationView(
                 files: assessmentFiles, index: $assessmentIndex,
                 isAdding: $isAddingAssessment, newFileName: $newFileName,
-                addLabel: "Nouvelle évaluation", emptyTitle: "Aucune évaluation",
+                addLabel: "New assessment", emptyTitle: "No assessments",
                 emptyIcon: "checkmark.seal", markdownTheme: markdownTheme,
                 skillRunner: skillRunner,
                 subfolderURL: personURL.appendingPathComponent("assessment", isDirectory: true),
@@ -58,7 +58,7 @@ struct PersonDetailView: View {
             SubfolderNavigationView(
                 files: objectifsFiles, index: $objectifIndex,
                 isAdding: $isAddingObjectif, newFileName: $newFileName,
-                addLabel: "Nouvel objectif", emptyTitle: "Aucun objectif",
+                addLabel: "New goal", emptyTitle: "No goals",
                 emptyIcon: "target", markdownTheme: markdownTheme,
                 skillRunner: skillRunner,
                 subfolderURL: personURL.appendingPathComponent("objectifs", isDirectory: true),
@@ -94,7 +94,7 @@ struct PersonDetailView: View {
                             .glassEffect(.regular.interactive(), in: .circle)
                     }
                     .buttonStyle(.plain)
-                    .help("Importer un fichier ou un lien")
+                    .help("Import a file or link")
                     .popover(isPresented: $showImportJobDesc) {
                         ImportDocumentView(
                             targetPath: fileURL.path,
@@ -180,7 +180,7 @@ struct PersonDetailView: View {
         do {
             try FileManager.default.removeItem(at: file.url)
         } catch {
-            errorState?.show("Impossible de supprimer « \(file.name) » : \(error.localizedDescription)")
+            errorState?.show(String(localized: "Unable to delete '\(file.name)': \(error.localizedDescription)"))
         }
         loadSubfolders()
         if subfolder == "assessment" {
@@ -214,9 +214,9 @@ struct PersonOneOnOneView: View {
         Group {
             if entries.isEmpty {
                 ContentUnavailableView(
-                    "Aucun 1-1",
+                    "No 1-1s",
                     systemImage: "person.2",
-                    description: Text("Lancez un enregistrement pour créer un 1-1.")
+                    description: Text("Start a recording to create a 1-1.")
                 )
             } else {
                 dateNavigationDetail
@@ -296,7 +296,7 @@ struct PersonOneOnOneView: View {
                     if let t = entry.transcript { try FileManager.default.removeItem(at: t.url) }
                 }
             } catch {
-                errorState?.show("Impossible de supprimer : \(error.localizedDescription)")
+                errorState?.show(String(localized: "Unable to delete: \(error.localizedDescription)"))
             }
             loadEntries()
         }

@@ -2,7 +2,7 @@ import SwiftUI
 
 private struct TabItem {
     let tab: AppTab
-    let label: String
+    let label: LocalizedStringKey
     let icon: String
 }
 
@@ -16,9 +16,9 @@ struct FloatingTabBar: View {
     @Namespace private var tabNamespace
 
     private let tabs: [TabItem] = [
-        TabItem(tab: .meeting, label: "Réunions", icon: "calendar"),
-        TabItem(tab: .people, label: "Personnes", icon: "person.2"),
-        TabItem(tab: .task, label: "Tâches", icon: "checklist"),
+        TabItem(tab: .meeting, label: "Meetings", icon: "calendar"),
+        TabItem(tab: .people, label: "People", icon: "person.2"),
+        TabItem(tab: .task, label: "Tasks", icon: "checklist"),
     ]
 
     var body: some View {
@@ -40,7 +40,7 @@ struct FloatingTabBar: View {
             .buttonStyle(.plain)
             .foregroundStyle(isHomeActive ? .primary : .secondary)
             .glassEffect(.regular, in: .circle)
-            .help("Accueil")
+            .help("Home")
 
             HStack(spacing: 4) {
                 ForEach(tabs, id: \.tab) { item in
@@ -69,7 +69,7 @@ struct FloatingTabBar: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(!isHomeActive && activeTab == item.tab ? .primary : .secondary)
-                    .help(item.label)
+                    .help(Text(item.label))
                 }
             }
             .padding(4)
@@ -86,7 +86,7 @@ struct FloatingTabBar: View {
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
             .glassEffect(.regular, in: .circle)
-            .help("Rechercher (⌘⇧F)")
+            .help("Search (⌘⇧F)")
         }
     }
 }

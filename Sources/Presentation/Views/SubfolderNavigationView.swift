@@ -5,8 +5,8 @@ struct SubfolderNavigationView: View {
     @Binding var index: Int
     @Binding var isAdding: Bool
     @Binding var newFileName: String
-    let addLabel: String
-    let emptyTitle: String
+    let addLabel: LocalizedStringKey
+    let emptyTitle: LocalizedStringKey
     let emptyIcon: String
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var skillRunner: SkillRunner?
@@ -31,9 +31,9 @@ struct SubfolderNavigationView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .deletionAlert(
-            "Supprimer ?",
+            "Delete?",
             item: $fileToDelete,
-            message: { "« \($0.name) » sera supprimé définitivement." },
+            message: { String(localized: "'\($0.name)' will be permanently deleted.") },
             onDelete: { onDelete($0) }
         )
     }
@@ -53,7 +53,7 @@ struct SubfolderNavigationView: View {
 
                 if let runner = skillRunner, let folderURL = subfolderURL {
                     Button { showImport = true } label: {
-                        Label("Importer", systemImage: "square.and.arrow.down")
+                        Label("Import", systemImage: "square.and.arrow.down")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -136,7 +136,7 @@ struct SubfolderNavigationView: View {
                         .glassEffect(.regular.interactive(), in: .circle)
                 }
                 .buttonStyle(.plain)
-                .help("Importer un fichier ou un lien")
+                .help("Import a file or link")
                 .popover(isPresented: $showImport) {
                     ImportDocumentView(
                         targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
@@ -148,7 +148,7 @@ struct SubfolderNavigationView: View {
 
             Menu {
                 Button(role: .destructive) { fileToDelete = file } label: {
-                    Label("Supprimer", systemImage: "trash")
+                    Label("Delete", systemImage: "trash")
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -168,14 +168,14 @@ struct SubfolderNavigationView: View {
         VStack(spacing: 12) {
             Text(addLabel).font(.headline)
             HStack(spacing: 8) {
-                TextField("Nom (ex: 2025-S2)", text: $newFileName)
+                TextField("Name (e.g. 2025-S2)", text: $newFileName)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 200)
                     .onSubmit { onCreate() }
                     .onExitCommand { isAdding = false; newFileName = "" }
-                Button("Créer") { onCreate() }
+                Button("Create") { onCreate() }
                     .disabled(newFileName.trimmingCharacters(in: .whitespaces).isEmpty)
-                Button("Annuler", role: .cancel) { isAdding = false; newFileName = "" }
+                Button("Cancel", role: .cancel) { isAdding = false; newFileName = "" }
             }
         }
     }

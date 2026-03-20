@@ -4,6 +4,24 @@ enum AppSettings {
     private static let rootDirectoryKey = "rootDirectory"
     private static let onboardingCompletedKey = "onboardingCompleted"
     private static let transcriptionLanguageKey = "transcriptionLanguage"
+    private static let appLanguageKey = "appLanguage"
+
+    static var appLanguage: String {
+        get { UserDefaults.standard.string(forKey: appLanguageKey) ?? "system" }
+        set {
+            UserDefaults.standard.set(newValue, forKey: appLanguageKey)
+            applyLanguage()
+        }
+    }
+
+    static func applyLanguage() {
+        let lang = appLanguage
+        if lang == "system" {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.set([lang], forKey: "AppleLanguages")
+        }
+    }
 
     static var rootDirectory: URL {
         get {

@@ -11,7 +11,7 @@ struct ImportDocumentView: View {
             Button {
                 pickFile()
             } label: {
-                Label("Choisir un fichier", systemImage: "doc.badge.plus")
+                Label("Choose a file", systemImage: "doc.badge.plus")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

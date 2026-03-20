@@ -95,7 +95,7 @@ final class SkillRunner {
         outputLines = []
         lastAssistantLine = ""
         currentText = ""
-        appendLine("[commande] \(prompt)", kind: .system)
+        appendLine("[command] \(prompt)", kind: .system)
 
         let proc = Process()
         let pipe = Pipe()
@@ -140,7 +140,7 @@ final class SkillRunner {
             try proc.run()
         } catch {
             isRunning = false
-            appendLine("Erreur: \(error.localizedDescription)", kind: .system)
+            appendLine("Error: \(error.localizedDescription)", kind: .system)
         }
     }
 
@@ -189,10 +189,10 @@ final class SkillRunner {
             handleStreamEvent(json)
         case "system":
             if let message = json["message"] as? String {
-                appendLine("[système] \(message)", kind: .system)
+                appendLine("[system] \(message)", kind: .system)
             }
         case "result":
-            // Le contenu est déjà affiché via les stream_events, ignorer pour éviter la duplication
+            // Content already displayed via stream_events, skip to avoid duplication
             break
         default:
             break
@@ -258,11 +258,11 @@ final class SkillRunner {
     func formatToolCall(name: String, inputJSON: String) -> String {
         guard let data = inputJSON.data(using: .utf8),
               let params = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-        else { return "[outil] \(name)" }
+        else { return "[tool] \(name)" }
 
         let details = toolSummary(name: name, params: params)
-        if details.isEmpty { return "[outil] \(name)" }
-        return "[outil] \(name) — \(details)"
+        if details.isEmpty { return "[tool] \(name)" }
+        return "[tool] \(name) — \(details)"
     }
 
     func toolSummary(name: String, params: [String: Any]) -> String {

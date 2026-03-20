@@ -10,17 +10,17 @@ struct CalendarLinkSheet: View {
     var body: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("Événement Calendar lié")
+                Text("Linked Calendar event")
                     .font(.headline)
                 Spacer()
-                Button("Fermer") { onDismiss() }
+                Button("Close") { onDismiss() }
                     .keyboardShortcut(.cancelAction)
             }
 
             HStack(spacing: 8) {
                 Image(systemName: "calendar")
                     .foregroundStyle(.secondary)
-                TextField("Nom de l'événement Calendar", text: $eventName)
+                TextField("Calendar event name", text: $eventName)
                     .textFieldStyle(.roundedBorder)
                     .onSubmit { saveLink() }
                 if !eventName.isEmpty {
@@ -35,7 +35,7 @@ struct CalendarLinkSheet: View {
                 }
             }
 
-            Text("L'enregistrement démarrera automatiquement dans ce dossier quand un événement Calendar porte ce nom.")
+            Text("Recording will start automatically in this folder when a Calendar event has this name.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 

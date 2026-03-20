@@ -6,7 +6,7 @@ struct GoogleCalendarSettingsView: View {
     var body: some View {
         Form {
             Section("Google Calendar") {
-                Text("Connectez votre calendrier pour voir vos prochaines réunions et démarrer l'enregistrement automatiquement.")
+                Text("Connect your calendar to see your upcoming meetings and start recording automatically.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -25,7 +25,7 @@ struct GoogleCalendarSettingsView: View {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
-                Text("Connecté")
+                Text("Connected")
                     .fontWeight(.medium)
             }
 
@@ -38,7 +38,7 @@ struct GoogleCalendarSettingsView: View {
                 }
             }
 
-            Button("Déconnecter") {
+            Button("Disconnect") {
                 viewModel.disconnect()
             }
             .padding(.top, 4)
@@ -50,7 +50,7 @@ struct GoogleCalendarSettingsView: View {
             HStack(spacing: 8) {
                 Image(systemName: "xmark.circle")
                     .foregroundStyle(.secondary)
-                Text("Non connecté")
+                Text("Not connected")
                     .foregroundStyle(.secondary)
             }
 
@@ -58,11 +58,11 @@ struct GoogleCalendarSettingsView: View {
                 HStack(spacing: 8) {
                     ProgressView()
                         .controlSize(.small)
-                    Text("Connexion en cours…")
+                    Text("Connecting...")
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Button("Connecter Google Calendar") {
+                Button("Connect Google Calendar") {
                     viewModel.connect()
                 }
                 .disabled(GoogleCalendarService.clientID.isEmpty || GoogleCalendarService.clientSecret.isEmpty)

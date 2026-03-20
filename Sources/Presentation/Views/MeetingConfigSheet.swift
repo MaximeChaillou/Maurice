@@ -57,10 +57,10 @@ struct MeetingConfigSheet: View {
             Divider()
 
             HStack {
-                Button("Annuler") { dismiss() }
+                Button("Cancel") { dismiss() }
                     .keyboardShortcut(.cancelAction)
                 Spacer()
-                Button("Enregistrer") { save() }
+                Button("Save") { save() }
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)
             }
@@ -105,7 +105,7 @@ struct MeetingConfigSheet: View {
     // MARK: - Meeting name
 
     private var meetingSection: some View {
-        Section("Réunion") {
+        Section("Meeting") {
             LabeledContent {
                 HStack(spacing: 6) {
                     Button {
@@ -136,13 +136,13 @@ struct MeetingConfigSheet: View {
                         .background(.quaternary, in: .rect(cornerRadius: 6))
                     }
                     .buttonStyle(.plain)
-                    .help("Choisir une icône")
+                    .help("Choose an icon")
 
                     TextField("", text: $editedName)
                         .textFieldStyle(.roundedBorder)
                 }
             } label: {
-                Text("Nom")
+                Text("Name")
             }
         }
     }
@@ -150,8 +150,8 @@ struct MeetingConfigSheet: View {
     // MARK: - Calendar link
 
     private var calendarLinkSection: some View {
-        Section("Événement Google Calendar lié") {
-            TextField("Nom de l'événement", text: $calendarText)
+        Section("Linked Google Calendar event") {
+            TextField("Event name", text: $calendarText)
                 .textFieldStyle(.roundedBorder)
         }
     }
@@ -161,7 +161,7 @@ struct MeetingConfigSheet: View {
     private var actionsSection: some View {
         Section {
             if localActions.isEmpty {
-                Text("Aucune action configurée")
+                Text("No configured actions")
                     .foregroundStyle(.secondary)
                     .font(.callout)
             } else {
@@ -218,14 +218,14 @@ struct MeetingConfigSheet: View {
             }
         }
         .alert(
-            "Supprimer l'action ?",
+            "Delete action?",
             isPresented: Binding(
                 get: { actionToDelete != nil },
                 set: { if !$0 { actionToDelete = nil } }
             )
         ) {
-            Button("Annuler", role: .cancel) { actionToDelete = nil }
-            Button("Supprimer", role: .destructive) {
+            Button("Cancel", role: .cancel) { actionToDelete = nil }
+            Button("Delete", role: .destructive) {
                 if let action = actionToDelete {
                     localActions.removeAll { $0.id == action.id }
                     actionToDelete = nil
@@ -233,15 +233,15 @@ struct MeetingConfigSheet: View {
             }
         } message: {
             if let action = actionToDelete {
-                Text("L'action « \(action.buttonName) » sera supprimée.")
+                Text(String(localized: "The action '\(action.buttonName)' will be deleted."))
             }
         }
     }
 
     // MARK: - Action form sheet
 
-    private var formTitle: String {
-        editingAction != nil ? "Modifier l'action" : "Nouvelle action"
+    private var formTitle: LocalizedStringKey {
+        editingAction != nil ? "Edit action" : "New action"
     }
 
     private var actionFormSheet: some View {
@@ -249,11 +249,11 @@ struct MeetingConfigSheet: View {
             Text(formTitle)
                 .font(.headline)
 
-            TextField("Nom du bouton", text: $formName)
+            TextField("Button name", text: $formName)
                 .textFieldStyle(.roundedBorder)
 
             Picker("Skill", selection: $formSkill) {
-                Text("Choisir un skill…")
+                Text("Choose a skill...")
                     .tag(nil as String?)
                 ForEach(availableSkills) { skill in
                     Text(skill.name)
@@ -261,18 +261,18 @@ struct MeetingConfigSheet: View {
                 }
             }
 
-            TextField("Paramètre (optionnel)", text: $formParameter)
+            TextField("Parameter (optional)", text: $formParameter)
                 .textFieldStyle(.roundedBorder)
 
             HStack {
-                Button("Annuler") {
+                Button("Cancel") {
                     resetForm()
                 }
                 .keyboardShortcut(.cancelAction)
 
                 Spacer()
 
-                Button(editingAction != nil ? "Enregistrer" : "Ajouter") {
+                Button(editingAction != nil ? "Save" : "Add") {
                     guard let skill = formSkill, !formName.isEmpty else { return }
                     let param = formParameter.trimmingCharacters(in: .whitespaces)
                     let paramValue: String? = param.isEmpty ? nil : param

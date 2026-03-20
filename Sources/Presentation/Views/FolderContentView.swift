@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FolderContentView: View {
     let emptyIcon: String
-    let emptyTitle: String
+    let emptyTitle: LocalizedStringKey
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var navigateByDate: Bool = false
     var showSkillConfig: Bool = false
@@ -44,7 +44,7 @@ struct FolderContentView: View {
                 }
             }
         }
-        .alert("Erreur", isPresented: Binding(
+        .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
@@ -66,7 +66,7 @@ struct FolderContentView: View {
     private var folderList: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Réunions")
+                Text("Meetings")
                     .font(.headline)
                 Spacer()
                 Button {
@@ -77,7 +77,7 @@ struct FolderContentView: View {
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .help("Nouvelle réunion")
+                .help("New meeting")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -95,7 +95,7 @@ struct FolderContentView: View {
                                 .lineLimit(1)
                         }
                         .font(.body)
-                        Text("\(folder.fileCount) fichier\(folder.fileCount > 1 ? "s" : "")")
+                        Text("\(folder.fileCount) files")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -115,30 +115,30 @@ struct FolderContentView: View {
                                     showConfigSidebar = true
                                 }
                             } label: {
-                                Label("Configurer", systemImage: "gearshape")
+                                Label("Configure", systemImage: "gearshape")
                             }
                             Divider()
                         }
                         Button(role: .destructive) {
                             folderToDelete = folder
                         } label: {
-                            Label("Supprimer", systemImage: "trash")
+                            Label("Delete", systemImage: "trash")
                         }
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             folderToDelete = folder
                         } label: {
-                            Label("Supprimer", systemImage: "trash")
+                            Label("Delete", systemImage: "trash")
                         }
                     }
                 }
             }
             .scrollContentBackground(.hidden)
             .deletionAlert(
-                "Supprimer le dossier ?",
+                "Delete folder?",
                 item: $folderToDelete,
-                message: { "Le dossier « \($0.name) » et tout son contenu seront supprimés définitivement." },
+                message: { String(localized: "The folder '\($0.name)' and all its content will be permanently deleted.") },
                 onDelete: { viewModel.deleteFolder($0) }
             )
             .onChange(of: viewModel.selectedFolder) {
@@ -161,8 +161,8 @@ struct FolderContentView: View {
         }
         .sheet(isPresented: $viewModel.isAddingFolder) {
             AddItemSheet(
-                title: "Nouvelle réunion",
-                placeholder: "Nom de la réunion",
+                title: "New meeting",
+                placeholder: "Meeting name",
                 text: $viewModel.newFolderName,
                 onCreate: { viewModel.createFolder() },
                 onCancel: { viewModel.isAddingFolder = false; viewModel.newFolderName = "" }
@@ -185,16 +185,16 @@ struct FolderContentView: View {
             }
         } else if viewModel.folders.isEmpty {
             ContentUnavailableView(
-                "Aucune réunion",
+                "No meetings",
                 systemImage: "calendar",
-                description: Text("Cliquez sur + pour créer votre première réunion récurrente (ex : standup, 1-1).")
+                description: Text("Click + to create your first recurring meeting (e.g. standup, 1-1).")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ContentUnavailableView(
                 emptyTitle,
                 systemImage: emptyIcon,
-                description: Text("Sélectionnez un élément dans la liste.")
+                description: Text("Select an item from the list.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -251,9 +251,9 @@ extension FolderContentView {
                     .id(file.id)
             } else {
                 ContentUnavailableView(
-                    "Aucun fichier sélectionné",
+                    "No file selected",
                     systemImage: "doc.text",
-                    description: Text("Sélectionnez un fichier dans la liste.")
+                    description: Text("Select a file from the list.")
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }

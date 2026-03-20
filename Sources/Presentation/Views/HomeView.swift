@@ -17,10 +17,10 @@ struct HomeView: View {
                     .font(.system(size: 64))
                     .foregroundStyle(.secondary)
 
-                Text("Bienvenue dans Maurice")
+                Text("Welcome to Maurice")
                     .font(.largeTitle.weight(.semibold))
 
-                Text("Votre assistant de transcription de réunions")
+                Text("Your meeting transcription assistant")
                     .font(.title3)
                     .foregroundStyle(.secondary)
 
@@ -53,15 +53,15 @@ struct HomeView: View {
         return LazyVGrid(columns: columns, spacing: 12) {
             actionCard(
                 icon: "mic.fill",
-                title: "Enregistrer",
-                description: "Démarrez l'enregistrement avec le bouton micro ci-dessous",
+                title: "Record",
+                description: "Start recording with the mic button below",
                 action: nil
             )
 
             actionCard(
                 icon: "calendar.badge.plus",
-                title: "Créer une réunion",
-                description: "Organisez vos réunions récurrentes (standup, 1-1…)"
+                title: "Create a meeting",
+                description: "Organize your recurring meetings (standup, 1-1...)"
             ) {
                 coordinator.showHome = false
                 coordinator.activeTab = .meeting
@@ -69,8 +69,8 @@ struct HomeView: View {
 
             actionCard(
                 icon: "person.badge.plus",
-                title: "Ajouter une personne",
-                description: "Notes de 1-1, évaluations et objectifs"
+                title: "Add a person",
+                description: "1-1 notes, assessments, and goals"
             ) {
                 coordinator.showHome = false
                 coordinator.activeTab = .people
@@ -78,8 +78,8 @@ struct HomeView: View {
 
             actionCard(
                 icon: "calendar",
-                title: "Connecter Google Calendar",
-                description: "Voyez vos prochaines réunions sur l'accueil"
+                title: "Connect Google Calendar",
+                description: "See your upcoming meetings on the home screen"
             ) {
                 openWindow(id: "settings")
             }
@@ -130,7 +130,7 @@ struct HomeView: View {
             HStack {
                 Image(systemName: "calendar")
                     .foregroundStyle(.secondary)
-                Text("Prochaines réunions")
+                Text("Upcoming meetings")
                     .font(.headline)
             }
 
@@ -138,7 +138,7 @@ struct HomeView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity)
             } else if upcomingEvents.isEmpty {
-                Text("Aucune réunion prévue")
+                Text("No upcoming meetings")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
             } else {
@@ -174,14 +174,14 @@ struct HomeView: View {
 
         if calendar.isDateInToday(event.start) {
             let t = DateFormatters.timeOnly
-            return "Aujourd'hui \(t.string(from: event.start)) – \(t.string(from: event.end))"
+            return "\(String(localized: "Today")) \(t.string(from: event.start)) – \(t.string(from: event.end))"
         } else if calendar.isDateInTomorrow(event.start) {
             let t = DateFormatters.timeOnly
-            return "Demain \(t.string(from: event.start)) – \(t.string(from: event.end))"
+            return "\(String(localized: "Tomorrow")) \(t.string(from: event.start)) – \(t.string(from: event.end))"
         } else {
             let f = DateFormatter()
             f.dateFormat = "EEEE d MMM, HH:mm"
-            f.locale = Locale(identifier: "fr_FR")
+            f.locale = Locale.current
             return f.string(from: event.start)
         }
     }

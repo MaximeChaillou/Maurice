@@ -52,14 +52,14 @@ struct FloatingActionBar: View {
                     HStack(spacing: 4) {
                         Image(systemName: showLiveTranscript ? "chevron.down" : "chevron.up")
                             .font(.caption2)
-                        Text("Transcript en direct")
+                        Text("Live transcript")
                             .font(.caption)
                     }
                     .foregroundStyle(.secondary)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .help(showLiveTranscript ? "Masquer le transcript en direct" : "Afficher le transcript en direct")
+                .help(showLiveTranscript ? String(localized: "Hide live transcript") : String(localized: "Show live transcript"))
                 .padding(.bottom, 4)
             }
         }
@@ -102,7 +102,7 @@ struct FloatingActionBar: View {
         }
         .buttonStyle(.plain)
         .disabled(viewModel.isPreparing)
-        .help(viewModel.isRecording ? "Arrêter l'enregistrement" : "Démarrer l'enregistrement")
+        .help(viewModel.isRecording ? String(localized: "Stop recording") : String(localized: "Start recording"))
     }
 
     private func waveformEdgeMask(fadeSide: HorizontalEdge) -> some View {

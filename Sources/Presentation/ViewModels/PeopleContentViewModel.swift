@@ -130,7 +130,7 @@ final class PeopleContentViewModel {
             try FileManager.default.removeItem(at: person.url)
             if selectedPerson == person.relativePath { selectedPerson = nil }
         } catch {
-            errorMessage = "Impossible de supprimer \u{00AB} \(person.name) \u{00BB} : \(error.localizedDescription)"
+            errorMessage = String(localized: "Unable to delete '\(person.name)': \(error.localizedDescription)")
         }
         loadFolders()
     }

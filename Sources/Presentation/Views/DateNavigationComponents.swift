@@ -33,7 +33,7 @@ struct DateNavigationHeader: View {
                 if let config, let skillRunner {
                     SkillActionsMenu(config: config, runner: skillRunner, activeFilePath: entry.noteFile?.url.path ?? entry.transcript?.url.path)
                     if let showConfigAction {
-                        GlassIconButton(icon: "gearshape", help: "Configurer les skills") {
+                        GlassIconButton(icon: "gearshape", help: "Configure skills") {
                             showConfigAction()
                         }
                     }
@@ -63,7 +63,7 @@ struct DateNavigationHeader: View {
         }
         .buttonStyle(.plain)
         .interactiveHover()
-        .help(isBackward ? "Entrée précédente" : "Entrée suivante")
+        .help(isBackward ? String(localized: "Previous entry") : String(localized: "Next entry"))
         .disabled(isBackward ? index >= totalEntries - 1 : index <= 0)
     }
 }
@@ -108,8 +108,8 @@ struct TranscriptToggleButton: View {
         .disabled(!canToggle)
         .help(
             !canToggle
-                ? (entry.hasNote ? "Pas de transcript" : "Pas de note")
-                : (showTranscripts ? "Afficher les notes" : "Afficher les transcripts")
+                ? (entry.hasNote ? String(localized: "No transcript") : String(localized: "No note"))
+                : (showTranscripts ? String(localized: "Show notes") : String(localized: "Show transcripts"))
         )
     }
 }
@@ -158,7 +158,7 @@ struct SkillActionsMenu: View {
             .menuIndicator(.hidden)
             .frame(width: 32, height: 32)
             .interactiveHover()
-            .help("Lancer une action")
+            .help("Run an action")
         }
     }
 }
@@ -173,18 +173,18 @@ struct EntryActionsMenu: View {
         Menu {
             if entry.hasNote {
                 Button(role: .destructive) { entryDeleteAction = .note(entry) } label: {
-                    Label("Supprimer la note", systemImage: "doc.text")
+                    Label("Delete note", systemImage: "doc.text")
                 }
             }
             if entry.hasTranscript {
                 Button(role: .destructive) { entryDeleteAction = .transcript(entry) } label: {
-                    Label("Supprimer le transcript", systemImage: "waveform")
+                    Label("Delete transcript", systemImage: "waveform")
                 }
             }
             if entry.hasNote && entry.hasTranscript {
                 Divider()
                 Button(role: .destructive) { entryDeleteAction = .both(entry) } label: {
-                    Label("Tout supprimer", systemImage: "trash")
+                    Label("Delete all", systemImage: "trash")
                 }
             }
         } label: {
@@ -198,7 +198,7 @@ struct EntryActionsMenu: View {
         .menuIndicator(.hidden)
         .frame(width: 32, height: 32)
         .interactiveHover()
-        .help("Supprimer…")
+        .help("Delete...")
     }
 }
 
@@ -206,7 +206,7 @@ struct EntryActionsMenu: View {
 
 struct GlassIconButton: View {
     let icon: String
-    var help: String = ""
+    var help: LocalizedStringKey = ""
     let action: () -> Void
 
     var body: some View {
@@ -249,10 +249,10 @@ struct NextNoteButton: View {
         }
         .buttonStyle(.plain)
         .interactiveHover()
-        .help("Notes pour le prochain point")
+        .help("Notes for next meeting")
         .popover(isPresented: $showPopover) {
             VStack(spacing: 0) {
-                Text("Note pour la prochaine réunion — next.md")
+                Text("Notes for next meeting — next.md")
                     .font(.headline)
                     .padding(.top, 12)
                     .padding(.bottom, 8)
@@ -289,7 +289,7 @@ struct NextNoteButton: View {
 // MARK: - Generic Deletion Alert Modifier
 
 struct DeletionAlertModifier<Item: Identifiable>: ViewModifier {
-    let title: String
+    let title: LocalizedStringKey
     @Binding var item: Item?
     let message: (Item) -> String
     let onDelete: (Item) -> Void
@@ -302,8 +302,8 @@ struct DeletionAlertModifier<Item: Identifiable>: ViewModifier {
                 set: { if !$0 { item = nil } }
             )
         ) {
-            Button("Annuler", role: .cancel) { item = nil }
-            Button("Supprimer", role: .destructive) {
+            Button("Cancel", role: .cancel) { item = nil }
+            Button("Delete", role: .destructive) {
                 if let toDelete = item {
                     onDelete(toDelete)
                     item = nil
@@ -317,7 +317,7 @@ struct DeletionAlertModifier<Item: Identifiable>: ViewModifier {
 
 extension View {
     func deletionAlert<Item: Identifiable>(
-        _ title: String,
+        _ title: LocalizedStringKey,
         item: Binding<Item?>,
         message: @escaping (Item) -> String,
         onDelete: @escaping (Item) -> Void
@@ -334,14 +334,14 @@ struct EntryDeleteAlertModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.alert(
-            "Supprimer ?",
+            "Delete?",
             isPresented: Binding(
                 get: { entryDeleteAction != nil },
                 set: { if !$0 { entryDeleteAction = nil } }
             )
         ) {
-            Button("Annuler", role: .cancel) { entryDeleteAction = nil }
-            Button("Supprimer", role: .destructive) {
+            Button("Cancel", role: .cancel) { entryDeleteAction = nil }
+            Button("Delete", role: .destructive) {
                 if let action = entryDeleteAction {
                     onDelete(action)
                     entryDeleteAction = nil

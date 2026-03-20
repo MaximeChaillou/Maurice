@@ -18,6 +18,7 @@ struct MauriceApp: App {
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
     init() {
+        AppSettings.applyLanguage()
         let storage = FileTranscriptionStorage()
 
         let useCase = RecordingUseCase(
@@ -156,21 +157,21 @@ struct MauriceApp: App {
                 SettingsMenuButton()
             }
             CommandGroup(after: .textEditing) {
-                Button("Rechercher…") {
+                Button("Search...") {
                     showSearch = true
                 }
                 .keyboardShortcut("f", modifiers: [.command, .shift])
-                Button("Rechercher dans le fichier…") {
+                Button("Find in file...") {
                     sendFindAction(.showFindInterface)
                 }
                 .keyboardShortcut("f", modifiers: .command)
             }
-            CommandMenu("Mémoire") {
+            CommandMenu("Memory") {
                 MemoryMenuButton()
             }
         }
 
-        Window("Réglages", id: "settings") {
+        Window("Settings", id: "settings") {
             SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel) {
                 reloadAfterDirectoryChange()
             }
@@ -180,7 +181,7 @@ struct MauriceApp: App {
         .defaultSize(width: 800, height: 600)
         .windowResizability(.contentMinSize)
 
-        Window("Mémoire", id: "memory") {
+        Window("Memory", id: "memory") {
             ZStack {
                 WaveBackground(hue: appTheme.memoryTabHue)
 
@@ -223,7 +224,7 @@ struct MauriceApp: App {
         case .meeting:
             FolderContentView(
                 emptyIcon: "calendar",
-                emptyTitle: "Aucune réunion sélectionnée",
+                emptyTitle: "No meeting selected",
                 markdownTheme: appTheme.markdown,
                 navigateByDate: true,
                 showSkillConfig: true,
@@ -248,7 +249,7 @@ private struct SettingsMenuButton: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Button("Réglages…") {
+        Button("Settings...") {
             openWindow(id: "settings")
         }
         .keyboardShortcut(",", modifiers: .command)
@@ -259,7 +260,7 @@ private struct MemoryMenuButton: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Button("Ouvrir la mémoire") {
+        Button("Open memory") {
             openWindow(id: "memory")
         }
         .keyboardShortcut("m", modifiers: [.command, .shift])

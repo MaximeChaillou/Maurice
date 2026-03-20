@@ -124,7 +124,7 @@ final class RecordingViewModel {
                             try useCase.appendEntry(entry, to: url)
                         } catch {
                             Task { @MainActor in
-                                self.errorMessage = "Erreur d'écriture : \(error.localizedDescription)"
+                                self.errorMessage = String(localized: "Write error: \(error.localizedDescription)")
                             }
                         }
                     }

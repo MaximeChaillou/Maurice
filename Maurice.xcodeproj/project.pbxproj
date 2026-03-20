@@ -27,6 +27,7 @@
 		59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14241F0FA37147C8A3048475 /* TranscriptionStorage.swift */; };
 		6071ADB5BD2B81A0FB03B264 /* TranscriptionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */; };
 		6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444945559552A66796B66A73 /* Assets.xcassets */; };
+		LC11LC12LC13LC14LC15LC16 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */; };
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
 		6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */; };
@@ -150,6 +151,7 @@
 		2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarEvent.swift; sourceTree = "<group>"; };
 		2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeSettingsView.swift; sourceTree = "<group>"; };
 		444945559552A66796B66A73 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		4455667788990011223344DD /* PersistentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodable.swift; sourceTree = "<group>"; };
 		48A9CF845207422686E623CC /* CalendarLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLinkSheet.swift; sourceTree = "<group>"; };
 		50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptDetailView.swift; sourceTree = "<group>"; };
@@ -393,6 +395,7 @@
 			isa = PBXGroup;
 			children = (
 				444945559552A66796B66A73 /* Assets.xcassets */,
+				LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */,
 				FN00GR00GR00GR00GR00GR00 /* Fonts */,
 				TP01TP02TP03TP04TP05TP06 /* Templates */,
 			);
@@ -606,6 +609,7 @@
 			knownRegions = (
 				Base,
 				en,
+				fr,
 			);
 			mainGroup = F81067684A1EE16B2E0FC7F1;
 			minimizedProjectReferenceProxies = 1;
@@ -628,6 +632,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */,
+				LC11LC12LC13LC14LC15LC16 /* Localizable.xcstrings in Resources */,
 				FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */,
 				FN02BF02BF02BF02BF02BF02 /* FiraCodeNerdFont-Bold.ttf in Resources */,
 				FN03BF03BF03BF03BF03BF03 /* FiraCodeNerdFont-SemiBold.ttf in Resources */,

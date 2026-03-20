@@ -1,15 +1,27 @@
 import SwiftUI
 
 enum SettingsSection: String, CaseIterable, Identifiable {
-    case general = "Général"
-    case calendar = "Google Calendar"
-    case background = "Arrière-plan"
-    case appearance = "Markdown style"
-    case skills = "Skills"
-    case mcp = "MCP Servers"
-    case claudeMD = "CLAUDE.md"
+    case general
+    case calendar
+    case background
+    case appearance
+    case skills
+    case mcp
+    case claudeMD
 
     var id: String { rawValue }
+
+    var localizedName: String {
+        switch self {
+        case .general: String(localized: "General")
+        case .calendar: String(localized: "Google Calendar")
+        case .background: String(localized: "Background")
+        case .appearance: String(localized: "Markdown style")
+        case .skills: String(localized: "Skills")
+        case .mcp: String(localized: "MCP Servers")
+        case .claudeMD: String(localized: "CLAUDE.md")
+        }
+    }
 
     var icon: String {
         switch self {
@@ -43,7 +55,7 @@ struct SettingsView: View {
     private var settingsSidebar: some View {
         List(selection: $selectedSection) {
             ForEach(SettingsSection.allCases) { section in
-                Label(section.rawValue, systemImage: section.icon)
+                Label(section.localizedName, systemImage: section.icon)
                     .tag(section)
             }
         }
@@ -71,20 +83,22 @@ struct SettingsView: View {
             ClaudeMDView(markdownTheme: appTheme.markdown)
         case .none:
             ContentUnavailableView(
-                "Aucune section sélectionnée",
+                "No section selected",
                 systemImage: "gearshape",
-                description: Text("Sélectionnez une section dans la liste.")
+                description: Text("Select a section from the list.")
             )
         }
     }
 }
 
-// MARK: - Général
+// MARK: - General
 
 private struct GeneralSettingsView: View {
     var onRootDirectoryChanged: (() -> Void)?
     @State private var rootDirectory: URL = AppSettings.rootDirectory
     @State private var transcriptionLanguage: String = AppSettings.transcriptionLanguage
+    @State private var appLanguage: String = AppSettings.appLanguage
+    @State private var showRestartAlert = false
     @StateObject private var updateChecker = UpdateChecker()
 
     private let languages = [
@@ -94,28 +108,28 @@ private struct GeneralSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Mise à jour") {
+            Section("Update") {
                 HStack {
-                    Text("Version actuelle")
+                    Text("Current version")
                     Spacer()
                     Text(updateChecker.currentVersion)
                         .foregroundStyle(.secondary)
                 }
 
                 HStack {
-                    Toggle("Vérifier automatiquement", isOn: $updateChecker.automaticallyChecksForUpdates)
+                    Toggle("Check automatically", isOn: $updateChecker.automaticallyChecksForUpdates)
 
                     Spacer()
 
-                    Button("Vérifier maintenant") {
+                    Button("Check now") {
                         updateChecker.checkForUpdates()
                     }
                 }
             }
 
-            Section("Dossier de données") {
+            Section("Data folder") {
                 HStack {
-                    Text("Dossier racine")
+                    Text("Root folder")
                     Spacer()
                     Text(rootDirectory.path)
                         .foregroundStyle(.secondary)
@@ -125,10 +139,10 @@ private struct GeneralSettingsView: View {
 
                 HStack {
                     Spacer()
-                    Button("Choisir un dossier…") {
+                    Button("Choose a folder...") {
                         chooseFolder()
                     }
-                    Button("Réinitialiser") {
+                    Button("Reset") {
                         rootDirectory = AppSettings.defaultRootDirectory
                         AppSettings.rootDirectory = rootDirectory
                         onRootDirectoryChanged?()
@@ -137,15 +151,15 @@ private struct GeneralSettingsView: View {
                 }
 
                 Text(
-                    "Tous vos fichiers Maurice sont stockés ici." +
-                    " Vous pouvez utiliser un dossier iCloud ou Dropbox pour synchroniser entre machines."
+                    "All your Maurice files are stored here." +
+                    " You can use an iCloud or Dropbox folder to sync across machines."
                 )
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section("Transcription") {
-                Picker("Langue", selection: $transcriptionLanguage) {
+                Picker("Language", selection: $transcriptionLanguage) {
                     ForEach(languages, id: \.0) { code, name in
                         Text(name).tag(code)
                     }
@@ -154,12 +168,45 @@ private struct GeneralSettingsView: View {
                     AppSettings.transcriptionLanguage = transcriptionLanguage
                 }
 
-                Text("La langue utilisée pour la reconnaissance vocale. Choisissez la langue principale de vos réunions.")
+                Text("The language used for speech recognition. Choose the main language of your meetings.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Section("App language") {
+                Picker("Language", selection: $appLanguage) {
+                    Text("System").tag("system")
+                    Text("English").tag("en")
+                    Text("French").tag("fr")
+                }
+                .onChange(of: appLanguage) {
+                    AppSettings.appLanguage = appLanguage
+                    showRestartAlert = true
+                }
+            }
         }
         .formStyle(.grouped)
+        .alert("Restart required", isPresented: $showRestartAlert) {
+            Button("Restart now") {
+                restartApp()
+            }
+            Button("Later", role: .cancel) {}
+        } message: {
+            Text("The app needs to restart to apply the language change.")
+        }
+    }
+
+    private func restartApp() {
+        let url = URL(fileURLWithPath: Bundle.main.resourcePath!)
+        let appURL = url
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let task = Process()
+        task.launchPath = "/usr/bin/open"
+        task.arguments = ["-n", appURL.path]
+        try? task.run()
+        NSApplication.shared.terminate(nil)
     }
 
     private func chooseFolder() {
@@ -168,8 +215,8 @@ private struct GeneralSettingsView: View {
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         panel.canCreateDirectories = true
-        panel.prompt = "Choisir"
-        panel.message = "Sélectionnez le dossier racine pour Maurice"
+        panel.prompt = String(localized: "Choose")
+        panel.message = String(localized: "Select the root folder for Maurice")
 
         if panel.runModal() == .OK, let url = panel.url {
             rootDirectory = url
@@ -184,7 +231,7 @@ private struct ClaudeMDView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Ce fichier configure le comportement de l'assistant IA. Il est lu à chaque interaction.")
+            Text("This file configures the AI assistant's behavior. It is read at each interaction.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 16)
@@ -221,7 +268,7 @@ private struct SkillsSettingsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear { loadSkills() }
-        .alert("Erreur", isPresented: Binding(
+        .alert("Error", isPresented: Binding(
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
         )) {
@@ -230,23 +277,23 @@ private struct SkillsSettingsView: View {
             if let msg = errorMessage { Text(msg) }
         }
         .alert(
-            "Supprimer le skill ?",
+            "Delete skill?",
             isPresented: Binding(
                 get: { skillToDelete != nil },
                 set: { if !$0 { skillToDelete = nil } }
             )
         ) {
-            Button("Annuler", role: .cancel) {
+            Button("Cancel", role: .cancel) {
                 skillToDelete = nil
             }
-            Button("Supprimer", role: .destructive) {
+            Button("Delete", role: .destructive) {
                 if let skill = skillToDelete {
                     deleteSkill(skill)
                 }
             }
         } message: {
             if let skill = skillToDelete {
-                Text("Le fichier « \(skill.filename) » sera supprimé définitivement.")
+                Text(String(localized: "The file '\(skill.filename)' will be permanently deleted."))
             }
         }
     }
@@ -269,7 +316,7 @@ private struct SkillsSettingsView: View {
                         Button(role: .destructive) {
                             skillToDelete = skill
                         } label: {
-                            Label("Supprimer", systemImage: "trash")
+                            Label("Delete", systemImage: "trash")
                         }
                     }
                 }
@@ -285,7 +332,7 @@ private struct SkillsSettingsView: View {
                     isAddingSkill = true
                     newSkillName = ""
                 } label: {
-                    Label("Ajouter un skill", systemImage: "plus")
+                    Label("Add a skill", systemImage: "plus")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -310,18 +357,18 @@ private struct SkillsSettingsView: View {
 
     private var newSkillForm: some View {
         VStack(spacing: 8) {
-            TextField("Nom du skill (ex: mon-skill)", text: $newSkillName)
+            TextField("Skill name (e.g. my-skill)", text: $newSkillName)
                 .textFieldStyle(.roundedBorder)
 
             HStack {
-                Button("Annuler") {
+                Button("Cancel") {
                     isAddingSkill = false
                     newSkillName = ""
                 }
 
                 Spacer()
 
-                Button("Créer") {
+                Button("Create") {
                     createSkill()
                 }
                 .disabled(newSkillName.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -338,7 +385,7 @@ private struct SkillsSettingsView: View {
     private var skillDetail: some View {
         if selectedSkill != nil {
             VStack(spacing: 0) {
-                Text("Un skill est un prompt Markdown exécuté par l'IA sur vos notes. Exemple : résumer un transcript, extraire les actions.")
+                Text("A skill is a Markdown prompt executed by AI on your notes. Example: summarize a transcript, extract actions.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 16)
@@ -357,7 +404,7 @@ private struct SkillsSettingsView: View {
                             try Data(text.utf8).write(to: url, options: .atomic)
                         } catch {
                             await MainActor.run {
-                                errorMessage.wrappedValue = "Impossible de sauvegarder : \(error.localizedDescription)"
+                                errorMessage.wrappedValue = String(localized: "Unable to save: \(error.localizedDescription)")
                             }
                         }
                     }
@@ -365,18 +412,18 @@ private struct SkillsSettingsView: View {
             }
         } else if skills.isEmpty {
             ContentUnavailableView(
-                "Aucun skill",
+                "No skills",
                 systemImage: "terminal",
                 description: Text(
-                    "Les skills sont des prompts IA réutilisables." +
-                    " Créez-en un pour automatiser vos tâches (résumé, compte-rendu…)."
+                    "Skills are reusable AI prompts." +
+                    " Create one to automate your tasks (summary, meeting notes...)."
                 )
             )
         } else {
             ContentUnavailableView(
-                "Aucun skill sélectionné",
+                "No skill selected",
                 systemImage: "terminal",
-                description: Text("Sélectionnez un skill pour le modifier.")
+                description: Text("Select a skill to edit it.")
             )
         }
     }
@@ -412,7 +459,7 @@ private struct SkillsSettingsView: View {
         do {
             try FileManager.default.removeItem(at: skill.url)
         } catch {
-            errorMessage = "Impossible de supprimer « \(skill.name) » : \(error.localizedDescription)"
+            errorMessage = String(localized: "Unable to delete '\(skill.name)': \(error.localizedDescription)")
         }
         if selectedSkill == skill { selectedSkill = nil }
         skillToDelete = nil
@@ -420,7 +467,7 @@ private struct SkillsSettingsView: View {
     }
 }
 
-// MARK: - Arrière-plan
+// MARK: - Background
 
 private struct TabInfo {
     let tab: AppTab
@@ -432,14 +479,14 @@ private struct BackgroundSettingsView: View {
     @Binding var appTheme: AppTheme
 
     private let tabs: [TabInfo] = [
-        TabInfo(tab: .meeting, label: "Réunions", icon: "calendar"),
-        TabInfo(tab: .people, label: "Personnes", icon: "person.2"),
-        TabInfo(tab: .task, label: "Tâches", icon: "checklist"),
+        TabInfo(tab: .meeting, label: String(localized: "Meetings"), icon: "calendar"),
+        TabInfo(tab: .people, label: String(localized: "People"), icon: "person.2"),
+        TabInfo(tab: .task, label: String(localized: "Tasks"), icon: "checklist"),
     ]
 
     var body: some View {
         Form {
-            Section("Couleur par onglet") {
+            Section("Color per tab") {
                 ForEach(tabs, id: \.tab) { item in
                     HStack {
                         Label(item.label, systemImage: item.icon)
@@ -456,7 +503,7 @@ private struct BackgroundSettingsView: View {
 
             Section {
                 HStack {
-                    Text("Aperçu")
+                    Text("Preview")
                         .foregroundStyle(.secondary)
                     Spacer()
                 }

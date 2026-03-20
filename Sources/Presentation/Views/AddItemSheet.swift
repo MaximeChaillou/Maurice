@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct AddItemSheet: View {
-    let title: String
-    let placeholder: String
+    let title: LocalizedStringKey
+    let placeholder: LocalizedStringKey
     @Binding var text: String
     var onCreate: () -> Void
     var onCancel: () -> Void
@@ -26,7 +26,7 @@ struct AddItemSheet: View {
             Divider()
 
             HStack {
-                Button("Annuler") {
+                Button("Cancel") {
                     onCancel()
                     dismiss()
                 }
@@ -34,7 +34,7 @@ struct AddItemSheet: View {
 
                 Spacer()
 
-                Button("Créer") { submit() }
+                Button("Create") { submit() }
                     .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)

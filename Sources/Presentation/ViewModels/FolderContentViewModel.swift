@@ -107,7 +107,7 @@ final class FolderContentViewModel {
             try FileManager.default.removeItem(at: folder.url)
             if selectedFolder == folder.name { selectedFolder = nil }
         } catch {
-            errorMessage = "Impossible de supprimer « \(folder.name) » : \(error.localizedDescription)"
+            errorMessage = String(localized: "Unable to delete '\(folder.name)': \(error.localizedDescription)")
         }
         loadFolders()
     }
@@ -121,7 +121,7 @@ final class FolderContentViewModel {
                 try FileManager.default.removeItem(at: transcript.url)
             }
         } catch {
-            errorMessage = "Impossible de supprimer : \(error.localizedDescription)"
+            errorMessage = String(localized: "Unable to delete: \(error.localizedDescription)")
         }
         loadFolders()
     }
