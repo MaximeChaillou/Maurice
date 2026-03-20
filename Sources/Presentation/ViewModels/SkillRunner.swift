@@ -42,7 +42,8 @@ final class SkillRunner {
             "--allowedTools", "Edit(\(root)/**)",
             "--allowedTools", "Glob(\(root)/**)",
             "--allowedTools", "Grep(\(root)/**)",
-            "--allowedTools", "Bash(ls:*,mkdir:*,cat:*,mv:*,cp:*,rm:*)"
+            "--allowedTools", "Bash(ls:*,mkdir:*,cat:*,mv:*,cp:*,rm:*)",
+            "--allowedTools", "mcp__*"
         ]
     }
 
