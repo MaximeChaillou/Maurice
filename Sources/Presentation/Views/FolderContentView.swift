@@ -84,14 +84,27 @@ struct FolderContentView: View {
 
             Divider()
 
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.folders) { folder in
-                        MeetingRow(
-                            folder: folder,
-                            isSelected: viewModel.selectedFolder == folder.name,
-                            onSelect: { viewModel.selectedFolder = folder.name },
-                            onConfigure: showSkillConfig ? {
+            List(selection: $viewModel.selectedFolder) {
+                ForEach(viewModel.folders) { folder in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 4) {
+                            if let icon = folder.icon {
+                                Text(icon)
+                            }
+                            Text(folder.name)
+                                .lineLimit(1)
+                        }
+                        .font(.body)
+                        Text("\(folder.fileCount) files")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                    .tag(folder.name)
+                    .listRowBackground(Color.clear)
+                    .contextMenu {
+                        if showSkillConfig {
+                            Button {
                                 viewModel.selectedFolder = folder.name
                                 let url = folder.url
                                 Task {
@@ -101,12 +114,27 @@ struct FolderContentView: View {
                                     viewModel.meetingConfig = cfg
                                     showConfigSidebar = true
                                 }
-                            } : nil,
-                            onDelete: { folderToDelete = folder }
-                        )
+                            } label: {
+                                Label("Configure", systemImage: "gearshape")
+                            }
+                            Divider()
+                        }
+                        Button(role: .destructive) {
+                            folderToDelete = folder
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            folderToDelete = folder
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
             .deletionAlert(
                 "Delete folder?",
                 item: $folderToDelete,
@@ -249,67 +277,5 @@ extension FolderContentView {
             }
         }
         .scrollContentBackground(.hidden)
-    }
-}
-
-// MARK: - Meeting Row
-
-private struct MeetingRow: View {
-    let folder: FolderItem
-    let isSelected: Bool
-    let onSelect: () -> Void
-    var onConfigure: (() -> Void)?
-    let onDelete: () -> Void
-    @State private var isHovered = false
-
-    var body: some View {
-        Button(action: onSelect) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 4) {
-                    if let icon = folder.icon {
-                        Text(icon)
-                    }
-                    Text(folder.name)
-                        .lineLimit(1)
-                }
-                .font(.body)
-                Text("\(folder.fileCount) files")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-        }
-        .buttonStyle(.plain)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isSelected ? .white.opacity(0.15) : (isHovered ? .white.opacity(0.08) : .clear))
-        )
-        .padding(.horizontal, 4)
-        .contentShape(Rectangle())
-        .onHover { hovering in
-            isHovered = hovering
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-        }
-        .contextMenu {
-            if let onConfigure {
-                Button {
-                    onConfigure()
-                } label: {
-                    Label("Configure", systemImage: "gearshape")
-                }
-                Divider()
-            }
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-        }
     }
 }
