@@ -29,6 +29,9 @@
 		6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444945559552A66796B66A73 /* Assets.xcassets */; };
 		LC11LC12LC13LC14LC15LC16 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */; };
 		BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */; };
+		GS01GS02GS03GS04GS05GS06 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */; };
+		CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */; };
+		SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */; };
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
 		6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */; };
@@ -170,6 +173,9 @@
 		994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfig.swift; sourceTree = "<group>"; };
 		9CF056EF2F6B3784007276E9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingsView.swift; sourceTree = "<group>"; };
+		GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
+		CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeMDView.swift; sourceTree = "<group>"; };
+		SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsSettingsView.swift; sourceTree = "<group>"; };
 		9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarSettingsView.swift; sourceTree = "<group>"; };
 		A149458BA1EDDBB22708DBEE /* TranscriptionEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEntry.swift; sourceTree = "<group>"; };
 		A26DEF28AB727905D3069845 /* Transcription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transcription.swift; sourceTree = "<group>"; };
@@ -429,6 +435,9 @@
 				5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */,
 				AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */,
 				BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */,
+				CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */,
+				GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */,
+				SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */,
 				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
@@ -715,6 +724,9 @@
 				6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */,
 				AC01AC02AC03AC04AC05AC06 /* AskButtonComponents.swift in Sources */,
 				BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */,
+				CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */,
+				GS01GS02GS03GS04GS05GS06 /* GeneralSettingsView.swift in Sources */,
+				SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */,
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,
 				E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */,
 				18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */,
