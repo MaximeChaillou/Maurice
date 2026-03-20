@@ -273,7 +273,8 @@ struct PersonOneOnOneView: View {
                 config: meetingConfig,
                 skillRunner: skillRunner,
                 showConfigAction: skillRunner != nil ? { showConfigSheet = true } : nil,
-                entryDeleteAction: $entryDeleteAction
+                entryDeleteAction: $entryDeleteAction,
+                nextFileURL: oneOnOneDir.appendingPathComponent("next.md")
             )
             Divider()
             DateEntryContentView(

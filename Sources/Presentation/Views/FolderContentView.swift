@@ -208,7 +208,8 @@ extension FolderContentView {
                 config: showSkillConfig ? viewModel.meetingConfig : nil,
                 skillRunner: skillRunner,
                 showConfigAction: showSkillConfig ? { showConfigSidebar = true } : nil,
-                entryDeleteAction: $entryDeleteAction
+                entryDeleteAction: $entryDeleteAction,
+                nextFileURL: folder.url.appendingPathComponent("next.md")
             )
             Divider()
             DateEntryContentView(

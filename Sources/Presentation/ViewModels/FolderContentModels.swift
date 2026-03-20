@@ -52,6 +52,7 @@ struct MeetingDateEntry: Identifiable {
 
         for file in mdFiles {
             let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            guard datePrefix != "next" else { continue }
             let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
             dateMap[datePrefix, default: (nil, nil)].note = folderFile
         }

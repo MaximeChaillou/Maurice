@@ -147,6 +147,7 @@ final class FolderContentViewModel {
 
     nonisolated private static func scanFiles(in dir: URL) -> [FolderFile] {
         DirectoryScanner.scan(at: dir, fileExtension: "md").files
+            .filter { $0.url.deletingPathExtension().lastPathComponent != "next" }
             .map { FolderFile(id: $0.url, name: $0.url.deletingPathExtension().lastPathComponent,
                               date: $0.date, url: $0.url) }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }

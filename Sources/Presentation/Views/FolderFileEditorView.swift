@@ -32,6 +32,7 @@ struct FolderFileEditorView: View {
             .onAppear { loadFile() }
             .onChange(of: bodyText) {
                 guard bodyText != loadedText else { return }
+                loadedText = bodyText
                 lastSaveDate = Date()
                 let text = bodyText
                 let url = file.url

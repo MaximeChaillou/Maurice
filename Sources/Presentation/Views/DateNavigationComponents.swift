@@ -11,6 +11,7 @@ struct DateNavigationHeader: View {
     var skillRunner: SkillRunner?
     var showConfigAction: (() -> Void)?
     @Binding var entryDeleteAction: EntryDeleteAction?
+    var nextFileURL: URL?
 
     var body: some View {
         VStack(spacing: 4) {
@@ -25,6 +26,9 @@ struct DateNavigationHeader: View {
 
             HStack(spacing: 8) {
                 Spacer()
+                if let nextFileURL {
+                    NextNoteButton(fileURL: nextFileURL)
+                }
                 TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
                 if let config, let skillRunner {
                     SkillActionsMenu(config: config, runner: skillRunner, activeFilePath: entry.noteFile?.url.path ?? entry.transcript?.url.path)
@@ -213,6 +217,63 @@ struct GlassIconButton: View {
         .buttonStyle(.plain)
         .interactiveHover()
         .help(help)
+    }
+}
+
+// MARK: - Next Note Button
+
+struct NextNoteButton: View {
+    let fileURL: URL
+    @State private var showPopover = false
+    @State private var hasContent = false
+
+    var body: some View {
+        Button {
+            ensureFileExists()
+            showPopover.toggle()
+        } label: {
+            Image(systemName: "text.badge.plus")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+                .overlay(alignment: .topTrailing) {
+                    if hasContent {
+                        Circle()
+                            .fill(.orange)
+                            .frame(width: 7, height: 7)
+                            .offset(x: 2, y: 2)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .interactiveHover()
+        .help("Notes pour le prochain point")
+        .popover(isPresented: $showPopover) {
+            FolderFileEditorView(
+                file: FolderFile(url: fileURL),
+                markdownTheme: MarkdownTheme()
+            )
+            .frame(width: 400, height: 300)
+        }
+        .onAppear { checkContent() }
+        .onChange(of: showPopover) { if !showPopover { checkContent() } }
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            checkContent()
+        }
+    }
+
+    private func checkContent() {
+        guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            hasContent = false
+            return
+        }
+        hasContent = !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private func ensureFileExists() {
+        if !FileManager.default.fileExists(atPath: fileURL.path) {
+            FileManager.default.createFile(atPath: fileURL.path, contents: nil)
+        }
     }
 }
 
