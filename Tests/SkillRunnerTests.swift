@@ -192,8 +192,8 @@ final class SkillRunnerTests: XCTestCase {
 
     func testMauricePermissionsHasSixPairs() {
         let permissions = SkillRunner.mauricePermissions
-        // 6 tools: Read, Write, Edit, Glob, Grep, Bash -> 12 elements (flag + value each)
-        XCTAssertEqual(permissions.count, 12)
+        // 7 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__* -> 14 elements (flag + value each)
+        XCTAssertEqual(permissions.count, 14)
     }
 
     // MARK: - Initial state

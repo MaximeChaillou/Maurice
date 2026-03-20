@@ -130,9 +130,9 @@ final class FileTranscriptionStorageTests: XCTestCase {
 
     func testBeginLiveSessionWithPeopleSubdirectoryUsesRootDirectory() throws {
         let date = Date()
-        let url = try storage.beginLiveSession(startDate: date, subdirectory: "People/JohnDoe")
+        let url = try storage.beginLiveSession(startDate: date, subdirectory: "People/Team/JohnDoe/1-1")
 
-        XCTAssertTrue(url.path.contains("People/JohnDoe"))
+        XCTAssertTrue(url.path.contains("People/Team/JohnDoe/1-1"))
         // People/ prefix uses rootDirectory, not meetingsDirectory
         XCTAssertFalse(url.path.contains("Meetings"))
     }

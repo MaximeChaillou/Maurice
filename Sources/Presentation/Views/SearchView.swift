@@ -226,36 +226,78 @@ private enum ExactSearchEngine {
     }
 
     static func searchDirectory(_ scope: SearchScope, term: String, query: String, into found: inout [SearchResult]) {
+        let isPeople = scope.directory == AppSettings.peopleDirectory
+        if isPeople {
+            searchPeopleDirectory(scope, term: term, query: query, into: &found)
+        } else {
+            searchFlatDirectory(scope, term: term, query: query, into: &found)
+        }
+    }
+
+    static func searchFlatDirectory(
+        _ scope: SearchScope, term: String, query: String, into found: inout [SearchResult]
+    ) {
         let contents = DirectoryScanner.scan(at: scope.directory)
         for folder in contents.folders {
-            if folder.name.lowercased().contains(term) {
+            let ctx = FolderSearchContext(folder: folder, scope: scope, folderKey: folder.name)
+            searchFolder(ctx, term: term, query: query, into: &found)
+        }
+    }
+
+    static func searchPeopleDirectory(
+        _ scope: SearchScope, term: String, query: String, into found: inout [SearchResult]
+    ) {
+        let categories = DirectoryScanner.scan(at: scope.directory)
+        for category in categories.folders {
+            let people = DirectoryScanner.scan(at: category.url)
+            for person in people.folders {
+                let relativePath = "\(category.name)/\(person.name)"
+                let personScope = SearchScope(
+                    directory: scope.directory,
+                    label: "Personne",
+                    icon: "person",
+                    kind: { _ in .person(relativePath) }
+                )
+                let ctx = FolderSearchContext(folder: person, scope: personScope, folderKey: person.name)
+                searchFolder(ctx, term: term, query: query, into: &found)
+            }
+        }
+    }
+
+    struct FolderSearchContext {
+        let folder: Folder
+        let scope: SearchScope
+        let folderKey: String
+    }
+
+    static func searchFolder(_ ctx: FolderSearchContext, term: String, query: String, into found: inout [SearchResult]) {
+        if ctx.folder.name.lowercased().contains(term) {
+            found.append(SearchResult(
+                name: ctx.folder.name,
+                context: ctx.scope.label,
+                icon: ctx.scope.icon,
+                kind: ctx.scope.kind(ctx.folderKey),
+                snippet: "",
+                query: query
+            ))
+        }
+        let files = DirectoryScanner.scanRecursiveFiles(at: ctx.folder.url, fileExtension: "md")
+        for file in files {
+            let fileName = file.url.deletingPathExtension().lastPathComponent
+            let content = try? String(contentsOf: file.url, encoding: .utf8)
+            let nameMatch = fileName.lowercased().contains(term)
+            let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
+            if nameMatch || contentMatch {
+                let label = "\(ctx.scope.label) \u{2014} \(ctx.folderKey)"
+                let snippet = extractSnippet(from: content ?? "", term: term)
                 found.append(SearchResult(
-                    name: folder.name,
-                    context: scope.label,
-                    icon: scope.icon,
-                    kind: scope.kind(folder.name),
-                    snippet: "",
+                    name: fileName,
+                    context: label,
+                    icon: "doc.text",
+                    kind: ctx.scope.kind(ctx.folderKey),
+                    snippet: snippet,
                     query: query
                 ))
-            }
-            let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
-            for file in files {
-                let fileName = file.url.deletingPathExtension().lastPathComponent
-                let content = try? String(contentsOf: file.url, encoding: .utf8)
-                let nameMatch = fileName.lowercased().contains(term)
-                let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
-                if nameMatch || contentMatch {
-                    let ctx = "\(scope.label) — \(folder.name)"
-                    let snippet = extractSnippet(from: content ?? "", term: term)
-                    found.append(SearchResult(
-                        name: fileName,
-                        context: ctx,
-                        icon: "doc.text",
-                        kind: scope.kind(folder.name),
-                        snippet: snippet,
-                        query: query
-                    ))
-                }
             }
         }
     }

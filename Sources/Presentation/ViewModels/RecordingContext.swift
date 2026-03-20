@@ -6,14 +6,14 @@ final class RecordingContext {
     private let recordingViewModel: RecordingViewModel
     private let calendarViewModel: GoogleCalendarViewModel
     private let meetingViewModel: FolderContentViewModel
-    private let peopleViewModel: FolderContentViewModel
+    private let peopleViewModel: PeopleContentViewModel
     private let navigationCoordinator: NavigationCoordinator
 
     init(
         recordingViewModel: RecordingViewModel,
         calendarViewModel: GoogleCalendarViewModel,
         meetingViewModel: FolderContentViewModel,
-        peopleViewModel: FolderContentViewModel,
+        peopleViewModel: PeopleContentViewModel,
         navigationCoordinator: NavigationCoordinator
     ) {
         self.recordingViewModel = recordingViewModel
@@ -45,7 +45,7 @@ final class RecordingContext {
                       let folder = meetingViewModel.selectedFolder {
                 recordingViewModel.subdirectory = folder
             } else if navigationCoordinator.activeTab == .people,
-                      let person = peopleViewModel.selectedFolder {
+                      let person = peopleViewModel.selectedPerson {
                 recordingViewModel.subdirectory = "People/\(person)/1-1"
             } else {
                 let name = "Enregistrement \(DateFormatters.dayAndTime.string(from: Date()))"
@@ -70,13 +70,14 @@ final class RecordingContext {
 
     private func navigateToSubdirectory(_ subdirectory: String) {
         if subdirectory.hasPrefix("People/") {
-            let parts = subdirectory.split(separator: "/")
-            if parts.count >= 2 {
-                let personName = String(parts[1])
-                navigationCoordinator.activeTab = .people
-                peopleViewModel.loadFolders()
-                peopleViewModel.selectedFolder = personName
+            // Extract relativePath between "People/" and "/1-1"
+            var relativePath = String(subdirectory.dropFirst("People/".count))
+            if relativePath.hasSuffix("/1-1") {
+                relativePath = String(relativePath.dropLast("/1-1".count))
             }
+            navigationCoordinator.activeTab = .people
+            peopleViewModel.loadFolders()
+            peopleViewModel.selectedPerson = relativePath
         } else {
             navigateToMeeting(subdirectory)
         }
@@ -100,16 +101,21 @@ final class RecordingContext {
                 }
             }
 
-            // Search in People/*/1-1
+            // Search in People/category/person/1-1
             let peopleDir = AppSettings.peopleDirectory
-            if let people = try? fm.contentsOfDirectory(at: peopleDir, includingPropertiesForKeys: nil) {
-                for person in people where person.hasDirectoryPath {
-                    let oneOnOneDir = person.appendingPathComponent("1-1", isDirectory: true)
-                    guard fm.fileExists(atPath: oneOnOneDir.path) else { continue }
-                    let config = MeetingConfig.load(from: oneOnOneDir)
-                    if let linkedName = config.calendarEventName,
-                       linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
-                        return "People/\(person.lastPathComponent)/1-1"
+            if let categories = try? fm.contentsOfDirectory(at: peopleDir, includingPropertiesForKeys: nil) {
+                for category in categories where category.hasDirectoryPath {
+                    guard let people = try? fm.contentsOfDirectory(
+                        at: category, includingPropertiesForKeys: nil
+                    ) else { continue }
+                    for person in people where person.hasDirectoryPath {
+                        let oneOnOneDir = person.appendingPathComponent("1-1", isDirectory: true)
+                        guard fm.fileExists(atPath: oneOnOneDir.path) else { continue }
+                        let config = MeetingConfig.load(from: oneOnOneDir)
+                        if let linkedName = config.calendarEventName,
+                           linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
+                            return "People/\(category.lastPathComponent)/\(person.lastPathComponent)/1-1"
+                        }
                     }
                 }
             }

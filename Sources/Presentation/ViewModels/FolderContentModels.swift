@@ -4,8 +4,15 @@ struct FolderItem: Identifiable {
     let name: String, url: URL, files: [FolderFile]
     var dateEntries: [MeetingDateEntry] = []
     var icon: String?
-    var id: String { name }
+    var relativePath: String = ""
+    var id: String { relativePath.isEmpty ? name : relativePath }
     var fileCount: Int { max(files.count, dateEntries.count) }
+}
+
+struct PeopleCategory: Identifiable {
+    let name: String
+    var people: [FolderItem]
+    var id: String { name }
 }
 
 enum EntryDeleteAction {

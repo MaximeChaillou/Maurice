@@ -77,6 +77,7 @@
 		NA01NA02NA03NA04NA05NA06 /* NavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */; };
 		OB21OB22OB23OB24OB25OB26 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OB11OB12OB13OB14OB15OB16 /* OnboardingView.swift */; };
 		PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */; };
+		PC01PC02PC03PC04PC05PC06 /* PeopleContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */; };
 		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
 		RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */; };
 		SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */; };
@@ -101,6 +102,7 @@
 		NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */; };
 		NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */; };
 		NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */; };
+		PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */; };
 		NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */; };
 		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
@@ -208,6 +210,7 @@
 		NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinator.swift; sourceTree = "<group>"; };
 		OB11OB12OB13OB14OB15OB16 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
+		PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModel.swift; sourceTree = "<group>"; };
 		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingContext.swift; sourceTree = "<group>"; };
 		SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubfolderNavigationView.swift; sourceTree = "<group>"; };
@@ -229,6 +232,7 @@
 		NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarServiceTests.swift; sourceTree = "<group>"; };
 		NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigTests.swift; sourceTree = "<group>"; };
 		NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingDateEntryTests.swift; sourceTree = "<group>"; };
+		PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModelTests.swift; sourceTree = "<group>"; };
 		NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodableTests.swift; sourceTree = "<group>"; };
 		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
@@ -350,6 +354,7 @@
 				F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
 				NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */,
+				PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */,
 				RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */,
 				BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */,
 				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
@@ -510,6 +515,7 @@
 				NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */,
 				NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */,
 				VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */,
+				PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */,
 				NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */,
 				NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */,
 				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
@@ -732,6 +738,7 @@
 				SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */,
 				SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */,
 				SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */,
+				PC01PC02PC03PC04PC05PC06 /* PeopleContentViewModel.swift in Sources */,
 				PD01PD02PD03PD04PD05PD06 /* PersonDetailView.swift in Sources */,
 				PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */,
 				IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */,
@@ -763,6 +770,7 @@
 				NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */,
 				NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */,
 				VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */,
+				PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */,
 				NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */,
 				NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */,
 				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,

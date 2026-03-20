@@ -8,7 +8,7 @@ struct MauriceApp: App {
     @State private var coordinator = NavigationCoordinator()
     @State private var appTheme = AppTheme.load()
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
-    @State private var peopleViewModel = FolderContentViewModel(directory: AppSettings.peopleDirectory)
+    @State private var peopleViewModel = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
     @State private var showOnboarding = !AppSettings.onboardingCompleted
@@ -29,7 +29,7 @@ struct MauriceApp: App {
         let nav = NavigationCoordinator()
         let calVM = GoogleCalendarViewModel()
         let meetVM = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
-        let pplVM = FolderContentViewModel(directory: AppSettings.peopleDirectory)
+        let pplVM = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
 
         _recordingViewModel = State(initialValue: recVM)
         _coordinator = State(initialValue: nav)
@@ -125,9 +125,9 @@ struct MauriceApp: App {
                                 coordinator.activeTab = .meeting
                             }
                         },
-                        onOpenPerson: { name in
+                        onOpenPerson: { relativePath in
                             peopleViewModel.loadFolders()
-                            peopleViewModel.selectedFolder = name
+                            peopleViewModel.selectedPerson = relativePath
                             coordinator.activeTab = .people
                         },
                         searchService: searchService,

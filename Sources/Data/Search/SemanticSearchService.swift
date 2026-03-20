@@ -62,7 +62,7 @@ final class SemanticSearchService {
             uniquingKeysWith: { _, new in new }
         )
 
-        var docs: [IndexedDocument] = []
+        let ctx = IndexContext(embeddingFr: embeddingFr, embeddingEn: embeddingEn, existing: existingByURL)
         indexDirectory(
             IndexScope(
                 directory: AppSettings.meetingsDirectory,
@@ -70,23 +70,11 @@ final class SemanticSearchService {
                 icon: "calendar",
                 kind: { .meeting($0) }
             ),
-            embeddingFr: embeddingFr, embeddingEn: embeddingEn,
-            existing: existingByURL,
-            into: &docs
+            context: ctx
         )
-        indexDirectory(
-            IndexScope(
-                directory: AppSettings.peopleDirectory,
-                label: "Personne",
-                icon: "person",
-                kind: { .person($0) }
-            ),
-            embeddingFr: embeddingFr, embeddingEn: embeddingEn,
-            existing: existingByURL,
-            into: &docs
-        )
-        indexTasks(embeddingFr: embeddingFr, embeddingEn: embeddingEn, existing: existingByURL, into: &docs)
-        return docs
+        indexPeopleDirectory(context: ctx)
+        indexTasks(context: ctx)
+        return ctx.docs
     }
 
     func search(query: String, limit: Int = 20) async -> [SemanticSearchResult] {
@@ -180,74 +168,89 @@ final class SemanticSearchService {
 
     nonisolated private static func indexDirectory(
         _ scope: IndexScope,
-        embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?,
-        existing: [String: IndexedDocument],
-        into docs: inout [IndexedDocument]
+        context: IndexContext
     ) {
         let contents = DirectoryScanner.scan(at: scope.directory)
         for folder in contents.folders {
-            let folderURL = folder.url
-            let folderDate = modificationDate(for: folderURL)
-            if let cached = existing[folderURL.absoluteString], cached.modificationDate >= folderDate {
-                docs.append(cached)
-            } else if let vecs = dualVectors(for: folder.name, embeddingFr: embeddingFr, embeddingEn: embeddingEn) {
-                docs.append(IndexedDocument(
-                    name: folder.name,
-                    context: scope.label,
-                    icon: scope.icon,
-                    kind: scope.kind(folder.name),
-                    content: folder.name,
-                    embeddingFr: vecs.fr,
-                    embeddingEn: vecs.en,
-                    sourceURL: folderURL,
-                    modificationDate: folderDate
-                ))
-            }
+            indexSingleFolder(folder, scope: scope, folderKey: folder.name, context: context)
+        }
+    }
 
-            let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
-            for file in files {
-                let fileDate = file.date
-                if let cached = existing[file.url.absoluteString], cached.modificationDate >= fileDate {
-                    docs.append(cached)
-                    continue
-                }
-                let fileName = file.url.deletingPathExtension().lastPathComponent
-                guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
-                let text = "\(fileName) \(content)"
-                let truncated = String(text.prefix(500))
-                guard let vecs = dualVectors(for: truncated, embeddingFr: embeddingFr, embeddingEn: embeddingEn) else {
-                    continue
-                }
-                docs.append(IndexedDocument(
-                    name: fileName,
-                    context: "\(scope.label) — \(folder.name)",
-                    icon: "doc.text",
-                    kind: scope.kind(folder.name),
-                    content: text,
-                    embeddingFr: vecs.fr,
-                    embeddingEn: vecs.en,
-                    sourceURL: file.url,
-                    modificationDate: fileDate
-                ))
+    nonisolated private static func indexPeopleDirectory(
+        context: IndexContext
+    ) {
+        let peopleDir = AppSettings.peopleDirectory
+        let categories = DirectoryScanner.scan(at: peopleDir)
+        for category in categories.folders {
+            let people = DirectoryScanner.scan(at: category.url)
+            for person in people.folders {
+                let relativePath = "\(category.name)/\(person.name)"
+                let scope = IndexScope(
+                    directory: peopleDir,
+                    label: "Personne",
+                    icon: "person",
+                    kind: { _ in .person(relativePath) }
+                )
+                indexSingleFolder(person, scope: scope, folderKey: person.name, context: context)
             }
         }
     }
 
-    nonisolated private static func indexTasks(
-        embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?,
-        existing: [String: IndexedDocument],
-        into docs: inout [IndexedDocument]
+    nonisolated private static func indexSingleFolder(
+        _ folder: Folder, scope: IndexScope, folderKey: String,
+        context: IndexContext
     ) {
+        let folderURL = folder.url
+        let folderDate = modificationDate(for: folderURL)
+        if let cached = context.existing[folderURL.absoluteString], cached.modificationDate >= folderDate {
+            context.docs.append(cached)
+        } else if let vecs = dualVectors(
+            for: folder.name, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
+        ) {
+            context.docs.append(IndexedDocument(
+                name: folder.name, context: scope.label, icon: scope.icon,
+                kind: scope.kind(folderKey), content: folder.name,
+                embeddingFr: vecs.fr, embeddingEn: vecs.en,
+                sourceURL: folderURL, modificationDate: folderDate
+            ))
+        }
+
+        let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
+        for file in files {
+            let fileDate = file.date
+            if let cached = context.existing[file.url.absoluteString], cached.modificationDate >= fileDate {
+                context.docs.append(cached)
+                continue
+            }
+            let fileName = file.url.deletingPathExtension().lastPathComponent
+            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
+            let text = "\(fileName) \(content)"
+            let truncated = String(text.prefix(500))
+            guard let vecs = dualVectors(
+                for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
+            ) else { continue }
+            context.docs.append(IndexedDocument(
+                name: fileName, context: "\(scope.label) \u{2014} \(folderKey)",
+                icon: "doc.text", kind: scope.kind(folderKey), content: text,
+                embeddingFr: vecs.fr, embeddingEn: vecs.en,
+                sourceURL: file.url, modificationDate: fileDate
+            ))
+        }
+    }
+
+    nonisolated private static func indexTasks(context: IndexContext) {
         let url = AppSettings.tasksFileURL
         let date = modificationDate(for: url)
-        if let cached = existing[url.absoluteString], cached.modificationDate >= date {
-            docs.append(cached)
+        if let cached = context.existing[url.absoluteString], cached.modificationDate >= date {
+            context.docs.append(cached)
             return
         }
         guard let content = try? String(contentsOf: url, encoding: .utf8) else { return }
         let truncated = String(content.prefix(500))
-        guard let vecs = dualVectors(for: truncated, embeddingFr: embeddingFr, embeddingEn: embeddingEn) else { return }
-        docs.append(IndexedDocument(
+        guard let vecs = dualVectors(
+            for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
+        ) else { return }
+        context.docs.append(IndexedDocument(
             name: "Taches",
             context: "Fichier de taches",
             icon: "checklist",
@@ -374,6 +377,19 @@ extension SemanticSearchService {
 }
 
 // MARK: - Index scope
+
+private final class IndexContext {
+    let embeddingFr: NLEmbedding?
+    let embeddingEn: NLEmbedding?
+    let existing: [String: IndexedDocument]
+    var docs: [IndexedDocument] = []
+
+    init(embeddingFr: NLEmbedding?, embeddingEn: NLEmbedding?, existing: [String: IndexedDocument]) {
+        self.embeddingFr = embeddingFr
+        self.embeddingEn = embeddingEn
+        self.existing = existing
+    }
+}
 
 private struct IndexScope {
     let directory: URL
