@@ -41,23 +41,30 @@ echo "==> Updating appcast.xml..."
 DOWNLOAD_URL="https://github.com/MaximeChaillou/Maurice/releases/download/v${VERSION}/${ZIP_NAME}"
 PUB_DATE=$(date -R)
 
-# Build the new item XML
-ITEM="        <item>
+# Extract build number from project
+BUILD_NUMBER=$(grep -m1 'CURRENT_PROJECT_VERSION' Maurice.xcodeproj/project.pbxproj | tr -dc '0-9')
+
+# Build the new item XML and insert before </channel>
+ITEM_FILE=$(mktemp)
+cat > "$ITEM_FILE" <<XMLEOF
+        <item>
             <title>Version ${VERSION}</title>
             <pubDate>${PUB_DATE}</pubDate>
-            <sparkle:version>${VERSION}</sparkle:version>
+            <sparkle:version>${BUILD_NUMBER}</sparkle:version>
             <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <enclosure
-                url=\"${DOWNLOAD_URL}\"
-                sparkle:edSignature=\"${ED_SIGNATURE}\"
-                length=\"${LENGTH}\"
-                type=\"application/octet-stream\"
+                url="${DOWNLOAD_URL}"
+                sparkle:edSignature="${ED_SIGNATURE}"
+                length="${LENGTH}"
+                type="application/octet-stream"
             />
-        </item>"
+        </item>
+XMLEOF
 
-# Insert before </channel>
-sed -i '' "s|    </channel>|${ITEM}\n    </channel>|" appcast.xml
+# Insert item before </channel> using perl (handles multiline)
+perl -i -0pe "s|(    </channel>)|$(cat "$ITEM_FILE")\n\$1|" appcast.xml
+rm "$ITEM_FILE"
 
 echo "==> Creating GitHub release..."
 gh release create "v${VERSION}" "$ZIP_PATH" \
