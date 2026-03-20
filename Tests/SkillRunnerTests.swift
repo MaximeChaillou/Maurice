@@ -23,7 +23,7 @@ final class SkillRunnerTests: XCTestCase {
         {"file_path": "/Users/test/Documents/note.md"}
         """
         let result = sut.formatToolCall(name: "Read", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Read — note.md")
+        XCTAssertEqual(result, "[tool] Read — note.md")
     }
 
     func testFormatToolCallEditWithFilePath() {
@@ -31,7 +31,7 @@ final class SkillRunnerTests: XCTestCase {
         {"file_path": "/Users/test/project/main.swift", "old_string": "foo", "new_string": "bar"}
         """
         let result = sut.formatToolCall(name: "Edit", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Edit — main.swift")
+        XCTAssertEqual(result, "[tool] Edit — main.swift")
     }
 
     func testFormatToolCallWriteWithFilePath() {
@@ -39,7 +39,7 @@ final class SkillRunnerTests: XCTestCase {
         {"file_path": "/tmp/output.txt", "content": "hello"}
         """
         let result = sut.formatToolCall(name: "Write", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Write — output.txt")
+        XCTAssertEqual(result, "[tool] Write — output.txt")
     }
 
     func testFormatToolCallBashWithCommand() {
@@ -47,7 +47,7 @@ final class SkillRunnerTests: XCTestCase {
         {"command": "ls -la /Users/test/Documents"}
         """
         let result = sut.formatToolCall(name: "Bash", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Bash — ls -la /Users/test/Documents")
+        XCTAssertEqual(result, "[tool] Bash — ls -la /Users/test/Documents")
     }
 
     func testFormatToolCallBashTruncatesLongCommand() {
@@ -56,7 +56,7 @@ final class SkillRunnerTests: XCTestCase {
         {"command": "\(longCommand)"}
         """
         let result = sut.formatToolCall(name: "Bash", inputJSON: json)
-        let expectedPrefix = "[outil] Bash — " + String(repeating: "a", count: 80)
+        let expectedPrefix = "[tool] Bash — " + String(repeating: "a", count: 80)
         XCTAssertEqual(result, expectedPrefix)
     }
 
@@ -65,7 +65,7 @@ final class SkillRunnerTests: XCTestCase {
         {"pattern": "TODO|FIXME"}
         """
         let result = sut.formatToolCall(name: "Grep", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Grep — \"TODO|FIXME\"")
+        XCTAssertEqual(result, "[tool] Grep — \"TODO|FIXME\"")
     }
 
     func testFormatToolCallGlobWithPattern() {
@@ -73,24 +73,24 @@ final class SkillRunnerTests: XCTestCase {
         {"pattern": "**/*.swift"}
         """
         let result = sut.formatToolCall(name: "Glob", inputJSON: json)
-        XCTAssertEqual(result, "[outil] Glob — **/*.swift")
+        XCTAssertEqual(result, "[tool] Glob — **/*.swift")
     }
 
     // MARK: - formatToolCall with invalid / empty JSON
 
     func testFormatToolCallWithInvalidJSON() {
         let result = sut.formatToolCall(name: "Read", inputJSON: "not json")
-        XCTAssertEqual(result, "[outil] Read")
+        XCTAssertEqual(result, "[tool] Read")
     }
 
     func testFormatToolCallWithEmptyJSON() {
         let result = sut.formatToolCall(name: "Read", inputJSON: "")
-        XCTAssertEqual(result, "[outil] Read")
+        XCTAssertEqual(result, "[tool] Read")
     }
 
     func testFormatToolCallWithEmptyParams() {
         let result = sut.formatToolCall(name: "UnknownTool", inputJSON: "{}")
-        XCTAssertEqual(result, "[outil] UnknownTool")
+        XCTAssertEqual(result, "[tool] UnknownTool")
     }
 
     // MARK: - toolSummary
