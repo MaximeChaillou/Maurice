@@ -40,6 +40,7 @@ struct FloatingTabBar: View {
             .buttonStyle(.plain)
             .foregroundStyle(isHomeActive ? .primary : .secondary)
             .glassEffect(.regular, in: .circle)
+            .help("Accueil")
 
             HStack(spacing: 4) {
                 ForEach(tabs, id: \.tab) { item in
@@ -68,6 +69,7 @@ struct FloatingTabBar: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(!isHomeActive && activeTab == item.tab ? .primary : .secondary)
+                    .help(item.label)
                 }
             }
             .padding(4)
@@ -84,6 +86,7 @@ struct FloatingTabBar: View {
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
             .glassEffect(.regular, in: .circle)
+            .help("Rechercher (⌘⇧F)")
         }
     }
 }

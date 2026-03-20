@@ -29,6 +29,9 @@ struct MCPServersView: View {
                 } else if servers.isEmpty {
                     Text("Aucun serveur MCP détecté")
                         .foregroundStyle(.secondary)
+                    Text("Configurez des serveurs MCP dans .claude/settings.json pour étendre les capacités de l'assistant.")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
                 } else {
                     ForEach(servers) { server in
                         serverRow(server)
@@ -41,6 +44,7 @@ struct MCPServersView: View {
                     Task { await loadServers() }
                 }
                 .disabled(isLoading)
+                .help("Rafraîchir l'état des serveurs")
             }
         }
         .formStyle(.grouped)

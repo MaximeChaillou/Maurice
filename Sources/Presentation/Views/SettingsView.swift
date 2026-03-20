@@ -135,6 +135,13 @@ private struct GeneralSettingsView: View {
                     }
                     .disabled(rootDirectory == AppSettings.defaultRootDirectory)
                 }
+
+                Text(
+                    "Tous vos fichiers Maurice sont stockés ici." +
+                    " Vous pouvez utiliser un dossier iCloud ou Dropbox pour synchroniser entre machines."
+                )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Transcription") {
@@ -146,6 +153,10 @@ private struct GeneralSettingsView: View {
                 .onChange(of: transcriptionLanguage) {
                     AppSettings.transcriptionLanguage = transcriptionLanguage
                 }
+
+                Text("La langue utilisée pour la reconnaissance vocale. Choisissez la langue principale de vos réunions.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -172,10 +183,19 @@ private struct ClaudeMDView: View {
     var markdownTheme: MarkdownTheme
 
     var body: some View {
-        FolderFileDetailView(
-            file: FolderFile(url: AppSettings.claudeMDURL),
-            markdownTheme: markdownTheme
-        )
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Ce fichier configure le comportement de l'assistant IA. Il est lu à chaque interaction.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
+
+            FolderFileDetailView(
+                file: FolderFile(url: AppSettings.claudeMDURL),
+                markdownTheme: markdownTheme
+            )
+        }
     }
 }
 
@@ -318,6 +338,13 @@ private struct SkillsSettingsView: View {
     private var skillDetail: some View {
         if selectedSkill != nil {
             VStack(spacing: 0) {
+                Text("Un skill est un prompt Markdown exécuté par l'IA sur vos notes. Exemple : résumer un transcript, extraire les actions.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 4)
+
                 ThemedMarkdownView(content: $editorContent, theme: markdownTheme)
             }
             .onChange(of: editorContent) {
@@ -336,6 +363,15 @@ private struct SkillsSettingsView: View {
                     }
                 }
             }
+        } else if skills.isEmpty {
+            ContentUnavailableView(
+                "Aucun skill",
+                systemImage: "terminal",
+                description: Text(
+                    "Les skills sont des prompts IA réutilisables." +
+                    " Créez-en un pour automatiser vos tâches (résumé, compte-rendu…)."
+                )
+            )
         } else {
             ContentUnavailableView(
                 "Aucun skill sélectionné",

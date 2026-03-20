@@ -59,6 +59,7 @@ struct FloatingActionBar: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .help(showLiveTranscript ? "Masquer le transcript en direct" : "Afficher le transcript en direct")
                 .padding(.bottom, 4)
             }
         }
@@ -101,6 +102,7 @@ struct FloatingActionBar: View {
         }
         .buttonStyle(.plain)
         .disabled(viewModel.isPreparing)
+        .help(viewModel.isRecording ? "Arrêter l'enregistrement" : "Démarrer l'enregistrement")
     }
 
     private func waveformEdgeMask(fadeSide: HorizontalEdge) -> some View {

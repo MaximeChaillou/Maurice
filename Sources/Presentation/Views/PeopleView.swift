@@ -102,6 +102,7 @@ struct PeopleView: View {
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .help("Ajouter une personne")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -261,11 +262,18 @@ struct PeopleView: View {
                 skillRunner: skillRunner
             )
             .id(person.relativePath)
+        } else if viewModel.categories.isEmpty {
+            ContentUnavailableView(
+                "Aucune personne",
+                systemImage: "person.2",
+                description: Text("Ajoutez des personnes pour organiser vos notes de 1-1, évaluations et objectifs.")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ContentUnavailableView(
-                "Aucune personne s\u{00E9}lectionn\u{00E9}e",
+                "Aucune personne sélectionnée",
                 systemImage: "person.2",
-                description: Text("S\u{00E9}lectionnez une personne dans la liste.")
+                description: Text("Sélectionnez une personne dans la liste.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

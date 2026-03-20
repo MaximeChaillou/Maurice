@@ -2,34 +2,127 @@ import SwiftUI
 
 struct HomeView: View {
     let calendarViewModel: GoogleCalendarViewModel
+    let coordinator: NavigationCoordinator
+    var hasMeetings: Bool = false
+    @Environment(\.openWindow) private var openWindow
     @State private var upcomingEvents: [GoogleCalendarEvent] = []
     @State private var isLoading = false
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 24) {
+                Spacer(minLength: 20)
 
-            Image(systemName: "waveform.circle.fill")
-                .font(.system(size: 64))
-                .foregroundStyle(.secondary)
+                Image(systemName: "waveform.circle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(.secondary)
 
-            Text("Bienvenue dans Maurice")
-                .font(.largeTitle.weight(.semibold))
+                Text("Bienvenue dans Maurice")
+                    .font(.largeTitle.weight(.semibold))
 
-            Text("Votre assistant de transcription de réunions")
-                .font(.title3)
-                .foregroundStyle(.secondary)
+                Text("Votre assistant de transcription de réunions")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
 
-            if calendarViewModel.isConnected {
-                upcomingEventsSection
+                if !hasMeetings && !calendarViewModel.isConnected {
+                    actionCardsGrid
+                        .padding(.top, 8)
+                }
+
+                if calendarViewModel.isConnected {
+                    upcomingEventsSection
+                }
+
+                Spacer(minLength: 20)
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             await loadEvents()
         }
+    }
+
+    // MARK: - Action Cards
+
+    private var actionCardsGrid: some View {
+        let columns = [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
+        return LazyVGrid(columns: columns, spacing: 12) {
+            actionCard(
+                icon: "mic.fill",
+                title: "Enregistrer",
+                description: "Démarrez l'enregistrement avec le bouton micro ci-dessous",
+                action: nil
+            )
+
+            actionCard(
+                icon: "calendar.badge.plus",
+                title: "Créer une réunion",
+                description: "Organisez vos réunions récurrentes (standup, 1-1…)"
+            ) {
+                coordinator.showHome = false
+                coordinator.activeTab = .meeting
+            }
+
+            actionCard(
+                icon: "person.badge.plus",
+                title: "Ajouter une personne",
+                description: "Notes de 1-1, évaluations et objectifs"
+            ) {
+                coordinator.showHome = false
+                coordinator.activeTab = .people
+            }
+
+            actionCard(
+                icon: "calendar",
+                title: "Connecter Google Calendar",
+                description: "Voyez vos prochaines réunions sur l'accueil"
+            ) {
+                openWindow(id: "settings")
+            }
+        }
+        .frame(maxWidth: 500)
+    }
+
+    private func actionCard(
+        icon: String,
+        title: String,
+        description: String,
+        action: (() -> Void)?
+    ) -> some View {
+        Group {
+            if let action {
+                Button(action: action) {
+                    actionCardContent(icon: icon, title: title, description: description)
+                }
+                .buttonStyle(.plain)
+            } else {
+                actionCardContent(icon: icon, title: title, description: description)
+            }
+        }
+    }
+
+    private func actionCardContent(icon: String, title: String, description: String) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 28))
+                .foregroundStyle(.secondary)
+
+            Text(title)
+                .font(.headline)
+
+            Text(description)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .glassEffect(.regular, in: .rect(cornerRadius: 12))
     }
 
     private var upcomingEventsSection: some View {

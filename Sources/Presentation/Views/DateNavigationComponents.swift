@@ -63,6 +63,7 @@ struct DateNavigationHeader: View {
         }
         .buttonStyle(.plain)
         .interactiveHover()
+        .help(isBackward ? "Entrée précédente" : "Entrée suivante")
         .disabled(isBackward ? index >= totalEntries - 1 : index <= 0)
     }
 }
@@ -197,6 +198,7 @@ struct EntryActionsMenu: View {
         .menuIndicator(.hidden)
         .frame(width: 32, height: 32)
         .interactiveHover()
+        .help("Supprimer…")
     }
 }
 
@@ -249,10 +251,17 @@ struct NextNoteButton: View {
         .interactiveHover()
         .help("Notes pour le prochain point")
         .popover(isPresented: $showPopover) {
-            FolderFileEditorView(
-                file: FolderFile(url: fileURL),
-                markdownTheme: MarkdownTheme()
-            )
+            VStack(spacing: 0) {
+                Text("Note pour la prochaine réunion — next.md")
+                    .font(.headline)
+                    .padding(.top, 12)
+                    .padding(.bottom, 8)
+                Divider()
+                FolderFileEditorView(
+                    file: FolderFile(url: fileURL),
+                    markdownTheme: MarkdownTheme()
+                )
+            }
             .frame(width: 400, height: 300)
         }
         .onAppear { checkContent() }

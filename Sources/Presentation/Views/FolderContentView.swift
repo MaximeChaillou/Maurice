@@ -77,6 +77,7 @@ struct FolderContentView: View {
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .help("Nouvelle réunion")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -182,6 +183,13 @@ struct FolderContentView: View {
             } else {
                 fileListDetail(for: folder)
             }
+        } else if viewModel.folders.isEmpty {
+            ContentUnavailableView(
+                "Aucune réunion",
+                systemImage: "calendar",
+                description: Text("Cliquez sur + pour créer votre première réunion récurrente (ex : standup, 1-1).")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ContentUnavailableView(
                 emptyTitle,

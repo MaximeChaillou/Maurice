@@ -68,7 +68,7 @@ struct MauriceApp: App {
 
                     Group {
                         if coordinator.showHome {
-                            HomeView(calendarViewModel: calendarViewModel)
+                            HomeView(calendarViewModel: calendarViewModel, coordinator: coordinator, hasMeetings: !meetingViewModel.folders.isEmpty)
                         } else {
                             tabContent
                         }

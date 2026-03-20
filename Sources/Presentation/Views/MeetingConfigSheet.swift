@@ -136,6 +136,7 @@ struct MeetingConfigSheet: View {
                         .background(.quaternary, in: .rect(cornerRadius: 6))
                     }
                     .buttonStyle(.plain)
+                    .help("Choisir une icône")
 
                     TextField("", text: $editedName)
                         .textFieldStyle(.roundedBorder)

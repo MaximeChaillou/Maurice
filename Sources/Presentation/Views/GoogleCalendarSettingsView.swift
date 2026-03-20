@@ -6,6 +6,10 @@ struct GoogleCalendarSettingsView: View {
     var body: some View {
         Form {
             Section("Google Calendar") {
+                Text("Connectez votre calendrier pour voir vos prochaines réunions et démarrer l'enregistrement automatiquement.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
                 if viewModel.isConnected {
                     connectedView
                 } else {

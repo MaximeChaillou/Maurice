@@ -116,6 +116,7 @@ struct AskButton: View {
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
+            .help("Assistant IA")
             .overlay(alignment: .leading) {
                 if runner.isRunning && isExpanded {
                     Button {
@@ -127,6 +128,7 @@ struct AskButton: View {
                             .contentShape(Circle())
                     }
                     .buttonStyle(.plain)
+                    .help("Arrêter (⌃C)")
                     .offset(x: -30)
                     .transition(.opacity)
                 }
@@ -174,6 +176,7 @@ struct AskButton: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .help("Effacer la conversation")
                     .padding(8)
                 }
             }
