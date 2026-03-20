@@ -67,7 +67,9 @@ Sources/
 - Le Cask (`Casks/maurice.rb`) doit être mis à jour avec la nouvelle version et le SHA256 du zip.
 - L'app n'est **pas signée Apple** — les utilisateurs doivent débloquer Gatekeeper (`xattr -cr`).
 - Chaque release doit inclure un **changelog en anglais** listant les changements depuis la dernière version (nouvelles fonctionnalités, corrections, améliorations).
-- Le numéro de version doit être mis à jour dans `MARKETING_VERSION` du `project.pbxproj` (4 occurrences) à chaque release. C'est cette valeur qui contrôle la version affichée dans l'app et utilisée par Sparkle. Ne jamais hardcoder la version dans `Info.plist` — utiliser `$(MARKETING_VERSION)`.
+- Le numéro de version doit être mis à jour dans `MARKETING_VERSION` du `project.pbxproj` (4 occurrences) à chaque release. C'est cette valeur qui contrôle la version affichée dans l'app. Ne jamais hardcoder la version dans `Info.plist` — utiliser `$(MARKETING_VERSION)`.
+- **Build number** : `CURRENT_PROJECT_VERSION` dans le `project.pbxproj` (4 occurrences) doit être incrémenté à chaque release. C'est un entier simple (1, 2, 3…). Sparkle compare ce build number (via `sparkle:version` dans l'appcast) pour détecter les mises à jour. `sparkle:shortVersionString` contient le nom lisible (ex: `1.0.0-beta.4`). Ne jamais utiliser de versions pre-release (avec `-beta`, `-rc`, etc.) dans `sparkle:version` — toujours un entier.
+- Le script `create_release.sh` peut échouer à l'étape `sed` pour l'appcast — dans ce cas, mettre à jour `appcast.xml` manuellement.
 
 ## Settings & Configuration
 
