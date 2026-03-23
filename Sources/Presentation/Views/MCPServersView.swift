@@ -91,18 +91,33 @@ struct MCPServersView: View {
     private func runClaudeMCPList() async -> String? {
         await withCheckedContinuation { continuation in
             let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-            process.arguments = ["claude", "mcp", "list"]
+
+            // Resolve claude binary: try common locations since GUI apps have a limited PATH
+            let candidatePaths = [
+                "\(NSHomeDirectory())/.local/bin/claude",
+                "/usr/local/bin/claude",
+                "/opt/homebrew/bin/claude"
+            ]
+            if let found = candidatePaths.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
+                process.executableURL = URL(fileURLWithPath: found)
+                process.arguments = ["mcp", "list"]
+            } else {
+                // Fallback to env lookup
+                process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+                process.arguments = ["claude", "mcp", "list"]
+            }
+
             process.currentDirectoryURL = AppSettings.rootDirectory
 
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
+            let stdoutPipe = Pipe()
+            let stderrPipe = Pipe()
+            process.standardOutput = stdoutPipe
+            process.standardError = stderrPipe
 
             do {
                 try process.run()
                 process.waitUntilExit()
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let data = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
                 continuation.resume(returning: String(data: data, encoding: .utf8))
             } catch {
                 continuation.resume(returning: nil)
