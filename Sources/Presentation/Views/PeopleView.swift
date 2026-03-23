@@ -119,38 +119,45 @@ struct PeopleView: View {
 
             Divider()
 
-            List(selection: $viewModel.selectedPerson) {
-                ForEach(viewModel.categories) { category in
-                    Text(category.name)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 8)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                        .selectionDisabled()
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(viewModel.categories) { category in
+                        Text(category.name)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 8)
+                            .padding(.horizontal, 12)
 
-                    ForEach(category.people) { person in
-                        Text(person.name)
-                            .font(.body)
-                            .lineLimit(1)
-                            .padding(.vertical, 2)
-                            .tag(person.relativePath)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .onHover { hovering in
-                                if hovering { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+                        ForEach(category.people) { person in
+                            Button {
+                                viewModel.selectedPerson = person.relativePath
+                            } label: {
+                                Text(person.name)
+                                    .font(.body)
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 6)
+                                    .padding(.horizontal, 12)
+                                    .background(
+                                        viewModel.selectedPerson == person.relativePath
+                                            ? Color.accentColor.opacity(0.2)
+                                            : Color.clear,
+                                        in: .rect(cornerRadius: 6)
+                                    )
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            .buttonStyle(.plain)
+                            .contextMenu {
                                 Button(role: .destructive) {
                                     folderToDelete = person
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
+                        }
                     }
                 }
+                .padding(.vertical, 4)
             }
-            .scrollContentBackground(.hidden)
             .deletionAlert(
                 "Delete person?",
                 item: $folderToDelete,
@@ -256,15 +263,29 @@ struct PeopleView: View {
 
             Divider()
 
-            List(selection: $selectedSection) {
-                ForEach(PersonSection.allCases) { section in
-                    Label(section.localizedName, systemImage: section.icon)
-                        .foregroundStyle(.white)
-                        .tag(section)
-                        .listRowBackground(Color.clear)
+            ScrollView {
+                LazyVStack(spacing: 2) {
+                    ForEach(PersonSection.allCases) { section in
+                        Button {
+                            selectedSection = section
+                        } label: {
+                            Label(section.localizedName, systemImage: section.icon)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 12)
+                                .background(
+                                    selectedSection == section
+                                        ? Color.accentColor.opacity(0.2)
+                                        : Color.clear,
+                                    in: .rect(cornerRadius: 6)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding(.vertical, 4)
             }
-            .scrollContentBackground(.hidden)
         }
     }
 

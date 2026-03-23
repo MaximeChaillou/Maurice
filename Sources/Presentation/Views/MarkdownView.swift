@@ -107,6 +107,8 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
 
     init(_ parent: MarkdownView) { self.parent = parent }
 
+    private var pendingStylingWorkItem: DispatchWorkItem?
+
     func startObservingFrame() {
         guard frameObserver == nil, let textView else { return }
         textView.postsFrameChangedNotifications = true
@@ -118,7 +120,14 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
                 let w = tv.bounds.width
                 guard w > 0, abs(w - self.lastKnownWidth) > 1 else { return }
                 self.lastKnownWidth = w
-                self.applyMarkdownStyling()
+                self.pendingStylingWorkItem?.cancel()
+                let item = DispatchWorkItem { [weak self] in
+                    MainActor.assumeIsolated {
+                        self?.applyMarkdownStyling()
+                    }
+                }
+                self.pendingStylingWorkItem = item
+                DispatchQueue.main.async(execute: item)
             }
         }
     }

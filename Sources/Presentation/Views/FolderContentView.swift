@@ -84,57 +84,63 @@ struct FolderContentView: View {
 
             Divider()
 
-            List(selection: $viewModel.selectedFolder) {
-                ForEach(viewModel.folders) { folder in
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 4) {
-                            if let icon = folder.icon {
-                                Text(icon)
-                            }
-                            Text(folder.name)
-                                .lineLimit(1)
-                        }
-                        .font(.body)
-                        Text("\(folder.fileCount) files")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 2)
-                    .tag(folder.name)
-                    .listRowBackground(Color.clear)
-                    .contextMenu {
-                        if showSkillConfig {
-                            Button {
-                                viewModel.selectedFolder = folder.name
-                                let url = folder.url
-                                Task {
-                                    let cfg = await Task.detached {
-                                        MeetingConfig.load(from: url)
-                                    }.value
-                                    viewModel.meetingConfig = cfg
-                                    showConfigSidebar = true
+            ScrollView {
+                LazyVStack(spacing: 2) {
+                    ForEach(viewModel.folders) { folder in
+                        Button {
+                            viewModel.selectedFolder = folder.name
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 4) {
+                                    if let icon = folder.icon {
+                                        Text(icon)
+                                    }
+                                    Text(folder.name)
+                                        .lineLimit(1)
                                 }
-                            } label: {
-                                Label("Configure", systemImage: "gearshape")
+                                .font(.body)
+                                Text("\(folder.fileCount) files")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
-                            Divider()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 12)
+                            .background(
+                                viewModel.selectedFolder == folder.name
+                                    ? Color.accentColor.opacity(0.2)
+                                    : Color.clear,
+                                in: .rect(cornerRadius: 6)
+                            )
                         }
-                        Button(role: .destructive) {
-                            folderToDelete = folder
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            folderToDelete = folder
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            if showSkillConfig {
+                                Button {
+                                    viewModel.selectedFolder = folder.name
+                                    let url = folder.url
+                                    Task {
+                                        let cfg = await Task.detached {
+                                            MeetingConfig.load(from: url)
+                                        }.value
+                                        viewModel.meetingConfig = cfg
+                                        showConfigSidebar = true
+                                    }
+                                } label: {
+                                    Label("Configure", systemImage: "gearshape")
+                                }
+                                Divider()
+                            }
+                            Button(role: .destructive) {
+                                folderToDelete = folder
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }
+                .padding(.vertical, 4)
             }
-            .scrollContentBackground(.hidden)
             .deletionAlert(
                 "Delete folder?",
                 item: $folderToDelete,
@@ -261,21 +267,34 @@ extension FolderContentView {
     }
 
     func fileList(for folder: FolderItem) -> some View {
-        List(selection: $viewModel.selectedFile) {
-            ForEach(folder.files) { file in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(file.name)
-                        .font(.body)
-                        .lineLimit(1)
-                    Text(file.date, format: .dateTime.day().month(.abbreviated).year())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        ScrollView {
+            LazyVStack(spacing: 2) {
+                ForEach(folder.files) { file in
+                    Button {
+                        viewModel.selectedFile = file.url
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(file.name)
+                                .font(.body)
+                                .lineLimit(1)
+                            Text(file.date, format: .dateTime.day().month(.abbreviated).year())
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .background(
+                            viewModel.selectedFile == file.url
+                                ? Color.accentColor.opacity(0.2)
+                                : Color.clear,
+                            in: .rect(cornerRadius: 6)
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .padding(.vertical, 2)
-                .tag(file.url)
-                .listRowBackground(Color.clear)
             }
+            .padding(.vertical, 4)
         }
-        .scrollContentBackground(.hidden)
     }
 }

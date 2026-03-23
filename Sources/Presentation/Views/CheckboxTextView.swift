@@ -9,6 +9,8 @@ class CheckboxTextView: NSTextView {
     private var editingCell: TableCellRef?
     private var originalCellValue: String = ""
 
+    private var lastAppliedInset: CGFloat = 16
+
     var maxContentWidth: CGFloat = 0 {
         didSet { updateHorizontalInset() }
     }
@@ -19,12 +21,15 @@ class CheckboxTextView: NSTextView {
     }
 
     private func updateHorizontalInset() {
-        guard maxContentWidth > 0 else {
-            textContainerInset = NSSize(width: 16, height: 16)
-            return
+        let hInset: CGFloat
+        if maxContentWidth > 0 {
+            let available = bounds.width
+            hInset = max(16, (available - maxContentWidth) / 2)
+        } else {
+            hInset = 16
         }
-        let available = bounds.width
-        let hInset = max(16, (available - maxContentWidth) / 2)
+        guard abs(hInset - lastAppliedInset) > 0.5 else { return }
+        lastAppliedInset = hInset
         textContainerInset = NSSize(width: hInset, height: 16)
     }
 
