@@ -88,6 +88,34 @@ final class SkillRunner {
         )
     }
 
+    private static func findClaudeExecutable() -> URL? {
+        let candidates = [
+            "\(NSHomeDirectory())/.local/bin/claude",
+            "/usr/local/bin/claude",
+            "/opt/homebrew/bin/claude"
+        ]
+        for path in candidates {
+            if FileManager.default.isExecutableFile(atPath: path) {
+                return URL(fileURLWithPath: path)
+            }
+        }
+        // Fallback: use `which` to find claude in PATH
+        let whichProc = Process()
+        let whichPipe = Pipe()
+        whichProc.executableURL = URL(fileURLWithPath: "/usr/bin/which")
+        whichProc.arguments = ["claude"]
+        whichProc.standardOutput = whichPipe
+        whichProc.standardError = FileHandle.nullDevice
+        try? whichProc.run()
+        whichProc.waitUntilExit()
+        let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
+        if let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !path.isEmpty {
+            return URL(fileURLWithPath: path)
+        }
+        return nil
+    }
+
     private func launchClaude(prompt: String, extraArgs: [String], workingDirectory: URL) {
         guard !isRunning else { return }
 
@@ -97,10 +125,19 @@ final class SkillRunner {
         currentText = ""
         appendLine("[command] \(prompt)", kind: .system)
 
+        guard let claudeURL = Self.findClaudeExecutable() else {
+            appendLine(
+                "Erreur : impossible de trouver 'claude'. Installez Claude Code et vérifiez qu'il est dans votre PATH.",
+                kind: .error
+            )
+            isRunning = false
+            return
+        }
+
         let proc = Process()
         let pipe = Pipe()
 
-        proc.executableURL = URL(fileURLWithPath: "/Users/maxime/.local/bin/claude")
+        proc.executableURL = claudeURL
         proc.arguments = [
             "-p", prompt,
             "--output-format", "stream-json",
