@@ -108,5 +108,18 @@
                 type="application/octet-stream"
             />
         </item>
+        <item>
+            <title>Version 1.0.0-beta.9</title>
+            <pubDate>Tue, 24 Mar 2026 08:39:52 +0100</pubDate>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>1.0.0-beta.9</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://github.com/MaximeChaillou/Maurice/releases/download/v1.0.0-beta.9/Maurice-1.0.0-beta.9.zip"
+                sparkle:edSignature="a5v47vMi7ewkVq2kN+LFR8OtMDnSlIJGpNje3QZ+jREyEG2h7wvzdSwQPXq6k+hkc2JgsYgw4KLCQpc6AxbzCA=="
+                length="10986451"
+                type="application/octet-stream"
+            />
+        </item>
     </channel>
 </rss>
