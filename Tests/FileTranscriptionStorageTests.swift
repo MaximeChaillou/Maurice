@@ -334,8 +334,7 @@ final class FileTranscriptionStorageTests: XCTestCase {
         let existingURL = meetingsDir.appendingPathComponent("existing.txt")
         try "content".write(to: existingURL, atomically: true, encoding: .utf8)
 
-        let url = try storage.beginLiveSession(startDate: date, subdirectory: nil)
-        let transcript = StoredTranscript(id: url, name: "old", date: date, entries: [])
+        _ = try storage.beginLiveSession(startDate: date, subdirectory: nil)
 
         // Rename a different file to "existing" which already exists
         // First create the source file with a .txt extension in the meetings dir

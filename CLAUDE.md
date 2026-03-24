@@ -24,11 +24,12 @@ Sources/
 ## Code Quality
 
 - **Background threads** : Toujours déplacer le file I/O, le JSON encode/decode, le directory scanning et tout calcul lourd hors du main thread. Utiliser `Task.detached { }` pour le travail fire-and-forget (ex: saves), et `Task { await Task.detached { ... }.value }` pour charger des données puis mettre à jour l'UI. Ne jamais bloquer le main thread.
-- **SwiftLint** : Toujours corriger tous les warnings et erreurs SwiftLint. Lancer `swiftlint lint --config .swiftlint.yml` et résoudre chaque problème avant de considérer une tâche terminée. Ne jamais utiliser `// swiftlint:disable` pour contourner une règle — toujours corriger le code sous-jacent (extraire des structs, refactorer les paramètres, etc.).
+- **SwiftLint** : Toujours corriger tous les warnings et erreurs SwiftLint. Lancer `swiftlint lint --config .swiftlint.yml` et résoudre chaque problème avant de considérer une tâche terminée. Ne jamais utiliser `// swiftlint:disable` pour contourner une règle — toujours corriger le code sous-jacent (extraire des structs, refactorer les paramètres, etc.). Quand un warning SwiftLint remonte (y compris pendant un build ou un test), le corriger **immédiatement** avant de continuer — ne jamais ignorer ou reporter un warning.
 - **Réutilisation du code** : Réutiliser au maximum le code existant. Avant de créer une nouvelle fonction, vérifier s'il existe déjà une implémentation similaire dans le projet. Extraire les patterns communs en méthodes/extensions partagées plutôt que dupliquer du code.
 - **Composants partagés** : Utiliser les composants de `DateNavigationComponents.swift` (`DateNavigationHeader`, `DateEntryContentView`, `TranscriptToggleButton`, `SkillActionsMenu`, `EntryActionsMenu`, `GlassIconButton`, `.deletionAlert()`, `.entryDeleteAlert()`). Pour l'édition de fichiers markdown, réutiliser `FolderFileEditorView` / `FolderFileDetailView` avec `FolderFile(url:)` — ne pas recréer de logique load/save.
 - **Tests** : Quand une méthode/protocole est supprimé, toujours vérifier et mettre à jour les tests et les mocks correspondants dans `Tests/`. Les tests ne doivent **jamais** toucher aux fichiers de l'utilisateur — utiliser uniquement des répertoires temporaires (`NSTemporaryDirectory`) et des mocks. Pas de lecture/écriture dans `~/Documents/Maurice/` ou `AppTheme.persistenceURL` depuis les tests.
 - **Suppression de code** : Quand du code est supprimé (méthode, fichier, propriété), tracer toutes les références dans le projet ET les tests. Supprimer aussi les entrées du `project.pbxproj` pour les fichiers supprimés.
+- **Aucun chemin absolu hardcodé** : Ne jamais écrire de chemin absolu en dur dans le code (ex: `/Users/maxime/...`). Toujours résoudre les chemins dynamiquement via `NSHomeDirectory()`, `AppSettings.rootDirectory`, `Bundle.main`, `FileManager.default.urls(for:in:)`, ou des mécanismes de recherche (`which`, candidats multiples). L'app doit fonctionner sur n'importe quelle machine.
 
 ## UI
 
@@ -63,6 +64,7 @@ Sources/
 - Distribution via **Homebrew Cask** (`Casks/maurice.rb`) et **GitHub Releases**.
 - Mises à jour automatiques via **Sparkle** (clé EdDSA dans le Keychain, clé publique dans `Info.plist`).
 - Feed de mise à jour : `appcast.xml` à la racine du repo.
+- **Avant toute release**, lancer les tests (`test_macos`) et vérifier qu'ils passent tous à 100%. Si un test échoue, **bloquer la release** et corriger le problème d'abord.
 - Pour publier une release : `./Scripts/create_release.sh <version>` (build Release, zip, signature Sparkle, appcast, GitHub Release), puis commit et push `appcast.xml`.
 - Le Cask (`Casks/maurice.rb`) doit être mis à jour avec la nouvelle version et le SHA256 du zip.
 - L'app n'est **pas signée Apple** — les utilisateurs doivent débloquer Gatekeeper (`xattr -cr`).

@@ -18,6 +18,31 @@ struct SkillOutputLine: Identifiable {
     let kind: SkillOutputKind
 }
 
+private func findClaudeExecutable() -> URL? {
+    let candidates = [
+        "\(NSHomeDirectory())/.local/bin/claude",
+        "/usr/local/bin/claude",
+        "/opt/homebrew/bin/claude"
+    ]
+    for path in candidates where FileManager.default.isExecutableFile(atPath: path) {
+        return URL(fileURLWithPath: path)
+    }
+    let whichProc = Process()
+    let whichPipe = Pipe()
+    whichProc.executableURL = URL(fileURLWithPath: "/usr/bin/which")
+    whichProc.arguments = ["claude"]
+    whichProc.standardOutput = whichPipe
+    whichProc.standardError = FileHandle.nullDevice
+    try? whichProc.run()
+    whichProc.waitUntilExit()
+    let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
+    if let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+       !path.isEmpty {
+        return URL(fileURLWithPath: path)
+    }
+    return nil
+}
+
 @Observable
 @MainActor
 final class SkillRunner {
@@ -88,34 +113,6 @@ final class SkillRunner {
         )
     }
 
-    private static func findClaudeExecutable() -> URL? {
-        let candidates = [
-            "\(NSHomeDirectory())/.local/bin/claude",
-            "/usr/local/bin/claude",
-            "/opt/homebrew/bin/claude"
-        ]
-        for path in candidates {
-            if FileManager.default.isExecutableFile(atPath: path) {
-                return URL(fileURLWithPath: path)
-            }
-        }
-        // Fallback: use `which` to find claude in PATH
-        let whichProc = Process()
-        let whichPipe = Pipe()
-        whichProc.executableURL = URL(fileURLWithPath: "/usr/bin/which")
-        whichProc.arguments = ["claude"]
-        whichProc.standardOutput = whichPipe
-        whichProc.standardError = FileHandle.nullDevice
-        try? whichProc.run()
-        whichProc.waitUntilExit()
-        let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
-        if let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !path.isEmpty {
-            return URL(fileURLWithPath: path)
-        }
-        return nil
-    }
-
     private func launchClaude(prompt: String, extraArgs: [String], workingDirectory: URL) {
         guard !isRunning else { return }
 
@@ -125,7 +122,7 @@ final class SkillRunner {
         currentText = ""
         appendLine("[command] \(prompt)", kind: .system)
 
-        guard let claudeURL = Self.findClaudeExecutable() else {
+        guard let claudeURL = findClaudeExecutable() else {
             appendLine(
                 "Erreur : impossible de trouver 'claude'. Installez Claude Code et vérifiez qu'il est dans votre PATH.",
                 kind: .error
@@ -134,6 +131,16 @@ final class SkillRunner {
             return
         }
 
+        let proc = configureProcess(claudeURL: claudeURL, prompt: prompt, extraArgs: extraArgs, workingDirectory: workingDirectory)
+        do {
+            try proc.run()
+        } catch {
+            isRunning = false
+            appendLine("Error: \(error.localizedDescription)", kind: .system)
+        }
+    }
+
+    private func configureProcess(claudeURL: URL, prompt: String, extraArgs: [String], workingDirectory: URL) -> Process {
         let proc = Process()
         let pipe = Pipe()
 
@@ -173,12 +180,7 @@ final class SkillRunner {
             }
         }
 
-        do {
-            try proc.run()
-        } catch {
-            isRunning = false
-            appendLine("Error: \(error.localizedDescription)", kind: .system)
-        }
+        return proc
     }
 
     func stop() {
