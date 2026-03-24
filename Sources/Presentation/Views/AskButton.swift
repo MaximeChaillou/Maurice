@@ -53,7 +53,7 @@ struct AskButton: View {
             if runner.isRunning {
                 if let label = runner.skillLabel {
                     conversationLines.append(AskConversationLine(
-                        text: String(localized: "Running skill '\(label)'..."), kind: .system
+                        text: String(localized: "Running skill '\(label)'..."), kind: .user
                     ))
                     lastSyncedCount = 0
                 }

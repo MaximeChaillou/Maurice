@@ -126,13 +126,18 @@ final class RecordingContext {
 
     nonisolated private func writeFrontmatter(for event: GoogleCalendarEvent, in folderName: String) async {
         await Task.detached {
+            let fm = FileManager.default
             let folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
+            try? fm.createDirectory(at: folderURL, withIntermediateDirectories: true)
+
             let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
             let fileURL = folderURL.appendingPathComponent(fileName)
 
-            guard FileManager.default.fileExists(atPath: fileURL.path),
-                  let existing = try? String(contentsOf: fileURL, encoding: .utf8),
-                  existing.isEmpty else { return }
+            // Only write frontmatter if file doesn't exist or is empty
+            if fm.fileExists(atPath: fileURL.path) {
+                let existing = (try? String(contentsOf: fileURL, encoding: .utf8)) ?? ""
+                guard existing.isEmpty else { return }
+            }
 
             let timeFormatter = DateFormatters.dayAndTime
 

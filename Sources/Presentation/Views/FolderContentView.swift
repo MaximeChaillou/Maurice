@@ -106,6 +106,7 @@ struct FolderContentView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 6)
                             .padding(.horizontal, 12)
+                            .contentShape(Rectangle())
                             .background(
                                 viewModel.selectedFolder == folder.name
                                     ? Color.accentColor.opacity(0.2)
@@ -284,6 +285,7 @@ extension FolderContentView {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 6)
                         .padding(.horizontal, 12)
+                        .contentShape(Rectangle())
                         .background(
                             viewModel.selectedFile == file.url
                                 ? Color.accentColor.opacity(0.2)

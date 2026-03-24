@@ -138,6 +138,7 @@ struct PeopleView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.vertical, 6)
                                     .padding(.horizontal, 12)
+                                    .contentShape(Rectangle())
                                     .background(
                                         viewModel.selectedPerson == person.relativePath
                                             ? Color.accentColor.opacity(0.2)
@@ -274,6 +275,7 @@ struct PeopleView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 6)
                                 .padding(.horizontal, 12)
+                                .contentShape(Rectangle())
                                 .background(
                                     selectedSection == section
                                         ? Color.accentColor.opacity(0.2)
