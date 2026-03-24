@@ -120,6 +120,7 @@ struct MCPServersView: View {
                 let data = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
                 continuation.resume(returning: String(data: data, encoding: .utf8))
             } catch {
+                IssueLogger.log(.warning, "Failed to run claude MCP list", error: error)
                 continuation.resume(returning: nil)
             }
         }

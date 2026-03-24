@@ -80,7 +80,11 @@ enum AppSettings {
 
     static var themeFileURL: URL {
         let dir = mauriceConfigDirectory
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        } catch {
+            IssueLogger.log(.error, "Failed to create .maurice config directory", context: dir.path, error: error)
+        }
         return dir.appendingPathComponent("theme.json")
     }
 

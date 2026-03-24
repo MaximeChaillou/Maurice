@@ -77,8 +77,17 @@ struct MeetingDateEntry: Identifiable {
 
 struct FolderFile: Identifiable, Hashable {
     let id: URL, name: String, date: Date, url: URL
-    var content: String { (try? String(contentsOf: url, encoding: .utf8)) ?? "" }
-    func save(content: String) { try? content.write(to: url, atomically: true, encoding: .utf8) }
+    var content: String {
+        do { return try String(contentsOf: url, encoding: .utf8) } catch {
+            IssueLogger.log(.warning, "Failed to read folder file", context: url.path, error: error)
+            return ""
+        }
+    }
+    func save(content: String) {
+        do { try content.write(to: url, atomically: true, encoding: .utf8) } catch {
+            IssueLogger.log(.error, "Failed to save folder file", context: url.path, error: error)
+        }
+    }
 
     init(id: URL, name: String, date: Date, url: URL) {
         self.id = id; self.name = name; self.date = date; self.url = url

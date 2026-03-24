@@ -135,6 +135,7 @@ final class SkillRunner {
         do {
             try proc.run()
         } catch {
+            IssueLogger.log(.error, "Failed to launch claude process", error: error)
             isRunning = false
             appendLine("Error: \(error.localizedDescription)", kind: .system)
         }

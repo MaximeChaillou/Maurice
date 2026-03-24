@@ -41,6 +41,7 @@ final class GoogleCalendarViewModel {
                 connectedEmail = email
                 isConnected = true
             } catch {
+                IssueLogger.log(.error, "Google Calendar OAuth connection failed", error: error)
                 errorMessage = error.localizedDescription
             }
             isConnecting = false
@@ -60,9 +61,15 @@ final class GoogleCalendarViewModel {
             return cached
         }
         guard let tokens = await validTokens() else { return [] }
-        let events = (try? await calendarService.fetchUpcomingEvents(
-            accessToken: tokens.accessToken, limit: limit
-        )) ?? []
+        let events: [GoogleCalendarEvent]
+        do {
+            events = try await calendarService.fetchUpcomingEvents(
+                accessToken: tokens.accessToken, limit: limit
+            )
+        } catch {
+            IssueLogger.log(.warning, "Failed to fetch upcoming calendar events", error: error)
+            events = []
+        }
         cachedUpcoming = events
         cachedUpcomingDate = Date()
         return events
@@ -74,7 +81,13 @@ final class GoogleCalendarViewModel {
             return cached
         }
         guard let tokens = await validTokens() else { return nil }
-        let event = try? await calendarService.fetchCurrentEvent(accessToken: tokens.accessToken)
+        let event: GoogleCalendarEvent?
+        do {
+            event = try await calendarService.fetchCurrentEvent(accessToken: tokens.accessToken)
+        } catch {
+            IssueLogger.log(.warning, "Failed to fetch current calendar event", error: error)
+            event = nil
+        }
         cachedCurrent = .some(event)
         cachedCurrentDate = Date()
         return event
@@ -87,6 +100,7 @@ final class GoogleCalendarViewModel {
                 tokens = try await calendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
                 tokenStore.save(tokens)
             } catch {
+                IssueLogger.log(.warning, "Failed to refresh Google Calendar token", error: error)
                 return nil
             }
         }
@@ -108,13 +122,16 @@ final class GoogleCalendarViewModel {
                     tokens = try await calendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
                     tokenStore.save(tokens)
                 } catch {
+                    IssueLogger.log(.error, "Google Calendar token refresh failed, disconnecting", error: error)
                     disconnect()
                     return
                 }
             }
 
-            if let email = try? await calendarService.fetchUserEmail(accessToken: tokens.accessToken) {
-                connectedEmail = email
+            do {
+                connectedEmail = try await calendarService.fetchUserEmail(accessToken: tokens.accessToken)
+            } catch {
+                IssueLogger.log(.warning, "Failed to fetch Google account email", error: error)
             }
         }
     }

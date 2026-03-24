@@ -234,6 +234,7 @@ struct OnboardingView: View {
                     isCreating = false
                 }
             } catch {
+                IssueLogger.log(.error, "Onboarding directory setup failed", context: root.path, error: error)
                 await MainActor.run {
                     errorMessage = error.localizedDescription
                     isCreating = false
@@ -284,6 +285,10 @@ struct OnboardingView: View {
         guard !FileManager.default.fileExists(atPath: url.path),
               let sourceURL = Bundle.main.url(forResource: name, withExtension: "md", subdirectory: "Templates")
         else { return }
-        try? FileManager.default.copyItem(at: sourceURL, to: url)
+        do {
+            try FileManager.default.copyItem(at: sourceURL, to: url)
+        } catch {
+            IssueLogger.log(.error, "Failed to copy template", context: "\(name).md → \(url.path)", error: error)
+        }
     }
 }

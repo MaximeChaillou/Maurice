@@ -97,7 +97,12 @@ struct SkillsSettingsView: View {
                 let url = skill.url
                 Task {
                     let text = await Task.detached {
-                        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                        do {
+                            return try String(contentsOf: url, encoding: .utf8)
+                        } catch {
+                            IssueLogger.log(.warning, "Failed to read skill file", context: url.path, error: error)
+                            return ""
+                        }
                     }.value
                     editorContent = text
                 }
@@ -155,6 +160,7 @@ struct SkillsSettingsView: View {
                         do {
                             try Data(text.utf8).write(to: url, options: .atomic)
                         } catch {
+                            IssueLogger.log(.error, "Failed to save skill", context: url.path, error: error)
                             await MainActor.run {
                                 errorMessage.wrappedValue = String(localized: "Unable to save: \(error.localizedDescription)")
                             }
@@ -194,11 +200,19 @@ struct SkillsSettingsView: View {
         if !name.hasSuffix(".md") { name += ".md" }
 
         let dir = AppSettings.claudeCommandsDirectory
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        } catch {
+            IssueLogger.log(.error, "Failed to create skills directory", context: dir.path, error: error)
+        }
         let url = dir.appendingPathComponent(name)
 
         guard !FileManager.default.fileExists(atPath: url.path) else { return }
-        try? Data("".utf8).write(to: url, options: .atomic)
+        do {
+            try Data("".utf8).write(to: url, options: .atomic)
+        } catch {
+            IssueLogger.log(.error, "Failed to create skill file", context: url.path, error: error)
+        }
 
         isAddingSkill = false
         newSkillName = ""
@@ -211,6 +225,7 @@ struct SkillsSettingsView: View {
         do {
             try FileManager.default.removeItem(at: skill.url)
         } catch {
+            IssueLogger.log(.error, "Failed to delete skill", context: skill.url.path, error: error)
             errorMessage = String(localized: "Unable to delete '\(skill.name)': \(error.localizedDescription)")
         }
         if selectedSkill == skill { selectedSkill = nil }

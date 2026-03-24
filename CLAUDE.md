@@ -52,7 +52,7 @@ Sources/
 - C'est une app **macOS** : utiliser le workflow macOS de XcodeBuildMCP (pas simulator iOS).
 - Après chaque tâche terminée, **relancer l'app** pour vérifier.
 - Après une grosse tâche, lancer **SwiftLint** (`swiftlint lint --config .swiftlint.yml`) et corriger tous les problèmes.
-- Après une grosse tâche, **lancer les tests** (`test_macos`) et corriger les échecs.
+- Ne **pas** lancer les tests automatiquement après chaque tâche — lancer les tests uniquement quand l'utilisateur demande une release ou explicitement de jouer les tests.
 
 ## Xcode Project
 

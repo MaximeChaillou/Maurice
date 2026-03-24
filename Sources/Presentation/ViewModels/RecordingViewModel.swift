@@ -88,6 +88,7 @@ final class RecordingViewModel {
                 let stream = try await streamProvider(useCase)
                 try await processStream(stream, useCase: useCase, subdirectory: subdirectory)
             } catch {
+                IssueLogger.log(.error, "Recording failed", error: error)
                 let useCase = useCase
                 Task.detached { await useCase.stopRecording() }
                 errorMessage = error.localizedDescription
@@ -123,6 +124,7 @@ final class RecordingViewModel {
                         do {
                             try useCase.appendEntry(entry, to: url)
                         } catch {
+                            IssueLogger.log(.error, "Failed to append transcript entry", error: error)
                             Task { @MainActor in
                                 self.errorMessage = String(localized: "Write error: \(error.localizedDescription)")
                             }

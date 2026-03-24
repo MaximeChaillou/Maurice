@@ -112,7 +112,9 @@ struct GeneralSettingsView: View {
         let task = Process()
         task.launchPath = "/usr/bin/open"
         task.arguments = ["-n", appURL.path]
-        try? task.run()
+        do { try task.run() } catch {
+            IssueLogger.log(.error, "Failed to relaunch app", error: error)
+        }
         NSApplication.shared.terminate(nil)
     }
 

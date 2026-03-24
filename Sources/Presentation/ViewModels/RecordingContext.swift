@@ -128,7 +128,11 @@ final class RecordingContext {
         await Task.detached {
             let fm = FileManager.default
             let folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
-            try? fm.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            } catch {
+                IssueLogger.log(.error, "Failed to create meeting folder for frontmatter", context: folderURL.path, error: error)
+            }
 
             let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
             let fileURL = folderURL.appendingPathComponent(fileName)
@@ -156,7 +160,11 @@ final class RecordingContext {
             }
             yaml += "---\n\n"
 
-            try? yaml.write(to: fileURL, atomically: true, encoding: .utf8)
+            do {
+                try yaml.write(to: fileURL, atomically: true, encoding: .utf8)
+            } catch {
+                IssueLogger.log(.error, "Failed to write frontmatter", context: fileURL.path, error: error)
+            }
         }.value
     }
 }

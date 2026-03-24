@@ -161,7 +161,11 @@ struct PersonDetailView: View {
         let name = newFileName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
         let dir = personURL.appendingPathComponent(subfolder, isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        } catch {
+            IssueLogger.log(.error, "Failed to create subfolder directory", context: dir.path, error: error)
+        }
         let fileURL = dir.appendingPathComponent("\(name).md")
         if !FileManager.default.fileExists(atPath: fileURL.path) {
             FileManager.default.createFile(atPath: fileURL.path, contents: nil)
@@ -180,6 +184,7 @@ struct PersonDetailView: View {
         do {
             try FileManager.default.removeItem(at: file.url)
         } catch {
+            IssueLogger.log(.error, "Failed to delete subfolder file", context: file.url.path, error: error)
             errorState?.show(String(localized: "Unable to delete '\(file.name)': \(error.localizedDescription)"))
         }
         loadSubfolders()
@@ -296,6 +301,7 @@ struct PersonOneOnOneView: View {
                     if let t = entry.transcript { try FileManager.default.removeItem(at: t.url) }
                 }
             } catch {
+                IssueLogger.log(.error, "Failed to delete person entry", error: error)
                 errorState?.show(String(localized: "Unable to delete: \(error.localizedDescription)"))
             }
             loadEntries()

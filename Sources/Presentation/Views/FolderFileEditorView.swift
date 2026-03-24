@@ -41,6 +41,7 @@ struct FolderFileEditorView: View {
                     do {
                         try text.write(to: url, atomically: true, encoding: .utf8)
                     } catch {
+                        IssueLogger.log(.error, "Failed to save file", context: url.path, error: error)
                         await errorState?.show("Impossible de sauvegarder : \(error.localizedDescription)")
                     }
                 }
@@ -55,7 +56,12 @@ struct FolderFileEditorView: View {
         let url = file.url
         Task {
             let text = await Task.detached {
-                (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                do {
+                    return try String(contentsOf: url, encoding: .utf8)
+                } catch {
+                    IssueLogger.log(.warning, "Failed to read file", context: url.path, error: error)
+                    return ""
+                }
             }.value
             if text != bodyText {
                 loadedText = text

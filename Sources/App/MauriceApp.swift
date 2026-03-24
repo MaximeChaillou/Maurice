@@ -18,6 +18,7 @@ struct MauriceApp: App {
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
     init() {
+        IssueLogger.installCrashHandlers()
         AppSettings.applyLanguage()
         let storage = FileTranscriptionStorage()
 

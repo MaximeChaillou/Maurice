@@ -8,7 +8,10 @@ struct MemoryFile: Identifiable, Hashable {
     let url: URL
 
     var content: String {
-        (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+        do { return try String(contentsOf: url, encoding: .utf8) } catch {
+            IssueLogger.log(.warning, "Failed to read memory file", context: url.path, error: error)
+            return ""
+        }
     }
 
     /// YAML frontmatter block including the `---` delimiters.
@@ -34,6 +37,8 @@ struct MemoryFile: Identifiable, Hashable {
     func save(body: String) {
         let fm = frontmatter
         let full = fm.isEmpty ? body : fm + "\n\n" + body
-        try? full.write(to: url, atomically: true, encoding: .utf8)
+        do { try full.write(to: url, atomically: true, encoding: .utf8) } catch {
+            IssueLogger.log(.error, "Failed to save memory file", context: url.path, error: error)
+        }
     }
 }

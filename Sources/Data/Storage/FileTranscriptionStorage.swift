@@ -107,6 +107,7 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
             content = try String(contentsOf: url, encoding: .utf8)
         } catch {
             logger.warning("Impossible de lire \(url.lastPathComponent): \(error.localizedDescription)")
+            IssueLogger.log(.warning, "Failed to read transcript", context: url.path, error: error)
             return nil
         }
 

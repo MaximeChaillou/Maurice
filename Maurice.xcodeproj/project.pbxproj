@@ -86,6 +86,8 @@
 		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
 		RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */; };
 		SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */; };
+		IL01IL02IL03IL04IL05IL06 /* IssueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = IL11IL12IL13IL14IL15IL16 /* IssueLogger.swift */; };
+		IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */; };
 		SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */; };
 		SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV11SV12SV13SV14SV15SV16 /* SearchView.swift */; };
 		T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T101A102B103C104D105E106F /* CodableColorTests.swift */; };
@@ -229,6 +231,7 @@
 		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingContext.swift; sourceTree = "<group>"; };
 		SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubfolderNavigationView.swift; sourceTree = "<group>"; };
+		IL11IL12IL13IL14IL15IL16 /* IssueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLogger.swift; sourceTree = "<group>"; };
 		SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchService.swift; sourceTree = "<group>"; };
 		SV11SV12SV13SV14SV15SV16 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		T101A102B103C104D105E106F /* CodableColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColorTests.swift; sourceTree = "<group>"; };
@@ -255,6 +258,7 @@
 		PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModelTests.swift; sourceTree = "<group>"; };
 		NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodableTests.swift; sourceTree = "<group>"; };
 		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
+		IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLoggerTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
 		NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunnerTests.swift; sourceTree = "<group>"; };
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
@@ -291,10 +295,19 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		IL21IL22IL23IL24IL25IL26 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				IL11IL12IL13IL14IL15IL16 /* IssueLogger.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
 		0E54AA66B225F1D9202B5D54 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				283DF3F5E2CD4582A4C4ACEC /* Calendar */,
+				IL21IL22IL23IL24IL25IL26 /* Logging */,
 				SS21SS22SS23SS24SS25SS26 /* Search */,
 				D1171691D91CE9B0F20A0E85 /* Storage */,
 				65B4B0A1CA58A58423629C46 /* Transcription */,
@@ -536,6 +549,7 @@
 				NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */,
 				NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */,
 				HV11HV12HV13HV14HV15HV16 /* HomeViewTests.swift */,
+				IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */,
 				LT11LT12LT13LT14LT15LT16 /* LocalizationTests.swift */,
 				VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */,
 				T303A304B305C306D307E308F /* MarkdownStylingTests.swift */,
@@ -710,6 +724,7 @@
 				E1EE8116314F840B3C8FE1A0 /* BubbleScrollTransition.swift in Sources */,
 				C38E3C07DF3155E5019E2EC1 /* BubbleView.swift in Sources */,
 				3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */,
+				IL01IL02IL03IL04IL05IL06 /* IssueLogger.swift in Sources */,
 				FW01FW02FW03FW04FW05FW06 /* FileWatcher.swift in Sources */,
 				UC01UC02UC03UC04UC05UC06 /* UpdateChecker.swift in Sources */,
 				9005CB0D7E7A47ACA1723D96 /* KeychainHelper.swift in Sources */,
@@ -815,6 +830,7 @@
 				NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */,
 				NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */,
 				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
+				IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */,
 				NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */,
 				NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */,
 			);

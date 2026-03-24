@@ -223,7 +223,10 @@ final class SemanticSearchService {
                 continue
             }
             let fileName = file.url.deletingPathExtension().lastPathComponent
-            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
+            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else {
+                IssueLogger.log(.warning, "Failed to read file for indexing", context: file.url.path)
+                continue
+            }
             let text = "\(fileName) \(content)"
             let truncated = String(text.prefix(500))
             guard let vecs = dualVectors(
@@ -245,7 +248,10 @@ final class SemanticSearchService {
             context.docs.append(cached)
             return
         }
-        guard let content = try? String(contentsOf: url, encoding: .utf8) else { return }
+        guard let content = try? String(contentsOf: url, encoding: .utf8) else {
+            IssueLogger.log(.warning, "Failed to read tasks file for indexing", context: url.path)
+            return
+        }
         let truncated = String(content.prefix(500))
         guard let vecs = dualVectors(
             for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
@@ -287,8 +293,15 @@ final class SemanticSearchService {
                     modificationDate: doc.modificationDate
                 )
             }
-            guard let data = try? JSONEncoder().encode(entries) else { return }
-            try? data.write(to: url, options: .atomic)
+            guard let data = try? JSONEncoder().encode(entries) else {
+                IssueLogger.log(.error, "Failed to encode search index")
+                return
+            }
+            do {
+                try data.write(to: url, options: .atomic)
+            } catch {
+                IssueLogger.log(.error, "Failed to save search index", context: url.path, error: error)
+            }
         }
     }
 

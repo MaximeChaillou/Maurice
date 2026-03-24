@@ -103,6 +103,7 @@ final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Senda
                         }
                     }
                 } catch {
+                    IssueLogger.log(.error, "Speech recognition stream error", error: error)
                     continuation.yield(.error(error.localizedDescription))
                 }
                 continuation.finish()

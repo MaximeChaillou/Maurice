@@ -45,7 +45,11 @@ final class PeopleContentViewModel {
         let dir = directory
         let result = await Task.detached { () -> [PeopleCategory] in
             let fm = FileManager.default
-            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: dir, withIntermediateDirectories: true)
+            } catch {
+                IssueLogger.log(.warning, "Failed to create people directory", context: dir.path, error: error)
+            }
 
             let contents = DirectoryScanner.scan(at: dir)
             let storage = FileTranscriptionStorage()
@@ -87,7 +91,11 @@ final class PeopleContentViewModel {
 
         let catURL = directory.appendingPathComponent(trimmed, isDirectory: true)
         Task.detached {
-            try? FileManager.default.createDirectory(at: catURL, withIntermediateDirectories: true)
+            do {
+                try FileManager.default.createDirectory(at: catURL, withIntermediateDirectories: true)
+            } catch {
+                IssueLogger.log(.error, "Failed to create category directory", context: catURL.path, error: error)
+            }
         }
         loadFolders()
     }
@@ -104,16 +112,24 @@ final class PeopleContentViewModel {
         Task {
             await Task.detached {
                 let fm = FileManager.default
-                try? fm.createDirectory(at: personURL, withIntermediateDirectories: true)
-                for sub in ["1-1", "assessment", "objectifs"] {
-                    try? fm.createDirectory(
-                        at: personURL.appendingPathComponent(sub, isDirectory: true),
-                        withIntermediateDirectories: true
-                    )
+                do {
+                    try fm.createDirectory(at: personURL, withIntermediateDirectories: true)
+                    for sub in ["1-1", "assessment", "objectifs"] {
+                        try fm.createDirectory(
+                            at: personURL.appendingPathComponent(sub, isDirectory: true),
+                            withIntermediateDirectories: true
+                        )
+                    }
+                } catch {
+                    IssueLogger.log(.error, "Failed to create person directories", context: personURL.path, error: error)
                 }
                 let profileURL = personURL.appendingPathComponent("profile.md")
                 if !fm.fileExists(atPath: profileURL.path) {
-                    try? "# \(trimmed)\n".write(to: profileURL, atomically: true, encoding: .utf8)
+                    do {
+                        try "# \(trimmed)\n".write(to: profileURL, atomically: true, encoding: .utf8)
+                    } catch {
+                        IssueLogger.log(.error, "Failed to write profile", context: profileURL.path, error: error)
+                    }
                 }
                 let jobDescURL = personURL.appendingPathComponent("job-description.md")
                 if !fm.fileExists(atPath: jobDescURL.path) {
@@ -130,6 +146,7 @@ final class PeopleContentViewModel {
             try FileManager.default.removeItem(at: person.url)
             if selectedPerson == person.relativePath { selectedPerson = nil }
         } catch {
+            IssueLogger.log(.error, "Failed to delete person", context: person.url.path, error: error)
             errorMessage = String(localized: "Unable to delete '\(person.name)': \(error.localizedDescription)")
         }
         loadFolders()

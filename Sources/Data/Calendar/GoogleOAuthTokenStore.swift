@@ -11,8 +11,15 @@ enum GoogleOAuthTokenStore {
     private static let account = "oauth-tokens"
 
     static func save(_ tokens: GoogleTokens) {
-        guard let data = try? JSONEncoder().encode(tokens) else { return }
-        try? KeychainHelper.save(data: data, service: service, account: account)
+        guard let data = try? JSONEncoder().encode(tokens) else {
+            IssueLogger.log(.error, "Failed to encode Google tokens")
+            return
+        }
+        do {
+            try KeychainHelper.save(data: data, service: service, account: account)
+        } catch {
+            IssueLogger.log(.error, "Failed to save Google tokens to Keychain", error: error)
+        }
     }
 
     static func load() -> GoogleTokens? {

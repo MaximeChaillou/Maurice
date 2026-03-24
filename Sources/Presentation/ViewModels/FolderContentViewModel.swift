@@ -42,7 +42,11 @@ final class FolderContentViewModel {
         let dir = directory
         let result = await Task.detached {
             let fm = FileManager.default
-            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: dir, withIntermediateDirectories: true)
+            } catch {
+                IssueLogger.log(.warning, "Failed to create directory", context: dir.path, error: error)
+            }
 
             let contents = DirectoryScanner.scan(at: dir)
             let storage = FileTranscriptionStorage()
@@ -74,7 +78,11 @@ final class FolderContentViewModel {
         let dir = directory
         Task.detached {
             let folderURL = dir.appendingPathComponent(name, isDirectory: true)
-            try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            do {
+                try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            } catch {
+                IssueLogger.log(.error, "Failed to create folder", context: folderURL.path, error: error)
+            }
 
             let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
             let fileURL = folderURL.appendingPathComponent(fileName)
@@ -98,6 +106,7 @@ final class FolderContentViewModel {
             loadFolders()
             return true
         } catch {
+            IssueLogger.log(.error, "Failed to rename folder", context: "\(folder.name) → \(trimmed)", error: error)
             return false
         }
     }
@@ -107,6 +116,7 @@ final class FolderContentViewModel {
             try FileManager.default.removeItem(at: folder.url)
             if selectedFolder == folder.name { selectedFolder = nil }
         } catch {
+            IssueLogger.log(.error, "Failed to delete folder", context: folder.url.path, error: error)
             errorMessage = String(localized: "Unable to delete '\(folder.name)': \(error.localizedDescription)")
         }
         loadFolders()
@@ -121,6 +131,7 @@ final class FolderContentViewModel {
                 try FileManager.default.removeItem(at: transcript.url)
             }
         } catch {
+            IssueLogger.log(.error, "Failed to delete date entry", error: error)
             errorMessage = String(localized: "Unable to delete: \(error.localizedDescription)")
         }
         loadFolders()
