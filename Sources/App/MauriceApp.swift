@@ -4,7 +4,7 @@ import SwiftUI
 struct MauriceApp: App {
     @State private var recordingViewModel: RecordingViewModel
     @State private var memoryListViewModel = MemoryListViewModel()
-    @State private var skillRunner = SkillRunner()
+    @State private var consoleViewModel = ConsoleViewModel()
     @State private var coordinator = NavigationCoordinator()
     @State private var appTheme = AppTheme.load()
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
@@ -87,7 +87,7 @@ struct MauriceApp: App {
                     .padding(.vertical, 12)
                 }
                 .overlay(alignment: .bottomTrailing) {
-                    AskButton(runner: skillRunner)
+                    ConsolePanel(viewModel: consoleViewModel)
                         .padding(.horizontal, 36)
                         .padding(.bottom, 25)
                 }
@@ -230,14 +230,14 @@ struct MauriceApp: App {
                 navigateByDate: true,
                 showSkillConfig: true,
                 recordingViewModel: recordingViewModel,
-                skillRunner: skillRunner,
+                consoleViewModel: consoleViewModel,
                 viewModel: meetingViewModel
             )
         case .people:
             PeopleView(
                 markdownTheme: appTheme.markdown,
                 recordingViewModel: recordingViewModel,
-                skillRunner: skillRunner,
+                consoleViewModel: consoleViewModel,
                 viewModel: peopleViewModel
             )
         case .task:

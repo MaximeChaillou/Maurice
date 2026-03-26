@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 struct ImportDocumentView: View {
     let targetPath: String
-    let runner: SkillRunner
+    let consoleViewModel: ConsoleViewModel
     var onDismiss: () -> Void
 
     var body: some View {
@@ -33,10 +33,9 @@ struct ImportDocumentView: View {
         ]
 
         guard panel.runModal() == .OK, let fileURL = panel.url else { return }
-        runner.runImport(
+        consoleViewModel.sendImportSkill(
             source: fileURL.path,
-            targetPath: targetPath,
-            workingDirectory: AppSettings.rootDirectory
+            targetPath: targetPath
         )
         onDismiss()
     }

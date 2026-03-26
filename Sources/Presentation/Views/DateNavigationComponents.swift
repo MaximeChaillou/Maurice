@@ -8,7 +8,7 @@ struct DateNavigationHeader: View {
     @Binding var index: Int
     @Binding var showTranscripts: Bool
     var config: MeetingConfig?
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
     var showConfigAction: (() -> Void)?
     @Binding var entryDeleteAction: EntryDeleteAction?
     var nextFileURL: URL?
@@ -30,8 +30,12 @@ struct DateNavigationHeader: View {
                     NextNoteButton(fileURL: nextFileURL)
                 }
                 TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
-                if let config, let skillRunner {
-                    SkillActionsMenu(config: config, runner: skillRunner, activeFilePath: entry.noteFile?.url.path ?? entry.transcript?.url.path)
+                if let config, let consoleViewModel {
+                    let filePath = entry.noteFile?.url.path ?? entry.transcript?.url.path
+                    SkillActionsMenu(
+                        config: config, consoleViewModel: consoleViewModel,
+                        activeFilePath: filePath
+                    )
                     if let showConfigAction {
                         GlassIconButton(icon: "gearshape", help: "Configure skills") {
                             showConfigAction()
@@ -118,7 +122,7 @@ struct TranscriptToggleButton: View {
 
 struct SkillActionsMenu: View {
     let config: MeetingConfig
-    let runner: SkillRunner
+    let consoleViewModel: ConsoleViewModel
     var activeFilePath: String?
 
     var body: some View {
@@ -127,31 +131,21 @@ struct SkillActionsMenu: View {
             Menu {
                 ForEach(actions) { action in
                     Button {
-                        guard !runner.isRunning else { return }
-                        runner.actionID = action.id
                         let filePrefix = activeFilePath.map { $0 + " " } ?? ""
                         let fullParameter = filePrefix + (action.parameter ?? "")
-                        runner.run(
-                            skillFilename: action.skillFilename,
-                            buttonName: action.buttonName,
-                            parameter: fullParameter.isEmpty ? nil : fullParameter,
-                            workingDirectory: AppSettings.rootDirectory
+                        consoleViewModel.sendSkill(
+                            filename: action.skillFilename,
+                            parameter: fullParameter.isEmpty ? nil : fullParameter
                         )
                     } label: {
                         Label(action.buttonName, systemImage: "play.fill")
                     }
-                    .disabled(runner.isRunning)
                 }
             } label: {
-                ZStack {
-                    if runner.isRunning {
-                        ProgressView().controlSize(.small)
-                    } else {
-                        Image(systemName: "play.fill").font(.body)
-                    }
-                }
-                .frame(width: 32, height: 32)
-                .contentShape(Circle())
+                Image(systemName: "play.fill")
+                    .font(.body)
+                    .frame(width: 32, height: 32)
+                    .contentShape(Circle())
             }
             .buttonStyle(.plain)
             .menuStyle(.borderlessButton)

@@ -7,7 +7,7 @@ struct FolderContentView: View {
     var navigateByDate: Bool = false
     var showSkillConfig: Bool = false
     var recordingViewModel: RecordingViewModel?
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
 
     @State var viewModel: FolderContentViewModel
 
@@ -28,12 +28,12 @@ struct FolderContentView: View {
         }
         .sheet(isPresented: $showConfigSidebar) {
             if let folder = viewModel.currentFolder,
-               let runner = skillRunner {
+               let console = consoleViewModel {
                 MeetingConfigSheet(
                     folderName: folder.name,
                     folderURL: folder.url,
                     config: $viewModel.meetingConfig,
-                    runner: runner,
+                    consoleViewModel: console,
                     onRename: { newName in
                         viewModel.renameFolder(folder, to: newName)
                     }
@@ -221,7 +221,7 @@ extension FolderContentView {
                 index: $viewModel.fileIndex,
                 showTranscripts: $showTranscripts,
                 config: showSkillConfig ? viewModel.meetingConfig : nil,
-                skillRunner: skillRunner,
+                consoleViewModel: consoleViewModel,
                 showConfigAction: showSkillConfig ? { showConfigSidebar = true } : nil,
                 entryDeleteAction: $entryDeleteAction,
                 nextFileURL: folder.url.appendingPathComponent("next.md")

@@ -33,7 +33,7 @@ enum PersonSection: String, CaseIterable, Identifiable {
 struct PeopleView: View {
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var recordingViewModel: RecordingViewModel?
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
 
     @State var viewModel: PeopleContentViewModel
 
@@ -302,7 +302,7 @@ struct PeopleView: View {
                 activeSection: selectedSection,
                 markdownTheme: markdownTheme,
                 recordingViewModel: recordingViewModel,
-                skillRunner: skillRunner
+                consoleViewModel: consoleViewModel
             )
             .id(person.relativePath)
         } else if viewModel.categories.isEmpty {

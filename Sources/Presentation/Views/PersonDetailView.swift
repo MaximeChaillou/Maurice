@@ -6,7 +6,7 @@ struct PersonDetailView: View {
     let activeSection: PersonSection
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var recordingViewModel: RecordingViewModel?
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
 
     @State private var assessmentFiles: [FolderFile] = []
     @State private var objectifsFiles: [FolderFile] = []
@@ -41,7 +41,7 @@ struct PersonDetailView: View {
             PersonOneOnOneView(
                 personURL: personURL,
                 markdownTheme: markdownTheme,
-                skillRunner: skillRunner
+                consoleViewModel: consoleViewModel
             )
         case .assessment:
             SubfolderNavigationView(
@@ -49,7 +49,7 @@ struct PersonDetailView: View {
                 isAdding: $isAddingAssessment, newFileName: $newFileName,
                 addLabel: "New assessment", emptyTitle: "No assessments",
                 emptyIcon: "checkmark.seal", markdownTheme: markdownTheme,
-                skillRunner: skillRunner,
+                consoleViewModel: consoleViewModel,
                 subfolderURL: personURL.appendingPathComponent("assessment", isDirectory: true),
                 onCreate: { createSubfolderFile(subfolder: "assessment", isAdding: $isAddingAssessment) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "assessment") }
@@ -60,7 +60,7 @@ struct PersonDetailView: View {
                 isAdding: $isAddingObjectif, newFileName: $newFileName,
                 addLabel: "New goal", emptyTitle: "No goals",
                 emptyIcon: "target", markdownTheme: markdownTheme,
-                skillRunner: skillRunner,
+                consoleViewModel: consoleViewModel,
                 subfolderURL: personURL.appendingPathComponent("objectifs", isDirectory: true),
                 onCreate: { createSubfolderFile(subfolder: "objectifs", isAdding: $isAddingObjectif) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "objectifs") }
@@ -82,7 +82,7 @@ struct PersonDetailView: View {
             url: fileURL
         )
         VStack(spacing: 0) {
-            if let runner = skillRunner {
+            if let console = consoleViewModel {
                 HStack {
                     Spacer()
                     Button {
@@ -98,7 +98,7 @@ struct PersonDetailView: View {
                     .popover(isPresented: $showImportJobDesc) {
                         ImportDocumentView(
                             targetPath: fileURL.path,
-                            runner: runner,
+                            consoleViewModel: console,
                             onDismiss: { showImportJobDesc = false }
                         )
                     }
@@ -201,7 +201,7 @@ struct PersonDetailView: View {
 struct PersonOneOnOneView: View {
     let personURL: URL
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
 
     @State private var entries: [MeetingDateEntry] = []
     @State private var meetingConfig = MeetingConfig()
@@ -232,12 +232,12 @@ struct PersonOneOnOneView: View {
             loadEntries()
         }
         .sheet(isPresented: $showConfigSheet) {
-            if let runner = skillRunner {
+            if let console = consoleViewModel {
                 MeetingConfigSheet(
                     folderName: "1-1",
                     folderURL: oneOnOneDir,
                     config: $meetingConfig,
-                    runner: runner
+                    consoleViewModel: console
                 )
                 .frame(width: 400, height: 500)
             }
@@ -276,8 +276,8 @@ struct PersonOneOnOneView: View {
                 index: $index,
                 showTranscripts: $showTranscripts,
                 config: meetingConfig,
-                skillRunner: skillRunner,
-                showConfigAction: skillRunner != nil ? { showConfigSheet = true } : nil,
+                consoleViewModel: consoleViewModel,
+                showConfigAction: consoleViewModel != nil ? { showConfigSheet = true } : nil,
                 entryDeleteAction: $entryDeleteAction,
                 nextFileURL: oneOnOneDir.appendingPathComponent("next.md")
             )

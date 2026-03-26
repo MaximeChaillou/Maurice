@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */; };
+		VTS1BF01VTS1BF01VTS1BF01 /* VTSequencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */; };
+		CV01BF01CV01BF01CV01BF01 /* ConsoleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV01RF01CV01RF01CV01RF01 /* ConsoleViewModel.swift */; };
+		CT01BF01CT01BF01CT01BF01 /* ConsoleTerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */; };
+		CP01BF01CP01BF01CP01BF01 /* ConsolePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */; };
 		015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */; };
 		02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */; };
 		1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2233445566778899001122BB /* ThemedMarkdownView.swift */; };
@@ -34,8 +39,7 @@
 		SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */; };
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
-		6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */; };
-		AC01AC02AC03AC04AC05AC06 /* AskButtonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */; };
+
 		6F1ADD8CF138F5975A4310C0 /* MemoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80051D6DB5639866EA2923C6 /* MemoryContentView.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
 		8A763B6F00264839B4F3CAD8 /* GoogleCalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81AD12FE79304C27BE1C622E /* GoogleCalendarService.swift */; };
@@ -64,7 +68,7 @@
 		D5E6F7A8B9C0D1E2F3A4B5C6 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F7A8B9C0D1E2F3A4B5C6D7 /* AppSettings.swift */; };
 		DF01DF02DF03DF04DF05DF06 /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11DF12DF13DF14DF15DF16 /* DateFormatters.swift */; };
 		DN21DN22DN23DN24DN25DN26 /* DateNavigationComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = DN11DN12DN13DN14DN15DN16 /* DateNavigationComponents.swift */; };
-		E1E2E3E4E5E6E7E8E9E0E1E2 /* SkillRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */; };
+
 		E1EE8116314F840B3C8FE1A0 /* BubbleScrollTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D101BDDBF577263F9F8A0940 /* BubbleScrollTransition.swift */; };
 		E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D460FADEF7D4E0DC91E90DD0 /* LiveTranscriptionService.swift */; };
 		E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CF845207422686E623CC /* CalendarLinkSheet.swift */; };
@@ -103,7 +107,7 @@
 		NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */; };
 		NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */; };
 		TR01TR02TR03TR04TR05TR06 /* DirectoryScannerRecursiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */; };
-		TR07TR08TR09TR10TR11TR12 /* AskButtonComponentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */; };
+
 		HV01HV02HV03HV04HV05HV06 /* HomeViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HV11HV12HV13HV14HV15HV16 /* HomeViewTests.swift */; };
 		NC01NC02NC03NC04NC05NC06 /* NavigationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NC11NC12NC13NC14NC15NC16 /* NavigationCoordinatorTests.swift */; };
 		ES01ES02ES03ES04ES05ES06 /* EmptyStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ES11ES12ES13ES14ES15ES16 /* EmptyStateTests.swift */; };
@@ -118,7 +122,7 @@
 		NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */; };
 		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
-		NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */; };
+
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 		FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */; };
 		FN02BF02BF02BF02BF02BF02 /* FiraCodeNerdFont-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */; };
@@ -164,8 +168,7 @@
 		50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptDetailView.swift; sourceTree = "<group>"; };
 		52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
 		55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCase.swift; sourceTree = "<group>"; };
-		5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButton.swift; sourceTree = "<group>"; };
-		AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButtonComponents.swift; sourceTree = "<group>"; };
+
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MauriceApp.swift; sourceTree = "<group>"; };
 		6E435614E19D148F97CACBD6 /* SpeechModelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelState.swift; sourceTree = "<group>"; };
@@ -212,7 +215,7 @@
 		E6F7A8B9C0D1E2F3A4B5C6D7 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		E85222273DB7968BE346AD9C /* MarkdownTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTheme.swift; sourceTree = "<group>"; };
 		EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
-		F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunner.swift; sourceTree = "<group>"; };
+
 		F41DF75230BDB23FDEA3D4B4 /* Maurice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maurice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModel.swift; sourceTree = "<group>"; };
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
@@ -244,7 +247,7 @@
 		NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeTests.swift; sourceTree = "<group>"; };
 		NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerTests.swift; sourceTree = "<group>"; };
 		TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerRecursiveTests.swift; sourceTree = "<group>"; };
-		TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskButtonComponentsTests.swift; sourceTree = "<group>"; };
+
 		HV11HV12HV13HV14HV15HV16 /* HomeViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewTests.swift; sourceTree = "<group>"; };
 		NC11NC12NC13NC14NC15NC16 /* NavigationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatorTests.swift; sourceTree = "<group>"; };
 		ES11ES12ES13ES14ES15ES16 /* EmptyStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateTests.swift; sourceTree = "<group>"; };
@@ -260,7 +263,7 @@
 		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
 		IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLoggerTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
-		NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRunnerTests.swift; sourceTree = "<group>"; };
+
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
 		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
 		VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModelTests.swift; sourceTree = "<group>"; };
@@ -270,6 +273,11 @@
 		FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Bold.ttf"; sourceTree = "<group>"; };
 		FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-SemiBold.ttf"; sourceTree = "<group>"; };
 		FN04FR04FR04FR04FR04FR04 /* FiraCodeNerdFont-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Light.ttf"; sourceTree = "<group>"; };
+		CV01RF01CV01RF01CV01RF01 /* ConsoleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewModel.swift; sourceTree = "<group>"; };
+		CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleTerminalView.swift; sourceTree = "<group>"; };
+		CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsolePanel.swift; sourceTree = "<group>"; };
+		CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewModelTests.swift; sourceTree = "<group>"; };
+		VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTSequencesTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,8 +397,9 @@
 				NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */,
 				PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */,
 				RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */,
+				CV01RF01CV01RF01CV01RF01 /* ConsoleViewModel.swift */,
 				BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */,
-				F1F2F3F4F5F6F7F8F9F0F1F2 /* SkillRunner.swift */,
+
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -447,8 +456,7 @@
 				E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */,
 				EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */,
 				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
-				5A6B7C8D9E0F1A2B3C4D5E6F /* AskButton.swift */,
-				AC11AC12AC13AC14AC15AC16 /* AskButtonComponents.swift */,
+
 				BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */,
 				CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */,
 				GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */,
@@ -478,6 +486,8 @@
 				PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */,
 				PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */,
 				IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */,
+				CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */,
+				CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -540,7 +550,7 @@
 				NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */,
 				NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */,
 				T101A102B103C104D105E106F /* CodableColorTests.swift */,
-				TF07TF08TF09TF10TF11TF12 /* AskButtonComponentsTests.swift */,
+
 				ES11ES12ES13ES14ES15ES16 /* EmptyStateTests.swift */,
 				NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */,
 				TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */,
@@ -564,7 +574,8 @@
 				NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */,
 				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
 				NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */,
-				NF67NF68NF69NF70NF71NF72 /* SkillRunnerTests.swift */,
+				CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */,
+				VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -589,6 +600,7 @@
 			);
 			name = Maurice;
 			packageProductDependencies = (
+				ST02DEP02DEP02DEP02DEP02 /* SwiftTerm */,
 			);
 			productName = Maurice;
 			productReference = F41DF75230BDB23FDEA3D4B4 /* Maurice.app */;
@@ -643,6 +655,7 @@
 			mainGroup = F81067684A1EE16B2E0FC7F1;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				ST01PKG01REF01REF01REF01 /* SwiftTerm */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1BB583D8B7C5D14E61393EB3 /* Products */;
@@ -718,6 +731,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CV01BF01CV01BF01CV01BF01 /* ConsoleViewModel.swift in Sources */,
+				CT01BF01CT01BF01CT01BF01 /* ConsoleTerminalView.swift in Sources */,
+				CP01BF01CP01BF01CP01BF01 /* ConsolePanel.swift in Sources */,
 				1E337A3F4474B9E4A98681C4 /* AudioLevelBuffer.swift in Sources */,
 				AA3E82542E7DEBBBB8799C91 /* AudioWaveformView.swift in Sources */,
 				B034A36AA58C309E262870B2 /* BubbleListView.swift in Sources */,
@@ -739,8 +755,7 @@
 				02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */,
 				E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */,
 				015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */,
-				6B7C8D9E0F1A2B3C4D5E6F7A /* AskButton.swift in Sources */,
-				AC01AC02AC03AC04AC05AC06 /* AskButtonComponents.swift in Sources */,
+
 				BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */,
 				CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */,
 				GS01GS02GS03GS04GS05GS06 /* GeneralSettingsView.swift in Sources */,
@@ -776,7 +791,7 @@
 				A1A2A3A4A5A6A7A8A9A0A1A2 /* MeetingSkillConfig.swift in Sources */,
 				AI01AI02AI03AI04AI05AI06 /* AddItemSheet.swift in Sources */,
 				C1C2C3C4C5C6C7C8C9C0C1C2 /* MeetingConfigSheet.swift in Sources */,
-				E1E2E3E4E5E6E7E8E9E0E1E2 /* SkillRunner.swift in Sources */,
+
 				AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */,
 				CC33DD44EE55FF66AA11BB22 /* FolderNavigationStack.swift in Sources */,
 				DF01DF02DF03DF04DF05DF06 /* DateFormatters.swift in Sources */,
@@ -808,7 +823,7 @@
 				NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */,
 				NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */,
 				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
-				TR07TR08TR09TR10TR11TR12 /* AskButtonComponentsTests.swift in Sources */,
+
 				ES01ES02ES03ES04ES05ES06 /* EmptyStateTests.swift in Sources */,
 				HV01HV02HV03HV04HV05HV06 /* HomeViewTests.swift in Sources */,
 				NC01NC02NC03NC04NC05NC06 /* NavigationCoordinatorTests.swift in Sources */,
@@ -832,7 +847,8 @@
 				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
 				IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */,
 				NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */,
-				NT67NT68NT69NT70NT71NT72 /* SkillRunnerTests.swift in Sources */,
+				CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */,
+				VTS1BF01VTS1BF01VTS1BF01 /* VTSequencesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,7 +998,7 @@
 				CODE_SIGN_ENTITLEMENTS = Resources/Maurice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_APP_SANDBOX = NO;
@@ -997,7 +1013,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0-beta.11;
+				MARKETING_VERSION = 1.0.0-beta.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice;
 				PRODUCT_NAME = Maurice;
 				SDKROOT = macosx;
@@ -1013,7 +1029,7 @@
 				CODE_SIGN_ENTITLEMENTS = Resources/Maurice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_APP_SANDBOX = NO;
@@ -1028,7 +1044,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0-beta.11;
+				MARKETING_VERSION = 1.0.0-beta.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice;
 				PRODUCT_NAME = Maurice;
 				SDKROOT = macosx;
@@ -1041,14 +1057,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0.0-beta.11;
+				MARKETING_VERSION = 1.0.0-beta.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
 				PRODUCT_NAME = MauriceTests;
 				SDKROOT = macosx;
@@ -1062,14 +1078,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0.0-beta.11;
+				MARKETING_VERSION = 1.0.0-beta.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
 				PRODUCT_NAME = MauriceTests;
 				SDKROOT = macosx;
@@ -1109,6 +1125,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ST01PKG01REF01REF01REF01 /* SwiftTerm */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ST02DEP02DEP02DEP02DEP02 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ST01PKG01REF01REF01REF01 /* SwiftTerm */;
+			productName = SwiftTerm;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4CA168FEE059EC3395A91EE1 /* Project object */;
 }

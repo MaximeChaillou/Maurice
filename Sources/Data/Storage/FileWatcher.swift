@@ -1,5 +1,9 @@
 import Foundation
 
+extension Notification.Name {
+    static let fileSystemDidChange = Notification.Name("fileSystemDidChange")
+}
+
 final class FileWatcher {
     private var stream: FSEventStreamRef?
     private let path: String

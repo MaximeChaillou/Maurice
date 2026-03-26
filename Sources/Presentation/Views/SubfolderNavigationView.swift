@@ -9,7 +9,7 @@ struct SubfolderNavigationView: View {
     let emptyTitle: LocalizedStringKey
     let emptyIcon: String
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    var skillRunner: SkillRunner?
+    var consoleViewModel: ConsoleViewModel?
     var subfolderURL: URL?
     var onCreate: () -> Void
     var onDelete: (FolderFile) -> Void
@@ -51,7 +51,7 @@ struct SubfolderNavigationView: View {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
 
-                if let runner = skillRunner, let folderURL = subfolderURL {
+                if let console = consoleViewModel, let folderURL = subfolderURL {
                     Button { showImport = true } label: {
                         Label("Import", systemImage: "square.and.arrow.down")
                     }
@@ -60,7 +60,7 @@ struct SubfolderNavigationView: View {
                     .popover(isPresented: $showImport) {
                         ImportDocumentView(
                             targetPath: folderURL.appendingPathComponent("import.md").path,
-                            runner: runner,
+                            consoleViewModel: console,
                             onDismiss: { showImport = false }
                         )
                     }
@@ -128,7 +128,7 @@ struct SubfolderNavigationView: View {
             }
             .buttonStyle(.plain)
 
-            if let runner = skillRunner, let folderURL = subfolderURL {
+            if let console = consoleViewModel, let folderURL = subfolderURL {
                 Button { showImport = true } label: {
                     Image(systemName: "square.and.arrow.down")
                         .frame(width: 32, height: 32)
@@ -140,7 +140,7 @@ struct SubfolderNavigationView: View {
                 .popover(isPresented: $showImport) {
                     ImportDocumentView(
                         targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
-                        runner: runner,
+                        consoleViewModel: console,
                         onDismiss: { showImport = false }
                     )
                 }

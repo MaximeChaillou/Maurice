@@ -4,7 +4,7 @@ struct MeetingConfigSheet: View {
     let folderName: String
     let folderURL: URL
     @Binding var config: MeetingConfig
-    var runner: SkillRunner
+    var consoleViewModel: ConsoleViewModel
     var onRename: ((String) -> Void)?
 
     @State private var availableSkills: [SkillFile] = []
