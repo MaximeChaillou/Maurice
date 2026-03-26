@@ -33,6 +33,7 @@ final class RecordingContext {
         Task {
             if let event = await calendarViewModel.currentEvent() {
                 if let linked = await findLinkedFolder(for: event) {
+                    await writeFrontmatter(for: event, in: linked)
                     recordingViewModel.subdirectory = linked
                     navigateToSubdirectory(linked)
                 } else {
@@ -127,11 +128,23 @@ final class RecordingContext {
     nonisolated private func writeFrontmatter(for event: GoogleCalendarEvent, in folderName: String) async {
         await Task.detached {
             let fm = FileManager.default
-            let folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
+            let folderURL: URL
+            if folderName.hasPrefix("People/") {
+                folderURL = AppSettings.rootDirectory.appendingPathComponent(folderName, isDirectory: true)
+            } else {
+                folderURL = AppSettings.meetingsDirectory.appendingPathComponent(folderName, isDirectory: true)
+            }
             do {
                 try fm.createDirectory(at: folderURL, withIntermediateDirectories: true)
             } catch {
                 IssueLogger.log(.error, "Failed to create meeting folder for frontmatter", context: folderURL.path, error: error)
+            }
+
+            // Link calendar event name in config
+            var config = MeetingConfig.load(from: folderURL)
+            if config.calendarEventName == nil {
+                config.calendarEventName = event.summary
+                config.save(to: folderURL)
             }
 
             let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"
@@ -148,9 +161,12 @@ final class RecordingContext {
             var yaml = "---\n"
             yaml += "title: \(event.summary)\n"
             yaml += "date: \(timeFormatter.string(from: event.start))\n"
-            if !event.attendees.isEmpty {
+            let people = event.attendees.filter {
+                !$0.email.contains("resource.calendar.google.com")
+            }
+            if !people.isEmpty {
                 yaml += "participants:\n"
-                for attendee in event.attendees {
+                for attendee in people {
                     if let name = attendee.displayName {
                         yaml += "  - \(name) (\(attendee.email))\n"
                     } else {

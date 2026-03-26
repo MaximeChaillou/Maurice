@@ -40,6 +40,10 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             await loadEvents()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(60))
+                await loadEvents()
+            }
         }
     }
 
