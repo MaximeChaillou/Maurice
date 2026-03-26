@@ -7,7 +7,7 @@ private struct InteractiveHoverModifier: ViewModifier {
         content
             .background(
                 Circle()
-                    .fill(Color.white.opacity(isHovered ? 0.1 : 0))
+                    .fill(Color.primary.opacity(isHovered ? 0.1 : 0))
             )
             .onHover { hovering in
                 withAnimation(.easeInOut(duration: 0.15)) {

@@ -8,6 +8,7 @@ struct TabInfo {
 
 struct BackgroundSettingsView: View {
     @Binding var appTheme: AppTheme
+    @Environment(\.colorScheme) private var colorScheme
 
     private let tabs: [TabInfo] = [
         TabInfo(tab: .meeting, label: String(localized: "Meetings"), icon: "calendar"),
@@ -71,6 +72,11 @@ struct BackgroundSettingsView: View {
     }
 
     private func previewColor(for tab: AppTab) -> Color {
-        Color(hue: appTheme.hue(for: tab), saturation: 0.55, brightness: 0.20)
+        let isDark = colorScheme == .dark
+        return Color(
+            hue: appTheme.hue(for: tab),
+            saturation: isDark ? 0.55 : 0.30,
+            brightness: isDark ? 0.20 : 0.85
+        )
     }
 }

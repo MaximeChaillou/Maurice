@@ -638,6 +638,21 @@
     },
     "Underline" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Soulign\u00e9" } } }
+    },
+    "Apparence" : {
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } } }
+    },
+    "Mode" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mode" } } }
+    },
+    "Système" : {
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } } }
+    },
+    "Clair" : {
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } } }
+    },
+    "Sombre" : {
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } } }
     }
   },
   "version" : "1.0"

@@ -5,6 +5,7 @@ struct GeneralSettingsView: View {
     @State private var rootDirectory: URL = AppSettings.rootDirectory
     @State private var transcriptionLanguage: String = AppSettings.transcriptionLanguage
     @State private var appLanguage: String = AppSettings.appLanguage
+    @AppStorage(AppSettings.appearanceModeKey) private var appearanceMode = "system"
     @State private var showRestartAlert = false
     @StateObject private var updateChecker = UpdateChecker()
 
@@ -78,6 +79,14 @@ struct GeneralSettingsView: View {
                 Text("The language used for speech recognition. Choose the main language of your meetings.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+
+            Section(String(localized: "Apparence")) {
+                Picker(String(localized: "Mode"), selection: $appearanceMode) {
+                    Text(String(localized: "Système")).tag("system")
+                    Text(String(localized: "Clair")).tag("light")
+                    Text(String(localized: "Sombre")).tag("dark")
+                }
             }
 
             Section("App language") {

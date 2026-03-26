@@ -32,7 +32,7 @@ struct FloatingTabBar: View {
                     .background {
                         if isHomeActive {
                             Circle()
-                                .fill(.white.opacity(0.15))
+                                .fill(Color.primary.opacity(0.12))
                         }
                     }
                     .contentShape(Circle())
@@ -61,7 +61,7 @@ struct FloatingTabBar: View {
                         .background {
                             if !isHomeActive && activeTab == item.tab {
                                 Capsule()
-                                    .fill(.white.opacity(0.15))
+                                    .fill(Color.primary.opacity(0.12))
                                     .matchedGeometryEffect(id: "activeTab", in: tabNamespace)
                             }
                         }

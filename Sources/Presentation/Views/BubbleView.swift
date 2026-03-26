@@ -29,7 +29,7 @@ private struct BubbleBackgroundModifier: ViewModifier {
         switch style {
         case .final:
             content
-                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 .glassEffect(.regular, in: .rect(cornerRadius: 12))
         case .volatile:
             content

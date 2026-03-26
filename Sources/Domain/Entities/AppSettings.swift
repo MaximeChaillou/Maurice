@@ -1,10 +1,25 @@
 import Foundation
+import SwiftUI
 
 enum AppSettings {
     private static let rootDirectoryKey = "rootDirectory"
     private static let onboardingCompletedKey = "onboardingCompleted"
     private static let transcriptionLanguageKey = "transcriptionLanguage"
     private static let appLanguageKey = "appLanguage"
+    static let appearanceModeKey = "appearanceMode"
+
+    static var appearanceMode: String {
+        get { UserDefaults.standard.string(forKey: appearanceModeKey) ?? "system" }
+        set { UserDefaults.standard.set(newValue, forKey: appearanceModeKey) }
+    }
+
+    static var resolvedColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
 
     static var appLanguage: String {
         get { UserDefaults.standard.string(forKey: appLanguageKey) ?? "system" }

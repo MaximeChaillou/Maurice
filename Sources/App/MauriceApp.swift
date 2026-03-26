@@ -7,6 +7,7 @@ struct MauriceApp: App {
     @State private var consoleViewModel = ConsoleViewModel()
     @State private var coordinator = NavigationCoordinator()
     @State private var appTheme = AppTheme.load()
+    @AppStorage(AppSettings.appearanceModeKey) private var appearanceMode = "system"
     @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
@@ -142,6 +143,7 @@ struct MauriceApp: App {
                 }
             }
             .animation(.spring(duration: 0.3, bounce: 0.15), value: showSearch)
+            .preferredColorScheme(resolvedColorScheme)
             .sheet(isPresented: $showOnboarding) {
                 OnboardingView {
                     showOnboarding = false
@@ -177,6 +179,7 @@ struct MauriceApp: App {
                 reloadAfterDirectoryChange()
             }
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
+            .preferredColorScheme(resolvedColorScheme)
             .withErrorBanner()
         }
         .defaultSize(width: 800, height: 600)
@@ -194,10 +197,19 @@ struct MauriceApp: App {
                 .padding(16)
             }
             .frame(minWidth: 500, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
+            .preferredColorScheme(resolvedColorScheme)
             .withErrorBanner()
         }
         .defaultSize(width: 800, height: 550)
         .windowResizability(.contentMinSize)
+    }
+
+    private var resolvedColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
     }
 
     // MARK: - Find actions
