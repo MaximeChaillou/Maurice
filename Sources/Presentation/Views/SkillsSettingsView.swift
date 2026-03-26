@@ -77,20 +77,25 @@ struct SkillsSettingsView: View {
 
             Divider()
 
-            if isAddingSkill {
-                newSkillForm
-            } else {
-                Button {
-                    isAddingSkill = true
-                    newSkillName = ""
-                } label: {
-                    Label("Add a skill", systemImage: "plus")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.regular)
-                .padding(12)
+            Button {
+                isAddingSkill = true
+                newSkillName = ""
+            } label: {
+                Label("Add a skill", systemImage: "plus")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+            .padding(12)
+        }
+        .sheet(isPresented: $isAddingSkill) {
+            AddItemSheet(
+                title: "New skill",
+                placeholder: "Skill name (e.g. my-skill)",
+                text: $newSkillName,
+                onCreate: { createSkill() },
+                onCancel: { newSkillName = "" }
+            )
         }
         .onChange(of: selectedSkill) {
             if let skill = selectedSkill {
@@ -108,32 +113,6 @@ struct SkillsSettingsView: View {
                 }
             }
         }
-    }
-
-    // MARK: - New skill form
-
-    private var newSkillForm: some View {
-        VStack(spacing: 8) {
-            TextField("Skill name (e.g. my-skill)", text: $newSkillName)
-                .textFieldStyle(.roundedBorder)
-
-            HStack {
-                Button("Cancel") {
-                    isAddingSkill = false
-                    newSkillName = ""
-                }
-
-                Spacer()
-
-                Button("Create") {
-                    createSkill()
-                }
-                .disabled(newSkillName.trimmingCharacters(in: .whitespaces).isEmpty)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-            }
-        }
-        .padding(12)
     }
 
     // MARK: - Detail
