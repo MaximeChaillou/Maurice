@@ -1,82 +1,82 @@
 # Maurice
 
-Maurice est une application macOS de transcription audio avec édition Markdown.
+Maurice is a macOS audio transcription app with Markdown editing.
 
 ## General
 - Never add unrequested UI changes (shadows, animations, styling). Only change what was explicitly asked for. Respect user's editorial deletions - never reintroduce content the user removed.
 
 ## Architecture
 
-- **Clean Architecture** : Domain → Presentation → Data
-- **SwiftUI + AppKit** : NSViewRepresentable pour le rendu Markdown (NSTextView)
-- **Swift Concurrency** : async/await dans les ViewModels et UseCases
+- **Clean Architecture**: Domain → Presentation → Data
+- **SwiftUI + AppKit**: NSViewRepresentable for Markdown rendering (NSTextView)
+- **Swift Concurrency**: async/await in ViewModels and UseCases
 
 ## Structure
 
 ```
 Sources/
-├── App/              # Point d'entrée (MauriceApp)
-├── Presentation/     # Vues SwiftUI, ViewModels
-├── Domain/           # Entités, protocoles, cas d'utilisation
-└── Data/             # Stockage fichier, reconnaissance vocale
+├── App/              # Entry point (MauriceApp)
+├── Presentation/     # SwiftUI Views, ViewModels
+├── Domain/           # Entities, protocols, use cases
+└── Data/             # File storage, speech recognition
 ```
 
 ## Code Quality
 
-- **Background threads** : Toujours déplacer le file I/O, le JSON encode/decode, le directory scanning et tout calcul lourd hors du main thread. Utiliser `Task.detached { }` pour le travail fire-and-forget (ex: saves), et `Task { await Task.detached { ... }.value }` pour charger des données puis mettre à jour l'UI. Ne jamais bloquer le main thread.
-- **SwiftLint** : Toujours corriger tous les warnings et erreurs SwiftLint. Lancer `swiftlint lint --config .swiftlint.yml` et résoudre chaque problème avant de considérer une tâche terminée. Ne jamais utiliser `// swiftlint:disable` pour contourner une règle — toujours corriger le code sous-jacent (extraire des structs, refactorer les paramètres, etc.). Quand un warning SwiftLint remonte (y compris pendant un build ou un test), le corriger **immédiatement** avant de continuer — ne jamais ignorer ou reporter un warning.
-- **Réutilisation du code** : Réutiliser au maximum le code existant. Avant de créer une nouvelle fonction, vérifier s'il existe déjà une implémentation similaire dans le projet. Extraire les patterns communs en méthodes/extensions partagées plutôt que dupliquer du code.
-- **Composants partagés** : Utiliser les composants de `DateNavigationComponents.swift` (`DateNavigationHeader`, `DateEntryContentView`, `TranscriptToggleButton`, `SkillActionsMenu`, `EntryActionsMenu`, `GlassIconButton`, `.deletionAlert()`, `.entryDeleteAlert()`). Pour l'édition de fichiers markdown, réutiliser `FolderFileEditorView` / `FolderFileDetailView` avec `FolderFile(url:)` — ne pas recréer de logique load/save.
-- **Tests** : Quand une nouvelle feature est implémentée, toujours ajouter les tests correspondants dans `Tests/` (fichier + entrées `project.pbxproj`). Quand une méthode/protocole est supprimé, toujours vérifier et mettre à jour les tests et les mocks correspondants dans `Tests/`. Les tests ne doivent **jamais** toucher aux fichiers de l'utilisateur — utiliser uniquement des répertoires temporaires (`NSTemporaryDirectory`) et des mocks. Pas de lecture/écriture dans `~/Documents/Maurice/` ou `AppTheme.persistenceURL` depuis les tests.
-- **Suppression de code** : Quand du code est supprimé (méthode, fichier, propriété), tracer toutes les références dans le projet ET les tests. Supprimer aussi les entrées du `project.pbxproj` pour les fichiers supprimés.
-- **Aucun chemin absolu hardcodé** : Ne jamais écrire de chemin absolu en dur dans le code (ex: `/Users/maxime/...`). Toujours résoudre les chemins dynamiquement via `NSHomeDirectory()`, `AppSettings.rootDirectory`, `Bundle.main`, `FileManager.default.urls(for:in:)`, ou des mécanismes de recherche (`which`, candidats multiples). L'app doit fonctionner sur n'importe quelle machine.
+- **Background threads**: Always move file I/O, JSON encode/decode, directory scanning, and any heavy computation off the main thread. Use `Task.detached { }` for fire-and-forget work (e.g. saves), and `Task { await Task.detached { ... }.value }` to load data then update the UI. Never block the main thread.
+- **SwiftLint**: Always fix all SwiftLint warnings and errors. Run `swiftlint lint --config .swiftlint.yml` and resolve every issue before considering a task complete. Never use `// swiftlint:disable` to bypass a rule — always fix the underlying code (extract structs, refactor parameters, etc.). When a SwiftLint warning appears (including during a build or test), fix it **immediately** before continuing — never ignore or defer a warning.
+- **Code reuse**: Maximize reuse of existing code. Before creating a new function, check if a similar implementation already exists in the project. Extract common patterns into shared methods/extensions rather than duplicating code.
+- **Shared components**: Use components from `DateNavigationComponents.swift` (`DateNavigationHeader`, `DateEntryContentView`, `TranscriptToggleButton`, `SkillActionsMenu`, `EntryActionsMenu`, `GlassIconButton`, `.deletionAlert()`, `.entryDeleteAlert()`). For markdown file editing, reuse `FolderFileEditorView` / `FolderFileDetailView` with `FolderFile(url:)` — do not recreate load/save logic.
+- **Tests**: When a new feature is implemented, always add corresponding tests in `Tests/` (file + `project.pbxproj` entries). When a method/protocol is removed, always check and update corresponding tests and mocks in `Tests/`. Tests must **never** touch user files — use only temporary directories (`NSTemporaryDirectory`) and mocks. No reading/writing to `~/Documents/Maurice/` or `AppTheme.persistenceURL` from tests.
+- **Code removal**: When code is removed (method, file, property), trace all references in the project AND tests. Also remove `project.pbxproj` entries for deleted files.
+- **No hardcoded absolute paths**: Never hardcode absolute paths in the code (e.g. `/Users/maxime/...`). Always resolve paths dynamically via `NSHomeDirectory()`, `AppSettings.rootDirectory`, `Bundle.main`, `FileManager.default.urls(for:in:)`, or lookup mechanisms (`which`, multiple candidates). The app must work on any machine.
 
 ## UI
 
-- **Liquid Glass** : Utiliser le style Liquid Glass (macOS 26) pour tous les éléments d'interface — `.glassEffect()`, boutons, barres, panneaux. Préférer les matériaux translucides et les formes arrondies.
+- **Liquid Glass**: Use Liquid Glass style (macOS 26) for all UI elements — `.glassEffect()`, buttons, bars, panels. Prefer translucent materials and rounded shapes.
 
 ## Conventions
 
-- Langue de l'interface : français
-- Stockage des données : configurable via `AppSettings.rootDirectory` (défaut `~/Documents/Maurice/`)
-- Thème Markdown : `.maurice/theme.json` (dossier caché dans le root)
-- Index de recherche : `.maurice/search_index.json`
-- Fichiers mémoire : `Memory/`
-- Tâches : `Tasks.md` (majuscule)
-- Configuration IA : `CLAUDE.md` + `.claude/commands/`
+- UI language: French
+- Data storage: configurable via `AppSettings.rootDirectory` (default `~/Documents/Maurice/`)
+- Markdown theme: `.maurice/theme.json` (hidden folder in root)
+- Search index: `.maurice/search_index.json`
+- Memory files: `Memory/`
+- Tasks: `Tasks.md` (capitalized)
+- AI configuration: `CLAUDE.md` + `.claude/commands/`
 
 ## Build & Run
 
-- Utiliser **XcodeBuildMCP** pour build, run et test. Ne pas utiliser `xcodebuild` en shell.
-- Appeler `session_show_defaults` avant le premier build de la session.
-- C'est une app **macOS** : utiliser le workflow macOS de XcodeBuildMCP (pas simulator iOS).
-- Après chaque tâche terminée, **relancer l'app** pour vérifier.
-- Après une grosse tâche, lancer **SwiftLint** (`swiftlint lint --config .swiftlint.yml`) et corriger tous les problèmes.
-- Ne **pas** lancer les tests automatiquement après chaque tâche — lancer les tests uniquement quand l'utilisateur demande une release ou explicitement de jouer les tests.
+- Use **XcodeBuildMCP** for build, run, and test. Do not use `xcodebuild` in shell.
+- Call `session_show_defaults` before the first build of the session.
+- This is a **macOS** app: use XcodeBuildMCP's macOS workflow (not iOS simulator).
+- After each completed task, **relaunch the app** to verify.
+- After a large task, run **SwiftLint** (`swiftlint lint --config .swiftlint.yml`) and fix all issues.
+- Do **not** run tests automatically after each task — only run tests when the user requests a release or explicitly asks to run tests.
 
 ## Xcode Project
 
-- Ne **jamais** installer de dépendance Ruby (xcodeproj gem, etc.) pour modifier le projet.
-- Pour ajouter des fichiers au projet Xcode, modifier directement le `project.pbxproj` (PBXFileReference, PBXGroup, PBXBuildFile, PBXSourcesBuildPhase).
+- **Never** install Ruby dependencies (xcodeproj gem, etc.) to modify the project.
+- To add files to the Xcode project, edit `project.pbxproj` directly (PBXFileReference, PBXGroup, PBXBuildFile, PBXSourcesBuildPhase).
 
 ## Release & Distribution
 
-- Distribution via **Homebrew Cask** (`Casks/maurice.rb`) et **GitHub Releases**.
-- Mises à jour automatiques via **Sparkle** (clé EdDSA dans le Keychain, clé publique dans `Info.plist`).
-- Feed de mise à jour : `appcast.xml` à la racine du repo.
-- **Avant toute release**, lancer les tests (`test_macos`) et vérifier qu'ils passent tous à 100%. Si un test échoue, **bloquer la release** et corriger le problème d'abord.
-- **Ordre de release** : D'abord bump les versions (`MARKETING_VERSION` + `CURRENT_PROJECT_VERSION` dans `project.pbxproj`, `appcast.xml`, `Casks/maurice.rb`), puis **commit et push** les changements de version, puis exécuter `./Scripts/create_release.sh <version>`. Cela évite d'avoir un commit de version après le tag de release.
-- Pour publier une release : `./Scripts/create_release.sh <version>` (build Release, zip, signature Sparkle, appcast, GitHub Release), puis commit et push `appcast.xml`.
-- Le Cask (`Casks/maurice.rb`) doit être mis à jour avec la nouvelle version et le SHA256 du zip.
-- L'app n'est **pas signée Apple** — les utilisateurs doivent débloquer Gatekeeper (`xattr -cr`).
-- Chaque release doit inclure un **changelog en anglais** listant les changements depuis la dernière version (nouvelles fonctionnalités, corrections, améliorations).
-- Le numéro de version doit être mis à jour dans `MARKETING_VERSION` du `project.pbxproj` (4 occurrences) à chaque release. C'est cette valeur qui contrôle la version affichée dans l'app. Ne jamais hardcoder la version dans `Info.plist` — utiliser `$(MARKETING_VERSION)`.
-- **Build number** : `CURRENT_PROJECT_VERSION` dans le `project.pbxproj` (4 occurrences) doit être incrémenté à chaque release. C'est un entier simple (1, 2, 3…). Sparkle compare ce build number (via `sparkle:version` dans l'appcast) pour détecter les mises à jour. `sparkle:shortVersionString` contient le nom lisible (ex: `1.0.0-beta.4`). Ne jamais utiliser de versions pre-release (avec `-beta`, `-rc`, etc.) dans `sparkle:version` — toujours un entier.
+- Distribution via **Homebrew Cask** (`Casks/maurice.rb`) and **GitHub Releases**.
+- Automatic updates via **Sparkle** (EdDSA key in Keychain, public key in `Info.plist`).
+- Update feed: `appcast.xml` at the repo root.
+- **Before any release**, run tests (`test_macos`) and verify they all pass at 100%. If a test fails, **block the release** and fix the issue first.
+- **Release order**: First bump versions (`MARKETING_VERSION` + `CURRENT_PROJECT_VERSION` in `project.pbxproj`, `appcast.xml`, `Casks/maurice.rb`), then **commit and push** the version changes, then run `./Scripts/create_release.sh <version>`. This avoids having a version commit after the release tag.
+- To publish a release: `./Scripts/create_release.sh <version>` (Release build, zip, Sparkle signature, appcast, GitHub Release), then commit and push `appcast.xml`.
+- The Cask (`Casks/maurice.rb`) must be updated with the new version and the zip SHA256.
+- The app is **not Apple signed** — users must unblock Gatekeeper (`xattr -cr`).
+- Each release must include an **English changelog** listing changes since the last version (new features, fixes, improvements).
+- The version number must be updated in `MARKETING_VERSION` in `project.pbxproj` (4 occurrences) for each release. This value controls the version displayed in the app. Never hardcode the version in `Info.plist` — use `$(MARKETING_VERSION)`.
+- **Build number**: `CURRENT_PROJECT_VERSION` in `project.pbxproj` (4 occurrences) must be incremented for each release. It is a simple integer (1, 2, 3...). Sparkle compares this build number (via `sparkle:version` in the appcast) to detect updates. `sparkle:shortVersionString` contains the human-readable name (e.g. `1.0.0-beta.4`). Never use pre-release versions (with `-beta`, `-rc`, etc.) in `sparkle:version` — always an integer.
 
 
 ## Settings & Configuration
 
-- Tous les chemins dérivent de `AppSettings.rootDirectory` — ne jamais hardcoder de chemins absolus.
-- `AppSettings` centralise les UserDefaults (`rootDirectory`, `onboardingCompleted`, `transcriptionLanguage`).
-- Quand `rootDirectory` change, appeler `reloadAfterDirectoryChange()` dans `MauriceApp` pour mettre à jour tous les ViewModels.
-- La langue de transcription est lue depuis `AppSettings.transcriptionLanguage` (pas hardcodée dans `SpeechRecognitionService`).
+- All paths derive from `AppSettings.rootDirectory` — never hardcode absolute paths.
+- `AppSettings` centralizes UserDefaults (`rootDirectory`, `onboardingCompleted`, `transcriptionLanguage`).
+- When `rootDirectory` changes, call `reloadAfterDirectoryChange()` in `MauriceApp` to update all ViewModels.
+- Transcription language is read from `AppSettings.transcriptionLanguage` (not hardcoded in `SpeechRecognitionService`).
