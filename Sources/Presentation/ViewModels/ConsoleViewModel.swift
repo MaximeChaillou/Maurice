@@ -88,7 +88,7 @@ final class ConsoleViewModel {
 
         terminalView.startProcess(
             executable: path,
-            args: [],
+            args: ["--permission-mode", "acceptEdits"],
             environment: env,
             execName: "claude",
             currentDirectory: workingDir
@@ -145,6 +145,10 @@ final class ConsoleViewModel {
         var envDict = ProcessInfo.processInfo.environment
         // Remove CLAUDECODE to avoid non-interactive mode
         envDict.removeValue(forKey: "CLAUDECODE")
+        // Ensure terminal color support is detected by CLI tools
+        envDict["TERM"] = "xterm-256color"
+        envDict["COLORTERM"] = "truecolor"
+        envDict["FORCE_COLOR"] = "1"
         return envDict.map { "\($0.key)=\($0.value)" }
     }
 }
