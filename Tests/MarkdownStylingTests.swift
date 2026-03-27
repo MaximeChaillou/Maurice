@@ -484,6 +484,83 @@ final class MarkdownStylingIntegrationTests: XCTestCase {
     }
 }
 
+// MARK: - Inline link styling
+
+final class InlineLinkStylingTests: XCTestCase {
+
+    @MainActor
+    func testLinkColor() {
+        let text = "Visit [Google](https://google.com) now"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        // "Google" starts at index 7 (after "Visit [")
+        let color = tv.textStorage!.attribute(.foregroundColor, at: 7, effectiveRange: nil) as? NSColor
+        let expected = MarkdownTheme().linkColor.nsColor
+        XCTAssertEqual(color, expected)
+    }
+
+    @MainActor
+    func testLinkUnderline() {
+        let text = "Click [here](https://example.com)"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        let underline = tv.textStorage!.attribute(.underlineStyle, at: 7, effectiveRange: nil) as? Int
+        XCTAssertEqual(underline, NSUnderlineStyle.single.rawValue)
+    }
+
+    @MainActor
+    func testLinkAttribute() {
+        let text = "See [docs](https://docs.example.com/path)"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        let link = tv.textStorage!.attribute(.link, at: 5, effectiveRange: nil) as? String
+        XCTAssertEqual(link, "https://docs.example.com/path")
+    }
+
+    @MainActor
+    func testLinkMarkersHidden() {
+        let text = "[link](https://url.com)"
+        let (coord, _, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        // Should hide "[" (1 char) and "](https://url.com)" (18 chars) = 2 hidden ranges
+        let linkHiddenRanges = coord.hiddenRanges.filter { $0.length > 0 }
+        XCTAssertGreaterThanOrEqual(linkHiddenRanges.count, 2)
+    }
+
+    @MainActor
+    func testMultipleLinksOnSameLine() {
+        let text = "[a](https://a.com) and [b](https://b.com)"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        // First link text "a" at index 1
+        let link1 = tv.textStorage!.attribute(.link, at: 1, effectiveRange: nil) as? String
+        XCTAssertEqual(link1, "https://a.com")
+        // Second link text "b" at index 24
+        let link2 = tv.textStorage!.attribute(.link, at: 24, effectiveRange: nil) as? String
+        XCTAssertEqual(link2, "https://b.com")
+    }
+
+    @MainActor
+    func testLinkCustomColor() {
+        var theme = MarkdownTheme()
+        theme.linkColor = CodableColor(red: 1, green: 0, blue: 0)
+        let text = "[red](https://red.com)"
+        let (coord, tv, _) = makeCoordinator(text: text, theme: theme)
+        coord.applyMarkdownStyling()
+        let color = tv.textStorage!.attribute(.foregroundColor, at: 1, effectiveRange: nil) as? NSColor
+        XCTAssertEqual(color, theme.linkColor.nsColor)
+    }
+
+    @MainActor
+    func testNotALink() {
+        let text = "Just [brackets] without url"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+        let link = tv.textStorage!.attribute(.link, at: 6, effectiveRange: nil)
+        XCTAssertNil(link)
+    }
+}
+
 // MARK: - HidingLayoutManager.styledCellText
 
 final class StyledCellTextTests: XCTestCase {

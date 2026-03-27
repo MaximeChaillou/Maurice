@@ -68,7 +68,7 @@ class CheckboxTextView: NSTextView {
 
     override func mouseMoved(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
-        if isPointOverCheckbox(point) {
+        if isPointOverCheckbox(point) || isPointOverLink(point) {
             if !isOverCheckbox {
                 NSCursor.pointingHand.set()
                 isOverCheckbox = true
@@ -105,6 +105,14 @@ class CheckboxTextView: NSTextView {
             }
         }
 
+        if let urlString = linkAtPoint(point) {
+            commitCellEditing()
+            if let url = URL(string: urlString) {
+                NSWorkspace.shared.open(url)
+            }
+            return
+        }
+
         if let ref = tableCellAtPoint(point) {
             if editingCell != nil { commitCellEditing() }
             beginCellEditing(ref)
@@ -113,6 +121,27 @@ class CheckboxTextView: NSTextView {
 
         commitCellEditing()
         super.mouseDown(with: event)
+    }
+
+    // MARK: - Link hit testing
+
+    private func isPointOverLink(_ point: NSPoint) -> Bool {
+        linkAtPoint(point) != nil
+    }
+
+    private func linkAtPoint(_ point: NSPoint) -> String? {
+        guard let tc = textContainer, let lm = layoutManager else { return nil }
+        let offset = textContainerOrigin
+        let adjusted = NSPoint(x: point.x - offset.x, y: point.y - offset.y)
+        let charIndex = lm.characterIndex(
+            for: adjusted, in: tc,
+            fractionOfDistanceBetweenInsertionPoints: nil
+        )
+        guard charIndex < (textStorage?.length ?? 0) else { return nil }
+        if let link = textStorage?.attribute(.link, at: charIndex, effectiveRange: nil) {
+            return link as? String
+        }
+        return nil
     }
 
     // MARK: - Table cell hit testing

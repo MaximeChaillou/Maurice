@@ -51,7 +51,11 @@ struct MarkdownTheme: Codable, Equatable {
     var codeColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
     var codeBackgroundColor: CodableColor = CodableColor(red: 1, green: 1, blue: 1, alpha: 0.4012)
 
-    // MARK: - Links / dividers
+    // MARK: - Links
+
+    var linkColor: CodableColor = CodableColor(red: 0.1821, green: 0.4999, blue: 0.9470)
+
+    // MARK: - Dividers
 
     var dividerColor: CodableColor = CodableColor(red: 0.3584, green: 0.4181, blue: 0.4885)
 
@@ -93,6 +97,7 @@ struct MarkdownTheme: Codable, Equatable {
         quoteUnderline = try c.valueOrDefault(forKey: .quoteUnderline, default: defaults.quoteUnderline)
         codeColor = try c.valueOrDefault(forKey: .codeColor, default: defaults.codeColor)
         codeBackgroundColor = try c.valueOrDefault(forKey: .codeBackgroundColor, default: defaults.codeBackgroundColor)
+        linkColor = try c.valueOrDefault(forKey: .linkColor, default: defaults.linkColor)
         dividerColor = try c.valueOrDefault(forKey: .dividerColor, default: defaults.dividerColor)
         maxContentWidth = try c.valueOrDefault(forKey: .maxContentWidth, default: defaults.maxContentWidth)
     }

@@ -66,6 +66,7 @@ struct MarkdownThemeSettingsView: View {
             colorRow("Body", color: $theme.bodyColor)
             colorRow("Bold", color: $theme.boldColor)
             colorRow("Italic", color: $theme.italicColor)
+            colorRow("Links", color: $theme.linkColor)
             colorRow("Divider", color: $theme.dividerColor)
         }
     }

@@ -15,6 +15,7 @@ private enum MarkdownRegex {
     static let italic = regex("(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)")
     static let inlineCode = regex("(?<!`)`(?!`)(.+?)(?<!`)`(?!`)")
     static let strikethrough = regex("~~(.+?)~~")
+    static let link = regex("\\[([^\\]]+)\\]\\(([^)]+)\\)")
 }
 
 // MARK: - Block & Inline Styling
@@ -270,6 +271,7 @@ extension MarkdownCoordinator {
         }
         styleInlineCode(storage: storage, lineText: lineText, baseOffset: range.location)
         styleInlineStrikethrough(storage: storage, lineText: lineText, baseOffset: range.location)
+        styleInlineLinks(storage: storage, lineText: lineText, baseOffset: range.location)
     }
 
     private func styleInlinePattern(
@@ -322,6 +324,35 @@ extension MarkdownCoordinator {
             let contentRange = NSRange(location: baseOffset + full.location + 2, length: full.length - 4)
             if contentRange.length > 0 {
                 storage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: contentRange)
+            }
+        }
+    }
+
+    private func styleInlineLinks(storage: NSTextStorage, lineText: String, baseOffset: Int) {
+        let nsLine = lineText as NSString
+        for match in MarkdownRegex.link.matches(in: lineText, range: NSRange(location: 0, length: nsLine.length)) {
+            let full = match.range
+            let textRange = match.range(at: 1)
+            let urlRange = match.range(at: 2)
+            guard textRange.location != NSNotFound, urlRange.location != NSNotFound else { continue }
+
+            let urlString = nsLine.substring(with: urlRange)
+            let contentRange = NSRange(location: baseOffset + textRange.location, length: textRange.length)
+
+            // Hide `[` before text
+            hideRange(NSRange(location: baseOffset + full.location, length: 1))
+            // Hide `](url)` after text
+            let suffixStart = textRange.location + textRange.length
+            let suffixLen = full.length - suffixStart + full.location
+            hideRange(NSRange(location: baseOffset + suffixStart, length: suffixLen))
+
+            if contentRange.length > 0 {
+                storage.addAttributes([
+                    .foregroundColor: theme.linkColor.nsColor,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                    .link: urlString,
+                    .cursor: NSCursor.pointingHand,
+                ], range: contentRange)
             }
         }
     }

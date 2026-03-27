@@ -994,8 +994,9 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0-beta.15;
+				INFOPLIST_KEY_CFBundleDisplayName = "Maurice Debug";
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.debug;
-				PRODUCT_NAME = "Maurice Debug";
+				PRODUCT_NAME = Maurice;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
 			};
