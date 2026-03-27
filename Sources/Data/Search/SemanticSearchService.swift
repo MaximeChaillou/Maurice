@@ -43,8 +43,8 @@ final class SemanticSearchService {
         isIndexing = true
 
         let existing = documents
-        let embFr = embeddingFr
-        let embEn = embeddingEn
+        nonisolated(unsafe) let embFr = embeddingFr
+        nonisolated(unsafe) let embEn = embeddingEn
 
         Task {
             let docs = await Self.performIndexing(existing: existing, embeddingFr: embFr, embeddingEn: embEn)

@@ -26,8 +26,9 @@ struct AudioWaveformView: View {
             endPoint: CGPoint(x: size.width, y: 0)
         )
 
-        let sortedWaves = (0..<waveCount).sorted {
-            abs(Double($0) - Double(waveCount - 1) / 2.0) > abs(Double($1) - Double(waveCount - 1) / 2.0)
+        let center = Double(waveCount - 1) / 2.0
+        let sortedWaves: [Int] = (0..<waveCount).sorted { a, b in
+            abs(Double(a) - center) > abs(Double(b) - center)
         }
 
         for wave in sortedWaves {
