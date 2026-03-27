@@ -32,7 +32,13 @@ enum IssueLogger {
             entry += " | context: \(ctx)"
         }
         if let err = error {
-            entry += " | error: \(err.localizedDescription)"
+            let desc = err.localizedDescription
+            let detail = String(describing: err)
+            if detail != desc {
+                entry += " | error: \(desc) (\(detail))"
+            } else {
+                entry += " | error: \(desc)"
+            }
         }
         entry += "\n"
 

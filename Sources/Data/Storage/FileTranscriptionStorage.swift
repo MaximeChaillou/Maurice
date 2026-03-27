@@ -63,7 +63,10 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
 
         let line = "\(Self.formatTimestamp(entry.timestamp))\n\(entry.text)\n\n"
 
-        guard let data = line.data(using: .utf8) else { return }
+        guard let data = line.data(using: .utf8) else {
+            IssueLogger.log(.error, "Failed to encode transcript entry to UTF-8", context: fileURL.path)
+            return
+        }
         try handle.write(contentsOf: data)
     }
 
@@ -106,8 +109,10 @@ final class FileTranscriptionStorage: TranscriptionStorage, Sendable {
         do {
             content = try String(contentsOf: url, encoding: .utf8)
         } catch {
-            logger.warning("Impossible de lire \(url.lastPathComponent): \(error.localizedDescription)")
-            IssueLogger.log(.warning, "Failed to read transcript", context: url.path, error: error)
+            if FileManager.default.fileExists(atPath: url.path) {
+                logger.warning("Impossible de lire \(url.lastPathComponent): \(error.localizedDescription)")
+                IssueLogger.log(.warning, "Failed to read transcript", context: url.path, error: error)
+            }
             return nil
         }
 

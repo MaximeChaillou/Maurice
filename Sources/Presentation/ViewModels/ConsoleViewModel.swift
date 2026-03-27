@@ -16,7 +16,11 @@ private func findClaudeExecutable() -> String? {
     whichProc.arguments = ["claude"]
     whichProc.standardOutput = whichPipe
     whichProc.standardError = FileHandle.nullDevice
-    try? whichProc.run()
+    do {
+        try whichProc.run()
+    } catch {
+        IssueLogger.log(.warning, "Failed to locate claude binary via which", error: error)
+    }
     whichProc.waitUntilExit()
     let data = whichPipe.fileHandleForReading.readDataToEndOfFile()
     if let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),

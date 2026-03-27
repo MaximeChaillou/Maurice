@@ -124,7 +124,11 @@ final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Senda
             onAudioLevelHandler = nil
         }
 
-        try? await analyzer?.finalizeAndFinishThroughEndOfInput()
+        do {
+            try await analyzer?.finalizeAndFinishThroughEndOfInput()
+        } catch {
+            IssueLogger.log(.warning, "Failed to finalize speech analyzer", error: error)
+        }
         analyzer = nil
         startTime = nil
         activity = nil

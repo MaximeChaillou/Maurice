@@ -122,6 +122,16 @@
 		NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */; };
 		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
+		MF01BF01MF01BF01MF01BF01 /* MemoryFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */; };
+		AL01BF01AL01BF01AL01BF01 /* AudioLevelBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */; };
+		DF01BF01DF01BF01DF01BF01 /* DateFormattersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */; };
+		TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */; };
+		FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */; };
+		ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */; };
+		KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */; };
+		FP01BF01FP01BF01FP01BF01 /* FolderPersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */; };
+		SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */; };
+		FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */; };
 
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
 		FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */; };
@@ -263,6 +273,16 @@
 		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
 		IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLoggerTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
+		MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryFileTests.swift; sourceTree = "<group>"; };
+		AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLevelBufferTests.swift; sourceTree = "<group>"; };
+		DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormattersTests.swift; sourceTree = "<group>"; };
+		TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionTests.swift; sourceTree = "<group>"; };
+		FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderFileTests.swift; sourceTree = "<group>"; };
+		ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDeleteActionTests.swift; sourceTree = "<group>"; };
+		KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelperTests.swift; sourceTree = "<group>"; };
+		FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPersistentCodableTests.swift; sourceTree = "<group>"; };
+		SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStateTests.swift; sourceTree = "<group>"; };
+		FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemTests.swift; sourceTree = "<group>"; };
 
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
 		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
@@ -576,6 +596,16 @@
 				NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */,
 				CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */,
 				VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */,
+				MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */,
+				AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */,
+				DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */,
+				TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */,
+				FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */,
+				ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */,
+				KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */,
+				FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */,
+				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
+				FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -829,6 +859,16 @@
 				NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */,
 				CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */,
 				VTS1BF01VTS1BF01VTS1BF01 /* VTSequencesTests.swift in Sources */,
+				MF01BF01MF01BF01MF01BF01 /* MemoryFileTests.swift in Sources */,
+				AL01BF01AL01BF01AL01BF01 /* AudioLevelBufferTests.swift in Sources */,
+				DF01BF01DF01BF01DF01BF01 /* DateFormattersTests.swift in Sources */,
+				TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */,
+				FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */,
+				ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */,
+				KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */,
+				FP01BF01FP01BF01FP01BF01 /* FolderPersistentCodableTests.swift in Sources */,
+				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,
+				FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

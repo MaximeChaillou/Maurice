@@ -17,8 +17,13 @@ struct SkillFile: Identifiable, Hashable, Codable {
     }
 
     var description: String {
-        guard let content = try? String(contentsOf: url, encoding: .utf8) else { return "" }
-        return content.components(separatedBy: .newlines).first ?? ""
+        do {
+            let content = try String(contentsOf: url, encoding: .utf8)
+            return content.components(separatedBy: .newlines).first ?? ""
+        } catch {
+            IssueLogger.log(.warning, "Failed to read skill file", context: url.path, error: error)
+            return ""
+        }
     }
 }
 

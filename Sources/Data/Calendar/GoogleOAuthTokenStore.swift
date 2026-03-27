@@ -24,7 +24,12 @@ enum GoogleOAuthTokenStore {
 
     static func load() -> GoogleTokens? {
         guard let data = KeychainHelper.load(service: service, account: account) else { return nil }
-        return try? JSONDecoder().decode(GoogleTokens.self, from: data)
+        do {
+            return try JSONDecoder().decode(GoogleTokens.self, from: data)
+        } catch {
+            IssueLogger.log(.error, "Failed to decode Google OAuth tokens from Keychain", error: error)
+            return nil
+        }
     }
 
     static func clear() {
