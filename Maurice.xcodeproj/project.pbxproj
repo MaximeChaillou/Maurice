@@ -587,7 +587,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 310FCBFFE9FDFD7D959B196E /* Build configuration list for PBXNativeTarget "Maurice" */;
 			buildPhases = (
-				DB01CC01CC01CC01CC01CC01 /* Debug Icon Overlay */,
 				5CBD73A549B5052F992653F2 /* SwiftLint */,
 				F7F4CA430F66D3518244E42F /* Sources */,
 				5B422D36B0F7D9A82AFC02B7 /* Resources */,
@@ -704,25 +703,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if command -v swiftlint >/dev/null 2>&1; then\n  swiftlint lint --config \"${SRCROOT}/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-		DB01CC01CC01CC01CC01CC01 /* Debug Icon Overlay */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Debug Icon Overlay";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Scripts/debug_icon_overlay.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1014,8 +994,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0-beta.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice;
-				PRODUCT_NAME = Maurice;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.debug;
+				PRODUCT_NAME = "Maurice Debug";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
 			};
