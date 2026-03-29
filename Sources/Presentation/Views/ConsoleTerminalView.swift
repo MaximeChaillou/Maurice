@@ -100,6 +100,7 @@ final class TerminalViewController: NSViewController {
         ) { [weak self] event in
             guard let self,
                   let terminal = self.terminalView,
+                  event.window === terminal.window,
                   terminal.window?.firstResponder === terminal,
                   let seq = vtSequencesMap[event.keyCode]
             else {
