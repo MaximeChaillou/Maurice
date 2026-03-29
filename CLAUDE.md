@@ -65,14 +65,11 @@ Sources/
 - Automatic updates via **Sparkle** (EdDSA key in Keychain, public key in `Info.plist`).
 - Update feed: `appcast.xml` at the repo root.
 - **Before any release**, run tests (`test_macos`) and verify they all pass at 100%. If a test fails, **block the release** and fix the issue first.
-- **Release steps** (strict order — no commits allowed after the GitHub release):
+- **Release steps** (strict order — no commits allowed after the GitHub release tag):
   1. Bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.pbxproj` (4 occurrences each)
   2. Commit and push the version bump
-  3. Run `./Scripts/create_release.sh <version>` — this builds, zips, signs with Sparkle, updates `appcast.xml`, and creates the GitHub Release with tag
-  4. Get the zip SHA256 (`shasum -a 256 /tmp/Maurice-<version>.zip`) and update `Casks/maurice.rb` (version + sha256)
-  5. Commit and push `appcast.xml` + `Casks/maurice.rb`
-  6. Update the GitHub release notes with the changelog via `gh release edit`
-- **TODO**: steps 4-6 should be integrated into `create_release.sh` so the final commit happens before `gh release create`, avoiding post-tag commits.
+  3. Run `./Scripts/create_release.sh <version>` — this builds, zips, signs with Sparkle, updates `appcast.xml`, updates `Casks/maurice.rb`, commits and pushes, then creates the GitHub Release with tag
+  4. Update the GitHub release notes with the changelog via `gh release edit`
 - The app is **not Apple signed** — users must unblock Gatekeeper (`xattr -cr`).
 - Each release must include an **English changelog** listing changes since the last version (new features, fixes, improvements).
 - The version number must be updated in `MARKETING_VERSION` in `project.pbxproj` (4 occurrences) for each release. This value controls the version displayed in the app. Never hardcode the version in `Info.plist` — use `$(MARKETING_VERSION)`.

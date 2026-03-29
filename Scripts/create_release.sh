@@ -66,12 +66,21 @@ XMLEOF
 perl -i -0pe "s|(    </channel>)|$(cat "$ITEM_FILE")\n\$1|" appcast.xml
 rm "$ITEM_FILE"
 
+echo "==> Updating Cask..."
+SHA256=$(shasum -a 256 "$ZIP_PATH" | awk '{print $1}')
+sed -i '' "s/version \".*\"/version \"${VERSION}\"/" Casks/maurice.rb
+sed -i '' "s/sha256 \".*\"/sha256 \"${SHA256}\"/" Casks/maurice.rb
+
+echo "==> Committing appcast.xml and Cask..."
+git add appcast.xml Casks/maurice.rb
+git commit -m "Update appcast and Cask for v${VERSION}"
+git push
+
 echo "==> Creating GitHub release..."
 gh release create "v${VERSION}" "$ZIP_PATH" \
     --repo MaximeChaillou/Maurice \
     --title "v${VERSION}" \
     --prerelease
 
-echo "==> Done! Don't forget to commit and push appcast.xml"
-echo ""
-echo "    git add appcast.xml && git commit -m 'Update appcast for v${VERSION}' && git push"
+echo "==> Done! Release v${VERSION} published."
+echo "    Don't forget to update the release notes: gh release edit v${VERSION} --notes '...'"
