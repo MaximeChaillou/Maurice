@@ -208,7 +208,12 @@ struct PersonOneOnOneView: View {
     @State private var index: Int = 0
     @State private var showTranscripts = false
     @State private var showConfigSheet = false
+    @State private var showAddActionForm = false
     @State private var entryDeleteAction: EntryDeleteAction?
+    @State private var addActionName = ""
+    @State private var addActionSkill: String?
+    @State private var addActionParameter = ""
+    @State private var addActionAvailableSkills: [SkillFile] = []
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
     private var oneOnOneDir: URL {
@@ -241,6 +246,20 @@ struct PersonOneOnOneView: View {
                 )
                 .frame(width: 400, height: 500)
             }
+        }
+        .sheet(isPresented: $showAddActionForm) {
+            ActionFormSheet(
+                name: $addActionName,
+                skill: $addActionSkill,
+                parameter: $addActionParameter,
+                availableSkills: addActionAvailableSkills,
+                onCancel: { showAddActionForm = false },
+                onSave: { action in
+                    meetingConfig.addAction(action)
+                    meetingConfig.saveAsync(to: oneOnOneDir)
+                    showAddActionForm = false
+                }
+            )
         }
     }
 
@@ -278,6 +297,15 @@ struct PersonOneOnOneView: View {
                 config: meetingConfig,
                 consoleViewModel: consoleViewModel,
                 showConfigAction: consoleViewModel != nil ? { showConfigSheet = true } : nil,
+                onAddAction: consoleViewModel != nil ? {
+                    addActionName = ""
+                    addActionSkill = nil
+                    addActionParameter = ""
+                    Task {
+                        addActionAvailableSkills = await MeetingSkillConfig.availableSkillsAsync()
+                    }
+                    showAddActionForm = true
+                } : nil,
                 entryDeleteAction: $entryDeleteAction,
                 nextFileURL: oneOnOneDir.appendingPathComponent("next.md")
             )

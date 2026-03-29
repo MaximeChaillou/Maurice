@@ -10,6 +10,7 @@ struct DateNavigationHeader: View {
     var config: MeetingConfig?
     var consoleViewModel: ConsoleViewModel?
     var showConfigAction: (() -> Void)?
+    var onAddAction: (() -> Void)?
     @Binding var entryDeleteAction: EntryDeleteAction?
     var nextFileURL: URL?
 
@@ -34,7 +35,8 @@ struct DateNavigationHeader: View {
                     let filePath = entry.noteFile?.url.path ?? entry.transcript?.url.path
                     SkillActionsMenu(
                         config: config, consoleViewModel: consoleViewModel,
-                        activeFilePath: filePath
+                        activeFilePath: filePath,
+                        onAddAction: onAddAction
                     )
                     if let showConfigAction {
                         GlassIconButton(icon: "gearshape", help: "Configure skills") {
@@ -124,36 +126,42 @@ struct SkillActionsMenu: View {
     let config: MeetingConfig
     let consoleViewModel: ConsoleViewModel
     var activeFilePath: String?
+    var onAddAction: (() -> Void)?
 
     var body: some View {
-        let actions = config.actions
-        if !actions.isEmpty {
-            Menu {
-                ForEach(actions) { action in
-                    Button {
-                        let filePrefix = activeFilePath.map { $0 + " " } ?? ""
-                        let fullParameter = filePrefix + (action.parameter ?? "")
-                        consoleViewModel.sendSkill(
-                            filename: action.skillFilename,
-                            parameter: fullParameter.isEmpty ? nil : fullParameter
-                        )
-                    } label: {
-                        Label(action.buttonName, systemImage: "play.fill")
-                    }
+        Menu {
+            ForEach(config.actions) { action in
+                Button {
+                    let filePrefix = activeFilePath.map { $0 + " " } ?? ""
+                    let fullParameter = filePrefix + (action.parameter ?? "")
+                    consoleViewModel.sendSkill(
+                        filename: action.skillFilename,
+                        parameter: fullParameter.isEmpty ? nil : fullParameter
+                    )
+                } label: {
+                    Label(action.buttonName, systemImage: "play.fill")
                 }
-            } label: {
-                Image(systemName: "play.fill")
-                    .font(.body)
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
             }
-            .buttonStyle(.plain)
-            .menuStyle(.borderlessButton)
-            .menuIndicator(.hidden)
-            .frame(width: 32, height: 32)
-            .interactiveHover()
-            .help("Run an action")
+            if onAddAction != nil {
+                Divider()
+                Button {
+                    onAddAction?()
+                } label: {
+                    Label("Ajouter une action", systemImage: "plus")
+                }
+            }
+        } label: {
+            Image(systemName: "play.fill")
+                .font(.body)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
         }
+        .buttonStyle(.plain)
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .frame(width: 32, height: 32)
+        .interactiveHover()
+        .help("Run an action")
     }
 }
 

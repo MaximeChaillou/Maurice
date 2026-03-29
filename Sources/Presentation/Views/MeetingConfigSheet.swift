@@ -245,58 +245,28 @@ struct MeetingConfigSheet: View {
     }
 
     private var actionFormSheet: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(formTitle)
-                .font(.headline)
-
-            TextField("Button name", text: $formName)
-                .textFieldStyle(.roundedBorder)
-
-            Picker("Skill", selection: $formSkill) {
-                Text("Choose a skill...")
-                    .tag(nil as String?)
-                ForEach(availableSkills) { skill in
-                    Text(skill.name)
-                        .tag(skill.filename as String?)
-                }
-            }
-
-            TextField("Parameter (optional)", text: $formParameter)
-                .textFieldStyle(.roundedBorder)
-
-            HStack {
-                Button("Cancel") {
-                    resetForm()
-                }
-                .keyboardShortcut(.cancelAction)
-
-                Spacer()
-
-                Button(editingAction != nil ? "Save" : "Add") {
-                    guard let skill = formSkill, !formName.isEmpty else { return }
-                    let param = formParameter.trimmingCharacters(in: .whitespaces)
-                    let paramValue: String? = param.isEmpty ? nil : param
-                    if let existing = editingAction {
-                        if let idx = localActions.firstIndex(where: { $0.id == existing.id }) {
-                            localActions[idx] = SkillAction(
-                                id: existing.id, buttonName: formName,
-                                skillFilename: skill, parameter: paramValue
-                            )
-                        }
-                    } else {
-                        localActions.append(
-                            SkillAction(buttonName: formName, skillFilename: skill, parameter: paramValue)
+        ActionFormSheet(
+            title: formTitle,
+            name: $formName,
+            skill: $formSkill,
+            parameter: $formParameter,
+            availableSkills: availableSkills,
+            saveLabel: editingAction != nil ? "Save" : "Add",
+            onCancel: { resetForm() },
+            onSave: { action in
+                if let existing = editingAction {
+                    if let idx = localActions.firstIndex(where: { $0.id == existing.id }) {
+                        localActions[idx] = SkillAction(
+                            id: existing.id, buttonName: action.buttonName,
+                            skillFilename: action.skillFilename, parameter: action.parameter
                         )
                     }
-                    resetForm()
+                } else {
+                    localActions.append(action)
                 }
-                .disabled(formSkill == nil || formName.isEmpty)
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
+                resetForm()
             }
-        }
-        .padding(20)
-        .frame(width: 320)
+        )
     }
 
     private func resetForm() {
@@ -305,5 +275,62 @@ struct MeetingConfigSheet: View {
         formParameter = ""
         isAddingAction = false
         editingAction = nil
+    }
+}
+
+// MARK: - Reusable Action Form
+
+struct ActionFormSheet: View {
+    var title: LocalizedStringKey = "New action"
+    @Binding var name: String
+    @Binding var skill: String?
+    @Binding var parameter: String
+    var availableSkills: [SkillFile]
+    var saveLabel: LocalizedStringKey = "Add"
+    var onCancel: () -> Void
+    var onSave: (SkillAction) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.headline)
+
+            TextField("Button name", text: $name)
+                .textFieldStyle(.roundedBorder)
+
+            Picker("Skill", selection: $skill) {
+                Text("Choose a skill...")
+                    .tag(nil as String?)
+                ForEach(availableSkills) { s in
+                    Text(s.name)
+                        .tag(s.filename as String?)
+                }
+            }
+
+            TextField("Parameter (optional)", text: $parameter)
+                .textFieldStyle(.roundedBorder)
+
+            HStack {
+                Button("Cancel") { onCancel() }
+                    .keyboardShortcut(.cancelAction)
+
+                Spacer()
+
+                Button(saveLabel) {
+                    guard let skill, !name.isEmpty else { return }
+                    let param = parameter.trimmingCharacters(in: .whitespaces)
+                    onSave(SkillAction(
+                        buttonName: name,
+                        skillFilename: skill,
+                        parameter: param.isEmpty ? nil : param
+                    ))
+                }
+                .disabled(skill == nil || name.isEmpty)
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 320)
     }
 }

@@ -12,9 +12,14 @@ struct FolderContentView: View {
     @State var viewModel: FolderContentViewModel
 
     @State private var showConfigSidebar: Bool = false
+    @State private var showAddActionForm: Bool = false
     @State private var folderToDelete: FolderItem?
     @State private var entryDeleteAction: EntryDeleteAction?
     @State private var showTranscripts = false
+    @State private var addActionName = ""
+    @State private var addActionSkill: String?
+    @State private var addActionParameter = ""
+    @State private var addActionAvailableSkills: [SkillFile] = []
 
     var body: some View {
         HStack(spacing: 0) {
@@ -43,6 +48,22 @@ struct FolderContentView: View {
                     viewModel.updateCurrentFolderIcon(viewModel.meetingConfig.icon)
                 }
             }
+        }
+        .sheet(isPresented: $showAddActionForm) {
+            ActionFormSheet(
+                name: $addActionName,
+                skill: $addActionSkill,
+                parameter: $addActionParameter,
+                availableSkills: addActionAvailableSkills,
+                onCancel: { showAddActionForm = false },
+                onSave: { action in
+                    viewModel.meetingConfig.addAction(action)
+                    if let folder = viewModel.currentFolder {
+                        viewModel.meetingConfig.saveAsync(to: folder.url)
+                    }
+                    showAddActionForm = false
+                }
+            )
         }
         .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -223,6 +244,15 @@ extension FolderContentView {
                 config: showSkillConfig ? viewModel.meetingConfig : nil,
                 consoleViewModel: consoleViewModel,
                 showConfigAction: showSkillConfig ? { showConfigSidebar = true } : nil,
+                onAddAction: showSkillConfig ? {
+                    addActionName = ""
+                    addActionSkill = nil
+                    addActionParameter = ""
+                    Task {
+                        addActionAvailableSkills = await MeetingSkillConfig.availableSkillsAsync()
+                    }
+                    showAddActionForm = true
+                } : nil,
                 entryDeleteAction: $entryDeleteAction,
                 nextFileURL: folder.url.appendingPathComponent("next.md")
             )
