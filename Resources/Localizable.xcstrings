@@ -639,20 +639,23 @@
     "Underline" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Soulign\u00e9" } } }
     },
-    "Apparence" : {
-      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } } }
+    "Appearance" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Apparence" } } }
     },
     "Mode" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mode" } } }
     },
-    "Système" : {
-      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } } }
+    "Light" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Clair" } } }
     },
-    "Clair" : {
-      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } } }
+    "Dark" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sombre" } } }
     },
-    "Sombre" : {
-      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } } }
+    "Update memory from folder\u2026" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mettre \u00e0 jour depuis un dossier\u2026" } } }
+    },
+    "Choose a folder to import into Memory" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier \u00e0 importer dans la m\u00e9moire" } } }
     }
   },
   "version" : "1.0"

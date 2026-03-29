@@ -39,6 +39,7 @@
 		SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */; };
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
+		A1B2C3D4E5F60001AA000001 /* MemoryImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */; };
 
 		6F1ADD8CF138F5975A4310C0 /* MemoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80051D6DB5639866EA2923C6 /* MemoryContentView.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
@@ -178,6 +179,7 @@
 		50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptDetailView.swift; sourceTree = "<group>"; };
 		52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
 		55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCase.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryImporter.swift; sourceTree = "<group>"; };
 
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MauriceApp.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 		242D0C7FEA5829D1BB31A081 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */,
 				55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */,
 			);
 			path = UseCases;
@@ -784,6 +787,7 @@
 				353A6FD06F4DC65BEC7EDDE2 /* MemoryFile.swift in Sources */,
 				2D182DD428C529A63EC524BF /* MemoryListViewModel.swift in Sources */,
 				9AD1822356FD7ED58B9C8196 /* SpeechModelState.swift in Sources */,
+				A1B2C3D4E5F60001AA000001 /* MemoryImporter.swift in Sources */,
 				68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */,
 				RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */,
 				CD76B81A865FCEE5175E2574 /* RecordingViewModel.swift in Sources */,

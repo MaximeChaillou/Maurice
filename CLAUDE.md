@@ -37,7 +37,7 @@ Sources/
 
 ## Conventions
 
-- UI language: French
+- UI language: French — all user-facing strings must go through the `Localizable.xcstrings` file (`Resources/Localizable.xcstrings`). Use English as the source key in code (SwiftUI `Text("Key")` or `String(localized: "Key")` for non-SwiftUI contexts like `NSOpenPanel`) and provide the French translation in the xcstrings file. Never hardcode French strings directly in Swift code.
 - Data storage: configurable via `AppSettings.rootDirectory` (default `~/Documents/Maurice/`)
 - Markdown theme: `.maurice/theme.json` (hidden folder in root)
 - Search index: `.maurice/search_index.json`

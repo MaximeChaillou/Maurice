@@ -81,11 +81,11 @@ struct GeneralSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section(String(localized: "Apparence")) {
-                Picker(String(localized: "Mode"), selection: $appearanceMode) {
-                    Text(String(localized: "Système")).tag("system")
-                    Text(String(localized: "Clair")).tag("light")
-                    Text(String(localized: "Sombre")).tag("dark")
+            Section("Appearance") {
+                Picker("Mode", selection: $appearanceMode) {
+                    Text("System").tag("system")
+                    Text("Light").tag("light")
+                    Text("Dark").tag("dark")
                 }
             }
 

@@ -307,11 +307,32 @@ private struct SettingsMenuButton: View {
 
 private struct MemoryMenuButton: View {
     @Environment(\.openWindow) private var openWindow
+    @State private var showFolderPicker = false
 
     var body: some View {
         Button("Open memory") {
             openWindow(id: "memory")
         }
         .keyboardShortcut("m", modifiers: [.command, .shift])
+
+        Button("Update memory from folder…") {
+            showFolderPicker = true
+        }
+        .task(id: showFolderPicker) {
+            guard showFolderPicker else { return }
+            defer { showFolderPicker = false }
+            let panel = NSOpenPanel()
+            panel.canChooseFiles = false
+            panel.canChooseDirectories = true
+            panel.allowsMultipleSelection = false
+            panel.message = String(localized: "Choose a folder to import into Memory")
+            panel.prompt = String(localized: "Import")
+            guard panel.runModal() == .OK, let source = panel.url else { return }
+            let destination = AppSettings.memoryDirectory
+            await Task.detached {
+                try? MemoryImporter.importFolder(from: source, to: destination)
+            }.value
+            NotificationCenter.default.post(name: .fileSystemDidChange, object: nil)
+        }
     }
 }
