@@ -654,6 +654,15 @@
     "Update memory from folder\u2026" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mettre \u00e0 jour depuis un dossier\u2026" } } }
     },
+    "Your profile" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre profil" } } }
+    },
+    "This information will be used to personalize the AI assistant." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ces informations seront utilis\u00e9es pour personnaliser l\u2019assistant IA." } } }
+    },
+    "Job title" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Poste" } } }
+    },
     "Choose a folder to import into Memory" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier \u00e0 importer dans la m\u00e9moire" } } }
     }

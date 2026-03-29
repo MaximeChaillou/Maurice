@@ -4,6 +4,8 @@ struct OnboardingView: View {
     @State private var step: OnboardingStep = .welcome
     @State private var rootDirectory: URL = AppSettings.defaultRootDirectory
     @State private var language: String = "fr-FR"
+    @State private var userName: String = ""
+    @State private var userJob: String = ""
     @State private var isCreating = false
     @State private var errorMessage: String?
     var onComplete: () -> Void
@@ -11,6 +13,7 @@ struct OnboardingView: View {
     private enum OnboardingStep {
         case welcome
         case language
+        case profile
         case creating
     }
 
@@ -24,6 +27,8 @@ struct OnboardingView: View {
                     welcomeStep
                 case .language:
                     languageStep
+                case .profile:
+                    profileStep
                 case .creating:
                     creatingStep
                 }
@@ -127,10 +132,9 @@ struct OnboardingView: View {
                 .controlSize(.large)
 
                 Button {
-                    step = .creating
-                    createStructure()
+                    step = .profile
                 } label: {
-                    Text("Finish")
+                    Text("Continue")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -163,7 +167,52 @@ struct OnboardingView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Step 3: Creating
+    // MARK: - Step 3: Profile
+
+    private var profileStep: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(.secondary)
+
+            Text("Your profile")
+                .font(.largeTitle.bold())
+
+            Text("This information will be used to personalize the AI assistant.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            VStack(spacing: 12) {
+                TextField("Name", text: $userName)
+                    .textFieldStyle(.roundedBorder)
+                TextField("Job title", text: $userJob)
+                    .textFieldStyle(.roundedBorder)
+            }
+
+            HStack {
+                Button("Back") {
+                    step = .language
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+
+                Button {
+                    step = .creating
+                    createStructure()
+                } label: {
+                    Text("Finish")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(userName.trimmingCharacters(in: .whitespaces).isEmpty
+                    || userJob.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+    }
+
+    // MARK: - Step 4: Creating
 
     private var creatingStep: some View {
         VStack(spacing: 24) {
@@ -223,10 +272,12 @@ struct OnboardingView: View {
         errorMessage = nil
         let root = rootDirectory
         let lang = language
+        let name = userName.trimmingCharacters(in: .whitespaces)
+        let job = userJob.trimmingCharacters(in: .whitespaces)
 
         Task.detached {
             do {
-                try Self.buildDirectoryTree(at: root)
+                try OnboardingFileSetup.buildDirectoryTree(at: root, userName: name, userJob: job)
                 await MainActor.run {
                     AppSettings.rootDirectory = root
                     AppSettings.transcriptionLanguage = lang
@@ -242,10 +293,12 @@ struct OnboardingView: View {
             }
         }
     }
+}
 
-    // MARK: - File system helpers (nonisolated)
+// MARK: - File system helpers
 
-    nonisolated private static func buildDirectoryTree(at root: URL) throws {
+private enum OnboardingFileSetup {
+    static func buildDirectoryTree(at root: URL, userName: String, userJob: String) throws {
         let fm = FileManager.default
         let dirs = [
             root,
@@ -259,7 +312,11 @@ struct OnboardingView: View {
             try fm.createDirectory(at: dir, withIntermediateDirectories: true)
         }
 
-        copyTemplateIfMissing("CLAUDE", to: root.appendingPathComponent("CLAUDE.md"))
+        copyTemplateIfMissing(
+            "CLAUDE",
+            to: root.appendingPathComponent("CLAUDE.md"),
+            replacements: ["{{name}}": userName, "{{job}}": userJob]
+        )
         copyTemplateIfMissing("maurice-convert-file-to-md", to: root.appendingPathComponent(".claude/commands/maurice-convert-file-to-md.md"))
         copyTemplateIfMissing("resume-meeting", to: root.appendingPathComponent(".claude/commands/resume-meeting.md"))
         try writeIfMissing("[]", to: root.appendingPathComponent(".maurice/search_index.json"))
@@ -276,17 +333,27 @@ struct OnboardingView: View {
         }
     }
 
-    nonisolated private static func writeIfMissing(_ content: String, to url: URL) throws {
+    static func writeIfMissing(_ content: String, to url: URL) throws {
         guard !FileManager.default.fileExists(atPath: url.path) else { return }
         try content.write(to: url, atomically: true, encoding: .utf8)
     }
 
-    nonisolated private static func copyTemplateIfMissing(_ name: String, to url: URL) {
+    static func copyTemplateIfMissing(
+        _ name: String, to url: URL, replacements: [String: String] = [:]
+    ) {
         guard !FileManager.default.fileExists(atPath: url.path),
               let sourceURL = Bundle.main.url(forResource: name, withExtension: "md", subdirectory: "Templates")
         else { return }
         do {
-            try FileManager.default.copyItem(at: sourceURL, to: url)
+            if replacements.isEmpty {
+                try FileManager.default.copyItem(at: sourceURL, to: url)
+            } else {
+                var content = try String(contentsOf: sourceURL, encoding: .utf8)
+                for (placeholder, value) in replacements {
+                    content = content.replacingOccurrences(of: placeholder, with: value)
+                }
+                try content.write(to: url, atomically: true, encoding: .utf8)
+            }
         } catch {
             IssueLogger.log(.error, "Failed to copy template", context: "\(name).md → \(url.path)", error: error)
         }
