@@ -19,17 +19,22 @@ struct SubfolderNavigationView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if files.isEmpty && !isAdding {
+            if files.isEmpty {
                 emptyState
-            } else if isAdding {
-                Spacer()
-                addForm
-                Spacer()
             } else {
                 fileContent
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $isAdding) {
+            AddItemSheet(
+                title: addLabel,
+                placeholder: "Name (e.g. 2025-S2)",
+                text: $newFileName,
+                onCreate: { onCreate() },
+                onCancel: { newFileName = "" }
+            )
+        }
         .deletionAlert(
             "Delete?",
             item: $fileToDelete,
@@ -161,22 +166,6 @@ struct SubfolderNavigationView: View {
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .frame(width: 32, height: 32)
-        }
-    }
-
-    private var addForm: some View {
-        VStack(spacing: 12) {
-            Text(addLabel).font(.headline)
-            HStack(spacing: 8) {
-                TextField("Name (e.g. 2025-S2)", text: $newFileName)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 200)
-                    .onSubmit { onCreate() }
-                    .onExitCommand { isAdding = false; newFileName = "" }
-                Button("Create") { onCreate() }
-                    .disabled(newFileName.trimmingCharacters(in: .whitespaces).isEmpty)
-                Button("Cancel", role: .cancel) { isAdding = false; newFileName = "" }
-            }
         }
     }
 }
