@@ -9,15 +9,19 @@ enum KeychainHelper {
             kSecAttrAccount as String: account
         ]
 
-        // Delete existing item first
-        SecItemDelete(query as CFDictionary)
+        let attributes: [String: Any] = [kSecValueData as String: data]
 
+        // Try to update existing item first
+        let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        if updateStatus == errSecSuccess { return }
+
+        // Item doesn't exist yet — add it
         var addQuery = query
         addQuery[kSecValueData as String] = data
 
-        let status = SecItemAdd(addQuery as CFDictionary, nil)
-        guard status == errSecSuccess else {
-            throw KeychainError.unhandledError(status: status)
+        let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+        guard addStatus == errSecSuccess else {
+            throw KeychainError.unhandledError(status: addStatus)
         }
     }
 
