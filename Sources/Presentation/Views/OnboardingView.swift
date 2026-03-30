@@ -344,7 +344,6 @@ enum OnboardingFileSetup {
 
         let templates: [(resource: String, filename: String)] = [
             ("maurice-convert-file-to-md", "maurice-convert-file-to-md.md"),
-            ("resume-meeting", "resume-meeting.md"),
             ("prepare-meeting", "prepare-meeting.md"),
             ("summarize-meeting", "summarize-meeting.md"),
         ]
