@@ -297,7 +297,7 @@ struct OnboardingView: View {
 
 // MARK: - File system helpers
 
-private enum OnboardingFileSetup {
+enum OnboardingFileSetup {
     static func buildDirectoryTree(at root: URL, userName: String, userJob: String) throws {
         let fm = FileManager.default
         let dirs = [
@@ -317,8 +317,7 @@ private enum OnboardingFileSetup {
             to: root.appendingPathComponent("CLAUDE.md"),
             replacements: ["{{name}}": userName, "{{job}}": userJob]
         )
-        copyTemplateIfMissing("maurice-convert-file-to-md", to: root.appendingPathComponent(".claude/commands/maurice-convert-file-to-md.md"))
-        copyTemplateIfMissing("resume-meeting", to: root.appendingPathComponent(".claude/commands/resume-meeting.md"))
+        copyMissingTemplates(to: root)
         try writeIfMissing("[]", to: root.appendingPathComponent(".maurice/search_index.json"))
 
         let tasksURL = root.appendingPathComponent("Tasks.md")
@@ -336,6 +335,22 @@ private enum OnboardingFileSetup {
     static func writeIfMissing(_ content: String, to url: URL) throws {
         guard !FileManager.default.fileExists(atPath: url.path) else { return }
         try content.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    /// Copy any missing skill templates to an existing installation.
+    static func copyMissingTemplates(to root: URL) {
+        let commands = root.appendingPathComponent(".claude/commands")
+        try? FileManager.default.createDirectory(at: commands, withIntermediateDirectories: true)
+
+        let templates: [(resource: String, filename: String)] = [
+            ("maurice-convert-file-to-md", "maurice-convert-file-to-md.md"),
+            ("resume-meeting", "resume-meeting.md"),
+            ("prepare-meeting", "prepare-meeting.md"),
+            ("summarize-meeting", "summarize-meeting.md"),
+        ]
+        for template in templates {
+            copyTemplateIfMissing(template.resource, to: commands.appendingPathComponent(template.filename))
+        }
     }
 
     static func copyTemplateIfMissing(

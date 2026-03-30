@@ -95,6 +95,9 @@ struct MauriceApp: App {
             }
             .onAppear {
                 fileWatcher.start()
+                Task.detached {
+                    OnboardingFileSetup.copyMissingTemplates(to: AppSettings.rootDirectory)
+                }
                 #if DEBUG
                 Self.applyDebugIconOverlay()
                 #endif
