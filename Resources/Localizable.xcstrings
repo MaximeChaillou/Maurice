@@ -663,6 +663,9 @@
     "Job title" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Poste" } } }
     },
+    "Summarize" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9sumer" } } }
+    },
     "Choose a folder to import into Memory" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier \u00e0 importer dans la m\u00e9moire" } } }
     }

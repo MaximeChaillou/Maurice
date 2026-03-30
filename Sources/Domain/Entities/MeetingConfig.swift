@@ -14,7 +14,7 @@ struct MeetingConfig: FolderPersistentCodable {
     }
 
     static let defaultActions: [SkillAction] = [
-        SkillAction(buttonName: "Résumé", skillFilename: "resume-meeting.md")
+        SkillAction(buttonName: String(localized: "Summarize"), skillFilename: "summarize-meeting.md")
     ]
 
     init() {
