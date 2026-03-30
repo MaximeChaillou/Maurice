@@ -663,6 +663,9 @@
     "Job title" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Poste" } } }
     },
+    "Prepare" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pr\u00e9parer" } } }
+    },
     "Summarize" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9sumer" } } }
     },
