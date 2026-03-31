@@ -37,13 +37,7 @@ Download the latest version from the [Releases](https://github.com/MaximeChaillo
 
 Maurice is not signed with an Apple Developer account. macOS will block the app on first launch.
 
-**Method 1 — Right-click:**
-1. Open Finder and go to `/Applications`
-2. **Right-click** (or Ctrl+click) on Maurice.app
-3. Click **Open**
-4. Confirm in the dialog
-
-**Method 2 — Terminal:**
+Run this command once in Terminal:
 
 ```bash
 xattr -cr /Applications/Maurice.app
