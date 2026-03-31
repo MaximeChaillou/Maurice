@@ -10,16 +10,21 @@ final class MeetingConfigTests: XCTestCase {
 
         XCTAssertNil(config.icon)
         XCTAssertNil(config.calendarEventName)
-        XCTAssertEqual(config.actions.count, 1)
+        XCTAssertEqual(config.actions.count, 2)
     }
 
-    func testDefaultActionsContainsResumeMeetingSkill() {
+    func testDefaultActionsContainsPrepareAndSummarizeSkills() {
         let config = MeetingConfig()
 
-        let resumeAction = config.actions.first
-        XCTAssertNotNil(resumeAction)
-        XCTAssertEqual(resumeAction?.buttonName, "Résumé")
-        XCTAssertEqual(resumeAction?.skillFilename, "resume-meeting.md")
+        let prepareAction = config.actions.first
+        XCTAssertNotNil(prepareAction)
+        XCTAssertEqual(prepareAction?.buttonName, "Préparer")
+        XCTAssertEqual(prepareAction?.skillFilename, "prepare-meeting.md")
+
+        let summarizeAction = config.actions.last
+        XCTAssertNotNil(summarizeAction)
+        XCTAssertEqual(summarizeAction?.buttonName, "Résumer")
+        XCTAssertEqual(summarizeAction?.skillFilename, "summarize-meeting.md")
     }
 
     func testStaticDefaultActionsMatchDefaultInit() {

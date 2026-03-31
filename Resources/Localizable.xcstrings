@@ -264,6 +264,9 @@
     "Add people to organize your 1-1 notes, assessments, and goals." : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajoutez des personnes pour organiser vos notes de 1-1, \u00e9valuations et objectifs." } } }
     },
+    "Import a PDF to add it as a Markdown file." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Importez un PDF pour l'ajouter en tant que fichier Markdown." } } }
+    },
     "No person selected" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune personne s\u00e9lectionn\u00e9e" } } }
     },

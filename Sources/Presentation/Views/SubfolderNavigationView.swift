@@ -7,6 +7,7 @@ struct SubfolderNavigationView: View {
     @Binding var newFileName: String
     let addLabel: LocalizedStringKey
     let emptyTitle: LocalizedStringKey
+    let emptyDescription: LocalizedStringKey?
     let emptyIcon: String
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var consoleViewModel: ConsoleViewModel?
@@ -46,7 +47,15 @@ struct SubfolderNavigationView: View {
     private var emptyState: some View {
         VStack {
             Spacer()
-            ContentUnavailableView(emptyTitle, systemImage: emptyIcon)
+            if let emptyDescription {
+                ContentUnavailableView(
+                    emptyTitle,
+                    systemImage: emptyIcon,
+                    description: Text(emptyDescription)
+                )
+            } else {
+                ContentUnavailableView(emptyTitle, systemImage: emptyIcon)
+            }
             Spacer()
             Divider()
             HStack(spacing: 8) {
