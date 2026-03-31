@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AddItemSheet: View {
     let title: LocalizedStringKey
+    var subtitle: LocalizedStringKey?
     let placeholder: LocalizedStringKey
     @Binding var text: String
     var onCreate: () -> Void
@@ -15,7 +16,16 @@ struct AddItemSheet: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.bottom, subtitle == nil ? 12 : 4)
+
+            if let subtitle {
+                Text(subtitle)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+            }
 
             TextField(placeholder, text: $text)
                 .textFieldStyle(.roundedBorder)

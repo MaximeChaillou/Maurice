@@ -267,6 +267,9 @@
     "Import a PDF to add it as a Markdown file." : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Importez un PDF pour l'ajouter en tant que fichier Markdown." } } }
     },
+    "People are organized by category (e.g. team, department). Create one first." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les personnes sont organis\u00e9es par cat\u00e9gorie (ex: \u00e9quipe, d\u00e9partement). Cr\u00e9ez-en une d'abord." } } }
+    },
     "No person selected" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune personne s\u00e9lectionn\u00e9e" } } }
     },

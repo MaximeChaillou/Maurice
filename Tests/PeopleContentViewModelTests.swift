@@ -141,6 +141,50 @@ final class PeopleContentViewModelTests: XCTestCase {
         XCTAssertFalse(fm.fileExists(atPath: aliceDir.path))
     }
 
+    // MARK: - Category names
+
+    func testCategoryNamesReturnsNames() async throws {
+        let fm = FileManager.default
+        let peopleDir = tempDir.appendingPathComponent("People", isDirectory: true)
+        try fm.createDirectory(
+            at: peopleDir.appendingPathComponent("Team", isDirectory: true),
+            withIntermediateDirectories: true
+        )
+        try fm.createDirectory(
+            at: peopleDir.appendingPathComponent("Managers", isDirectory: true),
+            withIntermediateDirectories: true
+        )
+
+        await loadAndWait()
+
+        XCTAssertEqual(viewModel.categoryNames.count, 2)
+        XCTAssertTrue(viewModel.categoryNames.contains("Team"))
+        XCTAssertTrue(viewModel.categoryNames.contains("Managers"))
+    }
+
+    func testCategoryNamesEmptyWhenNoCategories() async throws {
+        await loadAndWait()
+        XCTAssertTrue(viewModel.categoryNames.isEmpty)
+    }
+
+    func testCreateCategoryThenCategoryNamesUpdated() async throws {
+        viewModel.createCategory(name: "Engineering")
+
+        try await Task.sleep(for: .milliseconds(100))
+        await loadAndWait()
+
+        XCTAssertEqual(viewModel.categoryNames, ["Engineering"])
+    }
+
+    func testCreateCategoryIgnoresEmptyName() async throws {
+        viewModel.createCategory(name: "   ")
+
+        try await Task.sleep(for: .milliseconds(100))
+        await loadAndWait()
+
+        XCTAssertTrue(viewModel.categories.isEmpty)
+    }
+
     // MARK: - Helpers
 
     private func loadAndWait() async {

@@ -40,6 +40,8 @@ struct PeopleView: View {
     @State private var folderToDelete: FolderItem?
     @State private var selectedSection: PersonSection = .profile
     @State private var selectedCategory: String = ""
+    @State private var shouldAddPersonAfterCategory = false
+    @State private var pendingCategoryName = ""
 
     var body: some View {
         HStack(spacing: 0) {
@@ -101,6 +103,7 @@ struct PeopleView: View {
                 Spacer()
                 Button {
                     if viewModel.categoryNames.isEmpty {
+                        shouldAddPersonAfterCategory = true
                         viewModel.isAddingCategory = true
                     } else {
                         selectedCategory = viewModel.categoryNames.first ?? ""
@@ -169,22 +172,41 @@ struct PeopleView: View {
         .sheet(isPresented: $viewModel.isAddingFolder) {
             addPersonSheet
         }
-        .sheet(isPresented: $viewModel.isAddingCategory) {
+        .sheet(
+            isPresented: $viewModel.isAddingCategory,
+            onDismiss: {
+                if shouldAddPersonAfterCategory && !pendingCategoryName.isEmpty {
+                    shouldAddPersonAfterCategory = false
+                    selectedCategory = pendingCategoryName
+                    pendingCategoryName = ""
+                    viewModel.isAddingFolder = true
+                } else {
+                    shouldAddPersonAfterCategory = false
+                    pendingCategoryName = ""
+                }
+            },
+            content: {
             AddItemSheet(
                 title: "New category",
+                subtitle: shouldAddPersonAfterCategory
+                    ? "People are organized by category (e.g. team, department). Create one first."
+                    : nil,
                 placeholder: "Category name",
                 text: $viewModel.newCategoryName,
                 onCreate: {
+                    pendingCategoryName = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
                     viewModel.createCategory(name: viewModel.newCategoryName)
                     viewModel.newCategoryName = ""
                     viewModel.isAddingCategory = false
                 },
                 onCancel: {
+                    shouldAddPersonAfterCategory = false
+                    pendingCategoryName = ""
                     viewModel.isAddingCategory = false
                     viewModel.newCategoryName = ""
                 }
             )
-        }
+        })
     }
 
     // MARK: - Add person sheet
