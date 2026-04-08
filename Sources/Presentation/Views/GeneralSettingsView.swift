@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct GeneralSettingsView: View {
+    @ObservedObject var updateChecker: UpdateChecker
     var onRootDirectoryChanged: (() -> Void)?
     @State private var rootDirectory: URL = AppSettings.rootDirectory
     @State private var transcriptionLanguage: String = AppSettings.transcriptionLanguage
     @State private var appLanguage: String = AppSettings.appLanguage
     @AppStorage(AppSettings.appearanceModeKey) private var appearanceMode = "system"
     @State private var showRestartAlert = false
-    @StateObject private var updateChecker = UpdateChecker()
 
     private let languages = [
         ("fr-FR", "Français"),

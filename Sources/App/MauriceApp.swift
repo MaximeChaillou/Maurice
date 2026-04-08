@@ -16,6 +16,7 @@ struct MauriceApp: App {
     @State private var lastFileSystemReload = Date.distantPast
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
+    @StateObject private var updateChecker = UpdateChecker()
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
     init() {
@@ -181,7 +182,7 @@ struct MauriceApp: App {
         }
 
         Window("Settings", id: "settings") {
-            SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel) {
+            SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel, updateChecker: updateChecker) {
                 reloadAfterDirectoryChange()
             }
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)

@@ -39,6 +39,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
 struct SettingsView: View {
     @Binding var appTheme: AppTheme
     var calendarViewModel: GoogleCalendarViewModel?
+    @ObservedObject var updateChecker: UpdateChecker
     var onRootDirectoryChanged: (() -> Void)?
     @State private var selectedSection: SettingsSection? = .general
 
@@ -66,7 +67,7 @@ struct SettingsView: View {
     private var settingsDetail: some View {
         switch selectedSection {
         case .general:
-            GeneralSettingsView(onRootDirectoryChanged: onRootDirectoryChanged)
+            GeneralSettingsView(updateChecker: updateChecker, onRootDirectoryChanged: onRootDirectoryChanged)
         case .calendar:
             if let calendarViewModel {
                 GoogleCalendarSettingsView(viewModel: calendarViewModel)
