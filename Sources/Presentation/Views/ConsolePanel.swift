@@ -51,6 +51,7 @@ struct ConsolePanel: View {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.38) {
             terminalVisible = true
+            viewModel.focusTerminal()
         }
     }
 

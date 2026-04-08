@@ -141,6 +141,11 @@ final class ConsoleViewModel {
         }
     }
 
+    func focusTerminal() {
+        guard let terminalView else { return }
+        terminalView.window?.makeFirstResponder(terminalView)
+    }
+
     func processTerminated() {
         isRunning = false
     }
