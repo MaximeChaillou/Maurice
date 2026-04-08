@@ -54,11 +54,18 @@ final class ConsoleViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isRunning)
     }
 
-    // MARK: - startSession without terminal
+    // MARK: - startSessionIfNeeded without terminal
 
-    func testStartSessionWithoutTerminalDoesNotCrash() {
-        sut.startSession()
+    func testStartSessionIfNeededWithoutTerminalDoesNotCrash() {
+        sut.startSessionIfNeeded()
         // Should not crash, just no-op (no terminalView)
+        XCTAssertFalse(sut.isRunning)
+    }
+
+    // MARK: - focusTerminal without terminal
+
+    func testFocusTerminalWithoutTerminalDoesNotCrash() {
+        sut.focusTerminal()
         XCTAssertFalse(sut.isRunning)
     }
 

@@ -65,18 +65,12 @@ final class ConsoleViewModel {
         tv.processDelegate = delegate
         terminalView = tv
 
-        if !sessionStarted {
-            Task { @MainActor in
-                self.startSession()
-            }
-        }
-
         return tv
     }
 
-    func startSession() {
+    func startSessionIfNeeded() {
         guard let terminalView else { return }
-        guard !isRunning else { return }
+        guard !sessionStarted, !isRunning else { return }
         sessionStarted = true
 
         guard let path = claudePath else {
@@ -136,8 +130,9 @@ final class ConsoleViewModel {
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(500))
             self.isRunning = false
+            self.sessionStarted = false
             self.terminalView?.getTerminal().resetToInitialState()
-            self.startSession()
+            self.startSessionIfNeeded()
         }
     }
 

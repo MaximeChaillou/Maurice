@@ -81,8 +81,16 @@ final class TerminalViewController: NSViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+        terminalView?.frame = view.bounds
+        viewModel?.startSessionIfNeeded()
         view.window?.makeFirstResponder(terminalView)
         installEventMonitor()
+    }
+
+    override func viewDidLayout() {
+        super.viewDidLayout()
+        guard let terminalView, terminalView.frame != view.bounds else { return }
+        terminalView.frame = view.bounds
     }
 
     override func viewWillDisappear() {
