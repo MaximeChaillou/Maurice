@@ -1,11 +1,12 @@
 import SwiftUI
 
 enum PersonSection: String, CaseIterable, Identifiable {
-    case profile = "Profile"
-    case jobDescription = "Job description"
+    // Folders first (alphabetical), then files (alphabetical)
     case oneOnOne = "1-1"
     case assessment = "Assessment"
     case objectifs = "Goals"
+    case jobDescription = "Job description"
+    case profile = "Profile"
 
     var id: String { rawValue }
 
@@ -38,7 +39,7 @@ struct PeopleView: View {
     @State var viewModel: PeopleContentViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var selectedSection: PersonSection = .profile
+    @State private var selectedSection: PersonSection = .oneOnOne
     @State private var selectedCategory: String = ""
     @State private var shouldAddPersonAfterCategory = false
     @State private var pendingCategoryName = ""
@@ -64,7 +65,7 @@ struct PeopleView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onChange(of: viewModel.selectedPerson) {
-            selectedSection = .profile
+            selectedSection = .oneOnOne
             updateRecordingSubdirectory()
         }
         .onChange(of: selectedSection) {
