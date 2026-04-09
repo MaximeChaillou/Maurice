@@ -364,32 +364,43 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         rows: [TableBlockDrawInfo.Row], numCols: Int,
         font: NSFont, headerFont: NSFont, padding: CGFloat
     ) -> [CGFloat] {
-        var maxWidths = [CGFloat](repeating: 0, count: numCols)
+        var idealWidths = [CGFloat](repeating: 0, count: numCols)
+        var minWordWidths = [CGFloat](repeating: 0, count: numCols)
+
         for row in rows where !row.isSeparator {
-            let attrs: [NSAttributedString.Key: Any] = [.font: row.isHeader ? headerFont : font]
+            let f = row.isHeader ? headerFont : font
+            let attrs: [NSAttributedString.Key: Any] = [.font: f]
             for (col, cell) in row.cells.enumerated() where col < numCols {
-                maxWidths[col] = max(maxWidths[col], (cell as NSString).size(withAttributes: attrs).width)
+                idealWidths[col] = max(idealWidths[col], (cell as NSString).size(withAttributes: attrs).width)
+                for word in cell.split(separator: " ") {
+                    let w = (String(word) as NSString).size(withAttributes: attrs).width
+                    minWordWidths[col] = max(minWordWidths[col], w)
+                }
             }
         }
-        var widths = maxWidths.map { $0 + padding * 2 }
 
-        // Cap total width to available text container width
+        var widths = idealWidths.map { $0 + padding * 2 }
+        let minWidths = minWordWidths.map { $0 + padding * 2 }
+
         let availableWidth = textView?.textContainer?.containerSize.width
             ?? textView?.bounds.width ?? 600
         let pad = textView?.textContainer?.lineFragmentPadding ?? 5
         let maxTotal = availableWidth - pad * 2
         let total = widths.reduce(0, +)
+
         if total > maxTotal && maxTotal > 0 {
-            let minColWidth: CGFloat = 60
-            let scale = maxTotal / total
-            widths = widths.map { max($0 * scale, minColWidth) }
-            // Re-normalize if minColWidth pushed us over
-            let newTotal = widths.reduce(0, +)
-            if newTotal > maxTotal {
-                let excess = newTotal - maxTotal
-                let shrinkable = widths.filter { $0 > minColWidth }
-                let shrinkAmount = excess / CGFloat(max(shrinkable.count, 1))
-                widths = widths.map { $0 > minColWidth ? max($0 - shrinkAmount, minColWidth) : $0 }
+            let minTotal = minWidths.reduce(0, +)
+            if minTotal >= maxTotal {
+                widths = minWidths
+            } else {
+                let remaining = maxTotal - minTotal
+                let extras = zip(widths, minWidths).map { $0 - $1 }
+                let totalExtra = extras.reduce(0, +)
+                if totalExtra > 0 {
+                    widths = zip(minWidths, extras).map { $0 + $1 * (remaining / totalExtra) }
+                } else {
+                    widths = minWidths
+                }
             }
         }
         return widths

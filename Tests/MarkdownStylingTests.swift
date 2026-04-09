@@ -681,20 +681,75 @@ final class UpdateTableCellTests: XCTestCase {
 final class TableColumnWidthTests: XCTestCase {
 
     @MainActor
-    func testWideTableColumnsCapped() {
+    func testWideTableColumnsShrunkFromIdeal() {
         // Create a long-cell table that would exceed container width
         let longCell = String(repeating: "ABCDEFGHIJ ", count: 20)
         let text = "| \(longCell) | \(longCell) | \(longCell) |\n| --- | --- | --- |\n| a | b | c |"
         let (coord, tv, _) = makeCoordinator(text: text)
-        // Set a narrow container and matching bounds
         tv.setFrameSize(NSSize(width: 300, height: 500))
         tv.textContainer?.containerSize = NSSize(width: 300, height: CGFloat.greatestFiniteMagnitude)
         coord.applyMarkdownStyling()
-        // Verify table was built (column widths should be capped)
         XCTAssertFalse(coord.tableBlockInfos.isEmpty)
-        let totalWidth = coord.tableBlockInfos[0].columnWidths.reduce(0, +)
-        // Columns should be capped — each at minColWidth (60) = 180 total
-        XCTAssertLessThanOrEqual(totalWidth, 300)
+        let table = coord.tableBlockInfos[0]
+        let totalWidth = table.columnWidths.reduce(0, +)
+        // Columns are shrunk from ideal — total should be much less than unconstrained width
+        let font = NSFont.systemFont(ofSize: MarkdownTheme().baseFontSize)
+        let idealSingle = (longCell as NSString).size(withAttributes: [.font: font]).width + table.cellPadding * 2
+        XCTAssertLessThan(totalWidth, idealSingle * 3, "Table should be shrunk from ideal widths")
+        // Each column must still fit its widest word ("ABCDEFGHIJ")
+        let wordWidth = ("ABCDEFGHIJ" as NSString).size(withAttributes: [.font: font]).width
+        for colW in table.columnWidths {
+            XCTAssertGreaterThanOrEqual(colW, wordWidth)
+        }
+    }
+
+    @MainActor
+    func testColumnsRespectMinimumWordWidth() {
+        // A narrow column with a long word must be wide enough to fit the word
+        let text = "| Priorisation | A | B |\n| --- | --- | --- |\n| test | x | y |"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        tv.setFrameSize(NSSize(width: 300, height: 500))
+        tv.textContainer?.containerSize = NSSize(width: 300, height: CGFloat.greatestFiniteMagnitude)
+        coord.applyMarkdownStyling()
+        XCTAssertFalse(coord.tableBlockInfos.isEmpty)
+        let table = coord.tableBlockInfos[0]
+        // First column must be at least as wide as "Priorisation" + padding
+        let font = NSFont.systemFont(ofSize: MarkdownTheme().baseFontSize, weight: .semibold)
+        let wordWidth = ("Priorisation" as NSString).size(withAttributes: [.font: font]).width
+        XCTAssertGreaterThanOrEqual(table.columnWidths[0], wordWidth)
+    }
+
+    @MainActor
+    func testNarrowColumnsNotCrushedByWideColumns() {
+        // When one column is very wide, narrow columns should still fit their words
+        let longText = String(repeating: "LongWord ", count: 15)
+        let text = "| Sujet | \(longText) | Owner |\n| --- | --- | --- |\n| A | B | Maxime |"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        tv.setFrameSize(NSSize(width: 400, height: 500))
+        tv.textContainer?.containerSize = NSSize(width: 400, height: CGFloat.greatestFiniteMagnitude)
+        coord.applyMarkdownStyling()
+        XCTAssertFalse(coord.tableBlockInfos.isEmpty)
+        let table = coord.tableBlockInfos[0]
+        // "Maxime" is the widest word in column 2 — column must fit it
+        let font = NSFont.systemFont(ofSize: MarkdownTheme().baseFontSize)
+        let maximeWidth = ("Maxime" as NSString).size(withAttributes: [.font: font]).width + table.cellPadding * 2
+        XCTAssertGreaterThanOrEqual(table.columnWidths[2], maximeWidth)
+    }
+
+    @MainActor
+    func testAllColumnsEqualWhenContentSimilar() {
+        // Columns with similar content should get similar widths
+        let text = "| Alpha | Bravo | Charlie |\n| --- | --- | --- |\n| one | two | three |"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        tv.setFrameSize(NSSize(width: 800, height: 500))
+        tv.textContainer?.containerSize = NSSize(width: 800, height: CGFloat.greatestFiniteMagnitude)
+        coord.applyMarkdownStyling()
+        XCTAssertFalse(coord.tableBlockInfos.isEmpty)
+        let widths = coord.tableBlockInfos[0].columnWidths
+        // With plenty of space, no column should be drastically different
+        let maxW = widths.max()!
+        let minW = widths.min()!
+        XCTAssertLessThan(maxW - minW, 100, "Similar columns should have similar widths")
     }
 }
 
@@ -741,9 +796,8 @@ final class StylingEdgeCaseTests: XCTestCase {
     }
 
     @MainActor
-    func testComputeColumnWidthsReNormalization() {
-        // Create a table where some columns hit minColWidth (60) but total still exceeds
-        // This triggers the re-normalization branch
+    func testComputeColumnWidthsWithOneVeryWideColumn() {
+        // One column vastly wider than others — narrow columns should still get minimum word width
         let longA = String(repeating: "X", count: 100)
         let text = "| \(longA) | B | C |\n| --- | --- | --- |\n| a | b | c |"
         let (coord, tv, _) = makeCoordinator(text: text)
