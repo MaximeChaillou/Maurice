@@ -570,6 +570,6 @@ final class FolderContentViewModelTests: XCTestCase {
 
         XCTAssertEqual(peopleDestinations.count, 1)
         XCTAssertEqual(peopleDestinations.first?.name, "John (1-1)")
-        XCTAssertEqual(peopleDestinations.first?.url, oneOnOneDir)
+        XCTAssertEqual(peopleDestinations.first?.url.standardizedFileURL, oneOnOneDir.standardizedFileURL)
     }
 }
