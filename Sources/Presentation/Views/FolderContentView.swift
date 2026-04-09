@@ -14,6 +14,7 @@ struct FolderContentView: View {
     @State private var showConfigSidebar: Bool = false
     @State private var showAddActionForm: Bool = false
     @State private var folderToDelete: FolderItem?
+    @State private var moveDestinations: [MoveDestination] = []
     @State private var entryDeleteAction: EntryDeleteAction?
     @State private var showTranscripts = false
     @State private var addActionName = ""
@@ -153,6 +154,8 @@ struct FolderContentView: View {
                                 }
                                 Divider()
                             }
+                            moveMenu(for: folder)
+                            Divider()
                             Button(role: .destructive) {
                                 folderToDelete = folder
                             } label: {
@@ -228,6 +231,42 @@ struct FolderContentView: View {
         }
     }
 }
+// MARK: - Move menu
+
+extension FolderContentView {
+    @ViewBuilder
+    func moveMenu(for folder: FolderItem) -> some View {
+        let destinations = FolderContentViewModel.listMoveDestinations(excluding: folder)
+        let sections = Dictionary(grouping: destinations, by: \.section)
+        let sortedKeys = sections.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+
+        if destinations.isEmpty {
+            Button {} label: {
+                Label("Move content to…", systemImage: "folder.badge.arrow.right")
+            }
+            .disabled(true)
+        } else {
+            Menu {
+                ForEach(sortedKeys, id: \.self) { section in
+                    Section(section) {
+                        if let items = sections[section] {
+                            ForEach(items) { dest in
+                                Button {
+                                    viewModel.moveFolderContent(folder, to: dest.url)
+                                } label: {
+                                    Text(dest.name)
+                                }
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Label("Move content to…", systemImage: "folder.badge.arrow.right")
+            }
+        }
+    }
+}
+
 // MARK: - Date navigation
 extension FolderContentView {
     func dateNavigationDetail(for folder: FolderItem) -> some View {

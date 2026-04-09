@@ -75,6 +75,13 @@ struct MeetingDateEntry: Identifiable {
     }
 }
 
+struct MoveDestination: Identifiable {
+    let name: String
+    let url: URL
+    let section: String
+    var id: String { url.path }
+}
+
 struct FolderFile: Identifiable, Hashable {
     let id: URL, name: String, date: Date, url: URL
     var content: String {

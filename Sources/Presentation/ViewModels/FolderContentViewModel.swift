@@ -156,6 +156,90 @@ final class FolderContentViewModel {
         selectedFile = sorted[idx].url
     }
 
+    func moveFolderContent(_ folder: FolderItem, to destination: URL) {
+        let sourceURL = folder.url
+        Task {
+            let error: String? = await Task.detached {
+                let fm = FileManager.default
+                do {
+                    try fm.createDirectory(at: destination, withIntermediateDirectories: true)
+                } catch {
+                    return "Failed to create destination: \(error.localizedDescription)"
+                }
+
+                let contents = DirectoryScanner.scan(at: sourceURL)
+                for file in contents.files {
+                    let ext = file.url.pathExtension
+                    guard ext == "md" || ext == "transcript" else { continue }
+                    let name = file.url.lastPathComponent
+                    guard name != "next.md" else { continue }
+                    let destFile = destination.appendingPathComponent(name)
+                    do {
+                        if fm.fileExists(atPath: destFile.path) {
+                            try Self.mergeFile(from: file.url, to: destFile)
+                        } else {
+                            try fm.moveItem(at: file.url, to: destFile)
+                        }
+                    } catch {
+                        IssueLogger.log(.error, "Failed to move file", context: name, error: error)
+                        return "Failed to move '\(name)': \(error.localizedDescription)"
+                    }
+                }
+                return nil
+            }.value
+
+            if let error {
+                errorMessage = error
+            } else {
+                if selectedFolder == folder.name { selectedFolder = nil }
+            }
+            loadFolders()
+        }
+    }
+
+    nonisolated static func listMoveDestinations(excluding folder: FolderItem) -> [MoveDestination] {
+        var destinations: [MoveDestination] = []
+
+        // Other meetings
+        let meetingsDir = AppSettings.meetingsDirectory
+        let meetingFolders = DirectoryScanner.scan(at: meetingsDir).folders
+        for meeting in meetingFolders where meeting.name != folder.name {
+            destinations.append(MoveDestination(
+                name: meeting.name,
+                url: meeting.url,
+                section: "Meetings"
+            ))
+        }
+
+        // People 1-1 subfolders
+        let peopleDir = AppSettings.peopleDirectory
+        let categories = DirectoryScanner.scan(at: peopleDir).folders
+        for category in categories {
+            let people = DirectoryScanner.scan(at: category.url).folders
+            for person in people {
+                let oneOnOneDir = person.url.appendingPathComponent("1-1", isDirectory: true)
+                if FileManager.default.fileExists(atPath: oneOnOneDir.path) {
+                    destinations.append(MoveDestination(
+                        name: "\(person.name) (1-1)",
+                        url: oneOnOneDir,
+                        section: category.name
+                    ))
+                }
+            }
+        }
+
+        return destinations
+    }
+
+    nonisolated private static func mergeFile(from source: URL, to dest: URL) throws {
+        let sourceContent = try String(contentsOf: source, encoding: .utf8)
+        let destContent = try String(contentsOf: dest, encoding: .utf8)
+        let merged = destContent.trimmingCharacters(in: .whitespacesAndNewlines)
+            + "\n\n" + sourceContent.trimmingCharacters(in: .whitespacesAndNewlines) + "\n"
+        try merged.write(to: dest, atomically: true, encoding: .utf8)
+        try FileManager.default.removeItem(at: source)
+    }
+
     nonisolated private static func scanFiles(in dir: URL) -> [FolderFile] {
         DirectoryScanner.scan(at: dir, fileExtension: "md").files
             .filter { $0.url.deletingPathExtension().lastPathComponent != "next" }

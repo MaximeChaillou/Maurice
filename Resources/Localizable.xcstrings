@@ -183,6 +183,9 @@
     "Delete" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer" } } }
     },
+    "Move content to…" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9placer le contenu vers\u2026" } } }
+    },
     "Delete folder?" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer le dossier ?" } } }
     },
