@@ -15,9 +15,6 @@ struct PersonDetailView: View {
     @State private var isAddingAssessment = false
     @State private var isAddingObjectif = false
     @State private var newFileName = ""
-    @State private var showImportJobDesc = false
-    @State private var showImportAssessment = false
-    @State private var showImportObjectif = false
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
     var body: some View {
@@ -88,7 +85,10 @@ struct PersonDetailView: View {
                 HStack {
                     Spacer()
                     Button {
-                        showImportJobDesc = true
+                        ImportDocumentHelper.pickFile(
+                            targetPath: fileURL.path,
+                            consoleViewModel: console
+                        )
                     } label: {
                         Image(systemName: "square.and.arrow.down")
                             .frame(width: 32, height: 32)
@@ -97,13 +97,6 @@ struct PersonDetailView: View {
                     }
                     .buttonStyle(.plain)
                     .help("Import a file or link")
-                    .popover(isPresented: $showImportJobDesc) {
-                        ImportDocumentView(
-                            targetPath: fileURL.path,
-                            consoleViewModel: console,
-                            onDismiss: { showImportJobDesc = false }
-                        )
-                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

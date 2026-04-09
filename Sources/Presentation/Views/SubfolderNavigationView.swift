@@ -16,7 +16,6 @@ struct SubfolderNavigationView: View {
     var onDelete: (FolderFile) -> Void
 
     @State private var fileToDelete: FolderFile?
-    @State private var showImport = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -66,18 +65,16 @@ struct SubfolderNavigationView: View {
                 .controlSize(.small)
 
                 if let console = consoleViewModel, let folderURL = subfolderURL {
-                    Button { showImport = true } label: {
+                    Button {
+                        ImportDocumentHelper.pickFile(
+                            targetPath: folderURL.appendingPathComponent("import.md").path,
+                            consoleViewModel: console
+                        )
+                    } label: {
                         Label("Import", systemImage: "square.and.arrow.down")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
-                    .popover(isPresented: $showImport) {
-                        ImportDocumentView(
-                            targetPath: folderURL.appendingPathComponent("import.md").path,
-                            consoleViewModel: console,
-                            onDismiss: { showImport = false }
-                        )
-                    }
                 }
             }
             .padding(8)
@@ -143,7 +140,12 @@ struct SubfolderNavigationView: View {
             .buttonStyle(.plain)
 
             if let console = consoleViewModel, let folderURL = subfolderURL {
-                Button { showImport = true } label: {
+                Button {
+                    ImportDocumentHelper.pickFile(
+                        targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
+                        consoleViewModel: console
+                    )
+                } label: {
                     Image(systemName: "square.and.arrow.down")
                         .frame(width: 32, height: 32)
                         .contentShape(Circle())
@@ -151,13 +153,6 @@ struct SubfolderNavigationView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Import a file or link")
-                .popover(isPresented: $showImport) {
-                    ImportDocumentView(
-                        targetPath: folderURL.appendingPathComponent("\(file.name).md").path,
-                        consoleViewModel: console,
-                        onDismiss: { showImport = false }
-                    )
-                }
             }
 
             Menu {
