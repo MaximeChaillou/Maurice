@@ -50,7 +50,7 @@ participants: [list of identified participants]
 
    Then apply the memory update protocol defined in CLAUDE.md:
    - Update `Memory/Directory.md` if new participants or role changes
-   - Update `Memory/People/` files for participants with new relevant info (topics raised, positions taken, patterns observed). Date each new fact with `[YYYY-MM]`. Strikethrough obsolete facts. Update `updated` field.
+   - Update `Memory/People/` files for participants with new relevant info (topics raised, positions taken, patterns observed). Date each new fact with `[YYYY-MM-DD]`. Strikethrough obsolete facts. Update `updated` field.
    - Create a `Memory/People/` file for any participant seen in 3+ meetings who doesn't have one yet
    - Update `Memory/Projects/` files with decisions, status changes, or metrics discussed
    - Ensure cross-references are consistent (`people[].projects` ↔ `projects[].people`)
