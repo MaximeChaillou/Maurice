@@ -17,6 +17,7 @@ enum IndexedDocumentKind: Sendable {
     case meeting(String)
     case person(String)
     case task
+    case memory(String)
 }
 
 @MainActor
@@ -74,6 +75,15 @@ final class SemanticSearchService {
         )
         indexPeopleDirectory(context: ctx)
         indexTasks(context: ctx)
+        indexDirectory(
+            IndexScope(
+                directory: AppSettings.memoryDirectory,
+                label: "Memory",
+                icon: "brain.head.profile",
+                kind: { .memory($0) }
+            ),
+            context: ctx
+        )
         return ctx.docs
     }
 
@@ -174,11 +184,29 @@ final class SemanticSearchService {
         for folder in contents.folders {
             indexSingleFolder(folder, scope: scope, folderKey: folder.name, context: context)
         }
+        for file in contents.files {
+            let fileDate = file.date
+            if let cached = context.existing[file.url.absoluteString], cached.modificationDate >= fileDate {
+                context.docs.append(cached)
+                continue
+            }
+            let fileName = file.url.deletingPathExtension().lastPathComponent
+            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
+            let text = "\(fileName) \(content)"
+            let truncated = String(text.prefix(500))
+            guard let vecs = dualVectors(
+                for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
+            ) else { continue }
+            context.docs.append(IndexedDocument(
+                name: fileName, context: scope.label, icon: "doc.text",
+                kind: scope.kind(fileName), content: text,
+                embeddingFr: vecs.fr, embeddingEn: vecs.en,
+                sourceURL: file.url, modificationDate: fileDate
+            ))
+        }
     }
 
-    nonisolated private static func indexPeopleDirectory(
-        context: IndexContext
-    ) {
+    nonisolated private static func indexPeopleDirectory(context: IndexContext) {
         let peopleDir = AppSettings.peopleDirectory
         let categories = DirectoryScanner.scan(at: peopleDir)
         for category in categories.folders {
@@ -186,9 +214,7 @@ final class SemanticSearchService {
             for person in people.folders {
                 let relativePath = "\(category.name)/\(person.name)"
                 let scope = IndexScope(
-                    directory: peopleDir,
-                    label: "Personne",
-                    icon: "person",
+                    directory: peopleDir, label: "Personne", icon: "person",
                     kind: { _ in .person(relativePath) }
                 )
                 indexSingleFolder(person, scope: scope, folderKey: person.name, context: context)
@@ -197,8 +223,7 @@ final class SemanticSearchService {
     }
 
     nonisolated private static func indexSingleFolder(
-        _ folder: Folder, scope: IndexScope, folderKey: String,
-        context: IndexContext
+        _ folder: Folder, scope: IndexScope, folderKey: String, context: IndexContext
     ) {
         let folderURL = folder.url
         let folderDate = modificationDate(for: folderURL)
@@ -214,7 +239,6 @@ final class SemanticSearchService {
                 sourceURL: folderURL, modificationDate: folderDate
             ))
         }
-
         let files = DirectoryScanner.scanRecursiveFiles(at: folder.url, fileExtension: "md")
         for file in files {
             let fileDate = file.date
@@ -227,14 +251,13 @@ final class SemanticSearchService {
                 IssueLogger.log(.warning, "Failed to read file for indexing", context: file.url.path)
                 continue
             }
-            let text = "\(fileName) \(content)"
-            let truncated = String(text.prefix(500))
+            let truncated = String("\(fileName) \(content)".prefix(500))
             guard let vecs = dualVectors(
                 for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
             ) else { continue }
             context.docs.append(IndexedDocument(
                 name: fileName, context: "\(scope.label) \u{2014} \(folderKey)",
-                icon: "doc.text", kind: scope.kind(folderKey), content: text,
+                icon: "doc.text", kind: scope.kind(folderKey), content: "\(fileName) \(content)",
                 embeddingFr: vecs.fr, embeddingEn: vecs.en,
                 sourceURL: file.url, modificationDate: fileDate
             ))
@@ -257,15 +280,9 @@ final class SemanticSearchService {
             for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
         ) else { return }
         context.docs.append(IndexedDocument(
-            name: "Taches",
-            context: "Fichier de taches",
-            icon: "checklist",
-            kind: .task,
-            content: content,
-            embeddingFr: vecs.fr,
-            embeddingEn: vecs.en,
-            sourceURL: url,
-            modificationDate: date
+            name: "Taches", context: "Fichier de taches", icon: "checklist", kind: .task,
+            content: content, embeddingFr: vecs.fr, embeddingEn: vecs.en,
+            sourceURL: url, modificationDate: date
         ))
     }
 
@@ -432,6 +449,7 @@ private extension IndexedDocumentKind {
         case .meeting: "meeting"
         case .person: "person"
         case .task: "task"
+        case .memory: "memory"
         }
     }
 
@@ -440,6 +458,7 @@ private extension IndexedDocumentKind {
         case .meeting(let name): name
         case .person(let name): name
         case .task: ""
+        case .memory(let name): name
         }
     }
 
@@ -448,6 +467,7 @@ private extension IndexedDocumentKind {
         case "meeting": self = .meeting(value)
         case "person": self = .person(value)
         case "task": self = .task
+        case "memory": self = .memory(value)
         default: return nil
         }
     }

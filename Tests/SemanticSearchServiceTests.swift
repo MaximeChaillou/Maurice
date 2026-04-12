@@ -198,6 +198,42 @@ final class SemanticSearchServiceTests: XCTestCase {
         }
     }
 
+    func testIndexedDocumentKindMemoryAssociatedValue() {
+        let kind = IndexedDocumentKind.memory("Company")
+        if case .memory(let name) = kind {
+            XCTAssertEqual(name, "Company")
+        } else {
+            XCTFail("Expected memory kind")
+        }
+    }
+
+    func testIndexedDocumentKindMemoryEquality() {
+        let kind1 = IndexedDocumentKind.memory("Company")
+        let kind2 = IndexedDocumentKind.memory("Company")
+        let kind3 = IndexedDocumentKind.memory("Projects")
+        if case .memory(let n1) = kind1, case .memory(let n2) = kind2 {
+            XCTAssertEqual(n1, n2)
+        } else {
+            XCTFail("Expected memory kinds")
+        }
+        if case .memory(let n1) = kind1, case .memory(let n3) = kind3 {
+            XCTAssertNotEqual(n1, n3)
+        } else {
+            XCTFail("Expected memory kinds")
+        }
+    }
+
+    func testIndexedDocumentKindMemoryIsDistinctFromOtherKinds() {
+        let memory = IndexedDocumentKind.memory("Test")
+        let meeting = IndexedDocumentKind.meeting("Test")
+        if case .memory = meeting {
+            XCTFail("Meeting should not match memory")
+        }
+        if case .meeting = memory {
+            XCTFail("Memory should not match meeting")
+        }
+    }
+
     // MARK: - Search with short query
 
     @MainActor

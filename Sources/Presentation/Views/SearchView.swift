@@ -3,6 +3,7 @@ import SwiftUI
 struct SearchView: View {
     let onOpenMeeting: (String) -> Void
     let onOpenPerson: (String) -> Void
+    let onOpenMemory: () -> Void
     let searchService: SemanticSearchService
     @Binding var isPresented: Bool
 
@@ -120,6 +121,7 @@ struct SearchView: View {
                 case .meeting(let name): .meeting(name)
                 case .person(let name): .person(name)
                 case .task: .task
+                case .memory(let name): .memory(name)
                 }
                 return SearchResult(
                     name: sr.name, context: sr.context, icon: sr.icon,
@@ -151,6 +153,8 @@ struct SearchView: View {
             onOpenPerson(name)
         case .task:
             onOpenMeeting("")
+        case .memory:
+            onOpenMemory()
         }
     }
 }
@@ -168,6 +172,7 @@ private struct SearchResult: Identifiable {
         case meeting(String)
         case person(String)
         case task
+        case memory(String)
     }
 
     func highlightedSnippet() -> AttributedString {
@@ -219,8 +224,15 @@ private enum ExactSearchEngine {
             icon: "person",
             kind: { .person($0) }
         )
+        let memory = SearchScope(
+            directory: AppSettings.memoryDirectory,
+            label: "Memory",
+            icon: "brain.head.profile",
+            kind: { .memory($0) }
+        )
         searchDirectory(meetings, term: termLower, query: term, into: &found)
         searchDirectory(people, term: termLower, query: term, into: &found)
+        searchDirectory(memory, term: termLower, query: term, into: &found)
         searchTasks(term: termLower, query: term, into: &found)
         return found
     }
@@ -241,6 +253,19 @@ private enum ExactSearchEngine {
         for folder in contents.folders {
             let ctx = FolderSearchContext(folder: folder, scope: scope, folderKey: folder.name)
             searchFolder(ctx, term: term, query: query, into: &found)
+        }
+        for file in contents.files {
+            let fileName = file.url.deletingPathExtension().lastPathComponent
+            let content = try? String(contentsOf: file.url, encoding: .utf8)
+            let nameMatch = fileName.lowercased().contains(term)
+            let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
+            if nameMatch || contentMatch {
+                let snippet = extractSnippet(from: content ?? "", term: term)
+                found.append(SearchResult(
+                    name: fileName, context: scope.label, icon: "doc.text",
+                    kind: scope.kind(fileName), snippet: snippet, query: query
+                ))
+            }
         }
     }
 

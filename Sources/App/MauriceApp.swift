@@ -119,35 +119,13 @@ struct MauriceApp: App {
             }
             .onChange(of: appTheme) { appTheme.saveAsync() }
             .overlay {
-                if showSearch {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .onTapGesture { showSearch = false }
-                        .transition(.opacity)
-
-                    SearchView(
-                        onOpenMeeting: { name in
-                            if name.isEmpty {
-                                coordinator.activeTab = .task
-                            } else {
-                                meetingViewModel.loadFolders()
-                                meetingViewModel.selectedFolder = name
-                                coordinator.activeTab = .meeting
-                            }
-                        },
-                        onOpenPerson: { relativePath in
-                            peopleViewModel.loadFolders()
-                            peopleViewModel.selectedPerson = relativePath
-                            coordinator.activeTab = .people
-                        },
-                        searchService: searchService,
-                        isPresented: $showSearch
-                    )
-                    .frame(width: 600, height: 450)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 16))
-                    .shadow(color: .black.opacity(0.3), radius: 30, y: 10)
-                    .transition(.scale(scale: 0.95).combined(with: .opacity))
-                }
+                SearchOverlay(
+                    showSearch: $showSearch,
+                    coordinator: coordinator,
+                    meetingViewModel: meetingViewModel,
+                    peopleViewModel: peopleViewModel,
+                    searchService: searchService
+                )
             }
             .animation(.spring(duration: 0.3, bounce: 0.15), value: showSearch)
             .preferredColorScheme(resolvedColorScheme)
@@ -306,6 +284,50 @@ private struct SettingsMenuButton: View {
             openWindow(id: "settings")
         }
         .keyboardShortcut(",", modifiers: .command)
+    }
+}
+
+private struct SearchOverlay: View {
+    @Binding var showSearch: Bool
+    let coordinator: NavigationCoordinator
+    let meetingViewModel: FolderContentViewModel
+    let peopleViewModel: PeopleContentViewModel
+    let searchService: SemanticSearchService
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        if showSearch {
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .onTapGesture { showSearch = false }
+                .transition(.opacity)
+
+            SearchView(
+                onOpenMeeting: { name in
+                    if name.isEmpty {
+                        coordinator.activeTab = .task
+                    } else {
+                        meetingViewModel.loadFolders()
+                        meetingViewModel.selectedFolder = name
+                        coordinator.activeTab = .meeting
+                    }
+                },
+                onOpenPerson: { relativePath in
+                    peopleViewModel.loadFolders()
+                    peopleViewModel.selectedPerson = relativePath
+                    coordinator.activeTab = .people
+                },
+                onOpenMemory: {
+                    openWindow(id: "memory")
+                },
+                searchService: searchService,
+                isPresented: $showSearch
+            )
+            .frame(width: 600, height: 450)
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.3), radius: 30, y: 10)
+            .transition(.scale(scale: 0.95).combined(with: .opacity))
+        }
     }
 }
 
