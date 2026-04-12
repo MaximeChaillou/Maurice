@@ -305,6 +305,7 @@ enum OnboardingFileSetup {
             root.appendingPathComponent("Meetings"),
             root.appendingPathComponent("People"),
             root.appendingPathComponent("Memory"),
+            root.appendingPathComponent("Memory/People"),
             root.appendingPathComponent(".maurice"),
             root.appendingPathComponent(".claude/commands"),
         ]
