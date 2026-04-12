@@ -198,7 +198,7 @@ final class SemanticSearchService {
                 for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
             ) else { continue }
             context.docs.append(IndexedDocument(
-                name: fileName, context: scope.label, icon: "doc.text",
+                name: fileName, context: scope.label, icon: scope.icon,
                 kind: scope.kind(fileName), content: text,
                 embeddingFr: vecs.fr, embeddingEn: vecs.en,
                 sourceURL: file.url, modificationDate: fileDate
@@ -257,7 +257,7 @@ final class SemanticSearchService {
             ) else { continue }
             context.docs.append(IndexedDocument(
                 name: fileName, context: "\(scope.label) \u{2014} \(folderKey)",
-                icon: "doc.text", kind: scope.kind(folderKey), content: "\(fileName) \(content)",
+                icon: scope.icon, kind: scope.kind(folderKey), content: "\(fileName) \(content)",
                 embeddingFr: vecs.fr, embeddingEn: vecs.en,
                 sourceURL: file.url, modificationDate: fileDate
             ))

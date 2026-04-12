@@ -262,7 +262,7 @@ private enum ExactSearchEngine {
             if nameMatch || contentMatch {
                 let snippet = extractSnippet(from: content ?? "", term: term)
                 found.append(SearchResult(
-                    name: fileName, context: scope.label, icon: "doc.text",
+                    name: fileName, context: scope.label, icon: scope.icon,
                     kind: scope.kind(fileName), snippet: snippet, query: query
                 ))
             }
@@ -318,7 +318,7 @@ private enum ExactSearchEngine {
                 found.append(SearchResult(
                     name: fileName,
                     context: label,
-                    icon: "doc.text",
+                    icon: ctx.scope.icon,
                     kind: ctx.scope.kind(ctx.folderKey),
                     snippet: snippet,
                     query: query

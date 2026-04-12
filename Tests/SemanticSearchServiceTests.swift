@@ -169,6 +169,67 @@ final class SemanticSearchServiceTests: XCTestCase {
         XCTAssertEqual(result.query, "test query")
     }
 
+    func testSemanticSearchResultMemoryKindHoldsIcon() {
+        let result = SemanticSearchResult(
+            name: "Company",
+            context: "Memory",
+            icon: "brain.head.profile",
+            kind: .memory("Company"),
+            score: 0.9,
+            snippet: "Enterprise context",
+            query: "company"
+        )
+        XCTAssertEqual(result.icon, "brain.head.profile")
+        XCTAssertEqual(result.context, "Memory")
+        if case .memory(let name) = result.kind {
+            XCTAssertEqual(name, "Company")
+        } else {
+            XCTFail("Expected memory kind")
+        }
+    }
+
+    // MARK: - Category icons
+
+    func testIndexedDocumentMeetingPreservesIcon() {
+        let doc = IndexedDocument(
+            name: "2026-04-10", context: "Reunion — EL", icon: "calendar",
+            kind: .meeting("EL"), content: "notes",
+            embeddingFr: [], embeddingEn: [],
+            sourceURL: URL(fileURLWithPath: "/tmp/test.md"), modificationDate: Date()
+        )
+        XCTAssertEqual(doc.icon, "calendar")
+    }
+
+    func testIndexedDocumentPersonPreservesIcon() {
+        let doc = IndexedDocument(
+            name: "erwan", context: "Personne", icon: "person",
+            kind: .person("ML/Erwan"), content: "notes",
+            embeddingFr: [], embeddingEn: [],
+            sourceURL: URL(fileURLWithPath: "/tmp/test.md"), modificationDate: Date()
+        )
+        XCTAssertEqual(doc.icon, "person")
+    }
+
+    func testIndexedDocumentMemoryPreservesIcon() {
+        let doc = IndexedDocument(
+            name: "Company", context: "Memory", icon: "brain.head.profile",
+            kind: .memory("Company"), content: "notes",
+            embeddingFr: [], embeddingEn: [],
+            sourceURL: URL(fileURLWithPath: "/tmp/test.md"), modificationDate: Date()
+        )
+        XCTAssertEqual(doc.icon, "brain.head.profile")
+    }
+
+    func testIndexedDocumentTaskPreservesIcon() {
+        let doc = IndexedDocument(
+            name: "Taches", context: "Fichier de taches", icon: "checklist",
+            kind: .task, content: "tasks",
+            embeddingFr: [], embeddingEn: [],
+            sourceURL: URL(fileURLWithPath: "/tmp/test.md"), modificationDate: Date()
+        )
+        XCTAssertEqual(doc.icon, "checklist")
+    }
+
     // MARK: - IndexedDocumentKind
 
     func testIndexedDocumentKindMeetingAssociatedValue() {
