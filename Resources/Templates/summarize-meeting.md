@@ -37,9 +37,20 @@ participants: [list of identified participants]
 ```
 
 4. **Present a concise summary** highlighting key decisions and actions
-5. **Update memory** — Apply the memory update protocol defined in CLAUDE.md:
+5. **Extract and update memory** — First, produce a structured extraction block at the end of the meeting note:
+
+```markdown
+## Extraction mémoire
+- **Personnes mises à jour** : prenom-nom (nouveau fait), prenom-nom (nouveau fait)
+- **Projets mis à jour** : projet (décision/changement)
+- **Nouveaux faits** : prenom-nom → fait appris
+- **Faits obsolètes** : prenom-nom → ~~ancien fait~~ remplacé par nouveau fait
+- **Nouvelles personnes** : prenom-nom (rôle, équipe, contexte)
+```
+
+   Then apply the memory update protocol defined in CLAUDE.md:
    - Update `Memory/Directory.md` if new participants or role changes
-   - Update `Memory/People/` files for participants with new relevant info (topics raised, positions taken, patterns observed). Update `updated` field.
+   - Update `Memory/People/` files for participants with new relevant info (topics raised, positions taken, patterns observed). Date each new fact with `[YYYY-MM]`. Strikethrough obsolete facts. Update `updated` field.
    - Create a `Memory/People/` file for any participant seen in 3+ meetings who doesn't have one yet
    - Update `Memory/Projects/` files with decisions, status changes, or metrics discussed
    - Ensure cross-references are consistent (`people[].projects` ↔ `projects[].people`)

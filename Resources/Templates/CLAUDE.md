@@ -39,7 +39,14 @@ updated: YYYY-MM-DD
 ---
 ```
 
-Le corps contient des bullet points factuels : compétences, patterns observés, sujets récurrents, points d'attention.
+Le corps contient des bullet points factuels **datés** : compétences, patterns observés, sujets récurrents, points d'attention. Chaque fait est préfixé par sa date d'apprentissage :
+
+```markdown
+- [2026-01] Référent technique API Gateway
+- [2026-03] Pousse pour migrer vers gRPC
+- [2026-04] Charge de travail élevée, sujet remonté en 1:1
+- ~~[2026-01] Travaille sur Smart Crop~~ → remplacé par Mobile-CLIP [2026-04]
+```
 
 - **`managed: true`** = managé direct de {{name}}. A aussi un dossier dans `People/` avec 1:1, objectifs, assessment.
 - **`managed: false`** = collègue, pair, partie prenante. Seule la fiche dans `Memory/People/` existe.
@@ -126,10 +133,12 @@ Index léger de toutes les personnes connues, organisé par département. Format
 | Métrique significative | `Memory/Projects/` § Technique |
 
 ### Règles de mise à jour
-- Ne jamais supprimer d'info — ajouter, corriger, nuancer
+- **Ne jamais supprimer d'info** — quand un fait devient obsolète, le barrer avec `~~` et ajouter le nouveau fait avec sa date. Exemple : `~~[2026-01] Owner de Smart Crop~~ → transféré à Régis [2026-04]`
+- **Dater chaque fait** — préfixer avec `[YYYY-MM]` pour tracer la fraîcheur de l'information
 - Toujours mettre à jour `maj` / `updated` dans le frontmatter
 - Préfixer `?` les infos incertaines
 - Rester concis — une ligne par fait, pas de prose
+- **Faits récents > faits anciens** — en cas d'ambiguïté, prioriser les faits les plus récents
 
 ---
 
