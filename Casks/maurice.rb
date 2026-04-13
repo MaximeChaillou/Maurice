@@ -1,6 +1,6 @@
 cask "maurice" do
-  version "1.0.4"
-  sha256 "984d13bf122914421777dcefc469dae9e53a89643ba17dd97b245b7b3c7580b3"
+  version "1.0.5"
+  sha256 "5afcdd2953c97dc9ff2dd103840274a01a1a8fa6053c7716d90f6b64bed07b06"
 
   url "https://github.com/MaximeChaillou/Maurice/releases/download/v#{version}/Maurice-#{version}.zip"
   name "Maurice"
