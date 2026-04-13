@@ -11,8 +11,11 @@ enum GoogleOAuthTokenStore {
     private static let account = "oauth-tokens"
 
     static func save(_ tokens: GoogleTokens) {
-        guard let data = try? JSONEncoder().encode(tokens) else {
-            IssueLogger.log(.error, "Failed to encode Google tokens")
+        let data: Data
+        do {
+            data = try JSONEncoder().encode(tokens)
+        } catch {
+            IssueLogger.log(.error, "Failed to encode Google tokens", error: error)
             return
         }
         do {

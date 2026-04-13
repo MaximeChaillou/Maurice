@@ -12,7 +12,9 @@ extension PersistentCodable {
         do {
             data = try Data(contentsOf: url)
         } catch {
-            IssueLogger.log(.warning, "Failed to read persistence file", context: url.path, error: error)
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read persistence file", context: url.path, error: error)
+            }
             return Self()
         }
         do {
@@ -25,8 +27,23 @@ extension PersistentCodable {
 
     static func loadAsync() async -> Self {
         let url = persistenceURL
-        let data = await Task.detached { try? Data(contentsOf: url) }.value
-        guard let data else { return Self() }
+        let result: Result<Data, Error> = await Task.detached {
+            do {
+                return .success(try Data(contentsOf: url))
+            } catch {
+                return .failure(error)
+            }
+        }.value
+        let data: Data
+        switch result {
+        case .success(let value):
+            data = value
+        case .failure(let error):
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read persistence file (async)", context: url.path, error: error)
+            }
+            return Self()
+        }
         do {
             return try JSONDecoder().decode(Self.self, from: data)
         } catch {

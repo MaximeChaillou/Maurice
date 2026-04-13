@@ -92,7 +92,7 @@ final class RecordingContext {
 
             // Search in Meetings
             let meetingsDir = AppSettings.meetingsDirectory
-            if let folders = try? fm.contentsOfDirectory(at: meetingsDir, includingPropertiesForKeys: nil) {
+            if let folders = Self.scanDirectory(at: meetingsDir, with: fm) {
                 for folder in folders where folder.hasDirectoryPath {
                     let config = MeetingConfig.load(from: folder)
                     if let linkedName = config.calendarEventName,
@@ -104,11 +104,9 @@ final class RecordingContext {
 
             // Search in People/category/person/1-1
             let peopleDir = AppSettings.peopleDirectory
-            if let categories = try? fm.contentsOfDirectory(at: peopleDir, includingPropertiesForKeys: nil) {
+            if let categories = Self.scanDirectory(at: peopleDir, with: fm) {
                 for category in categories where category.hasDirectoryPath {
-                    guard let people = try? fm.contentsOfDirectory(
-                        at: category, includingPropertiesForKeys: nil
-                    ) else { continue }
+                    guard let people = Self.scanDirectory(at: category, with: fm) else { continue }
                     for person in people where person.hasDirectoryPath {
                         let oneOnOneDir = person.appendingPathComponent("1-1", isDirectory: true)
                         guard fm.fileExists(atPath: oneOnOneDir.path) else { continue }
@@ -123,6 +121,18 @@ final class RecordingContext {
 
             return nil
         }.value
+    }
+
+    nonisolated private static func scanDirectory(at url: URL, with fm: FileManager) -> [URL]? {
+        do {
+            return try fm.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to scan directory",
+                                context: url.path, error: error)
+            }
+            return nil
+        }
     }
 
     nonisolated private func writeFrontmatter(for event: GoogleCalendarEvent, in folderName: String) async {

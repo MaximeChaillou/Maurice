@@ -356,7 +356,14 @@ private struct MemoryMenuButton: View {
             guard panel.runModal() == .OK, let source = panel.url else { return }
             let destination = AppSettings.memoryDirectory
             await Task.detached {
-                try? MemoryImporter.importFolder(from: source, to: destination)
+                do {
+                    try MemoryImporter.importFolder(from: source, to: destination)
+                } catch {
+                    IssueLogger.log(
+                        .error, "Failed to import folder into Memory",
+                        context: "\(source.path) → \(destination.path)", error: error
+                    )
+                }
             }.value
             NotificationCenter.default.post(name: .fileSystemDidChange, object: nil)
         }

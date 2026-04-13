@@ -321,40 +321,56 @@ final class SemanticSearchService {
             }
         }
     }
+}
 
-    private func loadIndexFromDisk() {
+// MARK: - Disk index loading
+extension SemanticSearchService {
+    fileprivate func loadIndexFromDisk() {
         let dimFr = embeddingFr?.dimension ?? 0
         let dimEn = embeddingEn?.dimension ?? 0
         let url = Self.indexFileURL
         Task {
-            let docs = await Task.detached {
-                guard let data = try? Data(contentsOf: url),
-                      let entries = try? JSONDecoder().decode([StoredEntry].self, from: data) else { return [IndexedDocument]() }
-                return entries.compactMap { entry -> IndexedDocument? in
-                    guard let kind = IndexedDocumentKind(typeString: entry.kindType, value: entry.kindValue),
-                          let sourceURL = URL(string: entry.sourceURL),
-                          entry.embeddingFr.count == dimFr,
-                          entry.embeddingEn.count == dimEn else { return nil }
-                    return IndexedDocument(
-                        name: entry.name,
-                        context: entry.context,
-                        icon: entry.icon,
-                        kind: kind,
-                        content: entry.content,
-                        embeddingFr: entry.embeddingFr,
-                        embeddingEn: entry.embeddingEn,
-                        sourceURL: sourceURL,
-                        modificationDate: entry.modificationDate
-                    )
-                }
+            documents = await Task.detached {
+                guard let entries = Self.decodeStoredEntries(at: url) else { return [] }
+                return entries.compactMap { $0.toDocument(dimFr: dimFr, dimEn: dimEn) }
             }.value
-            documents = docs
+        }
+    }
+
+    nonisolated private static func decodeStoredEntries(at url: URL) -> [StoredEntry]? {
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read search index", context: url.path, error: error)
+            }
+            return nil
+        }
+        do {
+            return try JSONDecoder().decode([StoredEntry].self, from: data)
+        } catch {
+            IssueLogger.log(.warning, "Failed to decode search index", context: url.path, error: error)
+            return nil
         }
     }
 }
 
-// MARK: - Snippet & Math helpers
+private extension StoredEntry {
+    func toDocument(dimFr: Int, dimEn: Int) -> IndexedDocument? {
+        guard let kind = IndexedDocumentKind(typeString: kindType, value: kindValue),
+              let url = URL(string: sourceURL),
+              embeddingFr.count == dimFr,
+              embeddingEn.count == dimEn else { return nil }
+        return IndexedDocument(
+            name: name, context: context, icon: icon, kind: kind, content: content,
+            embeddingFr: embeddingFr, embeddingEn: embeddingEn,
+            sourceURL: url, modificationDate: modificationDate
+        )
+    }
+}
 
+// MARK: - Snippet & Math helpers
 extension SemanticSearchService {
     nonisolated static func extractSnippet(from content: String, query: String, radius: Int = 60) -> String {
         let lower = content.lowercased()

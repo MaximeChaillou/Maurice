@@ -280,11 +280,16 @@ struct NextNoteButton: View {
     }
 
     private func checkContent() {
-        guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
+        do {
+            let content = try String(contentsOf: fileURL, encoding: .utf8)
+            hasContent = !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read next.md content",
+                                context: fileURL.path, error: error)
+            }
             hasContent = false
-            return
         }
-        hasContent = !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func ensureFileExists() {
