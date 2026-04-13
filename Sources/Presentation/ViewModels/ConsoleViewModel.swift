@@ -102,10 +102,16 @@ final class ConsoleViewModel {
     func sendSkill(filename: String, parameter: String? = nil) {
         shouldExpand = true
         let commandName = filename.replacingOccurrences(of: ".md", with: "")
+        let skillCommand: String
         if let param = parameter, !param.isEmpty {
-            sendCommand("/\(commandName) \(param)")
+            skillCommand = "/\(commandName) \(param)"
         } else {
-            sendCommand("/\(commandName)")
+            skillCommand = "/\(commandName)"
+        }
+        sendCommand("/clear")
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(300))
+            self.sendCommand(skillCommand)
         }
     }
 
