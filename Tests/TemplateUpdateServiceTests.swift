@@ -240,7 +240,11 @@ final class TemplateUpdateServiceTests: XCTestCase {
         let service = makeService()
         await service.reconcile(rootDirectory: tempDir, descriptors: [template])
 
-        // New bundled changes the non-placeholder body
+        // User customizes the non-placeholder portion
+        try? "Hello Alice\nMy custom body"
+            .write(to: template.userFileURL, atomically: true, encoding: .utf8)
+
+        // New bundled changes the non-placeholder body too
         bundleContent["foo"] = "Hello {{name}}\nNew body"
         let service2 = makeService()
         await service2.reconcile(rootDirectory: tempDir, descriptors: [template])
