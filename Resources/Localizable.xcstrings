@@ -531,6 +531,12 @@
     "Event name" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l\u2019\u00e9v\u00e9nement" } } }
     },
+    "Google Calendar 1-1 event name (optional)" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l\u2019\u00e9v\u00e9nement 1-1 dans Google Calendar (optionnel)" } } }
+    },
+    "Used to automatically link the 1-1 Google Calendar event to this person." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Permet de lier automatiquement l\u2019\u00e9v\u00e9nement 1-1 de Google Calendar \u00e0 cette personne." } } }
+    },
     "No configured actions" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune action configur\u00e9e" } } }
     },

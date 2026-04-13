@@ -124,6 +124,89 @@ final class PeopleContentViewModelTests: XCTestCase {
         XCTAssertTrue(fm.fileExists(atPath: aliceDir.appendingPathComponent("profile.md").path))
     }
 
+    func testCreatePersonWithCalendarEventNameSavesConfig() async throws {
+        let fm = FileManager.default
+        let teamDir = tempDir.appendingPathComponent("People/Team", isDirectory: true)
+        try fm.createDirectory(at: teamDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        viewModel.createPerson(
+            name: "Alice",
+            inCategory: "Team",
+            calendarEventName: "1-1 Alice / Maxime"
+        )
+        try await Task.sleep(for: .milliseconds(200))
+
+        let oneOnOneDir = teamDir
+            .appendingPathComponent("Alice", isDirectory: true)
+            .appendingPathComponent("1-1", isDirectory: true)
+        let configURL = oneOnOneDir.appendingPathComponent(MeetingConfig.fileName)
+        XCTAssertTrue(fm.fileExists(atPath: configURL.path))
+
+        let config = MeetingConfig.load(from: oneOnOneDir)
+        XCTAssertEqual(config.calendarEventName, "1-1 Alice / Maxime")
+    }
+
+    func testCreatePersonWithoutCalendarEventNameSkipsConfig() async throws {
+        let fm = FileManager.default
+        let teamDir = tempDir.appendingPathComponent("People/Team", isDirectory: true)
+        try fm.createDirectory(at: teamDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        viewModel.createPerson(name: "Alice", inCategory: "Team", calendarEventName: "")
+        try await Task.sleep(for: .milliseconds(200))
+
+        let configURL = teamDir
+            .appendingPathComponent("Alice", isDirectory: true)
+            .appendingPathComponent("1-1", isDirectory: true)
+            .appendingPathComponent(MeetingConfig.fileName)
+        XCTAssertFalse(fm.fileExists(atPath: configURL.path))
+    }
+
+    func testCreatePersonTrimsCalendarEventName() async throws {
+        let fm = FileManager.default
+        let teamDir = tempDir.appendingPathComponent("People/Team", isDirectory: true)
+        try fm.createDirectory(at: teamDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        viewModel.createPerson(
+            name: "Alice",
+            inCategory: "Team",
+            calendarEventName: "   1-1 Alice   "
+        )
+        try await Task.sleep(for: .milliseconds(200))
+
+        let oneOnOneDir = teamDir
+            .appendingPathComponent("Alice", isDirectory: true)
+            .appendingPathComponent("1-1", isDirectory: true)
+        let config = MeetingConfig.load(from: oneOnOneDir)
+        XCTAssertEqual(config.calendarEventName, "1-1 Alice")
+    }
+
+    func testCreatePersonWithWhitespaceOnlyEventNameSkipsConfig() async throws {
+        let fm = FileManager.default
+        let teamDir = tempDir.appendingPathComponent("People/Team", isDirectory: true)
+        try fm.createDirectory(at: teamDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        viewModel.createPerson(
+            name: "Alice",
+            inCategory: "Team",
+            calendarEventName: "   "
+        )
+        try await Task.sleep(for: .milliseconds(200))
+
+        let configURL = teamDir
+            .appendingPathComponent("Alice", isDirectory: true)
+            .appendingPathComponent("1-1", isDirectory: true)
+            .appendingPathComponent(MeetingConfig.fileName)
+        XCTAssertFalse(fm.fileExists(atPath: configURL.path))
+    }
+
     // MARK: - Deletion
 
     func testDeletePerson() async throws {

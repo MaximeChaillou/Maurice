@@ -12,6 +12,7 @@ final class PeopleContentViewModel {
     var isAddingCategory = false
     var newFolderName = ""
     var newCategoryName = ""
+    var newCalendarEventName = ""
     var errorMessage: String?
 
     var currentPerson: FolderItem? {
@@ -100,7 +101,7 @@ final class PeopleContentViewModel {
         loadFolders()
     }
 
-    func createPerson(name: String, inCategory category: String) {
+    func createPerson(name: String, inCategory category: String, calendarEventName: String = "") {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
 
@@ -108,6 +109,7 @@ final class PeopleContentViewModel {
             .appendingPathComponent(category, isDirectory: true)
             .appendingPathComponent(trimmed, isDirectory: true)
         let relativePath = "\(category)/\(trimmed)"
+        let trimmedEvent = calendarEventName.trimmingCharacters(in: .whitespaces)
 
         Task {
             await Task.detached {
@@ -134,6 +136,11 @@ final class PeopleContentViewModel {
                 let jobDescURL = personURL.appendingPathComponent("job-description.md")
                 if !fm.fileExists(atPath: jobDescURL.path) {
                     fm.createFile(atPath: jobDescURL.path, contents: nil)
+                }
+                if !trimmedEvent.isEmpty {
+                    var config = MeetingConfig()
+                    config.calendarEventName = trimmedEvent
+                    config.save(to: personURL.appendingPathComponent("1-1", isDirectory: true))
                 }
             }.value
             loadFolders()

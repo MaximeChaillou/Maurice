@@ -216,17 +216,7 @@ struct PersonOneOnOneView: View {
     }
 
     var body: some View {
-        Group {
-            if entries.isEmpty {
-                ContentUnavailableView(
-                    "No 1-1s",
-                    systemImage: "person.2",
-                    description: Text("Start a recording to create a 1-1.")
-                )
-            } else {
-                dateNavigationDetail
-            }
-        }
+        dateNavigationDetail
         .onAppear { loadEntries(); loadConfig() }
         .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
             loadEntries()
@@ -279,13 +269,16 @@ struct PersonOneOnOneView: View {
 
     // MARK: - Date navigation
 
-    private var dateNavigationDetail: some View {
+    private var currentEntry: MeetingDateEntry? {
+        guard !entries.isEmpty else { return nil }
         let safeIndex = min(index, entries.count - 1)
-        let entry = entries[max(safeIndex, 0)]
+        return entries[max(safeIndex, 0)]
+    }
 
-        return VStack(spacing: 0) {
+    private var dateNavigationDetail: some View {
+        VStack(spacing: 0) {
             DateNavigationHeader(
-                entry: entry,
+                entry: currentEntry,
                 totalEntries: entries.count,
                 index: $index,
                 showTranscripts: $showTranscripts,
@@ -305,9 +298,18 @@ struct PersonOneOnOneView: View {
                 nextFileURL: oneOnOneDir.appendingPathComponent("next.md")
             )
             Divider()
-            DateEntryContentView(
-                entry: entry, markdownTheme: markdownTheme, showTranscripts: $showTranscripts
-            )
+            if let entry = currentEntry {
+                DateEntryContentView(
+                    entry: entry, markdownTheme: markdownTheme, showTranscripts: $showTranscripts
+                )
+            } else {
+                ContentUnavailableView(
+                    "No 1-1s",
+                    systemImage: "person.2",
+                    description: Text("Start a recording to create a 1-1.")
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: index) { showTranscripts = false }

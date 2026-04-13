@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Date Navigation Header
 
 struct DateNavigationHeader: View {
-    let entry: MeetingDateEntry
+    let entry: MeetingDateEntry?
     let totalEntries: Int
     @Binding var index: Int
     @Binding var showTranscripts: Bool
@@ -16,13 +16,15 @@ struct DateNavigationHeader: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            HStack {
-                navButton(direction: .backward)
-                Spacer()
-                Text(entry.date, format: .dateTime.day().month(.wide).year())
-                    .font(.headline)
-                Spacer()
-                navButton(direction: .forward)
+            if let entry {
+                HStack {
+                    navButton(direction: .backward)
+                    Spacer()
+                    Text(entry.date, format: .dateTime.day().month(.wide).year())
+                        .font(.headline)
+                    Spacer()
+                    navButton(direction: .forward)
+                }
             }
 
             HStack(spacing: 8) {
@@ -30,9 +32,11 @@ struct DateNavigationHeader: View {
                 if let nextFileURL {
                     NextNoteButton(fileURL: nextFileURL)
                 }
-                TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
+                if let entry {
+                    TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
+                }
                 if let config, let consoleViewModel {
-                    let filePath = entry.noteFile?.url.path ?? entry.transcript?.url.path
+                    let filePath = entry?.noteFile?.url.path ?? entry?.transcript?.url.path
                     SkillActionsMenu(
                         config: config, consoleViewModel: consoleViewModel,
                         activeFilePath: filePath,
@@ -44,7 +48,9 @@ struct DateNavigationHeader: View {
                         }
                     }
                 }
-                EntryActionsMenu(entry: entry, entryDeleteAction: $entryDeleteAction)
+                if let entry {
+                    EntryActionsMenu(entry: entry, entryDeleteAction: $entryDeleteAction)
+                }
             }
         }
         .padding(.horizontal, 16)
