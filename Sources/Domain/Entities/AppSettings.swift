@@ -6,7 +6,19 @@ enum AppSettings {
     private static let onboardingCompletedKey = "onboardingCompleted"
     private static let transcriptionLanguageKey = "transcriptionLanguage"
     private static let appLanguageKey = "appLanguage"
+    private static let userNameKey = "userName"
+    private static let userJobKey = "userJob"
     static let appearanceModeKey = "appearanceMode"
+
+    static var userName: String {
+        get { UserDefaults.standard.string(forKey: userNameKey) ?? "" }
+        set { UserDefaults.standard.set(newValue, forKey: userNameKey) }
+    }
+
+    static var userJob: String {
+        get { UserDefaults.standard.string(forKey: userJobKey) ?? "" }
+        set { UserDefaults.standard.set(newValue, forKey: userJobKey) }
+    }
 
     static var appearanceMode: String {
         get { UserDefaults.standard.string(forKey: appearanceModeKey) ?? "system" }

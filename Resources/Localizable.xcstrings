@@ -686,6 +686,69 @@
     },
     "Choose a folder to import into Memory" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier \u00e0 importer dans la m\u00e9moire" } } }
+    },
+    "Template updates" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mises \u00e0 jour des mod\u00e8les" } } }
+    },
+    "Templates up to date" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mod\u00e8les \u00e0 jour" } } }
+    },
+    "All skill templates match the latest bundled versions." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tous les mod\u00e8les de skills correspondent aux versions les plus r\u00e9centes." } } }
+    },
+    "New versions available" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelles versions disponibles" } } }
+    },
+    "No template selected" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun mod\u00e8le s\u00e9lectionn\u00e9" } } }
+    },
+    "Keep" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Garder" } } }
+    },
+    "Accept" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accepter" } } }
+    },
+    "Apply" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appliquer" } } }
+    },
+    "Discard decisions" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Abandonner les d\u00e9cisions" } } }
+    },
+    "accepted" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "accept\u00e9s" } } }
+    },
+    "kept" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "gard\u00e9s" } } }
+    },
+    "remaining" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "restants" } } }
+    },
+    "Will use new version" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Utilisera la nouvelle version" } } }
+    },
+    "Will keep your version" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gardera votre version" } } }
+    },
+    "Undo" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } } }
+    },
+    "Decide on all blocks before applying." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9cidez pour tous les blocs avant d\u2019appliquer." } } }
+    },
+    "Decide on every block (Accept or Keep) to enable Apply." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9cidez pour chaque bloc (Accepter ou Garder) pour activer Appliquer." } } }
+    },
+    "Apply will rewrite your file to include %lld accepted block(s)." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appliquer r\u00e9\u00e9crira votre fichier pour inclure %lld bloc(s) accept\u00e9(s)." } } }
+    },
+    "No file change pending. Apply only records that you reviewed this version." : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune modification en attente. Appliquer enregistrera seulement que vous avez vu cette version." } } }
+    },
+    "Keep my version" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Garder ma version" } } }
+    },
+    "Use new version" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Utiliser la nouvelle version" } } }
     }
   },
   "version" : "1.0"

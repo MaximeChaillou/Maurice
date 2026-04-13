@@ -281,6 +281,8 @@ struct OnboardingView: View {
                 await MainActor.run {
                     AppSettings.rootDirectory = root
                     AppSettings.transcriptionLanguage = lang
+                    AppSettings.userName = name
+                    AppSettings.userJob = job
                     AppSettings.onboardingCompleted = true
                     isCreating = false
                 }

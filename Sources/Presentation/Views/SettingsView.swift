@@ -6,6 +6,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
     case background
     case appearance
     case skills
+    case templateUpdates
     case mcp
     case claudeMD
 
@@ -18,6 +19,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .background: String(localized: "Background")
         case .appearance: String(localized: "Markdown style")
         case .skills: String(localized: "Skills")
+        case .templateUpdates: String(localized: "Template updates")
         case .mcp: String(localized: "MCP Servers")
         case .claudeMD: String(localized: "CLAUDE.md")
         }
@@ -30,6 +32,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .background: "paintpalette"
         case .appearance: "paintbrush"
         case .skills: "terminal"
+        case .templateUpdates: "arrow.triangle.2.circlepath"
         case .mcp: "server.rack"
         case .claudeMD: "doc.text"
         }
@@ -40,6 +43,7 @@ struct SettingsView: View {
     @Binding var appTheme: AppTheme
     var calendarViewModel: GoogleCalendarViewModel?
     @ObservedObject var updateChecker: UpdateChecker
+    var templateUpdateService: TemplateUpdateService
     var onRootDirectoryChanged: (() -> Void)?
     @State private var selectedSection: SettingsSection? = .general
 
@@ -56,8 +60,14 @@ struct SettingsView: View {
     private var settingsSidebar: some View {
         List(selection: $selectedSection) {
             ForEach(SettingsSection.allCases) { section in
-                Label(section.localizedName, systemImage: section.icon)
-                    .tag(section)
+                HStack(spacing: 6) {
+                    Label(section.localizedName, systemImage: section.icon)
+                    Spacer()
+                    if section == .templateUpdates, templateUpdateService.hasPendingUpdates {
+                        Circle().fill(.orange).frame(width: 7, height: 7)
+                    }
+                }
+                .tag(section)
             }
         }
         .listStyle(.sidebar)
@@ -78,6 +88,11 @@ struct SettingsView: View {
             MarkdownThemeSettingsView(theme: $appTheme.markdown)
         case .skills:
             SkillsSettingsView(markdownTheme: appTheme.markdown)
+        case .templateUpdates:
+            TemplateUpdatesView(
+                service: templateUpdateService,
+                rootDirectory: AppSettings.rootDirectory
+            )
         case .mcp:
             MCPServersView()
         case .claudeMD:

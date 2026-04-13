@@ -10,6 +10,11 @@
 		CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */; };
 		VTS1BF01VTS1BF01VTS1BF01 /* VTSequencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */; };
 		CV01BF01CV01BF01CV01BF01 /* ConsoleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CV01RF01CV01RF01CV01RF01 /* ConsoleViewModel.swift */; };
+		TU01TU02TU03TU04TU05TU06 /* TemplateUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TU11TU12TU13TU14TU15TU16 /* TemplateUpdateService.swift */; };
+		TPE1TPE2TPE3TPE4TPE5TPE6 /* TemplatePlaceholderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TPE7TPE8TPE9TPE0TPEATPEB /* TemplatePlaceholderEngine.swift */; };
+		TV01TV02TV03TV04TV05TV06 /* TemplateUpdatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TV11TV12TV13TV14TV15TV16 /* TemplateUpdatesView.swift */; };
+		TDC1TDC2TDC3TDC4TDC5TDC6 /* TemplateDiffComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = TDC7TDC8TDC9TDC0TDCATDCB /* TemplateDiffComponents.swift */; };
+		TT01TT02TT03TT04TT05TT06 /* TemplateUpdateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TT11TT12TT13TT14TT15TT16 /* TemplateUpdateServiceTests.swift */; };
 		CT01BF01CT01BF01CT01BF01 /* ConsoleTerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */; };
 		CP01BF01CP01BF01CP01BF01 /* ConsolePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */; };
 		015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */; };
@@ -296,6 +301,11 @@
 		FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-SemiBold.ttf"; sourceTree = "<group>"; };
 		FN04FR04FR04FR04FR04FR04 /* FiraCodeNerdFont-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Light.ttf"; sourceTree = "<group>"; };
 		CV01RF01CV01RF01CV01RF01 /* ConsoleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewModel.swift; sourceTree = "<group>"; };
+		TU11TU12TU13TU14TU15TU16 /* TemplateUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateUpdateService.swift; sourceTree = "<group>"; };
+		TPE7TPE8TPE9TPE0TPEATPEB /* TemplatePlaceholderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePlaceholderEngine.swift; sourceTree = "<group>"; };
+		TV11TV12TV13TV14TV15TV16 /* TemplateUpdatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateUpdatesView.swift; sourceTree = "<group>"; };
+		TDC7TDC8TDC9TDC0TDCATDCB /* TemplateDiffComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateDiffComponents.swift; sourceTree = "<group>"; };
+		TT11TT12TT13TT14TT15TT16 /* TemplateUpdateServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateUpdateServiceTests.swift; sourceTree = "<group>"; };
 		CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleTerminalView.swift; sourceTree = "<group>"; };
 		CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsolePanel.swift; sourceTree = "<group>"; };
 		CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewModelTests.swift; sourceTree = "<group>"; };
@@ -360,6 +370,8 @@
 			children = (
 				A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */,
 				55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */,
+				TU11TU12TU13TU14TU15TU16 /* TemplateUpdateService.swift */,
+				TPE7TPE8TPE9TPE0TPEATPEB /* TemplatePlaceholderEngine.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -511,6 +523,8 @@
 				IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */,
 				CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */,
 				CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */,
+				TV11TV12TV13TV14TV15TV16 /* TemplateUpdatesView.swift */,
+				TDC7TDC8TDC9TDC0TDCATDCB /* TemplateDiffComponents.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -609,6 +623,7 @@
 				FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */,
 				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
 				FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */,
+				TT11TT12TT13TT14TT15TT16 /* TemplateUpdateServiceTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -827,6 +842,10 @@
 				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,
 				CS01B001C001D001E001F001 /* CalendarServiceProtocol.swift in Sources */,
+				TU01TU02TU03TU04TU05TU06 /* TemplateUpdateService.swift in Sources */,
+				TPE1TPE2TPE3TPE4TPE5TPE6 /* TemplatePlaceholderEngine.swift in Sources */,
+				TV01TV02TV03TV04TV05TV06 /* TemplateUpdatesView.swift in Sources */,
+				TDC1TDC2TDC3TDC4TDC5TDC6 /* TemplateDiffComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,6 +892,7 @@
 				FP01BF01FP01BF01FP01BF01 /* FolderPersistentCodableTests.swift in Sources */,
 				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,
 				FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */,
+				TT01TT02TT03TT04TT05TT06 /* TemplateUpdateServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

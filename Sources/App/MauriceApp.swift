@@ -16,6 +16,7 @@ struct MauriceApp: App {
     @State private var lastFileSystemReload = Date.distantPast
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
+    @State private var templateUpdateService = TemplateUpdateService()
     @StateObject private var updateChecker = UpdateChecker()
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
@@ -96,8 +97,12 @@ struct MauriceApp: App {
             }
             .onAppear {
                 fileWatcher.start()
-                Task.detached {
-                    OnboardingFileSetup.copyMissingTemplates(to: AppSettings.rootDirectory)
+                if AppSettings.onboardingCompleted {
+                    Task {
+                        await templateUpdateService.reconcile(
+                            rootDirectory: AppSettings.rootDirectory
+                        )
+                    }
                 }
                 #if DEBUG
                 Self.applyDebugIconOverlay()
@@ -133,6 +138,11 @@ struct MauriceApp: App {
                 OnboardingView {
                     showOnboarding = false
                     reloadAfterDirectoryChange()
+                    Task {
+                        await templateUpdateService.reconcile(
+                            rootDirectory: AppSettings.rootDirectory
+                        )
+                    }
                 }
                 .interactiveDismissDisabled()
             }
@@ -160,7 +170,12 @@ struct MauriceApp: App {
         }
 
         Window("Settings", id: "settings") {
-            SettingsView(appTheme: $appTheme, calendarViewModel: calendarViewModel, updateChecker: updateChecker) {
+            SettingsView(
+                appTheme: $appTheme,
+                calendarViewModel: calendarViewModel,
+                updateChecker: updateChecker,
+                templateUpdateService: templateUpdateService
+            ) {
                 reloadAfterDirectoryChange()
             }
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
@@ -212,6 +227,9 @@ struct MauriceApp: App {
         peopleViewModel.resetDirectory(AppSettings.peopleDirectory)
         memoryListViewModel.reloadDirectory()
         appTheme = AppTheme.load()
+        Task {
+            await templateUpdateService.reconcile(rootDirectory: AppSettings.rootDirectory)
+        }
     }
 
     // MARK: - Tab content
