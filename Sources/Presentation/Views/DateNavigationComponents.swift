@@ -273,6 +273,7 @@ struct NextNoteButton: View {
             .frame(width: 400, height: 300)
         }
         .onAppear { checkContent() }
+        .onChange(of: fileURL) { _, _ in checkContent() }
         .onChange(of: showPopover) { if !showPopover { checkContent() } }
         .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
             checkContent()
