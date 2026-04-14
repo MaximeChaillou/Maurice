@@ -6,7 +6,7 @@ description: Summarize a meeting from its transcript.
 
 ## Instructions
 
-1. **Read the transcript** from `$0`
+1. **Read the transcript** from the same folder of `$0` (e.g. `YYYY-MM-DD.transcript`)
 2. **Gather context:**
    - Check if a preparation note already exists for today in the same folder (`YYYY-MM-DD.md`). If so, use it as a base.
    - Identify participants from the transcript
