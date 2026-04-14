@@ -95,8 +95,12 @@ final class ConsoleViewModel {
 
     func sendCommand(_ command: String) {
         guard isRunning, let terminalView else { return }
-        let data = Array((command + "\r").utf8)
-        terminalView.send(data)
+        let textBytes = Array(command.utf8)
+        terminalView.send(textBytes)
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(50))
+            terminalView.send([0x0D])
+        }
     }
 
     func sendSkill(filename: String, parameter: String? = nil) {
@@ -118,7 +122,7 @@ final class ConsoleViewModel {
     func sendImportSkill(source: String, targetPath: String) {
         shouldExpand = true
         sendCommand(
-            "/maurice-convert-file-to-md source: \(source)\ntarget: \(targetPath)"
+            "/maurice-convert-file-to-md source: \(source) target: \(targetPath)"
         )
     }
 
@@ -129,9 +133,8 @@ final class ConsoleViewModel {
     }
 
     func restart() {
-        if isRunning, let terminalView {
-            let data = Array("exit\n".utf8)
-            terminalView.send(data)
+        if isRunning {
+            sendCommand("exit")
         }
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(500))
