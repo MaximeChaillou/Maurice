@@ -22,6 +22,11 @@ Integrated with Claude Code, it automates workflows like summarization and analy
 
 ## 📦 Installation
 
+### Prerequisites
+
+- **macOS 26+** (Tahoe)
+- **Claude Code** installed as a CLI in your terminal (not the Claude desktop app). Install via `curl -fsSL https://claude.ai/install.sh | bash` or see the [official docs](https://docs.claude.com/en/docs/claude-code).
+
 ### Via Homebrew (recommended)
 
 ```bash
