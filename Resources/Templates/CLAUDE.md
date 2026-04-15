@@ -20,7 +20,7 @@ Tu es l'assistant personnel de {{name}}, {{job}}. Tu agis comme un **executive a
 ### Nommage des fichiers
 - Notes de meeting : `YYYY-MM-DD.md` (ex: `2026-02-19.md`)
 - Fiches projets : nom en kebab-case (ex: `smart-crop.md`)
-- Fiches personnes : `prenom-nom.md` en minuscule (ex: `erwan-legoff.md`)
+- Fiches personnes : `prenom-nom.md` en minuscule (ex: `maxime-chaillou.md`)
 
 ### Fiches personnes (`Memory/People/`)
 
