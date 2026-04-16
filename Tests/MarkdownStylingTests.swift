@@ -838,3 +838,95 @@ final class MarkdownDataStructureTests: XCTestCase {
         XCTAssertEqual(ctx.dataRowIndex, -1)
     }
 }
+
+// MARK: - Incremental restyle
+
+final class IncrementalRestyleTests: XCTestCase {
+
+    @MainActor
+    func testRestyleLinesUpdatesOldAndNewActiveLines() {
+        let text = "# Title\nParagraph\n- Bullet"
+        let (coord, _, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+
+        // After full restyle, heading prefix "# " is hidden (line 0 is not active)
+        let headingHidden = coord.hiddenRanges.contains { $0.location == 0 }
+        XCTAssertTrue(headingHidden, "Heading prefix should be hidden initially")
+
+        // Simulate cursor moving from line -1 (no line) to line 0 (heading)
+        coord.restyleLines(old: -1, new: 0)
+
+        // Line 0 is now active: its "# " prefix should no longer be hidden
+        let headingStillHidden = coord.hiddenRanges.contains { $0.location == 0 && $0.length == 2 }
+        XCTAssertFalse(headingStillHidden, "Active heading line should not have hidden prefix")
+    }
+
+    @MainActor
+    func testRestyleLinesMovesBetweenLines() {
+        let text = "# Title\n- Bullet"
+        let (coord, _, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+
+        // Move cursor to line 0 (heading)
+        coord.restyleLines(old: -1, new: 0)
+        let headingHiddenAfterActivate = coord.hiddenRanges.contains { $0.location == 0 && $0.length == 2 }
+        XCTAssertFalse(headingHiddenAfterActivate)
+
+        // Move cursor away from line 0 to line 1 (bullet)
+        coord.restyleLines(old: 0, new: 1)
+        // Line 0 should have hidden prefix restored
+        let headingHiddenAfterDeactivate = coord.hiddenRanges.contains { $0.location == 0 && $0.length == 2 }
+        XCTAssertTrue(headingHiddenAfterDeactivate, "Heading prefix should be hidden after line deactivated")
+    }
+
+    @MainActor
+    func testRestyleLinesPreservesOtherLinesStyling() {
+        let text = "# Title\nPlain text\n- Bullet"
+        let (coord, tv, _) = makeCoordinator(text: text)
+        coord.applyMarkdownStyling()
+
+        // Capture font on heading before restyle
+        let headingFont = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+
+        // Move cursor to line 2 (bullet) — should not affect heading styling
+        coord.restyleLines(old: -1, new: 2)
+
+        let headingFontAfter = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+        XCTAssertEqual(headingFont?.pointSize, headingFontAfter?.pointSize,
+                       "Heading font should be unchanged by restyle of unrelated line")
+    }
+}
+
+// MARK: - applyMarkdownStyling with newContent
+
+final class SinglePassContentStylingTests: XCTestCase {
+
+    @MainActor
+    func testApplyMarkdownStylingWithNewContent() {
+        let (coord, tv, _) = makeCoordinator(text: "")
+        coord.applyMarkdownStyling(newContent: "# Hello")
+        XCTAssertEqual(tv.string, "# Hello")
+        let font = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+        XCTAssertEqual(font?.pointSize, 26) // h1FontSize
+    }
+
+    @MainActor
+    func testApplyMarkdownStylingReplacesContent() {
+        let (coord, tv, _) = makeCoordinator(text: "Old text")
+        coord.applyMarkdownStyling(newContent: "- Bullet")
+        XCTAssertEqual(tv.string, "- Bullet")
+        let para = tv.textStorage!.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle
+        XCTAssertEqual(para?.headIndent, 14) // bullet indent
+    }
+
+    @MainActor
+    func testApplyMarkdownStylingWithNilKeepsContent() {
+        let (coord, tv, _) = makeCoordinator(text: "# Title")
+        coord.applyMarkdownStyling()
+        let fontBefore = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+        coord.applyMarkdownStyling(newContent: nil)
+        let fontAfter = tv.textStorage!.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+        XCTAssertEqual(tv.string, "# Title")
+        XCTAssertEqual(fontBefore?.pointSize, fontAfter?.pointSize)
+    }
+}
