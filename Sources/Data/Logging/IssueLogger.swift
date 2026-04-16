@@ -15,6 +15,10 @@ enum IssueLevel: String {
     case crash = "CRASH"
 }
 
+/// Re-entrancy guard — prevents infinite recursion when the crash handler itself fails.
+/// File-level so signal handlers (C function pointers) can access it without capturing context.
+nonisolated(unsafe) private var issueLoggerCrashHandlerActive = false
+
 enum IssueLogger {
     private static let fileName = "issues.log"
     private static let maxFileSize: UInt64 = 2 * 1024 * 1024 // 2 MB
@@ -88,11 +92,11 @@ enum IssueLogger {
         if fm.fileExists(atPath: url.path) {
             do {
                 let handle = try FileHandle(forWritingTo: url)
-                handle.seekToEndOfFile()
-                handle.write(data)
-                handle.closeFile()
+                try handle.seekToEnd()
+                try handle.write(contentsOf: data)
+                try handle.close()
             } catch {
-                reportSelfFailure("Failed to open log file for writing at \(url.path)", error: error)
+                reportSelfFailure("Failed to write to log file at \(url.path)", error: error)
             }
         } else {
             fm.createFile(atPath: url.path, contents: data)
@@ -146,6 +150,8 @@ enum IssueLogger {
 
     static func installCrashHandlers() {
         NSSetUncaughtExceptionHandler { exception in
+            guard !issueLoggerCrashHandlerActive else { return }
+            issueLoggerCrashHandlerActive = true
             let stack = exception.callStackSymbols.prefix(20).joined(separator: "\n  ")
             IssueLogger.logCrash(
                 "\(exception.name.rawValue): \(exception.reason ?? "unknown")\n  \(stack)"
@@ -155,8 +161,15 @@ enum IssueLogger {
         let signals: [Int32] = [SIGABRT, SIGSEGV, SIGBUS, SIGFPE, SIGILL, SIGTRAP]
         for sig in signals {
             signal(sig) { sigNum in
+                guard !issueLoggerCrashHandlerActive else {
+                    signal(sigNum, SIG_DFL)
+                    raise(sigNum)
+                    return
+                }
+                issueLoggerCrashHandlerActive = true
                 IssueLogger.logCrash("Signal \(sigNum) received")
-                exit(sigNum)
+                signal(sigNum, SIG_DFL)
+                raise(sigNum)
             }
         }
     }
