@@ -56,6 +56,7 @@
 		9CF056F22F6B3789007276E9 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF056EF2F6B3784007276E9 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1A2A3A4A5A6A7A8A9A0A1A2 /* MeetingSkillConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* MarkdownCoordinator+Styling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */; };
+		A3C4D5E6F7A8B9C0D1E2F3A4 /* MarkdownCoordinator+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D6E7F8A9B0C1D2E3F4A5B6 /* MarkdownCoordinator+Actions.swift */; };
 		A2B3C4D5E6F7A8B9C0D1E2F3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C4D5E6F7A8B9C0D1E2F3A4 /* SettingsView.swift */; };
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
 		AA3E82542E7DEBBBB8799C91 /* AudioWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */; };
@@ -212,6 +213,7 @@
 		AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSkillConfig.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownCoordinator+Styling.swift"; sourceTree = "<group>"; };
+		C5D6E7F8A9B0C1D2E3F4A5B6 /* MarkdownCoordinator+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownCoordinator+Actions.swift"; sourceTree = "<group>"; };
 		B3C4D5E6F7A8B9C0D1E2F3A4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF660011 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
@@ -509,6 +511,7 @@
 				D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSheet.swift */,
 				SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */,
+				C5D6E7F8A9B0C1D2E3F4A5B6 /* MarkdownCoordinator+Actions.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* MarkdownLayoutManager.swift */,
 				2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */,
 				D7CE9DD4757DD131F4C42682 /* MarkdownView.swift */,
@@ -794,6 +797,7 @@
 				AT01AT02AT03AT04AT05AT06 /* AppTheme.swift in Sources */,
 				2D5E9D1C64C59AC43B8B7516 /* MarkdownThemeSettingsView.swift in Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* MarkdownCoordinator+Styling.swift in Sources */,
+				A3C4D5E6F7A8B9C0D1E2F3A4 /* MarkdownCoordinator+Actions.swift in Sources */,
 				C3D4E5F6A7B8C9D0E1F2A3B4 /* MarkdownLayoutManager.swift in Sources */,
 				F1A2B3C4D5E6F7A8B9C0D1E2 /* CheckboxTextView.swift in Sources */,
 				2080165B86775CA518F786AF /* MarkdownView.swift in Sources */,

@@ -56,15 +56,19 @@ struct MarkdownView: NSViewRepresentable {
         textView.maxContentWidth = theme.maxContentWidth
         let needsStyling = !context.coordinator.hasAppliedInitialStyling
         let themeChanged = context.coordinator.parent.theme != theme
-        if textView.string != content || themeChanged {
+        let contentChanged = textView.string != content
+        if contentChanged || themeChanged {
             let sel = textView.selectedRange()
-            if textView.string != content {
-                textView.string = content
+            context.coordinator.parent = self
+            if contentChanged {
+                // Set content via NSTextStorage inside applyMarkdownStyling's beginEditing/endEditing
+                // to avoid a double layout pass (textView.string = triggers layout, then styling triggers it again)
+                context.coordinator.applyMarkdownStyling(newContent: content)
                 let safePos = min(sel.location, (content as NSString).length)
                 textView.setSelectedRange(NSRange(location: safePos, length: 0))
+            } else {
+                context.coordinator.applyMarkdownStyling()
             }
-            context.coordinator.parent = self
-            context.coordinator.applyMarkdownStyling()
             context.coordinator.hasAppliedInitialStyling = true
             context.coordinator.startObservingFrame()
         } else if needsStyling {
@@ -104,6 +108,12 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
     var dividerInfos: [DividerDrawInfo] = []
     var tableRowContexts: [Int: TableRowContext] = [:]
     var tableBlockInfos: [TableBlockDrawInfo] = []
+
+    /// Cache key for table block computations — avoids expensive text measurement when only cursor moves.
+    private var cachedTableContent: String?
+    private var cachedTableWidth: CGFloat = 0
+    private var cachedTableBlocks: [TableBlockDrawInfo] = []
+    private var cachedTableRowContexts: [Int: TableRowContext] = [:]
 
     init(_ parent: MarkdownView) { self.parent = parent }
 
@@ -173,8 +183,9 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         MainActor.assumeIsolated {
             let newLine = currentLineIndex()
             if newLine != cursorLine {
+                let oldLine = cursorLine
                 cursorLine = newLine
-                applyMarkdownStyling()
+                restyleLines(old: oldLine, new: newLine)
             }
         }
     }
@@ -191,11 +202,20 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
 
     // MARK: - Styling
 
-    func applyMarkdownStyling() {
+    func applyMarkdownStyling(newContent: String? = nil) {
         guard let textView, let storage = textView.textStorage, let lm = hidingLM else { return }
+
+        storage.beginEditing()
+
+        // Replace content inside the batch to avoid a separate layout pass
+        if let newContent {
+            let fullReplace = NSRange(location: 0, length: storage.length)
+            storage.replaceCharacters(in: fullReplace, with: newContent)
+        }
+
         let text = textView.string
         let nsText = text as NSString
-        guard nsText.length > 0 else { return }
+        guard nsText.length > 0 else { storage.endEditing(); return }
 
         let lines = text.components(separatedBy: "\n")
         let activeLine = currentLineIndex()
@@ -207,8 +227,6 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         dividerInfos = []
         tableRowContexts = [:]
         tableBlockInfos = []
-
-        storage.beginEditing()
 
         let defaultFont = resolveFont(size: theme.baseFontSize)
         let defaultPara = NSMutableParagraphStyle()
@@ -228,7 +246,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         textView.setSelectedRange(savedSel)
     }
 
-    private func detectCodeBlockLines(_ lines: [String]) -> Set<Int> {
+    func detectCodeBlockLines(_ lines: [String]) -> Set<Int> {
         var inCodeBlock = false
         var codeLines = Set<Int>()
         for (i, line) in lines.enumerated() {
@@ -270,11 +288,9 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
     }
 
     private func commitLayoutChanges(lm: HidingLayoutManager, fullRange: NSRange) {
-        var indexSet = Set<Int>()
+        var indexSet = IndexSet()
         for range in hiddenRanges {
-            for i in range.location..<(range.location + range.length) {
-                indexSet.insert(i)
-            }
+            indexSet.insert(integersIn: range.location..<(range.location + range.length))
         }
         lm.hiddenCharIndexes = indexSet
         lm.glyphReplacements = replacements
@@ -285,10 +301,23 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         lm.invalidateLayout(forCharacterRange: fullRange, actualCharacterRange: nil)
         textView?.repositionCellEditorIfNeeded()
     }
+}
 
-    // MARK: - Table block detection
+// MARK: - Table block detection
 
-    private func buildTableInfos(lines: [String], codeLines: Set<Int> = []) {
+extension MarkdownCoordinator {
+    func buildTableInfos(lines: [String], codeLines: Set<Int> = []) {
+        let currentContent = textView?.string ?? ""
+        let currentWidth = textView?.textContainer?.containerSize.width
+            ?? textView?.bounds.width ?? 600
+
+        // Reuse cached table blocks if content and width haven't changed
+        if currentContent == cachedTableContent && abs(currentWidth - cachedTableWidth) < 1 {
+            tableBlockInfos = cachedTableBlocks
+            tableRowContexts = cachedTableRowContexts
+            return
+        }
+
         var offsets: [Int] = []
         var offset = 0
         for line in lines {
@@ -315,6 +344,11 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
                 }
             }
         }
+
+        cachedTableContent = currentContent
+        cachedTableWidth = currentWidth
+        cachedTableBlocks = tableBlockInfos
+        cachedTableRowContexts = tableRowContexts
     }
 
     private func parseTableBlock(lines: [String], range: Range<Int>, offsets: [Int]) -> TableBlockDrawInfo? {
@@ -430,54 +464,5 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
     private func parseCells(_ trimmed: String) -> [String] {
         let inner = String(trimmed.dropFirst().dropLast())
         return inner.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
-    }
-}
-
-// MARK: - Table cell editing & Checkbox toggle
-
-extension MarkdownCoordinator {
-    func updateTableCell(ref: TableCellRef, newValue: String) {
-        guard let textView, let storage = textView.textStorage else { return }
-        let nsText = textView.string as NSString
-        let lineRange = nsText.lineRange(for: NSRange(location: ref.rowCharIndex, length: 0))
-        let lineText = nsText.substring(with: lineRange)
-
-        var pipePositions: [Int] = []
-        for (i, char) in lineText.enumerated() where char == "|" { pipePositions.append(i) }
-        guard ref.colIndex + 1 < pipePositions.count else { return }
-
-        let cellStart = pipePositions[ref.colIndex] + 1
-        let cellEnd = pipePositions[ref.colIndex + 1]
-        let cellRange = NSRange(location: ref.rowCharIndex + cellStart, length: cellEnd - cellStart)
-
-        storage.replaceCharacters(in: cellRange, with: " \(newValue) ")
-        parent.content = textView.string
-        applyMarkdownStyling()
-    }
-
-    func toggleCheckbox(at charIndex: Int) {
-        guard let textView, let storage = textView.textStorage else { return }
-        let nsText = textView.string as NSString
-        let lineRange = nsText.lineRange(for: NSRange(location: charIndex, length: 0))
-        let line = nsText.substring(with: lineRange)
-        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        let isChecked = trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ")
-            || trimmed.hasPrefix("- [x]\u{00A0}") || trimmed.hasPrefix("- [X]\u{00A0}")
-        let isUnchecked = trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("- [\u{00A0}] ")
-            || trimmed.hasPrefix("- [ ]\u{00A0}") || trimmed.hasPrefix("- [\u{00A0}]\u{00A0}")
-        guard isChecked || isUnchecked else { return }
-
-        let bracketContent = charIndex + 3
-        let replaceRange = NSRange(location: bracketContent, length: 1)
-
-        if isUnchecked {
-            storage.replaceCharacters(in: replaceRange, with: "x")
-        } else {
-            storage.replaceCharacters(in: replaceRange, with: " ")
-        }
-
-        parent.content = textView.string
-        applyMarkdownStyling()
     }
 }

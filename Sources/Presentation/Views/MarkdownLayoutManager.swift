@@ -46,7 +46,7 @@ struct TableCellRef: Equatable {
 // MARK: - HidingLayoutManager
 
 class HidingLayoutManager: NSLayoutManager {
-    var hiddenCharIndexes = Set<Int>()
+    var hiddenCharIndexes = IndexSet()
     var glyphReplacements: [Int: UniChar] = [:]
     var checkboxes: [CheckboxDrawInfo] = []
     var dividers: [DividerDrawInfo] = []
@@ -289,6 +289,11 @@ class HidingLayoutManager: NSLayoutManager {
         }
     }
 
+    private static let cellTextRegex: NSRegularExpression = {
+        // swiftlint:disable:next force_try
+        try! NSRegularExpression(pattern: "(\\*\\*(.+?)\\*\\*|(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*))")
+    }()
+
     static func styledCellText(
         _ text: String, font: NSFont, color: NSColor,
         boldColor: NSColor, italicColor: NSColor
@@ -303,10 +308,7 @@ class HidingLayoutManager: NSLayoutManager {
         }
 
         var spans: [Span] = []
-        let pattern = "(\\*\\*(.+?)\\*\\*|(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*))"
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            return NSAttributedString(string: text, attributes: baseAttrs)
-        }
+        let regex = cellTextRegex
 
         var cursor = 0
         for match in regex.matches(in: text, range: NSRange(location: 0, length: nsText.length)) {
