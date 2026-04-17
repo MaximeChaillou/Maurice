@@ -65,7 +65,7 @@ let vtSequencesMap: [UInt16: [UInt8]] = [
 
 final class TerminalViewController: NSViewController {
     var viewModel: ConsoleViewModel?
-    var delegate: LocalProcessTerminalViewDelegate?
+    weak var delegate: LocalProcessTerminalViewDelegate?
     private var terminalView: LocalProcessTerminalView?
     private var eventMonitor: Any?
 

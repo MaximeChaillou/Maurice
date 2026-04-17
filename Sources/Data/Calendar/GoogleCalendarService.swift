@@ -246,6 +246,8 @@ enum GoogleCalendarService {
 
     private static func waitForAuthCode() async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
+            // Cancel any existing continuation to prevent a leak
+            authCodeContinuation?.resume(throwing: GoogleCalendarError.oauthTimeout)
             authCodeContinuation = continuation
 
             // Timeout after 120 seconds

@@ -82,14 +82,6 @@ struct MarkdownView: NSViewRepresentable {
     }
 }
 
-// MARK: - TableRowContext
-
-struct TableRowContext {
-    let isHeader: Bool
-    let isSeparator: Bool
-    let dataRowIndex: Int
-}
-
 // MARK: - Coordinator
 
 @MainActor
@@ -147,6 +139,8 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
             NotificationCenter.default.removeObserver(observer)
             frameObserver = nil
         }
+        pendingStylingWorkItem?.cancel()
+        pendingStylingWorkItem = nil
     }
 
     var theme: MarkdownTheme { parent.theme }

@@ -120,13 +120,13 @@ final class RecordingViewModel {
                 volatileText = ""
                 if let url = liveFileURL {
                     let useCase = useCase
-                    Task.detached {
+                    Task.detached { [weak self] in
                         do {
                             try useCase.appendEntry(entry, to: url)
                         } catch {
                             IssueLogger.log(.error, "Failed to append transcript entry", error: error)
-                            Task { @MainActor in
-                                self.errorMessage = String(localized: "Write error: \(error.localizedDescription)")
+                            Task { @MainActor [weak self] in
+                                self?.errorMessage = String(localized: "Write error: \(error.localizedDescription)")
                             }
                         }
                     }

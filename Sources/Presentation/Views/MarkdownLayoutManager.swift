@@ -43,6 +43,12 @@ struct TableCellRef: Equatable {
     let colIndex: Int
 }
 
+struct TableRowContext {
+    let isHeader: Bool
+    let isSeparator: Bool
+    let dataRowIndex: Int
+}
+
 // MARK: - HidingLayoutManager
 
 class HidingLayoutManager: NSLayoutManager {

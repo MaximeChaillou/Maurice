@@ -113,9 +113,9 @@ final class ConsoleViewModel {
             skillCommand = "/\(commandName)"
         }
         sendCommand("/clear")
-        Task { @MainActor in
+        Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(300))
-            self.sendCommand(skillCommand)
+            self?.sendCommand(skillCommand)
         }
     }
 
@@ -136,8 +136,9 @@ final class ConsoleViewModel {
         if isRunning {
             sendCommand("exit")
         }
-        Task { @MainActor in
+        Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(500))
+            guard let self else { return }
             self.isRunning = false
             self.sessionStarted = false
             self.terminalView?.getTerminal().resetToInitialState()

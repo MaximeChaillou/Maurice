@@ -22,14 +22,21 @@ struct FolderFileDetailView: View {
 struct FolderFileEditorView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    @State private var bodyText: String = ""
-    @State private var loadedText: String = ""
+    @State private var bodyText: String
+    @State private var loadedText: String
     @State private var lastSaveDate = Date.distantPast
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
+    init(file: FolderFile, markdownTheme: MarkdownTheme = MarkdownTheme()) {
+        self.file = file
+        self.markdownTheme = markdownTheme
+        let text = (try? String(contentsOf: file.url, encoding: .utf8)) ?? ""
+        _bodyText = State(initialValue: text)
+        _loadedText = State(initialValue: text)
+    }
+
     var body: some View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
-            .onAppear { loadFile() }
             .onChange(of: bodyText) {
                 guard bodyText != loadedText else { return }
                 loadedText = bodyText
@@ -48,20 +55,15 @@ struct FolderFileEditorView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
                 guard Date().timeIntervalSince(lastSaveDate) > 2.0 else { return }
-                loadFile()
+                reloadFile()
             }
     }
 
-    private func loadFile() {
+    private func reloadFile() {
         let url = file.url
         Task {
             let text = await Task.detached {
-                do {
-                    return try String(contentsOf: url, encoding: .utf8)
-                } catch {
-                    IssueLogger.log(.warning, "Failed to read file", context: url.path, error: error)
-                    return ""
-                }
+                (try? String(contentsOf: url, encoding: .utf8)) ?? ""
             }.value
             if text != bodyText {
                 loadedText = text
