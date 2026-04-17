@@ -108,13 +108,19 @@ struct MauriceApp: App {
                 Self.applyDebugIconOverlay()
                 #endif
             }
-            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
                 let now = Date()
                 guard now.timeIntervalSince(lastFileSystemReload) > 2.0 else { return }
                 lastFileSystemReload = now
-                meetingViewModel.loadFolders()
-                peopleViewModel.loadFolders()
-                memoryListViewModel.load()
+                if notif.affectsPath(AppSettings.meetingsDirectory) {
+                    meetingViewModel.loadFolders()
+                }
+                if notif.affectsPath(AppSettings.peopleDirectory) {
+                    peopleViewModel.loadFolders()
+                }
+                if notif.affectsPath(AppSettings.memoryDirectory) {
+                    memoryListViewModel.load()
+                }
             }
             .onChange(of: recordingViewModel.isRecording) {
                 if !recordingViewModel.isRecording {
@@ -383,7 +389,10 @@ private struct MemoryMenuButton: View {
                     )
                 }
             }.value
-            NotificationCenter.default.post(name: .fileSystemDidChange, object: nil)
+            NotificationCenter.default.post(
+                name: .fileSystemDidChange, object: nil,
+                userInfo: ["paths": [destination.path]]
+            )
         }
     }
 }

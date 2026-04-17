@@ -75,7 +75,8 @@ struct FolderContentView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onAppear { viewModel.loadFolders() }
-        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
+            guard notif.affectsPath(viewModel.directory) else { return }
             viewModel.loadFolders()
             if let folder = viewModel.currentFolder {
                 viewModel.selectFileAtIndex(in: folder)

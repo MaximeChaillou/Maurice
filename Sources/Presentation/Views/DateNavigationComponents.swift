@@ -275,7 +275,8 @@ struct NextNoteButton: View {
         .onAppear { checkContent() }
         .onChange(of: fileURL) { _, _ in checkContent() }
         .onChange(of: showPopover) { if !showPopover { checkContent() } }
-        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
+            guard notif.affectsPath(fileURL) else { return }
             checkContent()
         }
     }

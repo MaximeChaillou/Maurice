@@ -55,7 +55,8 @@ struct FolderFileEditorView: View {
                     }
                 }
             }
-            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
+                guard notif.affectsPath(file.url) else { return }
                 guard Date().timeIntervalSince(lastSaveDate) > 2.0 else { return }
                 reloadFile()
             }

@@ -22,7 +22,8 @@ struct PersonDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear { loadSubfolders() }
             .onChange(of: activeSection) { loadSubfolders() }
-            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
+                guard notif.affectsPath(personURL) else { return }
                 loadSubfolders()
             }
     }
@@ -129,11 +130,16 @@ struct PersonDetailView: View {
 
     private func loadSubfolders() {
         let url = personURL
+        let section = activeSection
         Task {
-            let evals = await Self.scanSubfolder("assessment", in: url)
-            let objs = await Self.scanSubfolder("objectifs", in: url)
-            assessmentFiles = evals
-            objectifsFiles = objs
+            switch section {
+            case .assessment:
+                assessmentFiles = await Self.scanSubfolder("assessment", in: url)
+            case .objectifs:
+                objectifsFiles = await Self.scanSubfolder("objectifs", in: url)
+            case .profile, .jobDescription, .oneOnOne:
+                break
+            }
         }
     }
 
@@ -218,7 +224,8 @@ struct PersonOneOnOneView: View {
     var body: some View {
         dateNavigationDetail
         .onAppear { loadEntries(); loadConfig() }
-        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
+            guard notif.affectsPath(oneOnOneDir) else { return }
             loadEntries()
         }
         .sheet(isPresented: $showConfigSheet) {
