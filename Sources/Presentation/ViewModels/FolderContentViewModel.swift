@@ -40,7 +40,7 @@ final class FolderContentViewModel {
 
     private func loadFoldersAsync() async {
         let dir = directory
-        let result = await Task.detached {
+        let result = await Task.detached { () -> [FolderItem] in
             let fm = FileManager.default
             do {
                 try fm.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -51,15 +51,20 @@ final class FolderContentViewModel {
             let contents = DirectoryScanner.scan(at: dir)
             let storage = FileTranscriptionStorage()
 
-            return contents.folders.map { folder in
+            var items: [FolderItem] = []
+            for folder in contents.folders {
                 let files = Self.scanFiles(in: folder.url)
-                let dateEntries = Self.scanDateEntries(in: folder.url, storage: storage)
+                let dateEntries = await Self.scanDateEntries(in: folder.url, storage: storage)
                 let icon = MeetingConfig.load(from: folder.url).icon
-                return FolderItem(name: folder.name, url: folder.url, files: files, dateEntries: dateEntries, icon: icon)
+                items.append(FolderItem(
+                    name: folder.name, url: folder.url, files: files,
+                    dateEntries: dateEntries, icon: icon
+                ))
             }
-            .sorted { (a: FolderItem, b: FolderItem) in
+            items.sort { (a: FolderItem, b: FolderItem) in
                 a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
             }
+            return items
         }.value
 
         folders = result
@@ -248,7 +253,7 @@ final class FolderContentViewModel {
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
     }
 
-    nonisolated private static func scanDateEntries(in dir: URL, storage: FileTranscriptionStorage) -> [MeetingDateEntry] {
-        MeetingDateEntry.scan(in: dir, storage: storage)
+    nonisolated private static func scanDateEntries(in dir: URL, storage: FileTranscriptionStorage) async -> [MeetingDateEntry] {
+        await MeetingDateEntry.scan(in: dir, storage: storage)
     }
 }

@@ -34,11 +34,11 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan with .md files only
 
-    func testScanWithMdFilesOnly() {
+    func testScanWithMdFilesOnly() async {
         createFile("2024-01-15.md")
         createFile("2024-02-20.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 2)
         XCTAssertTrue(entries.allSatisfy { $0.hasNote })
@@ -47,10 +47,10 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan with .transcript files only
 
-    func testScanWithTranscriptFilesOnly() {
+    func testScanWithTranscriptFilesOnly() async {
         createTranscriptFile("2024-03-10.transcript")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 1)
         XCTAssertFalse(entries[0].hasNote)
@@ -60,12 +60,12 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan with mixed .md and .transcript files
 
-    func testScanWithMixedFiles() {
+    func testScanWithMixedFiles() async {
         createFile("2024-01-15.md")
         createTranscriptFile("2024-01-15.transcript")
         createFile("2024-02-20.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 2)
 
@@ -82,25 +82,25 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan with empty directory
 
-    func testScanWithEmptyDirectory() {
-        let entries = MeetingDateEntry.scan(in: tempDir)
+    func testScanWithEmptyDirectory() async {
+        let entries = await MeetingDateEntry.scan(in: tempDir)
         XCTAssertTrue(entries.isEmpty)
     }
 
     // MARK: - scan with non-existent directory
 
-    func testScanWithNonExistentDirectory() {
+    func testScanWithNonExistentDirectory() async {
         let fakeDir = tempDir.appendingPathComponent("does-not-exist", isDirectory: true)
-        let entries = MeetingDateEntry.scan(in: fakeDir)
+        let entries = await MeetingDateEntry.scan(in: fakeDir)
         XCTAssertTrue(entries.isEmpty)
     }
 
     // MARK: - date parsing from filenames
 
-    func testDateParsingFromDateFilename() {
+    func testDateParsingFromDateFilename() async {
         createFile("2024-06-15.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].dateString, "2024-06-15")
@@ -112,10 +112,10 @@ final class MeetingDateEntryTests: XCTestCase {
         XCTAssertEqual(components.day, 15)
     }
 
-    func testNonDateFilenameStillScanned() {
+    func testNonDateFilenameStillScanned() async {
         createFile("notes-meeting.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].dateString, "notes-meeting")
@@ -123,12 +123,12 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - sorting by date (descending)
 
-    func testSortingByDateDescending() {
+    func testSortingByDateDescending() async {
         createFile("2024-01-01.md")
         createFile("2024-06-15.md")
         createFile("2024-03-10.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 3)
         XCTAssertEqual(entries[0].dateString, "2024-06-15")
@@ -136,13 +136,13 @@ final class MeetingDateEntryTests: XCTestCase {
         XCTAssertEqual(entries[2].dateString, "2024-01-01")
     }
 
-    func testSortingWithManyDates() {
+    func testSortingWithManyDates() async {
         let dates = ["2023-12-31", "2024-01-01", "2024-12-25", "2024-07-04", "2023-06-01"]
         for date in dates {
             createFile("\(date).md")
         }
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
         let dateStrings = entries.map(\.dateString)
 
         XCTAssertEqual(dateStrings, ["2024-12-25", "2024-07-04", "2024-01-01", "2023-12-31", "2023-06-01"])
@@ -193,13 +193,13 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan ignores non-md non-transcript files
 
-    func testScanIgnoresOtherFileTypes() {
+    func testScanIgnoresOtherFileTypes() async {
         createFile("2024-01-01.md")
         createFile("2024-01-01.txt")
         createFile("2024-01-01.pdf")
         createFile("readme.md")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         // Should find 2 .md files: 2024-01-01.md and readme.md
         XCTAssertEqual(entries.count, 2)
@@ -210,11 +210,11 @@ final class MeetingDateEntryTests: XCTestCase {
 
     // MARK: - scan merges same-date note and transcript
 
-    func testScanMergesSameDateNoteAndTranscript() {
+    func testScanMergesSameDateNoteAndTranscript() async {
         createFile("2024-05-01.md")
         createTranscriptFile("2024-05-01.transcript")
 
-        let entries = MeetingDateEntry.scan(in: tempDir)
+        let entries = await MeetingDateEntry.scan(in: tempDir)
 
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].dateString, "2024-05-01")

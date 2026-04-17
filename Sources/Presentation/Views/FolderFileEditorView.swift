@@ -22,23 +22,25 @@ struct FolderFileDetailView: View {
 struct FolderFileEditorView: View {
     let file: FolderFile
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    @State private var bodyText: String
-    @State private var loadedText: String
+    @State private var bodyText: String = ""
+    @State private var loadedText: String = ""
     @State private var lastSaveDate = Date.distantPast
+    @State private var isLoaded = false
     @Environment(ErrorState.self) private var errorState: ErrorState?
-
-    init(file: FolderFile, markdownTheme: MarkdownTheme = MarkdownTheme()) {
-        self.file = file
-        self.markdownTheme = markdownTheme
-        let text = (try? String(contentsOf: file.url, encoding: .utf8)) ?? ""
-        _bodyText = State(initialValue: text)
-        _loadedText = State(initialValue: text)
-    }
 
     var body: some View {
         ThemedMarkdownView(content: $bodyText, theme: markdownTheme)
+            .task(id: file.url) {
+                let url = file.url
+                let text = await Task.detached {
+                    (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                }.value
+                loadedText = text
+                bodyText = text
+                isLoaded = true
+            }
             .onChange(of: bodyText) {
-                guard bodyText != loadedText else { return }
+                guard isLoaded, bodyText != loadedText else { return }
                 loadedText = bodyText
                 lastSaveDate = Date()
                 let text = bodyText

@@ -93,30 +93,33 @@ final class NextNoteTests: XCTestCase {
 
     // MARK: - FolderFile content and save
 
-    func testFolderFileContentReadsFile() {
+    func testFolderFileContentReadsFile() async {
         try? "Hello".write(to: nextFileURL, atomically: true, encoding: .utf8)
         let file = FolderFile(url: nextFileURL)
-        XCTAssertEqual(file.content, "Hello")
+        let content = await file.loadContent()
+        XCTAssertEqual(content, "Hello")
     }
 
-    func testFolderFileContentEmptyWhenNoFile() {
+    func testFolderFileContentEmptyWhenNoFile() async {
         let file = FolderFile(url: nextFileURL)
-        XCTAssertEqual(file.content, "")
+        let content = await file.loadContent()
+        XCTAssertEqual(content, "")
     }
 
-    func testFolderFileSaveWritesContent() {
+    func testFolderFileSaveWritesContent() async {
         FileManager.default.createFile(atPath: nextFileURL.path, contents: nil)
         let file = FolderFile(url: nextFileURL)
-        file.save(content: "New notes")
+        await file.save(content: "New notes")
         let read = try? String(contentsOf: nextFileURL, encoding: .utf8)
         XCTAssertEqual(read, "New notes")
     }
 
-    func testFolderFileSaveOverwritesPrevious() {
+    func testFolderFileSaveOverwritesPrevious() async {
         try? "Old".write(to: nextFileURL, atomically: true, encoding: .utf8)
         let file = FolderFile(url: nextFileURL)
-        file.save(content: "New")
-        XCTAssertEqual(file.content, "New")
+        await file.save(content: "New")
+        let content = await file.loadContent()
+        XCTAssertEqual(content, "New")
     }
 
     // MARK: - Helpers (mirrors view logic)

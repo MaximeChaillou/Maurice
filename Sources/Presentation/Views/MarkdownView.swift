@@ -57,6 +57,9 @@ struct MarkdownView: NSViewRepresentable {
         let needsStyling = !context.coordinator.hasAppliedInitialStyling
         let themeChanged = context.coordinator.parent.theme != theme
         let contentChanged = textView.string != content
+        if themeChanged {
+            context.coordinator.invalidateStyleCaches()
+        }
         if contentChanged || themeChanged {
             let sel = textView.selectedRange()
             context.coordinator.parent = self
@@ -102,14 +105,51 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
     var tableBlockInfos: [TableBlockDrawInfo] = []
 
     /// Cache key for table block computations — avoids expensive text measurement when only cursor moves.
-    private var cachedTableContent: String?
-    private var cachedTableWidth: CGFloat = 0
-    private var cachedTableBlocks: [TableBlockDrawInfo] = []
-    private var cachedTableRowContexts: [Int: TableRowContext] = [:]
+    var cachedTableContent: String?
+    var cachedTableWidth: CGFloat = 0
+    var cachedTableBlocks: [TableBlockDrawInfo] = []
+    var cachedTableRowContexts: [Int: TableRowContext] = [:]
+
+    /// Per-table measurement cache. Key: "<width>|<tableText>". Lets us reuse column widths / row heights
+    /// when only text outside the table has changed, so offsets shift but the table layout is untouched.
+    struct TableMeasurement {
+        let columnWidths: [CGFloat]
+        let rowHeights: [CGFloat]
+    }
+    var tableMeasurementCache: [String: TableMeasurement] = [:]
+
+    /// Resolved-font cache keyed by "<name>|<size>|<weight>". Avoids repeated NSFont lookups during
+    /// styling passes that request the same font dozens of times.
+    private var fontCache: [String: NSFont] = [:]
+
+    /// Clear caches that depend on theme (font measurements, font lookups).
+    /// Call when the theme changes or the coordinator is dismantled.
+    func invalidateStyleCaches() {
+        tableMeasurementCache.removeAll(keepingCapacity: true)
+        fontCache.removeAll(keepingCapacity: true)
+        cachedTableContent = nil
+        cachedTableBlocks = []
+        cachedTableRowContexts = [:]
+    }
 
     init(_ parent: MarkdownView) { self.parent = parent }
 
     private var pendingStylingWorkItem: DispatchWorkItem?
+
+    /// Schedule a full re-style, coalescing rapid calls (typing, frame changes).
+    /// `delay` of 0 still routes through the main queue to batch multiple triggers per run-loop tick.
+    func scheduleApplyMarkdownStyling(delay: TimeInterval = 0.1) {
+        pendingStylingWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated { self?.applyMarkdownStyling() }
+        }
+        pendingStylingWorkItem = item
+        if delay > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: item)
+        } else {
+            DispatchQueue.main.async(execute: item)
+        }
+    }
 
     func startObservingFrame() {
         guard frameObserver == nil, let textView else { return }
@@ -122,14 +162,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
                 let w = tv.bounds.width
                 guard w > 0, abs(w - self.lastKnownWidth) > 1 else { return }
                 self.lastKnownWidth = w
-                self.pendingStylingWorkItem?.cancel()
-                let item = DispatchWorkItem { [weak self] in
-                    MainActor.assumeIsolated {
-                        self?.applyMarkdownStyling()
-                    }
-                }
-                self.pendingStylingWorkItem = item
-                DispatchQueue.main.async(execute: item)
+                self.scheduleApplyMarkdownStyling(delay: 0)
             }
         }
     }
@@ -149,14 +182,20 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
 
     func resolveFont(size: CGFloat, weight: NSFont.Weight = .regular) -> NSFont {
         let name = theme.fontName
+        let key = "\(name)|\(size)|\(weight.rawValue)"
+        if let cached = fontCache[key] { return cached }
+        let font: NSFont
         if name == "System" {
-            return .systemFont(ofSize: size, weight: weight)
+            font = .systemFont(ofSize: size, weight: weight)
         } else if name == "System Mono" {
-            return .monospacedSystemFont(ofSize: size, weight: weight)
-        } else if let font = NSFont(name: name, size: size) {
-            return font
+            font = .monospacedSystemFont(ofSize: size, weight: weight)
+        } else if let f = NSFont(name: name, size: size) {
+            font = f
+        } else {
+            font = .systemFont(ofSize: size, weight: weight)
         }
-        return .systemFont(ofSize: size, weight: weight)
+        fontCache[key] = font
+        return font
     }
 
     func monoFont(size: CGFloat, weight: NSFont.Weight = .regular) -> NSFont {
@@ -169,7 +208,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         MainActor.assumeIsolated {
             guard let textView else { return }
             parent.content = textView.string
-            applyMarkdownStyling()
+            scheduleApplyMarkdownStyling()
         }
     }
 
@@ -294,169 +333,5 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         lm.invalidateGlyphs(forCharacterRange: fullRange, changeInLength: 0, actualCharacterRange: nil)
         lm.invalidateLayout(forCharacterRange: fullRange, actualCharacterRange: nil)
         textView?.repositionCellEditorIfNeeded()
-    }
-}
-
-// MARK: - Table block detection
-
-extension MarkdownCoordinator {
-    func buildTableInfos(lines: [String], codeLines: Set<Int> = []) {
-        let currentContent = textView?.string ?? ""
-        let currentWidth = textView?.textContainer?.containerSize.width
-            ?? textView?.bounds.width ?? 600
-
-        // Reuse cached table blocks if content and width haven't changed
-        if currentContent == cachedTableContent && abs(currentWidth - cachedTableWidth) < 1 {
-            tableBlockInfos = cachedTableBlocks
-            tableRowContexts = cachedTableRowContexts
-            return
-        }
-
-        var offsets: [Int] = []
-        var offset = 0
-        for line in lines {
-            offsets.append(offset)
-            offset += (line as NSString).length + 1
-        }
-
-        var i = 0
-        while i < lines.count {
-            let trimmed = lines[i].trimmingCharacters(in: .whitespaces)
-            guard !codeLines.contains(i), trimmed.hasPrefix("|") && trimmed.hasSuffix("|") else { i += 1; continue }
-            let tableStart = i
-            while i < lines.count {
-                let t = lines[i].trimmingCharacters(in: .whitespaces)
-                guard t.hasPrefix("|") && t.hasSuffix("|") else { break }
-                i += 1
-            }
-            if let block = parseTableBlock(lines: lines, range: tableStart..<i, offsets: offsets) {
-                tableBlockInfos.append(block)
-                for row in block.rows {
-                    tableRowContexts[row.charIndex] = TableRowContext(
-                        isHeader: row.isHeader, isSeparator: row.isSeparator, dataRowIndex: row.dataRowIndex
-                    )
-                }
-            }
-        }
-
-        cachedTableContent = currentContent
-        cachedTableWidth = currentWidth
-        cachedTableBlocks = tableBlockInfos
-        cachedTableRowContexts = tableRowContexts
-    }
-
-    private func parseTableBlock(lines: [String], range: Range<Int>, offsets: [Int]) -> TableBlockDrawInfo? {
-        let font = resolveFont(size: theme.baseFontSize)
-        let headerFont = resolveFont(size: theme.baseFontSize, weight: .semibold)
-        let cellPadding: CGFloat = 10
-
-        var separatorLine: Int?
-        for li in range {
-            let t = lines[li].trimmingCharacters(in: .whitespaces)
-            if t.contains("---") && !t.contains(where: { $0.isLetter }) { separatorLine = li; break }
-        }
-
-        var rows: [TableBlockDrawInfo.Row] = []
-        var dataIdx = 0
-        for li in range {
-            let t = lines[li].trimmingCharacters(in: .whitespaces)
-            let isSep = t.contains("---") && !t.contains(where: { $0.isLetter })
-            let isHdr = separatorLine != nil && li < separatorLine!
-            let cells = parseCells(t)
-            rows.append(TableBlockDrawInfo.Row(
-                charIndex: offsets[li], cells: cells,
-                isHeader: isHdr, isSeparator: isSep,
-                dataRowIndex: (!isSep && !isHdr) ? dataIdx : -1
-            ))
-            if !isSep && !isHdr { dataIdx += 1 }
-        }
-
-        let numCols = rows.map(\.cells.count).max() ?? 0
-        guard numCols > 0 else { return nil }
-        let colWidths = computeColumnWidths(rows: rows, numCols: numCols, font: font, headerFont: headerFont, padding: cellPadding)
-        let rowHeights = computeRowHeights(rows: rows, colWidths: colWidths, font: font, headerFont: headerFont, padding: cellPadding)
-
-        return TableBlockDrawInfo(
-            rows: rows, columnWidths: colWidths, rowHeights: rowHeights, cellPadding: cellPadding,
-            font: font, headerFont: headerFont,
-            textColor: theme.bodyColor.nsColor,
-            boldColor: theme.boldColor.nsColor,
-            italicColor: theme.italicColor.nsColor,
-            headerBgColor: NSColor.controlAccentColor.withAlphaComponent(0.08),
-            stripeBgColor: NSColor.labelColor.withAlphaComponent(0.04),
-            borderColor: NSColor.separatorColor
-        )
-    }
-
-    private func computeColumnWidths(
-        rows: [TableBlockDrawInfo.Row], numCols: Int,
-        font: NSFont, headerFont: NSFont, padding: CGFloat
-    ) -> [CGFloat] {
-        var idealWidths = [CGFloat](repeating: 0, count: numCols)
-        var minWordWidths = [CGFloat](repeating: 0, count: numCols)
-
-        for row in rows where !row.isSeparator {
-            let f = row.isHeader ? headerFont : font
-            let attrs: [NSAttributedString.Key: Any] = [.font: f]
-            for (col, cell) in row.cells.enumerated() where col < numCols {
-                idealWidths[col] = max(idealWidths[col], (cell as NSString).size(withAttributes: attrs).width)
-                for word in cell.split(separator: " ") {
-                    let w = (String(word) as NSString).size(withAttributes: attrs).width
-                    minWordWidths[col] = max(minWordWidths[col], w)
-                }
-            }
-        }
-
-        var widths = idealWidths.map { $0 + padding * 2 }
-        let minWidths = minWordWidths.map { $0 + padding * 2 }
-
-        let availableWidth = textView?.textContainer?.containerSize.width
-            ?? textView?.bounds.width ?? 600
-        let pad = textView?.textContainer?.lineFragmentPadding ?? 5
-        let maxTotal = availableWidth - pad * 2
-        let total = widths.reduce(0, +)
-
-        if total > maxTotal && maxTotal > 0 {
-            let minTotal = minWidths.reduce(0, +)
-            if minTotal >= maxTotal {
-                widths = minWidths
-            } else {
-                let remaining = maxTotal - minTotal
-                let extras = zip(widths, minWidths).map { $0 - $1 }
-                let totalExtra = extras.reduce(0, +)
-                if totalExtra > 0 {
-                    widths = zip(minWidths, extras).map { $0 + $1 * (remaining / totalExtra) }
-                } else {
-                    widths = minWidths
-                }
-            }
-        }
-        return widths
-    }
-
-    private func computeRowHeights(
-        rows: [TableBlockDrawInfo.Row], colWidths: [CGFloat],
-        font: NSFont, headerFont: NSFont, padding: CGFloat
-    ) -> [CGFloat] {
-        rows.map { row in
-            guard !row.isSeparator else { return 4 }
-            let f = row.isHeader ? headerFont : font
-            var maxH: CGFloat = f.pointSize + 8
-            for (col, cell) in row.cells.enumerated() where col < colWidths.count {
-                let cellW = colWidths[col] - padding * 2
-                let styled = HidingLayoutManager.styledCellText(cell, font: f, color: .labelColor, boldColor: .labelColor, italicColor: .labelColor)
-                let textRect = styled.boundingRect(
-                    with: NSSize(width: max(cellW, 1), height: .greatestFiniteMagnitude),
-                    options: [.usesLineFragmentOrigin]
-                )
-                maxH = max(maxH, textRect.height + padding * 2)
-            }
-            return maxH
-        }
-    }
-
-    private func parseCells(_ trimmed: String) -> [String] {
-        let inner = String(trimmed.dropFirst().dropLast())
-        return inner.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
     }
 }

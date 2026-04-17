@@ -253,10 +253,7 @@ struct PersonOneOnOneView: View {
     private func loadEntries() {
         let dir = oneOnOneDir
         Task {
-            let result = await Task.detached {
-                MeetingDateEntry.scan(in: dir)
-            }.value
-            entries = result
+            entries = await MeetingDateEntry.scan(in: dir)
         }
     }
 

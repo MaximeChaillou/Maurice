@@ -58,20 +58,23 @@ final class PeopleContentViewModel {
             var cats: [PeopleCategory] = []
             for categoryFolder in contents.folders {
                 let peopleContents = DirectoryScanner.scan(at: categoryFolder.url)
-                let people = peopleContents.folders.map { personFolder in
+                var people: [FolderItem] = []
+                for personFolder in peopleContents.folders {
                     let relativePath = "\(categoryFolder.name)/\(personFolder.name)"
-                    let dateEntries = MeetingDateEntry.scan(in: personFolder.url, storage: storage)
+                    let dateEntries = await MeetingDateEntry.scan(
+                        in: personFolder.url, storage: storage
+                    )
                     let icon = MeetingConfig.load(from: personFolder.url).icon
-                    return FolderItem(
+                    people.append(FolderItem(
                         name: personFolder.name,
                         url: personFolder.url,
                         files: [],
                         dateEntries: dateEntries,
                         icon: icon,
                         relativePath: relativePath
-                    )
+                    ))
                 }
-                .sorted { (a: FolderItem, b: FolderItem) in
+                people.sort { (a: FolderItem, b: FolderItem) in
                     a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
                 }
 
