@@ -4,7 +4,7 @@ struct HomeView: View {
     let calendarViewModel: GoogleCalendarViewModel
     let coordinator: NavigationCoordinator
     var hasMeetings: Bool = false
-    @Environment(\.openWindow) private var openWindow
+    var hasPeople: Bool = false
     @State private var upcomingEvents: [GoogleCalendarEvent] = []
     @State private var isLoading = false
 
@@ -24,10 +24,8 @@ struct HomeView: View {
                     .font(.title3)
                     .foregroundStyle(.secondary)
 
-                if !hasMeetings && !calendarViewModel.isConnected {
-                    actionCardsGrid
-                        .padding(.top, 8)
-                }
+                actionCardsGrid
+                    .padding(.top, 8)
 
                 if calendarViewModel.isConnected {
                     upcomingEventsSection
@@ -55,37 +53,26 @@ struct HomeView: View {
             GridItem(.flexible(), spacing: 12)
         ]
         return LazyVGrid(columns: columns, spacing: 12) {
-            actionCard(
-                icon: "mic.fill",
-                title: "Record",
-                description: "Start recording with the mic button below",
-                action: nil
-            )
-
-            actionCard(
-                icon: "calendar.badge.plus",
-                title: "Create a meeting",
-                description: "Organize your recurring meetings (standup, 1-1...)"
-            ) {
-                coordinator.showHome = false
-                coordinator.activeTab = .meeting
+            if !hasMeetings {
+                actionCard(
+                    icon: "calendar.badge.plus",
+                    title: "Create a meeting",
+                    description: "Organize your recurring meetings (standup, 1-1...)"
+                ) {
+                    coordinator.showHome = false
+                    coordinator.activeTab = .meeting
+                }
             }
 
-            actionCard(
-                icon: "person.badge.plus",
-                title: "Add a person",
-                description: "1-1 notes, assessments, and goals"
-            ) {
-                coordinator.showHome = false
-                coordinator.activeTab = .people
-            }
-
-            actionCard(
-                icon: "calendar",
-                title: "Connect Google Calendar",
-                description: "See your upcoming meetings on the home screen"
-            ) {
-                openWindow(id: "settings")
+            if !hasPeople {
+                actionCard(
+                    icon: "person.badge.plus",
+                    title: "Add a person",
+                    description: "1-1 notes, assessments, and goals"
+                ) {
+                    coordinator.showHome = false
+                    coordinator.activeTab = .people
+                }
             }
         }
         .frame(maxWidth: 500)
@@ -95,18 +82,12 @@ struct HomeView: View {
         icon: String,
         title: String,
         description: String,
-        action: (() -> Void)?
+        action: @escaping () -> Void
     ) -> some View {
-        Group {
-            if let action {
-                Button(action: action) {
-                    actionCardContent(icon: icon, title: title, description: description)
-                }
-                .buttonStyle(.plain)
-            } else {
-                actionCardContent(icon: icon, title: title, description: description)
-            }
+        Button(action: action) {
+            actionCardContent(icon: icon, title: title, description: description)
         }
+        .buttonStyle(.plain)
     }
 
     private func actionCardContent(icon: String, title: String, description: String) -> some View {

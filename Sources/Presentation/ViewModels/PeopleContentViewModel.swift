@@ -15,6 +15,10 @@ final class PeopleContentViewModel {
     var newCalendarEventName = ""
     var errorMessage: String?
 
+    var hasAnyPerson: Bool {
+        categories.contains { !$0.people.isEmpty }
+    }
+
     var currentPerson: FolderItem? {
         guard let path = selectedPerson else { return nil }
         for category in categories {

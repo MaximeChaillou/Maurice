@@ -73,7 +73,12 @@ struct MauriceApp: App {
 
                     Group {
                         if coordinator.showHome {
-                            HomeView(calendarViewModel: calendarViewModel, coordinator: coordinator, hasMeetings: !meetingViewModel.folders.isEmpty)
+                            HomeView(
+                                calendarViewModel: calendarViewModel,
+                                coordinator: coordinator,
+                                hasMeetings: !meetingViewModel.folders.isEmpty,
+                                hasPeople: peopleViewModel.hasAnyPerson
+                            )
                         } else {
                             tabContent
                         }
@@ -98,6 +103,8 @@ struct MauriceApp: App {
             .onAppear {
                 fileWatcher.start()
                 if AppSettings.onboardingCompleted {
+                    meetingViewModel.loadFolders()
+                    peopleViewModel.loadFolders()
                     Task {
                         await templateUpdateService.reconcile(
                             rootDirectory: AppSettings.rootDirectory
@@ -141,7 +148,7 @@ struct MauriceApp: App {
             .animation(.spring(duration: 0.3, bounce: 0.15), value: showSearch)
             .preferredColorScheme(resolvedColorScheme)
             .sheet(isPresented: $showOnboarding) {
-                OnboardingView {
+                OnboardingView(calendarViewModel: calendarViewModel) {
                     showOnboarding = false
                     reloadAfterDirectoryChange()
                     Task {

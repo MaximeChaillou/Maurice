@@ -268,6 +268,35 @@ final class PeopleContentViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.categories.isEmpty)
     }
 
+    // MARK: - hasAnyPerson
+
+    func testHasAnyPersonFalseWhenNoCategories() async throws {
+        await loadAndWait()
+        XCTAssertFalse(viewModel.hasAnyPerson)
+    }
+
+    func testHasAnyPersonFalseWhenCategoriesButNoPeople() async throws {
+        let fm = FileManager.default
+        let teamDir = tempDir.appendingPathComponent("People/Team", isDirectory: true)
+        try fm.createDirectory(at: teamDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        XCTAssertEqual(viewModel.categories.count, 1)
+        XCTAssertFalse(viewModel.hasAnyPerson,
+                       "Empty category with no people must not count as hasAnyPerson")
+    }
+
+    func testHasAnyPersonTrueWhenAtLeastOnePersonExists() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+
+        XCTAssertTrue(viewModel.hasAnyPerson)
+    }
+
     // MARK: - Helpers
 
     private func loadAndWait() async {

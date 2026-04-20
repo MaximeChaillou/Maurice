@@ -94,6 +94,9 @@
     "Finish" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Terminer" } } }
     },
+    "Skip" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ignorer" } } }
+    },
     "Error" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur" } } }
     },

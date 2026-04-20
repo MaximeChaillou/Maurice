@@ -8,12 +8,14 @@ struct OnboardingView: View {
     @State private var userJob: String = ""
     @State private var isCreating = false
     @State private var errorMessage: String?
+    var calendarViewModel: GoogleCalendarViewModel
     var onComplete: () -> Void
 
     private enum OnboardingStep {
         case welcome
         case language
         case profile
+        case calendar
         case creating
     }
 
@@ -29,6 +31,8 @@ struct OnboardingView: View {
                     languageStep
                 case .profile:
                     profileStep
+                case .calendar:
+                    calendarStep
                 case .creating:
                     creatingStep
                 }
@@ -198,10 +202,9 @@ struct OnboardingView: View {
                 .controlSize(.large)
 
                 Button {
-                    step = .creating
-                    createStructure()
+                    step = .calendar
                 } label: {
-                    Text("Finish")
+                    Text("Continue")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -212,7 +215,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Step 4: Creating
+    // MARK: - Step 5: Creating
 
     private var creatingStep: some View {
         VStack(spacing: 24) {
@@ -292,6 +295,90 @@ struct OnboardingView: View {
                     errorMessage = error.localizedDescription
                     isCreating = false
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Calendar step
+
+extension OnboardingView {
+    var calendarStep: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "calendar")
+                .font(.system(size: 64))
+                .foregroundStyle(.secondary)
+
+            Text("Connect Google Calendar")
+                .font(.largeTitle.bold())
+
+            Text("See your upcoming meetings on the home screen")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            if calendarViewModel.isConnected {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    Text("Connected")
+                        .font(.headline)
+                    if let email = calendarViewModel.connectedEmail {
+                        Text(email)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 8)
+            } else {
+                Button {
+                    calendarViewModel.connect()
+                } label: {
+                    HStack {
+                        Image(systemName: "calendar.badge.plus")
+                        Text(calendarViewModel.isConnecting ? "Connecting..." : "Connect Google Calendar")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(calendarViewModel.isConnecting)
+            }
+
+            if let error = calendarViewModel.errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+            }
+
+            HStack {
+                Button("Back") {
+                    step = .profile
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+
+                if calendarViewModel.isConnected {
+                    Button {
+                        step = .creating
+                        createStructure()
+                    } label: {
+                        Text("Continue")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
+            }
+
+            if !calendarViewModel.isConnected {
+                Button("Skip") {
+                    step = .creating
+                    createStructure()
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .font(.callout)
             }
         }
     }
