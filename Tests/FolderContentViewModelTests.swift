@@ -572,4 +572,71 @@ final class FolderContentViewModelTests: XCTestCase {
         XCTAssertEqual(peopleDestinations.first?.name, "John (1-1)")
         XCTAssertEqual(peopleDestinations.first?.url.standardizedFileURL, oneOnOneDir.standardizedFileURL)
     }
+
+    // MARK: - loadMeetingConfig (race-condition guard)
+
+    func testLoadMeetingConfigAssignsWhenSelectionMatches() async throws {
+        let folderA = createSubfolder("MeetingA")
+        let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
+        configA.save(to: folderA)
+
+        let vm = FolderContentViewModel(directory: tempDir)
+        vm.selectedFolder = "MeetingA"
+
+        await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
+
+        XCTAssertEqual(vm.meetingConfig.icon, "🅰️")
+        XCTAssertEqual(vm.meetingConfig.calendarEventName, "EventA")
+    }
+
+    func testLoadMeetingConfigIgnoresResultWhenSelectionChanged() async throws {
+        let folderA = createSubfolder("MeetingA")
+        let folderB = createSubfolder("MeetingB")
+        let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
+        configA.save(to: folderA)
+        let configB = MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: [])
+        configB.save(to: folderB)
+
+        let vm = FolderContentViewModel(directory: tempDir)
+        // User was on A then switched to B before A's load completes.
+        vm.selectedFolder = "MeetingB"
+        await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
+
+        XCTAssertNotEqual(vm.meetingConfig.icon, "🅰️",
+                          "Config for MeetingA must not overwrite meetingConfig when MeetingB is selected")
+        XCTAssertNotEqual(vm.meetingConfig.calendarEventName, "EventA")
+    }
+
+    func testLoadMeetingConfigIgnoresResultWhenSelectionCleared() async throws {
+        let folderA = createSubfolder("MeetingA")
+        let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
+        configA.save(to: folderA)
+
+        let vm = FolderContentViewModel(directory: tempDir)
+        vm.selectedFolder = nil
+        await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
+
+        XCTAssertNotEqual(vm.meetingConfig.icon, "🅰️")
+    }
+
+    func testLoadMeetingConfigRapidSwitchKeepsLatestFolderConfig() async throws {
+        let folderA = createSubfolder("MeetingA")
+        let folderB = createSubfolder("MeetingB")
+        MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: []).save(to: folderA)
+        MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: []).save(to: folderB)
+
+        let vm = FolderContentViewModel(directory: tempDir)
+
+        // Select A, start loading A, then immediately switch to B and load B.
+        vm.selectedFolder = "MeetingA"
+        async let loadA: Void = vm.loadMeetingConfig(for: "MeetingA", from: folderA)
+        vm.selectedFolder = "MeetingB"
+        async let loadB: Void = vm.loadMeetingConfig(for: "MeetingB", from: folderB)
+
+        _ = await (loadA, loadB)
+
+        XCTAssertEqual(vm.meetingConfig.icon, "🅱️",
+                       "After switching to MeetingB, meetingConfig must reflect B regardless of load-completion order")
+        XCTAssertEqual(vm.meetingConfig.calendarEventName, "EventB")
+    }
 }

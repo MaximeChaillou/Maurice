@@ -143,11 +143,10 @@ struct FolderContentView: View {
                                 Button {
                                     viewModel.selectedFolder = folder.name
                                     let url = folder.url
+                                    let folderName = folder.name
                                     Task {
-                                        let cfg = await Task.detached {
-                                            MeetingConfig.load(from: url)
-                                        }.value
-                                        viewModel.meetingConfig = cfg
+                                        await viewModel.loadMeetingConfig(for: folderName, from: url)
+                                        guard viewModel.selectedFolder == folderName else { return }
                                         showConfigSidebar = true
                                     }
                                 } label: {
@@ -178,11 +177,9 @@ struct FolderContentView: View {
                 recordingViewModel?.subdirectory = viewModel.selectedFolder
                 if let folder = viewModel.currentFolder {
                     let url = folder.url
+                    let folderName = folder.name
                     Task {
-                        let config = await Task.detached {
-                            MeetingConfig.load(from: url)
-                        }.value
-                        viewModel.meetingConfig = config
+                        await viewModel.loadMeetingConfig(for: folderName, from: url)
                     }
                     if navigateByDate {
                         viewModel.fileIndex = 0

@@ -142,6 +142,14 @@ final class FolderContentViewModel {
         loadFolders()
     }
 
+    func loadMeetingConfig(for folderName: String, from url: URL) async {
+        let config = await Task.detached {
+            MeetingConfig.load(from: url)
+        }.value
+        guard selectedFolder == folderName else { return }
+        meetingConfig = config
+    }
+
     func updateCurrentFolderIcon(_ icon: String?) {
         guard let name = selectedFolder,
               let idx = folders.firstIndex(where: { $0.name == name }) else { return }
