@@ -1,5 +1,11 @@
 import SwiftUI
 
+@Observable
+@MainActor
+final class SettingsNavigator {
+    var selectedSection: SettingsSection? = .general
+}
+
 enum SettingsSection: String, CaseIterable, Identifiable {
     case general
     case calendar
@@ -44,8 +50,8 @@ struct SettingsView: View {
     var calendarViewModel: GoogleCalendarViewModel?
     @ObservedObject var updateChecker: UpdateChecker
     var templateUpdateService: TemplateUpdateService
+    @Bindable var navigator: SettingsNavigator
     var onRootDirectoryChanged: (() -> Void)?
-    @State private var selectedSection: SettingsSection? = .general
 
     var body: some View {
         HSplitView {
@@ -58,7 +64,7 @@ struct SettingsView: View {
     }
 
     private var settingsSidebar: some View {
-        List(selection: $selectedSection) {
+        List(selection: $navigator.selectedSection) {
             ForEach(SettingsSection.allCases) { section in
                 HStack(spacing: 6) {
                     Label(section.localizedName, systemImage: section.icon)
@@ -75,7 +81,7 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var settingsDetail: some View {
-        switch selectedSection {
+        switch navigator.selectedSection {
         case .general:
             GeneralSettingsView(updateChecker: updateChecker, onRootDirectoryChanged: onRootDirectoryChanged)
         case .calendar:

@@ -17,6 +17,7 @@ struct MauriceApp: App {
     @State private var calendarViewModel = GoogleCalendarViewModel()
     @State private var recordingContext: RecordingContext
     @State private var templateUpdateService = TemplateUpdateService()
+    @State private var settingsNavigator = SettingsNavigator()
     @StateObject private var updateChecker = UpdateChecker()
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
 
@@ -76,6 +77,8 @@ struct MauriceApp: App {
                             HomeView(
                                 calendarViewModel: calendarViewModel,
                                 coordinator: coordinator,
+                                templateUpdateService: templateUpdateService,
+                                settingsNavigator: settingsNavigator,
                                 hasMeetings: !meetingViewModel.folders.isEmpty,
                                 hasPeople: peopleViewModel.hasAnyPerson
                             )
@@ -187,7 +190,8 @@ struct MauriceApp: App {
                 appTheme: $appTheme,
                 calendarViewModel: calendarViewModel,
                 updateChecker: updateChecker,
-                templateUpdateService: templateUpdateService
+                templateUpdateService: templateUpdateService,
+                navigator: settingsNavigator
             ) {
                 reloadAfterDirectoryChange()
             }

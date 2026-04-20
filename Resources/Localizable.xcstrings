@@ -693,6 +693,12 @@
     "Template updates" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mises \u00e0 jour des mod\u00e8les" } } }
     },
+    "Model updates available" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mises \u00e0 jour des mod\u00e8les disponibles" } } }
+    },
+    "Review" : {
+      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Consulter" } } }
+    },
     "Templates up to date" : {
       "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mod\u00e8les \u00e0 jour" } } }
     },

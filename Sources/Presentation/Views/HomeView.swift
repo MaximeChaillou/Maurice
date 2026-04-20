@@ -3,14 +3,22 @@ import SwiftUI
 struct HomeView: View {
     let calendarViewModel: GoogleCalendarViewModel
     let coordinator: NavigationCoordinator
+    let templateUpdateService: TemplateUpdateService
+    let settingsNavigator: SettingsNavigator
     var hasMeetings: Bool = false
     var hasPeople: Bool = false
+    @Environment(\.openWindow) private var openWindow
     @State private var upcomingEvents: [GoogleCalendarEvent] = []
     @State private var isLoading = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
+                if templateUpdateService.hasPendingUpdates {
+                    templateUpdatesBanner
+                        .padding(.top, 12)
+                }
+
                 Spacer(minLength: 20)
 
                 Image(systemName: "waveform.circle.fill")
@@ -43,6 +51,26 @@ struct HomeView: View {
                 await loadEvents()
             }
         }
+    }
+
+    // MARK: - Template updates banner
+
+    private var templateUpdatesBanner: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundStyle(.orange)
+            Text("Model updates available")
+                .font(.callout)
+            Button("Review") {
+                settingsNavigator.selectedSection = .templateUpdates
+                openWindow(id: "settings")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .glassEffect(.regular, in: .capsule)
     }
 
     // MARK: - Action Cards
