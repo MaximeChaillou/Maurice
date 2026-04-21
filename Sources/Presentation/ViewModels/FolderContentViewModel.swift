@@ -49,12 +49,11 @@ final class FolderContentViewModel {
             }
 
             let contents = DirectoryScanner.scan(at: dir)
-            let storage = FileTranscriptionStorage()
 
             var items: [FolderItem] = []
             for folder in contents.folders {
                 let files = Self.scanFiles(in: folder.url)
-                let dateEntries = await Self.scanDateEntries(in: folder.url, storage: storage)
+                let dateEntries = await Self.scanDateEntries(in: folder.url)
                 let icon = MeetingConfig.load(from: folder.url).icon
                 items.append(FolderItem(
                     name: folder.name, url: folder.url, files: files,
@@ -132,8 +131,8 @@ final class FolderContentViewModel {
             if !transcriptOnly, let note = entry.noteFile {
                 try FileManager.default.removeItem(at: note.url)
             }
-            if !noteOnly, let transcript = entry.transcript {
-                try FileManager.default.removeItem(at: transcript.url)
+            if !noteOnly, let transcriptFile = entry.transcriptFile {
+                try FileManager.default.removeItem(at: transcriptFile.url)
             }
         } catch {
             IssueLogger.log(.error, "Failed to delete date entry", error: error)
@@ -261,7 +260,7 @@ final class FolderContentViewModel {
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
     }
 
-    nonisolated private static func scanDateEntries(in dir: URL, storage: FileTranscriptionStorage) async -> [MeetingDateEntry] {
-        await MeetingDateEntry.scan(in: dir, storage: storage)
+    nonisolated private static func scanDateEntries(in dir: URL) async -> [MeetingDateEntry] {
+        await MeetingDateEntry.scan(in: dir)
     }
 }

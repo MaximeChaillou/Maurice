@@ -324,10 +324,10 @@ struct PersonOneOnOneView: View {
                 case .note:
                     if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
                 case .transcript:
-                    if let t = entry.transcript { try FileManager.default.removeItem(at: t.url) }
+                    if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
                 case .both:
                     if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
-                    if let t = entry.transcript { try FileManager.default.removeItem(at: t.url) }
+                    if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
                 }
             } catch {
                 IssueLogger.log(.error, "Failed to delete person entry", error: error)

@@ -39,48 +39,38 @@ struct MeetingDateEntry: Identifiable {
     let dateString: String
     let date: Date
     let noteFile: FolderFile?
-    let transcript: StoredTranscript?
+    let transcriptFile: FolderFile?
     var id: String { dateString }
     var hasNote: Bool { noteFile != nil }
-    var hasTranscript: Bool { transcript != nil }
+    var hasTranscript: Bool { transcriptFile != nil }
 
-    static func scan(
-        in dir: URL, storage: FileTranscriptionStorage = FileTranscriptionStorage()
-    ) async -> [MeetingDateEntry] {
+    static func scan(in dir: URL) async -> [MeetingDateEntry] {
         async let mdScan = DirectoryScanner.scanAsync(at: dir, fileExtension: "md")
         async let transcriptScan = DirectoryScanner.scanAsync(at: dir, fileExtension: "transcript")
         let mdFiles = await mdScan.files
         let transcriptFiles = await transcriptScan.files
 
-        let transcripts = await withTaskGroup(of: (String, StoredTranscript?).self) { group in
-            for file in transcriptFiles {
-                let url = file.url
-                let datePrefix = url.deletingPathExtension().lastPathComponent
-                group.addTask { (datePrefix, storage.parseTranscriptFile(at: url)) }
-            }
-            var result: [String: StoredTranscript] = [:]
-            for await (key, parsed) in group {
-                if let parsed { result[key] = parsed }
-            }
-            return result
-        }
-
-        var dateMap: [String: (note: FolderFile?, transcript: StoredTranscript?)] = [:]
+        var dateMap: [String: (note: FolderFile?, transcript: FolderFile?)] = [:]
         for file in mdFiles {
             let datePrefix = file.url.deletingPathExtension().lastPathComponent
             guard datePrefix != "next" else { continue }
             let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
             dateMap[datePrefix, default: (nil, nil)].note = folderFile
         }
-        for (key, parsed) in transcripts {
-            dateMap[key, default: (nil, nil)].transcript = parsed
+        for file in transcriptFiles {
+            let datePrefix = file.url.deletingPathExtension().lastPathComponent
+            let folderFile = FolderFile(id: file.url, name: datePrefix, date: file.date, url: file.url)
+            dateMap[datePrefix, default: (nil, nil)].transcript = folderFile
         }
 
         let dateParser = DateFormatters.dayPOSIX
         return dateMap.map { key, value in
             let date = dateParser.date(from: key)
                 ?? value.note?.date ?? value.transcript?.date ?? Date.distantPast
-            return MeetingDateEntry(dateString: key, date: date, noteFile: value.note, transcript: value.transcript)
+            return MeetingDateEntry(
+                dateString: key, date: date,
+                noteFile: value.note, transcriptFile: value.transcript
+            )
         }
         .sorted { $0.dateString.localizedStandardCompare($1.dateString) == .orderedDescending }
     }

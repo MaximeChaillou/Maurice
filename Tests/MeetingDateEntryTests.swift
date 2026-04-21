@@ -23,13 +23,7 @@ final class MeetingDateEntryTests: XCTestCase {
     }
 
     private func createTranscriptFile(_ name: String) {
-        let header = "Maurice Transcript \u{2014} 18 mars 2026 \u{00E0} 14:30"
-        let content = """
-        \(header)
-        [0:05]
-        Bonjour, ceci est un test.
-        """
-        createFile(name, content: content)
+        createFile(name, content: "")
     }
 
     // MARK: - scan with .md files only
@@ -151,7 +145,7 @@ final class MeetingDateEntryTests: XCTestCase {
     // MARK: - Identifiable
 
     func testIdMatchesDateString() {
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: nil, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: nil, transcriptFile: nil)
         XCTAssertEqual(entry.id, "2024-01-01")
     }
 
@@ -160,7 +154,10 @@ final class MeetingDateEntryTests: XCTestCase {
     func testHasNoteWhenNotePresent() {
         let url = tempDir.appendingPathComponent("test.md")
         let noteFile = FolderFile(id: url, name: "test", date: Date(), url: url)
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcript: nil)
+        let entry = MeetingDateEntry(
+            dateString: "2024-01-01", date: Date(),
+            noteFile: noteFile, transcriptFile: nil
+        )
 
         XCTAssertTrue(entry.hasNote)
         XCTAssertFalse(entry.hasTranscript)
@@ -168,8 +165,11 @@ final class MeetingDateEntryTests: XCTestCase {
 
     func testHasTranscriptWhenTranscriptPresent() {
         let url = tempDir.appendingPathComponent("test.transcript")
-        let transcript = StoredTranscript(id: url, name: "test", date: Date(), entries: [])
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: nil, transcript: transcript)
+        let transcriptFile = FolderFile(id: url, name: "test", date: Date(), url: url)
+        let entry = MeetingDateEntry(
+            dateString: "2024-01-01", date: Date(),
+            noteFile: nil, transcriptFile: transcriptFile
+        )
 
         XCTAssertFalse(entry.hasNote)
         XCTAssertTrue(entry.hasTranscript)
@@ -179,12 +179,12 @@ final class MeetingDateEntryTests: XCTestCase {
         let noteURL = tempDir.appendingPathComponent("test.md")
         let transcriptURL = tempDir.appendingPathComponent("test.transcript")
         let noteFile = FolderFile(id: noteURL, name: "test", date: Date(), url: noteURL)
-        let transcript = StoredTranscript(id: transcriptURL, name: "test", date: Date(), entries: [])
+        let transcriptFile = FolderFile(id: transcriptURL, name: "test", date: Date(), url: transcriptURL)
         let entry = MeetingDateEntry(
             dateString: "2024-01-01",
             date: Date(),
             noteFile: noteFile,
-            transcript: transcript
+            transcriptFile: transcriptFile
         )
 
         XCTAssertTrue(entry.hasNote)

@@ -27,7 +27,7 @@ final class FolderItemTests: XCTestCase {
 
     func testFileCountFromDateEntries() {
         let url = URL(fileURLWithPath: "/tmp/test")
-        let entry = MeetingDateEntry(dateString: "2026-03-27", date: Date(), noteFile: nil, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2026-03-27", date: Date(), noteFile: nil, transcriptFile: nil)
         var item = FolderItem(name: "Test", url: url, files: [])
         item.dateEntries = [entry, entry]
         XCTAssertEqual(item.fileCount, 2)
@@ -37,7 +37,7 @@ final class FolderItemTests: XCTestCase {
         let url = URL(fileURLWithPath: "/tmp/test")
         let fileURL = URL(fileURLWithPath: "/tmp/test/a.md")
         let file = FolderFile(id: fileURL, name: "a", date: Date(), url: fileURL)
-        let entry = MeetingDateEntry(dateString: "2026-03-27", date: Date(), noteFile: nil, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2026-03-27", date: Date(), noteFile: nil, transcriptFile: nil)
         var item = FolderItem(name: "Test", url: url, files: [file])
         item.dateEntries = [entry, entry, entry]
         XCTAssertEqual(item.fileCount, 3)

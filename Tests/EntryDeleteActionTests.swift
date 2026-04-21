@@ -4,7 +4,7 @@ import XCTest
 final class EntryDeleteActionTests: XCTestCase {
 
     private func makeEntry(dateString: String = "2026-03-27") -> MeetingDateEntry {
-        MeetingDateEntry(dateString: dateString, date: Date(), noteFile: nil, transcript: nil)
+        MeetingDateEntry(dateString: dateString, date: Date(), noteFile: nil, transcriptFile: nil)
     }
 
     // MARK: - Entry Accessor

@@ -244,7 +244,7 @@ final class FolderContentViewModelTests: XCTestCase {
 
         let noteURL = sub.appendingPathComponent("2024-01-01.md")
         let noteFile = FolderFile(id: noteURL, name: "2024-01-01", date: Date(), url: noteURL)
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcriptFile: nil)
 
         vm.deleteDateEntry(entry)
 
@@ -257,7 +257,7 @@ final class FolderContentViewModelTests: XCTestCase {
 
         let noteURL = sub.appendingPathComponent("2024-01-01.md")
         let noteFile = FolderFile(id: noteURL, name: "2024-01-01", date: Date(), url: noteURL)
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcriptFile: nil)
 
         let vm = FolderContentViewModel(directory: tempDir)
         vm.deleteDateEntry(entry, noteOnly: true)
@@ -273,7 +273,7 @@ final class FolderContentViewModelTests: XCTestCase {
 
         let noteURL = sub.appendingPathComponent("2024-01-01.md")
         let noteFile = FolderFile(id: noteURL, name: "2024-01-01", date: Date(), url: noteURL)
-        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcript: nil)
+        let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcriptFile: nil)
 
         let vm = FolderContentViewModel(directory: tempDir)
         vm.deleteDateEntry(entry, transcriptOnly: true)

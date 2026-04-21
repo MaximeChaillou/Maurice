@@ -36,7 +36,7 @@ struct DateNavigationHeader: View {
                     TranscriptToggleButton(entry: entry, showTranscripts: $showTranscripts)
                 }
                 if let config, let consoleViewModel {
-                    let filePath = entry?.noteFile?.url.path ?? entry?.transcript?.url.path
+                    let filePath = entry?.noteFile?.url.path ?? entry?.transcriptFile?.url.path
                     SkillActionsMenu(
                         config: config, consoleViewModel: consoleViewModel,
                         activeFilePath: filePath,
@@ -88,12 +88,12 @@ struct DateEntryContentView: View {
     @Binding var showTranscripts: Bool
 
     var body: some View {
-        if showTranscripts, let transcript = entry.transcript {
-            TranscriptDetailView(transcript: transcript).id(transcript.id)
+        if showTranscripts, let file = entry.transcriptFile {
+            TranscriptDetailView(url: file.url).id(file.id)
         } else if let file = entry.noteFile {
             FolderFileEditorView(file: file, markdownTheme: markdownTheme).id(file.id)
-        } else if let transcript = entry.transcript {
-            TranscriptDetailView(transcript: transcript).id(transcript.id)
+        } else if let file = entry.transcriptFile {
+            TranscriptDetailView(url: file.url).id(file.id)
         }
     }
 }
