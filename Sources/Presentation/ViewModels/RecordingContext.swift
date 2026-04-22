@@ -31,13 +31,14 @@ final class RecordingContext {
 
         // Priority: Google Calendar > context (displayed meeting) > new meeting
         Task {
-            if let event = await calendarViewModel.currentEvent() {
+            if let event = calendarViewModel.currentEvent() {
                 if let linked = await findLinkedFolder(for: event) {
                     await writeFrontmatter(for: event, in: linked)
                     recordingViewModel.subdirectory = linked
                     navigateToSubdirectory(linked)
                 } else {
-                    let created = meetingViewModel.createFolderWithName(event.summary)
+                    let safeName = GoogleCalendarService.sanitizeFolderName(event.summary)
+                    let created = meetingViewModel.createFolderWithName(safeName)
                     await writeFrontmatter(for: event, in: created)
                     recordingViewModel.subdirectory = created
                     navigateToMeeting(created)
@@ -177,11 +178,7 @@ final class RecordingContext {
             if !people.isEmpty {
                 yaml += "participants:\n"
                 for attendee in people {
-                    if let name = attendee.displayName {
-                        yaml += "  - \(name) (\(attendee.email))\n"
-                    } else {
-                        yaml += "  - \(attendee.email)\n"
-                    }
+                    yaml += "  - \(attendee.formattedName) (\(attendee.email))\n"
                 }
             }
             yaml += "---\n\n"

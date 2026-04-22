@@ -9,25 +9,31 @@ final class GoogleCalendarViewModel {
     var isConnecting = false
     var errorMessage: String?
 
-    private var cachedUpcoming: [GoogleCalendarEvent]?
-    private var cachedUpcomingDate: Date?
-    private var cachedCurrent: GoogleCalendarEvent??
-    private var cachedCurrentDate: Date?
-    private let cacheDuration: TimeInterval = 60
+    var upcomingEvents: [GoogleCalendarEvent] = []
+    var lastRefreshDate: Date?
 
     private let calendarService: CalendarServiceProtocol
     private let tokenStore: TokenStoreProtocol
+    private let refreshInterval: TimeInterval
+    private let upcomingLimit: Int
     private var connectTask: Task<Void, Never>?
     private var loadTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
 
     init(
         calendarService: CalendarServiceProtocol = DefaultCalendarService(),
-        tokenStore: TokenStoreProtocol = DefaultTokenStore()
+        tokenStore: TokenStoreProtocol = DefaultTokenStore(),
+        refreshInterval: TimeInterval = 60,
+        upcomingLimit: Int = 5
     ) {
         self.calendarService = calendarService
         self.tokenStore = tokenStore
+        self.refreshInterval = refreshInterval
+        self.upcomingLimit = upcomingLimit
         loadConnectionState()
     }
+
+    // MARK: - Connect / Disconnect
 
     func connect() {
         guard !isConnecting else { return }
@@ -43,6 +49,7 @@ final class GoogleCalendarViewModel {
                 let email = try await self.calendarService.fetchUserEmail(accessToken: tokens.accessToken)
                 self.connectedEmail = email
                 self.isConnected = true
+                self.startAutoRefresh()
             } catch {
                 IssueLogger.log(.error, "Google Calendar OAuth connection failed", error: error)
                 self.errorMessage = error.localizedDescription
@@ -52,49 +59,64 @@ final class GoogleCalendarViewModel {
     }
 
     func disconnect() {
+        stopAutoRefresh()
         tokenStore.clear()
         isConnected = false
         connectedEmail = nil
         errorMessage = nil
+        upcomingEvents = []
+        lastRefreshDate = nil
     }
 
-    func upcomingEvents(limit: Int = 5) async -> [GoogleCalendarEvent] {
-        if let cached = cachedUpcoming, let date = cachedUpcomingDate,
-           Date().timeIntervalSince(date) < cacheDuration {
-            return cached
+    // MARK: - Derived event accessors
+
+    func imminentEvent(within minutes: Int = 60, now: Date = Date()) -> GoogleCalendarEvent? {
+        let horizon = now.addingTimeInterval(TimeInterval(minutes * 60))
+        return upcomingEvents.first { $0.start > now && $0.start <= horizon }
+    }
+
+    func currentEvent(now: Date = Date()) -> GoogleCalendarEvent? {
+        let soon = now.addingTimeInterval(5 * 60)
+        return upcomingEvents.first { $0.start <= soon && $0.end > now }
+    }
+
+    // MARK: - Refresh
+
+    func refresh() async {
+        guard let tokens = await validTokens() else {
+            upcomingEvents = []
+            return
         }
-        guard let tokens = await validTokens() else { return [] }
-        let events: [GoogleCalendarEvent]
         do {
-            events = try await calendarService.fetchUpcomingEvents(
-                accessToken: tokens.accessToken, limit: limit
+            let events = try await calendarService.fetchUpcomingEvents(
+                accessToken: tokens.accessToken, limit: upcomingLimit
             )
+            upcomingEvents = events
+            lastRefreshDate = Date()
         } catch {
             IssueLogger.log(.warning, "Failed to fetch upcoming calendar events", error: error)
-            events = []
         }
-        cachedUpcoming = events
-        cachedUpcomingDate = Date()
-        return events
     }
 
-    func currentEvent() async -> GoogleCalendarEvent? {
-        if let cached = cachedCurrent, let date = cachedCurrentDate,
-           Date().timeIntervalSince(date) < cacheDuration {
-            return cached
+    private func startAutoRefresh() {
+        refreshTask?.cancel()
+        let interval = refreshInterval
+        refreshTask = Task { [weak self] in
+            await self?.refresh()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(interval))
+                if Task.isCancelled { break }
+                await self?.refresh()
+            }
         }
-        guard let tokens = await validTokens() else { return nil }
-        let event: GoogleCalendarEvent?
-        do {
-            event = try await calendarService.fetchCurrentEvent(accessToken: tokens.accessToken)
-        } catch {
-            IssueLogger.log(.warning, "Failed to fetch current calendar event", error: error)
-            event = nil
-        }
-        cachedCurrent = .some(event)
-        cachedCurrentDate = Date()
-        return event
     }
+
+    private func stopAutoRefresh() {
+        refreshTask?.cancel()
+        refreshTask = nil
+    }
+
+    // MARK: - Tokens
 
     func validTokens() async -> GoogleTokens? {
         guard var tokens = tokenStore.load() else { return nil }
@@ -120,7 +142,6 @@ final class GoogleCalendarViewModel {
 
         loadTask = Task { [weak self] in
             guard let self else { return }
-            // Refresh if expired
             if tokens.expiresAt < Date() {
                 do {
                     tokens = try await self.calendarService.refreshAccessToken(refreshToken: tokens.refreshToken)
@@ -137,6 +158,8 @@ final class GoogleCalendarViewModel {
             } catch {
                 IssueLogger.log(.warning, "Failed to fetch Google account email", error: error)
             }
+
+            self.startAutoRefresh()
         }
     }
 }

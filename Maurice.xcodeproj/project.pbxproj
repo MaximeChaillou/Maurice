@@ -70,6 +70,7 @@
 		C3D4E5F6A7B8C9D0E1F2A3B4 /* MarkdownLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* MarkdownLayoutManager.swift */; };
 		C43D56B55FED9A0119945A45 /* SpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */; };
 		CB96682306A18B310F44649E /* MauriceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */; };
+		D1B0C0A0E0F0A0B0C0D0E001 /* DebugIconOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B0C0A0E0F0A0B0C0D0E002 /* DebugIconOverlay.swift */; };
 		CC33DD44EE55FF66AA11BB22 /* FolderNavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF66AA11BB22CC33 /* FolderNavigationStack.swift */; };
 		CD76B81A865FCEE5175E2574 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE7670CC0D05FD1B6898160 /* RecordingViewModel.swift */; };
 		CS01B001C001D001E001F001 /* CalendarServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CS01F001C001D001E001F001 /* CalendarServiceProtocol.swift */; };
@@ -97,6 +98,7 @@
 		PC01PC02PC03PC04PC05PC06 /* PeopleContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */; };
 		PV01PV02PV03PV04PV05PV06 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */; };
 		RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */; };
+		HS01HS02HS03HS04HS05HS06 /* HomeSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = HS11HS12HS13HS14HS15HS16 /* HomeSchedule.swift */; };
 		SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */; };
 		IL01IL02IL03IL04IL05IL06 /* IssueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = IL11IL12IL13IL14IL15IL16 /* IssueLogger.swift */; };
 		IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */; };
@@ -124,6 +126,7 @@
 		NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */; };
 		NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */; };
 		NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */; };
+		GN01GN02GN03GN04GN05GN06 /* GoogleCalendarServiceNetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GN11GN12GN13GN14GN15GN16 /* GoogleCalendarServiceNetworkTests.swift */; };
 		NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */; };
 		NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */; };
 		PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */; };
@@ -190,6 +193,7 @@
 
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MauriceApp.swift; sourceTree = "<group>"; };
+		D1B0C0A0E0F0A0B0C0D0E002 /* DebugIconOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugIconOverlay.swift; sourceTree = "<group>"; };
 		6E435614E19D148F97CACBD6 /* SpeechModelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelState.swift; sourceTree = "<group>"; };
 		80051D6DB5639866EA2923C6 /* MemoryContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryContentView.swift; sourceTree = "<group>"; };
 		81AD12FE79304C27BE1C622E /* GoogleCalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarService.swift; sourceTree = "<group>"; };
@@ -254,6 +258,7 @@
 		PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModel.swift; sourceTree = "<group>"; };
 		PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		RC11RC12RC13RC14RC15RC16 /* RecordingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingContext.swift; sourceTree = "<group>"; };
+		HS11HS12HS13HS14HS15HS16 /* HomeSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSchedule.swift; sourceTree = "<group>"; };
 		SN11SN12SN13SN14SN15SN16 /* SubfolderNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubfolderNavigationView.swift; sourceTree = "<group>"; };
 		IL11IL12IL13IL14IL15IL16 /* IssueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLogger.swift; sourceTree = "<group>"; };
 		SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchService.swift; sourceTree = "<group>"; };
@@ -277,6 +282,7 @@
 		NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTranscriptionStorageTests.swift; sourceTree = "<group>"; };
 		NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderNavigationStackTests.swift; sourceTree = "<group>"; };
 		NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarServiceTests.swift; sourceTree = "<group>"; };
+		GN11GN12GN13GN14GN15GN16 /* GoogleCalendarServiceNetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarServiceNetworkTests.swift; sourceTree = "<group>"; };
 		NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigTests.swift; sourceTree = "<group>"; };
 		NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingDateEntryTests.swift; sourceTree = "<group>"; };
 		PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModelTests.swift; sourceTree = "<group>"; };
@@ -432,6 +438,7 @@
 				FM11FM12FM13FM14FM15FM16 /* FolderContentModels.swift */,
 				FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */,
 				F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */,
+				HS11HS12HS13HS14HS15HS16 /* HomeSchedule.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
 				NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */,
 				PC11PC12PC13PC14PC15PC16 /* PeopleContentViewModel.swift */,
@@ -575,6 +582,7 @@
 			isa = PBXGroup;
 			children = (
 				658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */,
+				D1B0C0A0E0F0A0B0C0D0E002 /* DebugIconOverlay.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -601,6 +609,7 @@
 				VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */,
 				NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */,
 				NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */,
+				GN11GN12GN13GN14GN15GN16 /* GoogleCalendarServiceNetworkTests.swift */,
 				HV11HV12HV13HV14HV15HV16 /* HomeViewTests.swift */,
 				IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */,
 				LT11LT12LT13LT14LT15LT16 /* LocalizationTests.swift */,
@@ -806,6 +815,7 @@
 				F1A2B3C4D5E6F7A8B9C0D1E2 /* CheckboxTextView.swift in Sources */,
 				2080165B86775CA518F786AF /* MarkdownView.swift in Sources */,
 				CB96682306A18B310F44649E /* MauriceApp.swift in Sources */,
+				D1B0C0A0E0F0A0B0C0D0E001 /* DebugIconOverlay.swift in Sources */,
 				6F1ADD8CF138F5975A4310C0 /* MemoryContentView.swift in Sources */,
 				353A6FD06F4DC65BEC7EDDE2 /* MemoryFile.swift in Sources */,
 				2D182DD428C529A63EC524BF /* MemoryListViewModel.swift in Sources */,
@@ -813,6 +823,7 @@
 				A1B2C3D4E5F60001AA000001 /* MemoryImporter.swift in Sources */,
 				68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */,
 				RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */,
+				HS01HS02HS03HS04HS05HS06 /* HomeSchedule.swift in Sources */,
 				CD76B81A865FCEE5175E2574 /* RecordingViewModel.swift in Sources */,
 				C43D56B55FED9A0119945A45 /* SpeechRecognitionService.swift in Sources */,
 				189A198050B6E9C085345576 /* StoredTranscript.swift in Sources */,
@@ -876,6 +887,7 @@
 				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
 				NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */,
 				NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */,
+				GN01GN02GN03GN04GN05GN06 /* GoogleCalendarServiceNetworkTests.swift in Sources */,
 				VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */,
 				T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */,
 				T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */,

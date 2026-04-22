@@ -3,37 +3,21 @@ import SwiftUI
 struct FloatingActionBar: View {
     let viewModel: RecordingViewModel
     let onRecordTap: () -> Void
+    var contextTitle: String?
+    var contextSubtitle: String?
     @State private var showLiveTranscript = false
     @State private var transcriptHeight: CGFloat = 250
     @State private var dragStartHeight: CGFloat = 250
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: -12) {
+            Group {
                 if viewModel.isRecording {
-                    AudioWaveformView(buffer: viewModel.audioLevelBuffer)
-                        .frame(height: 64)
-                        .mask(waveformEdgeMask(fadeSide: .leading))
-                        .transition(.opacity)
+                    standardRecordRow
                 } else {
-                    Spacer()
-                }
-
-                recordButton
-                    .zIndex(1)
-
-                if viewModel.isRecording {
-                    AudioWaveformView(buffer: viewModel.audioLevelBuffer)
-                        .frame(height: 64)
-                        .scaleEffect(x: -1, y: 1)
-                        .mask(waveformEdgeMask(fadeSide: .trailing))
-                        .transition(.opacity)
-                } else {
-                    Spacer()
+                    recordPill
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
             .animation(.easeInOut(duration: 0.3), value: viewModel.isRecording)
 
             if viewModel.isRecording {
@@ -76,29 +60,101 @@ struct FloatingActionBar: View {
         }
     }
 
+    private var standardRecordRow: some View {
+        HStack(spacing: -12) {
+            if viewModel.isRecording {
+                AudioWaveformView(buffer: viewModel.audioLevelBuffer)
+                    .frame(height: 64)
+                    .mask(waveformEdgeMask(fadeSide: .leading))
+                    .transition(.opacity)
+            } else {
+                Spacer()
+            }
+
+            recordButton
+                .zIndex(1)
+
+            if viewModel.isRecording {
+                AudioWaveformView(buffer: viewModel.audioLevelBuffer)
+                    .frame(height: 64)
+                    .scaleEffect(x: -1, y: 1)
+                    .mask(waveformEdgeMask(fadeSide: .trailing))
+                    .transition(.opacity)
+            } else {
+                Spacer()
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+
+    private var recordPill: some View {
+        Button(action: onRecordTap) {
+            HStack(spacing: 12) {
+                micCircle
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(pillTitle)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
+                    if let subtitle = contextSubtitle {
+                        Text(subtitle)
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .padding(.leading, 5)
+            .padding(.trailing, 16)
+            .padding(.vertical, 5)
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.isPreparing)
+        .fixedSize()
+        .glassEffect(.regular, in: .capsule)
+        .help(String(localized: "Start recording"))
+    }
+
+    private var pillTitle: String {
+        if let contextTitle {
+            return String(localized: "Record \(contextTitle)")
+        }
+        return String(localized: "Start recording")
+    }
+
+    private var micCircle: some View {
+        ZStack {
+            Circle()
+                .fill(Color.cyan.opacity(0.88))
+                .frame(width: 34, height: 34)
+                .overlay {
+                    Circle()
+                        .strokeBorder(Color.white.opacity(0.4), lineWidth: 1)
+                        .blur(radius: 0.5)
+                        .mask(
+                            LinearGradient(
+                                colors: [.white, .clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                }
+                .shadow(color: Color.cyan.opacity(0.35), radius: 6, y: 2)
+
+            Image(systemName: viewModel.isRecording ? "stop.fill" : "mic.fill")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.white)
+        }
+    }
+
     private var recordButton: some View {
         Button(action: onRecordTap) {
-            ZStack {
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [.cyan.opacity(0.3), .cyan.opacity(0.1), .clear],
-                            center: .center,
-                            startRadius: 10,
-                            endRadius: 40
-                        )
-                    )
-                    .frame(width: 64, height: 64)
-
-                Circle()
-                    .fill(.cyan.opacity(0.8))
-                    .frame(width: 35, height: 35)
-
-                Image(systemName: viewModel.isRecording ? "stop.fill" : "mic.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.white)
-            }
-            .contentShape(Circle())
+            micCircle
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .disabled(viewModel.isPreparing)

@@ -4,7 +4,6 @@ protocol CalendarServiceProtocol: Sendable {
     func startOAuthFlow() async throws -> GoogleTokens
     func fetchUserEmail(accessToken: String) async throws -> String
     func fetchUpcomingEvents(accessToken: String, limit: Int) async throws -> [GoogleCalendarEvent]
-    func fetchCurrentEvent(accessToken: String) async throws -> GoogleCalendarEvent?
     func refreshAccessToken(refreshToken: String) async throws -> GoogleTokens
 }
 
@@ -27,10 +26,6 @@ struct DefaultCalendarService: CalendarServiceProtocol {
 
     func fetchUpcomingEvents(accessToken: String, limit: Int) async throws -> [GoogleCalendarEvent] {
         try await GoogleCalendarService.fetchUpcomingEvents(accessToken: accessToken, limit: limit)
-    }
-
-    func fetchCurrentEvent(accessToken: String) async throws -> GoogleCalendarEvent? {
-        try await GoogleCalendarService.fetchCurrentEvent(accessToken: accessToken)
     }
 
     func refreshAccessToken(refreshToken: String) async throws -> GoogleTokens {

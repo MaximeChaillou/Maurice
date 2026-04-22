@@ -13,6 +13,9 @@ enum GoogleCalendarService {
         Bundle.main.object(forInfoDictionaryKey: "GoogleClientSecret") as? String ?? ""
     }
 
+    // URLSession used for all HTTP calls. Swappable for testing.
+    nonisolated(unsafe) static var urlSession: URLSession = .shared
+
     private static let scopes = [
         "https://www.googleapis.com/auth/calendar.events.readonly",
         "https://www.googleapis.com/auth/userinfo.email"
@@ -61,7 +64,7 @@ enum GoogleCalendarService {
             ("grant_type", "authorization_code")
         ])
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
 
         guard let accessToken = json["access_token"] as? String,
@@ -90,7 +93,7 @@ enum GoogleCalendarService {
             ("grant_type", "refresh_token")
         ])
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
 
         guard let accessToken = json["access_token"] as? String,
@@ -107,50 +110,17 @@ enum GoogleCalendarService {
 
     // MARK: - API Calls
 
-    static func fetchCurrentEvent(accessToken: String) async throws -> GoogleCalendarEvent? {
-        let now = Date()
-        let fiveMinutesFromNow = now.addingTimeInterval(5 * 60)
-
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-
-        var components = URLComponents(string: "https://www.googleapis.com/calendar/v3/calendars/primary/events")!
-        components.queryItems = [
-            URLQueryItem(name: "timeMin", value: formatter.string(from: now.addingTimeInterval(-24 * 3600))),
-            URLQueryItem(name: "timeMax", value: formatter.string(from: fiveMinutesFromNow)),
-            URLQueryItem(name: "singleEvents", value: "true"),
-            URLQueryItem(name: "orderBy", value: "startTime")
-        ]
-
-        var request = URLRequest(url: components.url!)
-        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
-        let items = json["items"] as? [[String: Any]] ?? []
-
-        // Collect all current/upcoming events, then pick the best match
-        let candidates = items.compactMap { parseCalendarItem($0) }
-            .filter { $0.start <= fiveMinutesFromNow && $0.end > now }
-            .map { GoogleCalendarEvent(
-                id: $0.id, summary: sanitizeFolderName($0.summary),
-                start: $0.start, end: $0.end, attendees: $0.attendees
-            ) }
-
-        // Prefer the event with the closest start time to now
-        return candidates
-            .min { abs($0.start.timeIntervalSince(now)) < abs($1.start.timeIntervalSince(now)) }
-    }
-
     static func fetchUpcomingEvents(accessToken: String, limit: Int = 5) async throws -> [GoogleCalendarEvent] {
         let now = Date()
+        // Look back 4h to include meetings already in progress.
+        let lookbackStart = now.addingTimeInterval(-4 * 3600)
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
 
         var components = URLComponents(string: "https://www.googleapis.com/calendar/v3/calendars/primary/events")!
         components.queryItems = [
-            URLQueryItem(name: "timeMin", value: formatter.string(from: now)),
-            URLQueryItem(name: "maxResults", value: "\(limit + 10)"),
+            URLQueryItem(name: "timeMin", value: formatter.string(from: lookbackStart)),
+            URLQueryItem(name: "maxResults", value: "\(limit + 20)"),
             URLQueryItem(name: "singleEvents", value: "true"),
             URLQueryItem(name: "orderBy", value: "startTime")
         ]
@@ -158,11 +128,14 @@ enum GoogleCalendarService {
         var request = URLRequest(url: components.url!)
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
         let items = json["items"] as? [[String: Any]] ?? []
 
-        return Array(items.compactMap { parseCalendarItem($0) }.prefix(limit))
+        let filtered = items
+            .compactMap { parseCalendarItem($0) }
+            .filter { $0.end > now }
+        return Array(filtered.prefix(limit))
     }
 
     static func fetchUserEmail(accessToken: String) async throws -> String {
@@ -170,7 +143,7 @@ enum GoogleCalendarService {
         var request = URLRequest(url: url)
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await urlSession.data(for: request)
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
 
         guard let email = json["email"] as? String else {

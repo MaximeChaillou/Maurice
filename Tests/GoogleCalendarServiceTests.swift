@@ -242,4 +242,115 @@ final class GoogleCalendarServiceTests: XCTestCase {
     func testSanitizeFolderNamePreservesUnicode() {
         XCTAssertEqual(GoogleCalendarService.sanitizeFolderName("Réunion équipe"), "Réunion équipe")
     }
+
+    // MARK: - parseCalendarItem (additional edge cases)
+
+    func testParseCalendarItemReturnsNilWhenEndMissing() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Meeting",
+            "start": ["dateTime": "2026-03-18T10:00:00+01:00"]
+        ]
+        XCTAssertNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemReturnsNilWhenStartDateUnparseable() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Meeting",
+            "start": ["dateTime": "not-a-date"],
+            "end": ["dateTime": "2026-03-18T10:30:00+01:00"]
+        ]
+        XCTAssertNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemReturnsNilWhenEndDateUnparseable() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Meeting",
+            "start": ["dateTime": "2026-03-18T10:00:00+01:00"],
+            "end": ["dateTime": "not-a-date"]
+        ]
+        XCTAssertNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemAcceptsMissingOrganizer() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Meeting without organizer",
+            "start": ["dateTime": "2026-03-18T10:00:00+01:00"],
+            "end": ["dateTime": "2026-03-18T10:30:00+01:00"]
+        ]
+        XCTAssertNotNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemAcceptsOrganizerWithOtherEmail() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Client meeting",
+            "start": ["dateTime": "2026-03-18T10:00:00+01:00"],
+            "end": ["dateTime": "2026-03-18T10:30:00+01:00"],
+            "organizer": ["email": "someone@external.com"]
+        ]
+        XCTAssertNotNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemAcceptsOrganizerWithoutEmailField() {
+        let item: [String: Any] = [
+            "id": "evt_123",
+            "summary": "Meeting",
+            "start": ["dateTime": "2026-03-18T10:00:00+01:00"],
+            "end": ["dateTime": "2026-03-18T10:30:00+01:00"],
+            "organizer": ["displayName": "Some Name"]
+        ]
+        XCTAssertNotNil(GoogleCalendarService.parseCalendarItem(item))
+    }
+
+    func testParseCalendarItemComputedFieldsMatchInputs() {
+        let item: [String: Any] = [
+            "id": "evt_parsed",
+            "summary": "Full event",
+            "start": ["dateTime": "2026-03-18T10:00:00Z"],
+            "end": ["dateTime": "2026-03-18T11:00:00Z"],
+            "attendees": [
+                ["email": "a@x.com", "responseStatus": "accepted"]
+            ]
+        ]
+        let event = GoogleCalendarService.parseCalendarItem(item)
+        XCTAssertEqual(event?.id, "evt_parsed")
+        XCTAssertEqual(event?.summary, "Full event")
+        XCTAssertEqual(event?.attendees.count, 1)
+    }
+
+    // MARK: - GoogleCalendarError
+
+    func testGoogleCalendarErrorDescriptions() {
+        XCTAssertEqual(
+            GoogleCalendarError.tokenExchangeFailed.errorDescription,
+            "Échec de l'échange du token"
+        )
+        XCTAssertEqual(
+            GoogleCalendarError.refreshFailed.errorDescription,
+            "Échec du rafraîchissement du token"
+        )
+        XCTAssertEqual(
+            GoogleCalendarError.emailFetchFailed.errorDescription,
+            "Impossible de récupérer l'email"
+        )
+        XCTAssertEqual(
+            GoogleCalendarError.oauthTimeout.errorDescription,
+            "La connexion a expiré (120s)"
+        )
+    }
+
+    // MARK: - Configuration readers
+
+    func testClientIDFallsBackToEmptyWhenNotConfigured() {
+        // Bundle lookup returns nil in tests; value should be empty string, never crash.
+        XCTAssertNotNil(GoogleCalendarService.clientID)
+    }
+
+    func testClientSecretFallsBackToEmptyWhenNotConfigured() {
+        XCTAssertNotNil(GoogleCalendarService.clientSecret)
+    }
 }

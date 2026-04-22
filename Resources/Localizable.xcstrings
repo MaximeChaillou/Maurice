@@ -1,764 +1,2558 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Home" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accueil" } } }
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld event": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld événement"
+          }
+        }
+      }
     },
-    "Name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom" } } }
+    "%lld events": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld événements"
+          }
+        }
+      }
     },
-    "System Mono" : {
-      "comment" : "Font name, no translation needed"
+    "%lld d": {
+      "comment": "Short unit for days in a duration (e.g. countdown)",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld j"
+          }
+        }
+      }
     },
-    "Meetings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9unions" } } }
-    },
-    "People" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Personnes" } } }
-    },
-    "Tasks" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "T\u00e2ches" } } }
-    },
-    "Search (\u2318\u21e7F)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rechercher (\u2318\u21e7F)" } } }
-    },
-    "Welcome to Maurice" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bienvenue dans Maurice" } } }
-    },
-    "Your meeting transcription assistant" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre assistant de transcription de r\u00e9unions" } } }
-    },
-    "Record" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer" } } }
-    },
-    "Start recording with the mic button below" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9marrez l\u2019enregistrement avec le bouton micro ci-dessous" } } }
-    },
-    "Create a meeting" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cr\u00e9er une r\u00e9union" } } }
-    },
-    "Organize your recurring meetings (standup, 1-1...)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Organisez vos r\u00e9unions r\u00e9currentes (standup, 1-1\u2026)" } } }
-    },
-    "Add a person" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter une personne" } } }
-    },
-    "1-1 notes, assessments, and goals" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Notes de 1-1, \u00e9valuations et objectifs" } } }
-    },
-    "Connect Google Calendar" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Connecter Google Calendar" } } }
-    },
-    "See your upcoming meetings on the home screen" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Voyez vos prochaines r\u00e9unions sur l\u2019accueil" } } }
-    },
-    "Upcoming meetings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Prochaines r\u00e9unions" } } }
-    },
-    "No upcoming meetings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune r\u00e9union pr\u00e9vue" } } }
-    },
-    "Today" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aujourd\u2019hui" } } }
-    },
-    "Tomorrow" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Demain" } } }
-    },
-    "Choose the folder where Maurice will store your data." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez le dossier o\u00f9 Maurice stockera vos donn\u00e9es." } } }
-    },
-    "Continue" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Continuer" } } }
-    },
-    "Change..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modifier\u2026" } } }
-    },
-    "Choose" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir" } } }
-    },
-    "Transcription language" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Langue de transcription" } } }
-    },
-    "Choose the main language for speech recognition." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez la langue principale pour la reconnaissance vocale." } } }
-    },
-    "French" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fran\u00e7ais" } } }
-    },
-    "English" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "English" } } }
-    },
-    "Back" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Retour" } } }
-    },
-    "Finish" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Terminer" } } }
-    },
-    "Skip" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ignorer" } } }
-    },
-    "Error" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur" } } }
-    },
-    "Retry" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9essayer" } } }
-    },
-    "Creating file structure..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cr\u00e9ation de l\u2019arborescence\u2026" } } }
-    },
-    "Maurice is ready!" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Maurice est pr\u00eat !" } } }
-    },
-    "Get started" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Commencer" } } }
-    },
-    "Start recording" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9marrer l\u2019enregistrement" } } }
-    },
-    "Stop recording" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Arr\u00eater l\u2019enregistrement" } } }
-    },
-    "Live transcript" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Transcript en direct" } } }
-    },
-    "Show live transcript" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Afficher le transcript en direct" } } }
-    },
-    "Hide live transcript" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Masquer le transcript en direct" } } }
-    },
-    "AI Assistant" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Assistant IA" } } }
-    },
-    "Ask Claude..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Demander \u00e0 Claude..." } } }
-    },
-    "Stop (\u2303C)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Arr\u00eater (\u2303C)" } } }
-    },
-    "Clear conversation" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Effacer la conversation" } } }
-    },
-    "Running skill '%@'..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ex\u00e9cution du skill \u00ab %@ \u00bb\u2026" } } }
-    },
-    "New meeting" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelle r\u00e9union" } } }
-    },
-    "Meeting name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de la r\u00e9union" } } }
-    },
-    "No meetings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune r\u00e9union" } } }
-    },
-    "Click + to create your first recurring meeting (e.g. standup, 1-1)." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cliquez sur + pour cr\u00e9er votre premi\u00e8re r\u00e9union r\u00e9currente (ex : standup, 1-1)." } } }
-    },
-    "No meeting selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune r\u00e9union s\u00e9lectionn\u00e9e" } } }
-    },
-    "Select an item from the list." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez un \u00e9l\u00e9ment dans la liste." } } }
-    },
-    "%lld files" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld file" } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld files" } }
+    "%lld files": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld file"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld files"
+                }
+              }
             }
           }
         },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld fichier" } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld fichiers" } }
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichier"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fichiers"
+                }
+              }
             }
           }
         }
       }
     },
-    "Configure" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Configurer" } } }
-    },
-    "Delete" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer" } } }
-    },
-    "Move content to…" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9placer le contenu vers\u2026" } } }
-    },
-    "Delete folder?" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer le dossier ?" } } }
-    },
-    "The folder '%@' and all its content will be permanently deleted." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le dossier \u00ab %@ \u00bb et tout son contenu seront supprim\u00e9s d\u00e9finitivement." } } }
-    },
-    "No file selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun fichier s\u00e9lectionn\u00e9" } } }
-    },
-    "Select a file from the list." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez un fichier dans la liste." } } }
-    },
-    "Previous entry" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Entr\u00e9e pr\u00e9c\u00e9dente" } } }
-    },
-    "Next entry" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Entr\u00e9e suivante" } } }
-    },
-    "Show notes" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Afficher les notes" } } }
-    },
-    "Show transcripts" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Afficher les transcripts" } } }
-    },
-    "No transcript" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas de transcript" } } }
-    },
-    "No note" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas de note" } } }
-    },
-    "Run an action" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Lancer une action" } } }
-    },
-    "Configure skills" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Configurer les skills" } } }
-    },
-    "Delete..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer\u2026" } } }
-    },
-    "Delete note" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer la note" } } }
-    },
-    "Delete transcript" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer le transcript" } } }
-    },
-    "Delete all" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tout supprimer" } } }
-    },
-    "Notes for next meeting \u2014 next.md" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Note pour la prochaine r\u00e9union \u2014 next.md" } } }
-    },
-    "Notes for next meeting" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Notes pour le prochain point" } } }
-    },
-    "Delete?" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer ?" } } }
-    },
-    "Cancel" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } } }
-    },
-    "Profile" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } } }
-    },
-    "Job description" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fiche de poste" } } }
-    },
-    "1-1" : {
-      "comment" : "Section name for one-on-one meetings"
-    },
-    "Assessment" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "\u00c9valuation" } } }
-    },
-    "Goals" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Objectifs" } } }
-    },
-    "No people" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune personne" } } }
-    },
-    "Add people to organize your 1-1 notes, assessments, and goals." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajoutez des personnes pour organiser vos notes de 1-1, \u00e9valuations et objectifs." } } }
-    },
-    "Import a PDF to add it as a Markdown file." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Importez un PDF pour l'ajouter en tant que fichier Markdown." } } }
-    },
-    "People are organized by category (e.g. team, department). Create one first." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les personnes sont organis\u00e9es par cat\u00e9gorie (ex: \u00e9quipe, d\u00e9partement). Cr\u00e9ez-en une d'abord." } } }
-    },
-    "No person selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune personne s\u00e9lectionn\u00e9e" } } }
-    },
-    "Select a person from the list." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez une personne dans la liste." } } }
-    },
-    "New category" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelle cat\u00e9gorie" } } }
-    },
-    "Category name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de la cat\u00e9gorie" } } }
-    },
-    "New person" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelle personne" } } }
-    },
-    "Person name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de la personne" } } }
-    },
-    "Category" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cat\u00e9gorie" } } }
-    },
-    "Delete person?" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer la personne ?" } } }
-    },
-    "The person '%@' and all their content will be deleted." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "La personne \u00ab %@ \u00bb et tout son contenu seront supprim\u00e9s." } } }
-    },
-    "New assessment" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelle \u00e9valuation" } } }
-    },
-    "No assessments" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune \u00e9valuation" } } }
-    },
-    "New goal" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvel objectif" } } }
-    },
-    "No goals" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun objectif" } } }
-    },
-    "Import a file or link" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Importer un fichier ou un lien" } } }
-    },
-    "No 1-1s" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun 1-1" } } }
-    },
-    "Start a recording to create a 1-1." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Lancez un enregistrement pour cr\u00e9er un 1-1." } } }
-    },
-    "Search..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rechercher\u2026" } } }
-    },
-    "Type a term to search meetings, people, and tasks." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tapez un terme pour rechercher dans les r\u00e9unions, personnes et t\u00e2ches." } } }
-    },
-    "No results for '%@'" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas de r\u00e9sultats pour \u00ab %@ \u00bb" } } }
-    },
-    "Meeting" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9union" } } }
-    },
-    "Person" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Personne" } } }
-    },
-    "Task file" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fichier de t\u00e2ches" } } }
-    },
-    "General" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "G\u00e9n\u00e9ral" } } }
-    },
-    "Google Calendar" : {
-      "comment" : "Settings section name"
-    },
-    "Background" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Arri\u00e8re-plan" } } }
-    },
-    "Markdown style" : {
-      "comment" : "Settings section name"
-    },
-    "Skills" : {
-      "comment" : "Settings section name"
-    },
-    "MCP Servers" : {
-      "comment" : "Settings section name"
-    },
-    "CLAUDE.md" : {
-      "comment" : "Settings section name"
-    },
-    "No section selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune section s\u00e9lectionn\u00e9e" } } }
-    },
-    "Select a section from the list." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez une section dans la liste." } } }
-    },
-    "Update" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mise \u00e0 jour" } } }
-    },
-    "Current version" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Version actuelle" } } }
-    },
-    "Check automatically" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "V\u00e9rifier automatiquement" } } }
-    },
-    "Check now" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "V\u00e9rifier maintenant" } } }
-    },
-    "Data folder" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dossier de donn\u00e9es" } } }
-    },
-    "Root folder" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dossier racine" } } }
-    },
-    "Choose a folder..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier\u2026" } } }
-    },
-    "Reset" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9initialiser" } } }
-    },
-    "All your Maurice files are stored here. You can use an iCloud or Dropbox folder to sync across machines." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tous vos fichiers Maurice sont stock\u00e9s ici. Vous pouvez utiliser un dossier iCloud ou Dropbox pour synchroniser entre machines." } } }
-    },
-    "Transcription" : {
-      "comment" : "Settings section name"
-    },
-    "Language" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Langue" } } }
-    },
-    "The language used for speech recognition. Choose the main language of your meetings." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "La langue utilis\u00e9e pour la reconnaissance vocale. Choisissez la langue principale de vos r\u00e9unions." } } }
-    },
-    "This file configures the AI assistant's behavior. It is read at each interaction." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ce fichier configure le comportement de l\u2019assistant IA. Il est lu \u00e0 chaque interaction." } } }
-    },
-    "A skill is a Markdown prompt executed by AI on your notes. Example: summarize a transcript, extract actions." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Un skill est un prompt Markdown ex\u00e9cut\u00e9 par l\u2019IA sur vos notes. Exemple : r\u00e9sumer un transcript, extraire les actions." } } }
-    },
-    "No skills" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun skill" } } }
-    },
-    "Skills are reusable AI prompts. Create one to automate your tasks (summary, meeting notes...)." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les skills sont des prompts IA r\u00e9utilisables. Cr\u00e9ez-en un pour automatiser vos t\u00e2ches (r\u00e9sum\u00e9, compte-rendu\u2026)." } } }
-    },
-    "No skill selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun skill s\u00e9lectionn\u00e9" } } }
-    },
-    "Select a skill to edit it." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez un skill pour le modifier." } } }
-    },
-    "Add a skill" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter un skill" } } }
-    },
-    "Skill name (e.g. my-skill)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom du skill (ex: mon-skill)" } } }
-    },
-    "Delete skill?" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer le skill ?" } } }
-    },
-    "The file '%@' will be permanently deleted." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le fichier \u00ab %@ \u00bb sera supprim\u00e9 d\u00e9finitivement." } } }
-    },
-    "Unable to save: %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de sauvegarder : %@" } } }
-    },
-    "Unable to delete '%@': %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de supprimer \u00ab %@ \u00bb : %@" } } }
-    },
-    "Color per tab" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Couleur par onglet" } } }
-    },
-    "Preview" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aper\u00e7u" } } }
-    },
-    "Connect your calendar to see your upcoming meetings and start recording automatically." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Connectez votre calendrier pour voir vos prochaines r\u00e9unions et d\u00e9marrer l\u2019enregistrement automatiquement." } } }
-    },
-    "Connected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Connect\u00e9" } } }
-    },
-    "Disconnect" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9connecter" } } }
-    },
-    "Not connected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Non connect\u00e9" } } }
-    },
-    "Connecting..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Connexion en cours\u2026" } } }
-    },
-    "Checking servers..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "V\u00e9rification des serveurs\u2026" } } }
-    },
-    "No MCP servers detected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun serveur MCP d\u00e9tect\u00e9" } } }
-    },
-    "Configure MCP servers in .claude/settings.json to extend the assistant's capabilities." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Configurez des serveurs MCP dans .claude/settings.json pour \u00e9tendre les capacit\u00e9s de l\u2019assistant." } } }
-    },
-    "Refresh" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rafra\u00eechir" } } }
-    },
-    "Refresh server status" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rafra\u00eechir l\u2019\u00e9tat des serveurs" } } }
-    },
-    "Disconnected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9connect\u00e9" } } }
-    },
-    "Unable to run 'claude mcp list'. Make sure Claude Code is installed." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible d\u2019ex\u00e9cuter \u00ab claude mcp list \u00bb. V\u00e9rifiez que Claude Code est install\u00e9." } } }
-    },
-    "Typography" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Typographie" } } }
-    },
-    "Base size" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Taille de base" } } }
-    },
-    "Layout" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mise en page" } } }
-    },
-    "Max content width" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Largeur max du contenu" } } }
-    },
-    "Headings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Titres" } } }
-    },
-    "Text" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Texte" } } }
-    },
-    "Body" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Corps" } } }
-    },
-    "Bold" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gras" } } }
-    },
-    "Italic" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Italique" } } }
-    },
-    "Divider" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9parateur" } } }
-    },
-    "Quotes" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Citations" } } }
-    },
-    "Code" : {
-      "comment" : "Settings section for code styling"
-    },
-    "Configuration" : {
-      "comment" : "Meeting configuration sheet title"
-    },
-    "Save" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer" } } }
-    },
-    "Choose an icon" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir une ic\u00f4ne" } } }
-    },
-    "Linked Google Calendar event" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "\u00c9v\u00e9nement Google Calendar li\u00e9" } } }
-    },
-    "Event name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l\u2019\u00e9v\u00e9nement" } } }
-    },
-    "Google Calendar 1-1 event name (optional)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l\u2019\u00e9v\u00e9nement 1-1 dans Google Calendar (optionnel)" } } }
-    },
-    "Used to automatically link the 1-1 Google Calendar event to this person." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Permet de lier automatiquement l\u2019\u00e9v\u00e9nement 1-1 de Google Calendar \u00e0 cette personne." } } }
-    },
-    "No configured actions" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune action configur\u00e9e" } } }
-    },
-    "Actions" : {
-      "comment" : "Meeting config section"
-    },
-    "Delete action?" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer l\u2019action ?" } } }
-    },
-    "The action '%@' will be deleted." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "L\u2019action \u00ab %@ \u00bb sera supprim\u00e9e." } } }
-    },
-    "Edit action" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modifier l\u2019action" } } }
-    },
-    "New action" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelle action" } } }
-    },
-    "Button name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom du bouton" } } }
-    },
-    "Skill" : {
-      "comment" : "Picker label in action form"
-    },
-    "Choose a skill..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un skill\u2026" } } }
-    },
-    "Parameter (optional)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Param\u00e8tre (optionnel)" } } }
-    },
-    "Add" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter" } } }
-    },
-    "Create" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cr\u00e9er" } } }
-    },
-    "OK" : {
-      "comment" : "Alert dismiss button"
-    },
-    "Choose a file" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un fichier" } } }
-    },
-    "Linked Calendar event" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "\u00c9v\u00e9nement Calendar li\u00e9" } } }
-    },
-    "Close" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fermer" } } }
-    },
-    "Calendar event name" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l\u2019\u00e9v\u00e9nement Calendar" } } }
-    },
-    "Recording will start automatically in this folder when a Calendar event has this name." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "L\u2019enregistrement d\u00e9marrera automatiquement dans ce dossier quand un \u00e9v\u00e9nement Calendar porte ce nom." } } }
-    },
-    "'%@' will be permanently deleted." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "\u00ab %@ \u00bb sera supprim\u00e9 d\u00e9finitivement." } } }
-    },
-    "Import" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Importer" } } }
-    },
-    "Write error: %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur d\u2019\u00e9criture : %@" } } }
-    },
-    "Find in file..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rechercher dans le fichier\u2026" } } }
-    },
-    "Memory" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "M\u00e9moire" } } }
-    },
-    "Settings..." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9glages\u2026" } } }
-    },
-    "Open memory" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir la m\u00e9moire" } } }
-    },
-    "Settings" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9glages" } } }
-    },
-    "Select the root folder for Maurice" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "S\u00e9lectionnez le dossier racine pour Maurice" } } }
-    },
-    "App language" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Langue de l\u2019application" } } }
-    },
-    "System" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Syst\u00e8me" } } }
-    },
-    "Restart required" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Red\u00e9marrage requis" } } }
-    },
-    "The app needs to restart to apply the language change." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "L\u2019application doit red\u00e9marrer pour appliquer le changement de langue." } } }
-    },
-    "Restart now" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Red\u00e9marrer maintenant" } } }
-    },
-    "Later" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plus tard" } } }
-    },
-    "[command] %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "[commande] %@" } } }
-    },
-    "[system] %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "[syst\u00e8me] %@" } } }
-    },
-    "[tool] %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "[outil] %@" } } }
-    },
-    "Error: %@" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur : %@" } } }
-    },
-    "Name (e.g. 2025-S2)" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom (ex: 2025-S2)" } } }
-    },
-    "Underline" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Soulign\u00e9" } } }
-    },
-    "Appearance" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Apparence" } } }
-    },
-    "Mode" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mode" } } }
-    },
-    "Light" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Clair" } } }
-    },
-    "Dark" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sombre" } } }
-    },
-    "Update memory from folder\u2026" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mettre \u00e0 jour depuis un dossier\u2026" } } }
-    },
-    "Your profile" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre profil" } } }
-    },
-    "This information will be used to personalize the AI assistant." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ces informations seront utilis\u00e9es pour personnaliser l\u2019assistant IA." } } }
-    },
-    "Job title" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Poste" } } }
-    },
-    "Prepare" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pr\u00e9parer" } } }
-    },
-    "Summarize" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "R\u00e9sumer" } } }
-    },
-    "Choose a folder to import into Memory" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir un dossier \u00e0 importer dans la m\u00e9moire" } } }
-    },
-    "Template updates" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mises \u00e0 jour des mod\u00e8les" } } }
-    },
-    "Model updates available" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mises \u00e0 jour des mod\u00e8les disponibles" } } }
-    },
-    "Review" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Consulter" } } }
-    },
-    "Templates up to date" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mod\u00e8les \u00e0 jour" } } }
-    },
-    "All skill templates match the latest bundled versions." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tous les mod\u00e8les de skills correspondent aux versions les plus r\u00e9centes." } } }
-    },
-    "New versions available" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nouvelles versions disponibles" } } }
-    },
-    "No template selected" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun mod\u00e8le s\u00e9lectionn\u00e9" } } }
-    },
-    "Keep" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Garder" } } }
-    },
-    "Accept" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accepter" } } }
-    },
-    "Apply" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appliquer" } } }
-    },
-    "Discard decisions" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Abandonner les d\u00e9cisions" } } }
-    },
-    "accepted" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "accept\u00e9s" } } }
-    },
-    "kept" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "gard\u00e9s" } } }
-    },
-    "remaining" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "restants" } } }
-    },
-    "Will use new version" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Utilisera la nouvelle version" } } }
-    },
-    "Will keep your version" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gardera votre version" } } }
-    },
-    "Undo" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } } }
-    },
-    "Decide on all blocks before applying." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9cidez pour tous les blocs avant d\u2019appliquer." } } }
-    },
-    "Decide on every block (Accept or Keep) to enable Apply." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "D\u00e9cidez pour chaque bloc (Accepter ou Garder) pour activer Appliquer." } } }
-    },
-    "Apply will rewrite your file to include %lld accepted block(s)." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appliquer r\u00e9\u00e9crira votre fichier pour inclure %lld bloc(s) accept\u00e9(s)." } } }
-    },
-    "No file change pending. Apply only records that you reviewed this version." : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune modification en attente. Appliquer enregistrera seulement que vous avez vu cette version." } } }
-    },
-    "Keep my version" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Garder ma version" } } }
-    },
-    "Use new version" : {
-      "localizations" : { "fr" : { "stringUnit" : { "state" : "translated", "value" : "Utiliser la nouvelle version" } } }
+    "%lld h": {
+      "comment": "Short unit for hours in a duration (e.g. countdown)",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld h"
+          }
+        }
+      }
+    },
+    "%lld min": {
+      "comment": "Short unit for minutes in a duration (e.g. countdown)",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min"
+          }
+        }
+      }
+    },
+    "'%@' will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » sera supprimé définitivement."
+          }
+        }
+      }
+    },
+    "1-1": {
+      "comment": "Section name for one-on-one meetings"
+    },
+    "1-1 notes, assessments, and goals": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes de 1-1, évaluations et objectifs"
+          }
+        }
+      }
+    },
+    "A skill is a Markdown prompt executed by AI on your notes. Example: summarize a transcript, extract actions.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un skill est un prompt Markdown exécuté par l’IA sur vos notes. Exemple : résumer un transcript, extraire les actions."
+          }
+        }
+      }
+    },
+    "AI Assistant": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assistant IA"
+          }
+        }
+      }
+    },
+    "Accept": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepter"
+          }
+        }
+      }
+    },
+    "Actions": {
+      "comment": "Meeting config section"
+    },
+    "Add": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter"
+          }
+        }
+      }
+    },
+    "Add a person": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une personne"
+          }
+        }
+      }
+    },
+    "Add a skill": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un skill"
+          }
+        }
+      }
+    },
+    "Add people to organize your 1-1 notes, assessments, and goals.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez des personnes pour organiser vos notes de 1-1, évaluations et objectifs."
+          }
+        }
+      }
+    },
+    "All skill templates match the latest bundled versions.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous les modèles de skills correspondent aux versions les plus récentes."
+          }
+        }
+      }
+    },
+    "All your Maurice files are stored here. You can use an iCloud or Dropbox folder to sync across machines.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous vos fichiers Maurice sont stockés ici. Vous pouvez utiliser un dossier iCloud ou Dropbox pour synchroniser entre machines."
+          }
+        }
+      }
+    },
+    "App language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue de l’application"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparence"
+          }
+        }
+      }
+    },
+    "Apply": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appliquer"
+          }
+        }
+      }
+    },
+    "Apply will rewrite your file to include %lld accepted block(s).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appliquer réécrira votre fichier pour inclure %lld bloc(s) accepté(s)."
+          }
+        }
+      }
+    },
+    "Ask Claude...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demander à Claude..."
+          }
+        }
+      }
+    },
+    "Assessment": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Évaluation"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retour"
+          }
+        }
+      }
+    },
+    "Background": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrière-plan"
+          }
+        }
+      }
+    },
+    "Base size": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taille de base"
+          }
+        }
+      }
+    },
+    "Body": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corps"
+          }
+        }
+      }
+    },
+    "Bold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gras"
+          }
+        }
+      }
+    },
+    "Button name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du bouton"
+          }
+        }
+      }
+    },
+    "CLAUDE.md": {
+      "comment": "Settings section name"
+    },
+    "Calendar event name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de l’événement Calendar"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
+    "Category": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catégorie"
+          }
+        }
+      }
+    },
+    "Category name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de la catégorie"
+          }
+        }
+      }
+    },
+    "Change...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
+          }
+        }
+      }
+    },
+    "Check automatically": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier automatiquement"
+          }
+        }
+      }
+    },
+    "Check now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier maintenant"
+          }
+        }
+      }
+    },
+    "Checking servers...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification des serveurs…"
+          }
+        }
+      }
+    },
+    "Choose": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir"
+          }
+        }
+      }
+    },
+    "Choose a file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un fichier"
+          }
+        }
+      }
+    },
+    "Choose a folder to import into Memory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un dossier à importer dans la mémoire"
+          }
+        }
+      }
+    },
+    "Choose a folder...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un dossier…"
+          }
+        }
+      }
+    },
+    "Choose a skill...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un skill…"
+          }
+        }
+      }
+    },
+    "Choose an icon": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir une icône"
+          }
+        }
+      }
+    },
+    "Choose the folder where Maurice will store your data.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez le dossier où Maurice stockera vos données."
+          }
+        }
+      }
+    },
+    "Choose the main language for speech recognition.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez la langue principale pour la reconnaissance vocale."
+          }
+        }
+      }
+    },
+    "Clear conversation": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer la conversation"
+          }
+        }
+      }
+    },
+    "Click + to create your first recurring meeting (e.g. standup, 1-1).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez sur + pour créer votre première réunion récurrente (ex : standup, 1-1)."
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        }
+      }
+    },
+    "Code": {
+      "comment": "Settings section for code styling"
+    },
+    "Color per tab": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleur par onglet"
+          }
+        }
+      }
+    },
+    "Configuration": {
+      "comment": "Meeting configuration sheet title"
+    },
+    "Configure": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configurer"
+          }
+        }
+      }
+    },
+    "Configure MCP servers in .claude/settings.json to extend the assistant's capabilities.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configurez des serveurs MCP dans .claude/settings.json pour étendre les capacités de l’assistant."
+          }
+        }
+      }
+    },
+    "Configure skills": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configurer les skills"
+          }
+        }
+      }
+    },
+    "Connect Google Calendar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecter Google Calendar"
+          }
+        }
+      }
+    },
+    "Connect your calendar to see your upcoming meetings and start recording automatically.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connectez votre calendrier pour voir vos prochaines réunions et démarrer l’enregistrement automatiquement."
+          }
+        }
+      }
+    },
+    "Connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté"
+          }
+        }
+      }
+    },
+    "Connecting...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion en cours…"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer"
+          }
+        }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer"
+          }
+        }
+      }
+    },
+    "Create a meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer une réunion"
+          }
+        }
+      }
+    },
+    "Creating file structure...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Création de l’arborescence…"
+          }
+        }
+      }
+    },
+    "Current version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version actuelle"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sombre"
+          }
+        }
+      }
+    },
+    "Data folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dossier de données"
+          }
+        }
+      }
+    },
+    "Decide on all blocks before applying.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Décidez pour tous les blocs avant d’appliquer."
+          }
+        }
+      }
+    },
+    "Decide on every block (Accept or Keep) to enable Apply.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Décidez pour chaque bloc (Accepter ou Garder) pour activer Appliquer."
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer"
+          }
+        }
+      }
+    },
+    "Delete action?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer l’action ?"
+          }
+        }
+      }
+    },
+    "Delete all": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout supprimer"
+          }
+        }
+      }
+    },
+    "Delete folder?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer le dossier ?"
+          }
+        }
+      }
+    },
+    "Delete note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la note"
+          }
+        }
+      }
+    },
+    "Delete person?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la personne ?"
+          }
+        }
+      }
+    },
+    "Delete skill?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer le skill ?"
+          }
+        }
+      }
+    },
+    "Delete transcript": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer le transcript"
+          }
+        }
+      }
+    },
+    "Delete...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer…"
+          }
+        }
+      }
+    },
+    "Delete?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer ?"
+          }
+        }
+      }
+    },
+    "Discard decisions": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner les décisions"
+          }
+        }
+      }
+    },
+    "Disconnect": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déconnecter"
+          }
+        }
+      }
+    },
+    "Disconnected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déconnecté"
+          }
+        }
+      }
+    },
+    "Divider": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Séparateur"
+          }
+        }
+      }
+    },
+    "Edit action": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier l’action"
+          }
+        }
+      }
+    },
+    "English": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        }
+      }
+    },
+    "Error": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur"
+          }
+        }
+      }
+    },
+    "Error: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur : %@"
+          }
+        }
+      }
+    },
+    "Event name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de l’événement"
+          }
+        }
+      }
+    },
+    "Find in file...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans le fichier…"
+          }
+        }
+      }
+    },
+    "Finish": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminer"
+          }
+        }
+      }
+    },
+    "French": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
+          }
+        }
+      }
+    },
+    "General": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Général"
+          }
+        }
+      }
+    },
+    "Get started": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer"
+          }
+        }
+      }
+    },
+    "Getting started": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour commencer"
+          }
+        }
+      }
+    },
+    "Goals": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objectifs"
+          }
+        }
+      }
+    },
+    "Google Calendar": {
+      "comment": "Settings section name"
+    },
+    "Google Calendar 1-1 event name (optional)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de l’événement 1-1 dans Google Calendar (optionnel)"
+          }
+        }
+      }
+    },
+    "Headings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titres"
+          }
+        }
+      }
+    },
+    "Hello, %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonjour, %@."
+          }
+        }
+      }
+    },
+    "Hello.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonjour."
+          }
+        }
+      }
+    },
+    "Hide live transcript": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le transcript en direct"
+          }
+        }
+      }
+    },
+    "Home": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accueil"
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer"
+          }
+        }
+      }
+    },
+    "Import a PDF to add it as a Markdown file.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importez un PDF pour l'ajouter en tant que fichier Markdown."
+          }
+        }
+      }
+    },
+    "Import a file or link": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer un fichier ou un lien"
+          }
+        }
+      }
+    },
+    "Italic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Italique"
+          }
+        }
+      }
+    },
+    "Job description": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiche de poste"
+          }
+        }
+      }
+    },
+    "Job title": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poste"
+          }
+        }
+      }
+    },
+    "Keep": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder"
+          }
+        }
+      }
+    },
+    "Keep my version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder ma version"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue"
+          }
+        }
+      }
+    },
+    "Later": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        }
+      }
+    },
+    "Layout": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mise en page"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clair"
+          }
+        }
+      }
+    },
+    "Linked Calendar event": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Événement Calendar lié"
+          }
+        }
+      }
+    },
+    "Linked Google Calendar event": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Événement Google Calendar lié"
+          }
+        }
+      }
+    },
+    "Live transcript": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript en direct"
+          }
+        }
+      }
+    },
+    "MCP Servers": {
+      "comment": "Settings section name"
+    },
+    "Markdown style": {
+      "comment": "Settings section name"
+    },
+    "Maurice is ready!": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maurice est prêt !"
+          }
+        }
+      }
+    },
+    "Max content width": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largeur max du contenu"
+          }
+        }
+      }
+    },
+    "Meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réunion"
+          }
+        }
+      }
+    },
+    "Meeting name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de la réunion"
+          }
+        }
+      }
+    },
+    "Meetings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réunions"
+          }
+        }
+      }
+    },
+    "Memory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mémoire"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        }
+      }
+    },
+    "Model updates available": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mises à jour des modèles disponibles"
+          }
+        }
+      }
+    },
+    "Move content to…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer le contenu vers…"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom"
+          }
+        }
+      }
+    },
+    "Name (e.g. 2025-S2)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom (ex: 2025-S2)"
+          }
+        }
+      }
+    },
+    "New action": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle action"
+          }
+        }
+      }
+    },
+    "New assessment": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle évaluation"
+          }
+        }
+      }
+    },
+    "New category": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle catégorie"
+          }
+        }
+      }
+    },
+    "New goal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvel objectif"
+          }
+        }
+      }
+    },
+    "New meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle réunion"
+          }
+        }
+      }
+    },
+    "New person": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle personne"
+          }
+        }
+      }
+    },
+    "New versions available": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelles versions disponibles"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain"
+          }
+        }
+      }
+    },
+    "Next entry": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrée suivante"
+          }
+        }
+      }
+    },
+    "Next meeting in **%@**": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain meeting dans **%@**"
+          }
+        }
+      }
+    },
+    "No 1-1s": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun 1-1"
+          }
+        }
+      }
+    },
+    "No MCP servers detected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun serveur MCP détecté"
+          }
+        }
+      }
+    },
+    "No assessments": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune évaluation"
+          }
+        }
+      }
+    },
+    "No calendar connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun calendrier connecté"
+          }
+        }
+      }
+    },
+    "No configured actions": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune action configurée"
+          }
+        }
+      }
+    },
+    "No events today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun événement aujourd'hui"
+          }
+        }
+      }
+    },
+    "No file change pending. Apply only records that you reviewed this version.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune modification en attente. Appliquer enregistrera seulement que vous avez vu cette version."
+          }
+        }
+      }
+    },
+    "No file selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun fichier sélectionné"
+          }
+        }
+      }
+    },
+    "No goals": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun objectif"
+          }
+        }
+      }
+    },
+    "No meeting selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réunion sélectionnée"
+          }
+        }
+      }
+    },
+    "No meetings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réunion"
+          }
+        }
+      }
+    },
+    "No note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de note"
+          }
+        }
+      }
+    },
+    "No people": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune personne"
+          }
+        }
+      }
+    },
+    "No person selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune personne sélectionnée"
+          }
+        }
+      }
+    },
+    "No results for '%@'": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de résultats pour « %@ »"
+          }
+        }
+      }
+    },
+    "No section selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune section sélectionnée"
+          }
+        }
+      }
+    },
+    "No skill selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun skill sélectionné"
+          }
+        }
+      }
+    },
+    "No skills": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun skill"
+          }
+        }
+      }
+    },
+    "No template selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun modèle sélectionné"
+          }
+        }
+      }
+    },
+    "No transcript": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de transcript"
+          }
+        }
+      }
+    },
+    "No upcoming meetings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réunion prévue"
+          }
+        }
+      }
+    },
+    "Not connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non connecté"
+          }
+        }
+      }
+    },
+    "Notes for next meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes pour le prochain point"
+          }
+        }
+      }
+    },
+    "Notes for next meeting — next.md": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note pour la prochaine réunion — next.md"
+          }
+        }
+      }
+    },
+    "OK": {
+      "comment": "Alert dismiss button"
+    },
+    "Open memory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir la mémoire"
+          }
+        }
+      }
+    },
+    "Organize your recurring meetings (standup, 1-1...)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organisez vos réunions récurrentes (standup, 1-1…)"
+          }
+        }
+      }
+    },
+    "Parameter (optional)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paramètre (optionnel)"
+          }
+        }
+      }
+    },
+    "People": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personnes"
+          }
+        }
+      }
+    },
+    "People are organized by category (e.g. team, department). Create one first.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les personnes sont organisées par catégorie (ex: équipe, département). Créez-en une d'abord."
+          }
+        }
+      }
+    },
+    "Person": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personne"
+          }
+        }
+      }
+    },
+    "Person name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de la personne"
+          }
+        }
+      }
+    },
+    "Prepare": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Préparer"
+          }
+        }
+      }
+    },
+    "Preview": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu"
+          }
+        }
+      }
+    },
+    "Previous entry": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrée précédente"
+          }
+        }
+      }
+    },
+    "Profile": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        }
+      }
+    },
+    "Quotes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Citations"
+          }
+        }
+      }
+    },
+    "Record": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "Record %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer %@"
+          }
+        }
+      }
+    },
+    "Recording will start automatically in this folder when a Calendar event has this name.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’enregistrement démarrera automatiquement dans ce dossier quand un événement Calendar porte ce nom."
+          }
+        }
+      }
+    },
+    "Refresh": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rafraîchir"
+          }
+        }
+      }
+    },
+    "Refresh server status": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rafraîchir l’état des serveurs"
+          }
+        }
+      }
+    },
+    "Reset": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réinitialiser"
+          }
+        }
+      }
+    },
+    "Restart now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redémarrer maintenant"
+          }
+        }
+      }
+    },
+    "Restart required": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redémarrage requis"
+          }
+        }
+      }
+    },
+    "Retry": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer"
+          }
+        }
+      }
+    },
+    "Review": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consulter"
+          }
+        }
+      }
+    },
+    "Root folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dossier racine"
+          }
+        }
+      }
+    },
+    "Run an action": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer une action"
+          }
+        }
+      }
+    },
+    "Running skill '%@'...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécution du skill « %@ »…"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "Search (⌘⇧F)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher (⌘⇧F)"
+          }
+        }
+      }
+    },
+    "Search...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher…"
+          }
+        }
+      }
+    },
+    "See your upcoming meetings on the home screen": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voyez vos prochaines réunions sur l’accueil"
+          }
+        }
+      }
+    },
+    "Select a file from the list.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un fichier dans la liste."
+          }
+        }
+      }
+    },
+    "Select a person from the list.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une personne dans la liste."
+          }
+        }
+      }
+    },
+    "Select a section from the list.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une section dans la liste."
+          }
+        }
+      }
+    },
+    "Select a skill to edit it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un skill pour le modifier."
+          }
+        }
+      }
+    },
+    "Select an item from the list.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un élément dans la liste."
+          }
+        }
+      }
+    },
+    "Select the root folder for Maurice": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez le dossier racine pour Maurice"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages"
+          }
+        }
+      }
+    },
+    "Settings...": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages…"
+          }
+        }
+      }
+    },
+    "Show live transcript": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le transcript en direct"
+          }
+        }
+      }
+    },
+    "Show notes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les notes"
+          }
+        }
+      }
+    },
+    "Show transcripts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les transcripts"
+          }
+        }
+      }
+    },
+    "Skill": {
+      "comment": "Picker label in action form"
+    },
+    "Skill name (e.g. my-skill)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du skill (ex: mon-skill)"
+          }
+        }
+      }
+    },
+    "Skills": {
+      "comment": "Settings section name"
+    },
+    "Skills are reusable AI prompts. Create one to automate your tasks (summary, meeting notes...).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les skills sont des prompts IA réutilisables. Créez-en un pour automatiser vos tâches (résumé, compte-rendu…)."
+          }
+        }
+      }
+    },
+    "Skip": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer"
+          }
+        }
+      }
+    },
+    "Start a recording to create a 1-1.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancez un enregistrement pour créer un 1-1."
+          }
+        }
+      }
+    },
+    "Start recording": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrer l’enregistrement"
+          }
+        }
+      }
+    },
+    "Start recording with the mic button below": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrez l’enregistrement avec le bouton micro ci-dessous"
+          }
+        }
+      }
+    },
+    "Stop (⌃C)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter (⌃C)"
+          }
+        }
+      }
+    },
+    "Stop recording": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter l’enregistrement"
+          }
+        }
+      }
+    },
+    "Summarize": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résumer"
+          }
+        }
+      }
+    },
+    "System": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Système"
+          }
+        }
+      }
+    },
+    "System Mono": {
+      "comment": "Font name, no translation needed"
+    },
+    "Task file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichier de tâches"
+          }
+        }
+      }
+    },
+    "Tasks": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâches"
+          }
+        }
+      }
+    },
+    "Template updates": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mises à jour des modèles"
+          }
+        }
+      }
+    },
+    "Templates up to date": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèles à jour"
+          }
+        }
+      }
+    },
+    "Text": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texte"
+          }
+        }
+      }
+    },
+    "The action '%@' will be deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’action « %@ » sera supprimée."
+          }
+        }
+      }
+    },
+    "The app needs to restart to apply the language change.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’application doit redémarrer pour appliquer le changement de langue."
+          }
+        }
+      }
+    },
+    "The file '%@' will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier « %@ » sera supprimé définitivement."
+          }
+        }
+      }
+    },
+    "The folder '%@' and all its content will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le dossier « %@ » et tout son contenu seront supprimés définitivement."
+          }
+        }
+      }
+    },
+    "The language used for speech recognition. Choose the main language of your meetings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La langue utilisée pour la reconnaissance vocale. Choisissez la langue principale de vos réunions."
+          }
+        }
+      }
+    },
+    "The person '%@' and all their content will be deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La personne « %@ » et tout son contenu seront supprimés."
+          }
+        }
+      }
+    },
+    "This file configures the AI assistant's behavior. It is read at each interaction.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier configure le comportement de l’assistant IA. Il est lu à chaque interaction."
+          }
+        }
+      }
+    },
+    "This information will be used to personalize the AI assistant.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ces informations seront utilisées pour personnaliser l’assistant IA."
+          }
+        }
+      }
+    },
+    "Today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aujourd’hui"
+          }
+        }
+      }
+    },
+    "Tomorrow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demain"
+          }
+        }
+      }
+    },
+    "Transcription": {
+      "comment": "Settings section name"
+    },
+    "Transcription language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue de transcription"
+          }
+        }
+      }
+    },
+    "Type a term to search meetings, people, and tasks.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapez un terme pour rechercher dans les réunions, personnes et tâches."
+          }
+        }
+      }
+    },
+    "Typography": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typographie"
+          }
+        }
+      }
+    },
+    "Unable to delete '%@': %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de supprimer « %@ » : %@"
+          }
+        }
+      }
+    },
+    "Unable to run 'claude mcp list'. Make sure Claude Code is installed.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’exécuter « claude mcp list ». Vérifiez que Claude Code est installé."
+          }
+        }
+      }
+    },
+    "Unable to save: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de sauvegarder : %@"
+          }
+        }
+      }
+    },
+    "Underline": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Souligné"
+          }
+        }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
+    "Upcoming meetings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochaines réunions"
+          }
+        }
+      }
+    },
+    "Update": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mise à jour"
+          }
+        }
+      }
+    },
+    "Update memory from folder…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre à jour depuis un dossier…"
+          }
+        }
+      }
+    },
+    "Use new version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser la nouvelle version"
+          }
+        }
+      }
+    },
+    "Used to automatically link the 1-1 Google Calendar event to this person.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet de lier automatiquement l’événement 1-1 de Google Calendar à cette personne."
+          }
+        }
+      }
+    },
+    "Welcome to Maurice": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bienvenue dans Maurice"
+          }
+        }
+      }
+    },
+    "Will keep your version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gardera votre version"
+          }
+        }
+      }
+    },
+    "Will use new version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utilisera la nouvelle version"
+          }
+        }
+      }
+    },
+    "Write error: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur d’écriture : %@"
+          }
+        }
+      }
+    },
+    "Your meeting transcription assistant": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre assistant de transcription de réunions"
+          }
+        }
+      }
+    },
+    "Your profile": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre profil"
+          }
+        }
+      }
+    },
+    "[command] %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[commande] %@"
+          }
+        }
+      }
+    },
+    "[system] %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[système] %@"
+          }
+        }
+      }
+    },
+    "[tool] %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[outil] %@"
+          }
+        }
+      }
+    },
+    "accepted": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "acceptés"
+          }
+        }
+      }
+    },
+    "kept": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gardés"
+          }
+        }
+      }
+    },
+    "remaining": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "restants"
+          }
+        }
+      }
+    },
+    "starts in %lld min": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "commence dans %lld min"
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

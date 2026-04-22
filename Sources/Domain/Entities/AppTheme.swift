@@ -9,6 +9,7 @@ struct AppTheme: PersistentCodable, Equatable {
     var peopleTabHue: Double = 0.4604
     var taskTabHue: Double = 0.7501
     var memoryTabHue: Double = 0.85
+    var homeHue: Double = 0.09
 
     func hue(for tab: AppTab) -> Double {
         switch tab {
@@ -37,6 +38,7 @@ struct AppTheme: PersistentCodable, Equatable {
         meetingTabHue = try c.valueOrDefault(forKey: .meetingTabHue, default: defaults.meetingTabHue)
         peopleTabHue = try c.valueOrDefault(forKey: .peopleTabHue, default: defaults.peopleTabHue)
         taskTabHue = try c.valueOrDefault(forKey: .taskTabHue, default: defaults.taskTabHue)
+        homeHue = try c.valueOrDefault(forKey: .homeHue, default: defaults.homeHue)
     }
 
     // MARK: - Persistence

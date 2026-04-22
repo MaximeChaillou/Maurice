@@ -8,15 +8,12 @@ final class MockCalendarService: CalendarServiceProtocol, @unchecked Sendable {
     var emailError: Error?
     var upcomingEvents: [GoogleCalendarEvent] = []
     var upcomingError: Error?
-    var currentEvent: GoogleCalendarEvent?
-    var currentEventError: Error?
     var refreshedTokens: GoogleTokens?
     var refreshError: Error?
 
     var startOAuthFlowCallCount = 0
     var fetchEmailCallCount = 0
     var fetchUpcomingCallCount = 0
-    var fetchCurrentCallCount = 0
     var refreshCallCount = 0
 
     func startOAuthFlow() async throws -> GoogleTokens {
@@ -38,12 +35,6 @@ final class MockCalendarService: CalendarServiceProtocol, @unchecked Sendable {
         fetchUpcomingCallCount += 1
         if let error = upcomingError { throw error }
         return upcomingEvents
-    }
-
-    func fetchCurrentEvent(accessToken: String) async throws -> GoogleCalendarEvent? {
-        fetchCurrentCallCount += 1
-        if let error = currentEventError { throw error }
-        return currentEvent
     }
 
     func refreshAccessToken(refreshToken: String) async throws -> GoogleTokens {
@@ -84,13 +75,25 @@ private enum TestCalendarError: LocalizedError {
 @MainActor
 final class GoogleCalendarViewModelTests: XCTestCase {
 
+    private func makeViewModel(
+        service: MockCalendarService,
+        store: MockTokenStore,
+        refreshInterval: TimeInterval = 3600
+    ) -> GoogleCalendarViewModel {
+        GoogleCalendarViewModel(
+            calendarService: service,
+            tokenStore: store,
+            refreshInterval: refreshInterval
+        )
+    }
+
     // MARK: - Init / loadConnectionState
 
     func testInitWithNoTokensIsDisconnected() {
         let service = MockCalendarService()
         let store = MockTokenStore()
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         XCTAssertFalse(vm.isConnected)
         XCTAssertNil(vm.connectedEmail)
@@ -104,11 +107,10 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(3600)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         XCTAssertTrue(vm.isConnected)
 
-        // Wait for email fetch
         try await Task.sleep(for: .milliseconds(200))
 
         XCTAssertEqual(vm.connectedEmail, "test@example.com")
@@ -122,7 +124,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(-100)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         XCTAssertTrue(vm.isConnected)
 
@@ -142,7 +144,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(-100)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         try await Task.sleep(for: .milliseconds(300))
 
@@ -156,7 +158,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
         let service = MockCalendarService()
         let store = MockTokenStore()
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         vm.connect()
         try await Task.sleep(for: .milliseconds(300))
@@ -173,7 +175,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
         service.oauthError = TestCalendarError.failed
         let store = MockTokenStore()
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         vm.connect()
         try await Task.sleep(for: .milliseconds(300))
@@ -187,14 +189,13 @@ final class GoogleCalendarViewModelTests: XCTestCase {
         let service = MockCalendarService()
         let store = MockTokenStore()
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         vm.isConnecting = true
         vm.connect()
 
         try await Task.sleep(for: .milliseconds(200))
 
-        // startOAuthFlow should not have been called
         XCTAssertEqual(service.startOAuthFlowCallCount, 0)
     }
 
@@ -208,104 +209,46 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(3600)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
+        vm.upcomingEvents = [GoogleCalendarEvent(
+            id: "1", summary: "X", start: Date(), end: Date().addingTimeInterval(3600),
+            attendees: []
+        )]
 
         vm.disconnect()
 
         XCTAssertFalse(vm.isConnected)
         XCTAssertNil(vm.connectedEmail)
         XCTAssertNil(vm.errorMessage)
+        XCTAssertTrue(vm.upcomingEvents.isEmpty)
+        XCTAssertNil(vm.lastRefreshDate)
         XCTAssertEqual(store.clearCallCount, 1)
     }
 
-    // MARK: - upcomingEvents
+    // MARK: - Auto-refresh
 
-    func testUpcomingEventsReturnsFetchedEvents() async throws {
+    func testAutoRefreshPopulatesUpcomingEventsOnInit() async throws {
         let service = MockCalendarService()
-        let store = MockTokenStore()
-        store.storedTokens = GoogleTokens(
-            accessToken: "valid", refreshToken: "refresh",
-            expiresAt: Date().addingTimeInterval(3600)
-        )
-        let event = GoogleCalendarEvent(
-            id: "1", summary: "Meeting", start: Date(), end: Date().addingTimeInterval(3600),
-            attendees: []
-        )
-        service.upcomingEvents = [event]
-
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-
-        let events = await vm.upcomingEvents()
-
-        XCTAssertEqual(events.count, 1)
-        XCTAssertEqual(events.first?.summary, "Meeting")
-    }
-
-    func testUpcomingEventsReturnsEmptyWhenNoTokens() async {
-        let service = MockCalendarService()
-        let store = MockTokenStore()
-
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-
-        let events = await vm.upcomingEvents()
-
-        XCTAssertTrue(events.isEmpty)
-    }
-
-    func testUpcomingEventsCachesResults() async throws {
-        let service = MockCalendarService()
-        let store = MockTokenStore()
-        store.storedTokens = GoogleTokens(
-            accessToken: "valid", refreshToken: "refresh",
-            expiresAt: Date().addingTimeInterval(3600)
-        )
         service.upcomingEvents = [GoogleCalendarEvent(
-            id: "1", summary: "Cached", start: Date(), end: Date().addingTimeInterval(3600),
-            attendees: []
+            id: "1", summary: "Meeting", start: Date().addingTimeInterval(600),
+            end: Date().addingTimeInterval(4200), attendees: []
         )]
-
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-
-        _ = await vm.upcomingEvents()
-        _ = await vm.upcomingEvents()
-
-        // Should only fetch once due to cache
-        XCTAssertEqual(service.fetchUpcomingCallCount, 1)
-    }
-
-    // MARK: - currentEvent
-
-    func testCurrentEventReturnsFetchedEvent() async throws {
-        let service = MockCalendarService()
         let store = MockTokenStore()
         store.storedTokens = GoogleTokens(
             accessToken: "valid", refreshToken: "refresh",
             expiresAt: Date().addingTimeInterval(3600)
         )
-        service.currentEvent = GoogleCalendarEvent(
-            id: "1", summary: "Now", start: Date(), end: Date().addingTimeInterval(3600),
-            attendees: []
-        )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
-        let event = await vm.currentEvent()
+        try await Task.sleep(for: .milliseconds(300))
 
-        XCTAssertEqual(event?.summary, "Now")
+        XCTAssertEqual(vm.upcomingEvents.count, 1)
+        XCTAssertEqual(vm.upcomingEvents.first?.summary, "Meeting")
+        XCTAssertNotNil(vm.lastRefreshDate)
     }
 
-    func testCurrentEventReturnsNilWhenNoTokens() async {
-        let service = MockCalendarService()
-        let store = MockTokenStore()
-
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-
-        let event = await vm.currentEvent()
-
-        XCTAssertNil(event)
-    }
-
-    func testCurrentEventCachesResults() async throws {
+    func testAutoRefreshRepeatsOnInterval() async throws {
         let service = MockCalendarService()
         let store = MockTokenStore()
         store.storedTokens = GoogleTokens(
@@ -313,31 +256,185 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(3600)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store, refreshInterval: 0.1)
+        _ = vm
 
-        _ = await vm.currentEvent()
-        _ = await vm.currentEvent()
+        try await Task.sleep(for: .milliseconds(500))
 
-        XCTAssertEqual(service.fetchCurrentCallCount, 1)
+        XCTAssertGreaterThanOrEqual(service.fetchUpcomingCallCount, 3)
     }
 
-    func testCurrentEventCachesNilResult() async throws {
+    func testDisconnectStopsAutoRefresh() async throws {
         let service = MockCalendarService()
         let store = MockTokenStore()
         store.storedTokens = GoogleTokens(
             accessToken: "valid", refreshToken: "refresh",
             expiresAt: Date().addingTimeInterval(3600)
         )
-        service.currentEvent = nil
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store, refreshInterval: 0.1)
 
-        let event1 = await vm.currentEvent()
-        let event2 = await vm.currentEvent()
+        try await Task.sleep(for: .milliseconds(250))
+        let beforeDisconnect = service.fetchUpcomingCallCount
+        XCTAssertGreaterThan(beforeDisconnect, 0)
 
-        XCTAssertNil(event1)
-        XCTAssertNil(event2)
-        XCTAssertEqual(service.fetchCurrentCallCount, 1)
+        vm.disconnect()
+
+        try await Task.sleep(for: .milliseconds(400))
+
+        XCTAssertEqual(service.fetchUpcomingCallCount, beforeDisconnect)
+    }
+
+    func testConnectStartsAutoRefresh() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+
+        let vm = makeViewModel(service: service, store: store, refreshInterval: 0.1)
+
+        vm.connect()
+        try await Task.sleep(for: .milliseconds(400))
+
+        XCTAssertTrue(vm.isConnected)
+        XCTAssertGreaterThan(service.fetchUpcomingCallCount, 0)
+    }
+
+    // MARK: - Derived accessors
+
+    func testImminentEventReturnsFutureEventWithinWindow() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+        let now = Date()
+        let soon = GoogleCalendarEvent(
+            id: "1", summary: "Soon", start: now.addingTimeInterval(10 * 60),
+            end: now.addingTimeInterval(40 * 60), attendees: []
+        )
+        let later = GoogleCalendarEvent(
+            id: "2", summary: "Later", start: now.addingTimeInterval(120 * 60),
+            end: now.addingTimeInterval(180 * 60), attendees: []
+        )
+        service.upcomingEvents = [soon, later]
+
+        let vm = makeViewModel(service: service, store: store)
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertEqual(vm.imminentEvent(within: 60, now: now)?.summary, "Soon")
+        XCTAssertNil(vm.imminentEvent(within: 5, now: now))
+    }
+
+    func testImminentEventSkipsOngoingEvents() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+        let now = Date()
+        let ongoing = GoogleCalendarEvent(
+            id: "1", summary: "Ongoing", start: now.addingTimeInterval(-10 * 60),
+            end: now.addingTimeInterval(20 * 60), attendees: []
+        )
+        let next = GoogleCalendarEvent(
+            id: "2", summary: "Next", start: now.addingTimeInterval(30 * 60),
+            end: now.addingTimeInterval(60 * 60), attendees: []
+        )
+        service.upcomingEvents = [ongoing, next]
+
+        let vm = makeViewModel(service: service, store: store)
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertEqual(vm.imminentEvent(within: 60, now: now)?.summary, "Next")
+    }
+
+    func testCurrentEventReturnsOngoingEvent() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+        let now = Date()
+        let ongoing = GoogleCalendarEvent(
+            id: "1", summary: "Ongoing", start: now.addingTimeInterval(-10 * 60),
+            end: now.addingTimeInterval(20 * 60), attendees: []
+        )
+        service.upcomingEvents = [ongoing]
+
+        let vm = makeViewModel(service: service, store: store)
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertEqual(vm.currentEvent(now: now)?.summary, "Ongoing")
+    }
+
+    func testCurrentEventReturnsEventStartingWithinFiveMinutes() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+        let now = Date()
+        let soon = GoogleCalendarEvent(
+            id: "1", summary: "Soon", start: now.addingTimeInterval(3 * 60),
+            end: now.addingTimeInterval(30 * 60), attendees: []
+        )
+        service.upcomingEvents = [soon]
+
+        let vm = makeViewModel(service: service, store: store)
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertEqual(vm.currentEvent(now: now)?.summary, "Soon")
+    }
+
+    func testCurrentEventReturnsNilWhenEventTooFarAway() async throws {
+        let service = MockCalendarService()
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+        let now = Date()
+        let later = GoogleCalendarEvent(
+            id: "1", summary: "Later", start: now.addingTimeInterval(30 * 60),
+            end: now.addingTimeInterval(60 * 60), attendees: []
+        )
+        service.upcomingEvents = [later]
+
+        let vm = makeViewModel(service: service, store: store)
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertNil(vm.currentEvent(now: now))
+    }
+
+    // MARK: - Refresh error handling
+
+    func testRefreshErrorDoesNotCrashAndKeepsPreviousEvents() async throws {
+        let service = MockCalendarService()
+        let existing = GoogleCalendarEvent(
+            id: "1", summary: "First", start: Date().addingTimeInterval(600),
+            end: Date().addingTimeInterval(4200), attendees: []
+        )
+        service.upcomingEvents = [existing]
+        let store = MockTokenStore()
+        store.storedTokens = GoogleTokens(
+            accessToken: "valid", refreshToken: "refresh",
+            expiresAt: Date().addingTimeInterval(3600)
+        )
+
+        let vm = makeViewModel(service: service, store: store, refreshInterval: 0.1)
+
+        try await Task.sleep(for: .milliseconds(250))
+        XCTAssertEqual(vm.upcomingEvents.count, 1)
+
+        service.upcomingError = TestCalendarError.failed
+
+        try await Task.sleep(for: .milliseconds(300))
+
+        XCTAssertEqual(vm.upcomingEvents.count, 1)
+        XCTAssertEqual(vm.upcomingEvents.first?.summary, "First")
     }
 
     // MARK: - validTokens
@@ -346,7 +443,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
         let service = MockCalendarService()
         let store = MockTokenStore()
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         let tokens = await vm.validTokens()
 
@@ -361,7 +458,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(3600)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         let tokens = await vm.validTokens()
 
@@ -377,8 +474,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(-100)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-        // Wait for init's loadConnectionState to finish
+        let vm = makeViewModel(service: service, store: store)
         try? await Task.sleep(for: .milliseconds(300))
 
         let tokens = await vm.validTokens()
@@ -395,8 +491,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(-100)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
-        // Wait for init's loadConnectionState
+        let vm = makeViewModel(service: service, store: store)
         try? await Task.sleep(for: .milliseconds(300))
 
         let tokens = await vm.validTokens()
@@ -415,7 +510,7 @@ final class GoogleCalendarViewModelTests: XCTestCase {
             expiresAt: Date().addingTimeInterval(3600)
         )
 
-        let vm = GoogleCalendarViewModel(calendarService: service, tokenStore: store)
+        let vm = makeViewModel(service: service, store: store)
 
         try await Task.sleep(for: .milliseconds(300))
 

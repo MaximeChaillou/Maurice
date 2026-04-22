@@ -14,12 +14,14 @@ struct MauriceApp: App {
     @State private var showSearch = false
     @State private var showOnboarding = !AppSettings.onboardingCompleted
     @State private var lastFileSystemReload = Date.distantPast
-    @State private var calendarViewModel = GoogleCalendarViewModel()
+    @State private var calendarViewModel: GoogleCalendarViewModel
     @State private var recordingContext: RecordingContext
     @State private var templateUpdateService = TemplateUpdateService()
     @State private var settingsNavigator = SettingsNavigator()
+    @State private var tickDate = Date()
     @StateObject private var updateChecker = UpdateChecker()
     private let fileWatcher = FileWatcher(path: AppSettings.rootDirectory.path)
+    private let tickTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
     init() {
         IssueLogger.installCrashHandlers()
@@ -55,8 +57,8 @@ struct MauriceApp: App {
         WindowGroup {
             ZStack {
                 WaveBackground(
-                    hue: appTheme.hue(for: coordinator.activeTab),
-                    saturation: coordinator.showHome ? 0 : 1
+                    hue: coordinator.showHome ? appTheme.homeHue : appTheme.hue(for: coordinator.activeTab),
+                    saturation: 1
                 )
                 .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
                 .animation(.easeInOut(duration: 0.6), value: coordinator.showHome)
@@ -80,7 +82,8 @@ struct MauriceApp: App {
                                 templateUpdateService: templateUpdateService,
                                 settingsNavigator: settingsNavigator,
                                 hasMeetings: !meetingViewModel.folders.isEmpty,
-                                hasPeople: peopleViewModel.hasAnyPerson
+                                hasPeople: peopleViewModel.hasAnyPerson,
+                                now: tickDate
                             )
                         } else {
                             tabContent
@@ -92,7 +95,9 @@ struct MauriceApp: App {
 
                     FloatingActionBar(
                         viewModel: recordingViewModel,
-                        onRecordTap: { recordingContext.handleRecordTap() }
+                        onRecordTap: { recordingContext.handleRecordTap() },
+                        contextTitle: homeRecordContextTitle,
+                        contextSubtitle: homeRecordContextSubtitle
                     )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -115,8 +120,11 @@ struct MauriceApp: App {
                     }
                 }
                 #if DEBUG
-                Self.applyDebugIconOverlay()
+                DebugIconOverlay.apply()
                 #endif
+            }
+            .onReceive(tickTimer) { date in
+                tickDate = date
             }
             .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
                 let now = Date()
@@ -221,6 +229,21 @@ struct MauriceApp: App {
         .windowResizability(.contentMinSize)
     }
 
+    private var homeRecordContextTitle: String? {
+        guard coordinator.showHome,
+              let event = calendarViewModel.imminentEvent(within: 60, now: tickDate)
+        else { return nil }
+        return event.summary
+    }
+
+    private var homeRecordContextSubtitle: String? {
+        guard coordinator.showHome,
+              let event = calendarViewModel.imminentEvent(within: 60, now: tickDate)
+        else { return nil }
+        let minutes = max(0, Int(event.start.timeIntervalSince(tickDate) / 60.0))
+        return String(localized: "starts in \(minutes) min")
+    }
+
     private var resolvedColorScheme: ColorScheme? {
         switch appearanceMode {
         case "light": return .light
@@ -276,39 +299,6 @@ struct MauriceApp: App {
             TasksView(markdownTheme: appTheme.markdown)
         }
     }
-
-    // MARK: - Debug icon overlay
-
-    #if DEBUG
-    private static func applyDebugIconOverlay() {
-        guard let appIcon = NSApp.applicationIconImage else { return }
-        let size = appIcon.size
-        let newIcon = NSImage(size: size)
-        newIcon.lockFocus()
-        appIcon.draw(in: NSRect(origin: .zero, size: size))
-
-        let bannerHeight = size.height * 0.22
-        let bannerRect = NSRect(x: 0, y: 0, width: size.width, height: bannerHeight)
-        NSColor(red: 0.9, green: 0.3, blue: 0.0, alpha: 0.85).setFill()
-        bannerRect.fill()
-
-        let fontSize = bannerHeight * 0.55
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.boldSystemFont(ofSize: fontSize),
-            .foregroundColor: NSColor.white,
-        ]
-        let text = "DEBUG" as NSString
-        let textSize = text.size(withAttributes: attrs)
-        let textPoint = NSPoint(
-            x: (size.width - textSize.width) / 2,
-            y: (bannerHeight - textSize.height) / 2
-        )
-        text.draw(at: textPoint, withAttributes: attrs)
-
-        newIcon.unlockFocus()
-        NSApp.applicationIconImage = newIcon
-    }
-    #endif
 }
 
 private struct SettingsMenuButton: View {
