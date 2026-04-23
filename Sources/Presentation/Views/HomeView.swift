@@ -14,6 +14,10 @@ struct HomeView: View {
         calendarViewModel.upcomingEvents.first { $0.start > now }
     }
 
+    private var currentEvent: GoogleCalendarEvent? {
+        calendarViewModel.currentEvent(now: now)
+    }
+
     private var schedule: HomeSchedule.DayEvents {
         HomeSchedule.dayEvents(from: calendarViewModel.upcomingEvents, now: now)
     }
@@ -52,7 +56,8 @@ struct HomeView: View {
                         upcomingEvents: calendarViewModel.upcomingEvents,
                         displayedEvents: schedule.events,
                         isShowingTomorrow: schedule.isShowingTomorrow,
-                        nextEventId: nextEvent?.id,
+                        nowEventId: currentEvent?.id,
+                        nextEventId: currentEvent == nil ? nextEvent?.id : nil,
                         settingsNavigator: settingsNavigator
                     )
                     .frame(width: leftWidth, height: geo.size.height)
@@ -150,6 +155,7 @@ private struct HomeSchedulePanel: View {
     let upcomingEvents: [GoogleCalendarEvent]
     let displayedEvents: [GoogleCalendarEvent]
     let isShowingTomorrow: Bool
+    let nowEventId: String?
     let nextEventId: String?
     let settingsNavigator: SettingsNavigator
 
@@ -161,6 +167,12 @@ private struct HomeSchedulePanel: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .glassEffect(.regular, in: .rect(cornerRadius: 14))
+    }
+
+    private func highlight(for event: GoogleCalendarEvent) -> HomeEventRow.Highlight? {
+        if event.id == nowEventId { return .now }
+        if event.id == nextEventId { return .next }
+        return nil
     }
 
     private var header: some View {
@@ -195,7 +207,7 @@ private struct HomeSchedulePanel: View {
                     ForEach(Array(displayedEvents.enumerated()), id: \.element.id) { index, event in
                         HomeEventRow(
                             event: event,
-                            isNext: event.id == nextEventId,
+                            highlight: highlight(for: event),
                             isLast: index == displayedEvents.count - 1
                         )
                     }
@@ -254,9 +266,16 @@ private struct HomeNoEventsTodayState: View {
 // MARK: - Event row
 
 private struct HomeEventRow: View {
+    enum Highlight {
+        case now
+        case next
+    }
+
     let event: GoogleCalendarEvent
-    let isNext: Bool
+    let highlight: Highlight?
     let isLast: Bool
+
+    private var isHighlighted: Bool { highlight != nil }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -264,13 +283,13 @@ private struct HomeEventRow: View {
             accentBar
             titleColumn
             Spacer(minLength: 0)
-            if isNext { nextBadge }
+            if let highlight { badge(for: highlight) }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .background { rowBackground }
         .overlay(alignment: .bottom) {
-            if !isLast && !isNext {
+            if !isLast && !isHighlighted {
                 Divider().opacity(0.4).padding(.horizontal, 12)
             }
         }
@@ -281,7 +300,7 @@ private struct HomeEventRow: View {
             Text(DateFormatters.timeOnly.string(from: event.start))
                 .font(.system(size: 13, weight: .semibold))
                 .monospacedDigit()
-                .foregroundStyle(isNext ? Color.cyan : .primary)
+                .foregroundStyle(isHighlighted ? Color.cyan : .primary)
             Text(DateFormatters.timeOnly.string(from: event.end))
                 .font(.system(size: 10.5))
                 .monospacedDigit()
@@ -292,7 +311,7 @@ private struct HomeEventRow: View {
 
     private var accentBar: some View {
         RoundedRectangle(cornerRadius: 1)
-            .fill(isNext ? Color.cyan : Color.primary.opacity(0.08))
+            .fill(isHighlighted ? Color.cyan : Color.primary.opacity(0.08))
             .frame(width: 2)
             .padding(.vertical, 2)
     }
@@ -311,8 +330,8 @@ private struct HomeEventRow: View {
         }
     }
 
-    private var nextBadge: some View {
-        Text("Next")
+    private func badge(for highlight: Highlight) -> some View {
+        Text(highlight == .now ? "Now" : "Next")
             .font(.system(size: 10, weight: .bold))
             .kerning(0.8)
             .textCase(.uppercase)
@@ -324,7 +343,7 @@ private struct HomeEventRow: View {
 
     @ViewBuilder
     private var rowBackground: some View {
-        if isNext {
+        if isHighlighted {
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.cyan.opacity(0.10))
         }

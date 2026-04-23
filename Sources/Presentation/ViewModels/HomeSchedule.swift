@@ -12,6 +12,18 @@ enum HomeSchedule {
         let isShowingTomorrow: Bool
     }
 
+    enum RecordPillSubtitle: Equatable {
+        case startsIn(minutes: Int)
+        case startedAgo(minutes: Int)
+    }
+
+    static func recordPillSubtitle(eventStart: Date, now: Date) -> RecordPillSubtitle {
+        if eventStart > now {
+            return .startsIn(minutes: Int(eventStart.timeIntervalSince(now) / 60.0))
+        }
+        return .startedAgo(minutes: max(0, Int(now.timeIntervalSince(eventStart) / 60.0)))
+    }
+
     static func dayEvents(
         from upcoming: [GoogleCalendarEvent],
         now: Date,

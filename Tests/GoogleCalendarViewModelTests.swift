@@ -300,55 +300,6 @@ final class GoogleCalendarViewModelTests: XCTestCase {
 
     // MARK: - Derived accessors
 
-    func testImminentEventReturnsFutureEventWithinWindow() async throws {
-        let service = MockCalendarService()
-        let store = MockTokenStore()
-        store.storedTokens = GoogleTokens(
-            accessToken: "valid", refreshToken: "refresh",
-            expiresAt: Date().addingTimeInterval(3600)
-        )
-        let now = Date()
-        let soon = GoogleCalendarEvent(
-            id: "1", summary: "Soon", start: now.addingTimeInterval(10 * 60),
-            end: now.addingTimeInterval(40 * 60), attendees: []
-        )
-        let later = GoogleCalendarEvent(
-            id: "2", summary: "Later", start: now.addingTimeInterval(120 * 60),
-            end: now.addingTimeInterval(180 * 60), attendees: []
-        )
-        service.upcomingEvents = [soon, later]
-
-        let vm = makeViewModel(service: service, store: store)
-        try await Task.sleep(for: .milliseconds(300))
-
-        XCTAssertEqual(vm.imminentEvent(within: 60, now: now)?.summary, "Soon")
-        XCTAssertNil(vm.imminentEvent(within: 5, now: now))
-    }
-
-    func testImminentEventSkipsOngoingEvents() async throws {
-        let service = MockCalendarService()
-        let store = MockTokenStore()
-        store.storedTokens = GoogleTokens(
-            accessToken: "valid", refreshToken: "refresh",
-            expiresAt: Date().addingTimeInterval(3600)
-        )
-        let now = Date()
-        let ongoing = GoogleCalendarEvent(
-            id: "1", summary: "Ongoing", start: now.addingTimeInterval(-10 * 60),
-            end: now.addingTimeInterval(20 * 60), attendees: []
-        )
-        let next = GoogleCalendarEvent(
-            id: "2", summary: "Next", start: now.addingTimeInterval(30 * 60),
-            end: now.addingTimeInterval(60 * 60), attendees: []
-        )
-        service.upcomingEvents = [ongoing, next]
-
-        let vm = makeViewModel(service: service, store: store)
-        try await Task.sleep(for: .milliseconds(300))
-
-        XCTAssertEqual(vm.imminentEvent(within: 60, now: now)?.summary, "Next")
-    }
-
     func testCurrentEventReturnsOngoingEvent() async throws {
         let service = MockCalendarService()
         let store = MockTokenStore()

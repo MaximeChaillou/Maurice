@@ -231,17 +231,21 @@ struct MauriceApp: App {
 
     private var homeRecordContextTitle: String? {
         guard coordinator.showHome,
-              let event = calendarViewModel.imminentEvent(within: 60, now: tickDate)
+              let event = calendarViewModel.currentEvent(now: tickDate)
         else { return nil }
         return event.summary
     }
 
     private var homeRecordContextSubtitle: String? {
         guard coordinator.showHome,
-              let event = calendarViewModel.imminentEvent(within: 60, now: tickDate)
+              let event = calendarViewModel.currentEvent(now: tickDate)
         else { return nil }
-        let minutes = max(0, Int(event.start.timeIntervalSince(tickDate) / 60.0))
-        return String(localized: "starts in \(minutes) min")
+        switch HomeSchedule.recordPillSubtitle(eventStart: event.start, now: tickDate) {
+        case .startsIn(let minutes):
+            return String(localized: "starts in \(minutes) min")
+        case .startedAgo(let minutes):
+            return String(localized: "started \(minutes) min ago")
+        }
     }
 
     private var resolvedColorScheme: ColorScheme? {

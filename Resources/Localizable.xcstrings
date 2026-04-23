@@ -1628,6 +1628,16 @@
         }
       }
     },
+    "Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En cours"
+          }
+        }
+      }
+    },
     "OK": {
       "comment": "Alert dismiss button"
     },
@@ -2539,6 +2549,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "restants"
+          }
+        }
+      }
+    },
+    "started %lld min ago": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a commencé il y a %lld min"
           }
         }
       }

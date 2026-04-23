@@ -70,11 +70,6 @@ final class GoogleCalendarViewModel {
 
     // MARK: - Derived event accessors
 
-    func imminentEvent(within minutes: Int = 60, now: Date = Date()) -> GoogleCalendarEvent? {
-        let horizon = now.addingTimeInterval(TimeInterval(minutes * 60))
-        return upcomingEvents.first { $0.start > now && $0.start <= horizon }
-    }
-
     func currentEvent(now: Date = Date()) -> GoogleCalendarEvent? {
         let soon = now.addingTimeInterval(5 * 60)
         return upcomingEvents.first { $0.start <= soon && $0.end > now }

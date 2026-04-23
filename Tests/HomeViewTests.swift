@@ -88,6 +88,43 @@ final class HomeViewTests: XCTestCase {
         XCTAssertNil(breakdown)
     }
 
+    // MARK: - HomeSchedule.recordPillSubtitle
+
+    func testRecordPillSubtitleFutureEventReportsMinutesUntilStart() {
+        let now = Date()
+        let start = now.addingTimeInterval(15 * 60)
+        XCTAssertEqual(
+            HomeSchedule.recordPillSubtitle(eventStart: start, now: now),
+            .startsIn(minutes: 15)
+        )
+    }
+
+    func testRecordPillSubtitlePastEventReportsMinutesSinceStart() {
+        let now = Date()
+        let start = now.addingTimeInterval(-7 * 60)
+        XCTAssertEqual(
+            HomeSchedule.recordPillSubtitle(eventStart: start, now: now),
+            .startedAgo(minutes: 7)
+        )
+    }
+
+    func testRecordPillSubtitleAtExactStartReportsStartedAgoZero() {
+        let now = Date()
+        XCTAssertEqual(
+            HomeSchedule.recordPillSubtitle(eventStart: now, now: now),
+            .startedAgo(minutes: 0)
+        )
+    }
+
+    func testRecordPillSubtitleSubMinuteFutureTruncatesToZero() {
+        let now = Date()
+        let start = now.addingTimeInterval(30)
+        XCTAssertEqual(
+            HomeSchedule.recordPillSubtitle(eventStart: start, now: now),
+            .startsIn(minutes: 0)
+        )
+    }
+
     // MARK: - HomeSchedule.dayEvents
 
     func testDayEventsPrefersTodayWhenAvailable() {
