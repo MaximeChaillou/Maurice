@@ -256,7 +256,7 @@ enum GoogleCalendarService {
         guard let start = parseEventDate(startDict),
               let end = parseEventDate(endDict) else { return nil }
 
-        let attendees = parseAcceptedAttendees(item)
+        let attendees = parseAttendees(item)
         return GoogleCalendarEvent(id: id, summary: summary, start: start, end: end, attendees: attendees)
     }
 
@@ -276,12 +276,12 @@ enum GoogleCalendarService {
         return nil
     }
 
-    static func parseAcceptedAttendees(_ item: [String: Any]) -> [GoogleCalendarEvent.Attendee] {
+    static func parseAttendees(_ item: [String: Any]) -> [GoogleCalendarEvent.Attendee] {
         guard let attendees = item["attendees"] as? [[String: Any]] else { return [] }
         return attendees.compactMap { entry in
-            guard let email = entry["email"] as? String,
-                  let status = entry["responseStatus"] as? String,
-                  status == "accepted" else { return nil }
+            guard let email = entry["email"] as? String else { return nil }
+            let status = entry["responseStatus"] as? String
+            if status == "declined" { return nil }
             let name = entry["displayName"] as? String
             return GoogleCalendarEvent.Attendee(email: email, displayName: name)
         }

@@ -158,48 +158,50 @@ final class GoogleCalendarServiceTests: XCTestCase {
         XCTAssertEqual(components.minute, 30)
     }
 
-    // MARK: - parseAcceptedAttendees
+    // MARK: - parseAttendees
 
-    func testParseAcceptedAttendeesFiltersOnlyAccepted() {
+    func testParseAttendeesExcludesOnlyDeclined() {
         let item: [String: Any] = [
             "attendees": [
                 ["email": "a@test.com", "responseStatus": "accepted", "displayName": "A"],
                 ["email": "b@test.com", "responseStatus": "declined", "displayName": "B"],
                 ["email": "c@test.com", "responseStatus": "tentative", "displayName": "C"],
-                ["email": "d@test.com", "responseStatus": "accepted"]
+                ["email": "d@test.com", "responseStatus": "needsAction", "displayName": "D"],
+                ["email": "e@test.com"]
             ]
         ]
 
-        let attendees = GoogleCalendarService.parseAcceptedAttendees(item)
+        let attendees = GoogleCalendarService.parseAttendees(item)
 
-        XCTAssertEqual(attendees.count, 2)
-        XCTAssertEqual(attendees[0].email, "a@test.com")
+        XCTAssertEqual(attendees.count, 4)
+        XCTAssertEqual(attendees.map(\.email), ["a@test.com", "c@test.com", "d@test.com", "e@test.com"])
         XCTAssertEqual(attendees[0].displayName, "A")
-        XCTAssertEqual(attendees[1].email, "d@test.com")
-        XCTAssertNil(attendees[1].displayName)
+        XCTAssertEqual(attendees[1].displayName, "C")
+        XCTAssertEqual(attendees[2].displayName, "D")
+        XCTAssertNil(attendees[3].displayName)
     }
 
-    func testParseAcceptedAttendeesReturnsEmptyWhenNoAttendees() {
+    func testParseAttendeesReturnsEmptyWhenNoAttendees() {
         let item: [String: Any] = ["summary": "Solo meeting"]
 
-        let attendees = GoogleCalendarService.parseAcceptedAttendees(item)
+        let attendees = GoogleCalendarService.parseAttendees(item)
 
         XCTAssertTrue(attendees.isEmpty)
     }
 
-    func testParseAcceptedAttendeesReturnsEmptyWhenAllDeclined() {
+    func testParseAttendeesReturnsEmptyWhenAllDeclined() {
         let item: [String: Any] = [
             "attendees": [
                 ["email": "x@test.com", "responseStatus": "declined"]
             ]
         ]
 
-        let attendees = GoogleCalendarService.parseAcceptedAttendees(item)
+        let attendees = GoogleCalendarService.parseAttendees(item)
 
         XCTAssertTrue(attendees.isEmpty)
     }
 
-    func testParseAcceptedAttendeesSkipsEntriesWithoutEmail() {
+    func testParseAttendeesSkipsEntriesWithoutEmail() {
         let item: [String: Any] = [
             "attendees": [
                 ["responseStatus": "accepted", "displayName": "NoEmail"],
@@ -207,7 +209,7 @@ final class GoogleCalendarServiceTests: XCTestCase {
             ]
         ]
 
-        let attendees = GoogleCalendarService.parseAcceptedAttendees(item)
+        let attendees = GoogleCalendarService.parseAttendees(item)
 
         XCTAssertEqual(attendees.count, 1)
         XCTAssertEqual(attendees[0].email, "valid@test.com")
