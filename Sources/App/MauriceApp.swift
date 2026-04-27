@@ -96,8 +96,8 @@ struct MauriceApp: App {
                     FloatingActionBar(
                         viewModel: recordingViewModel,
                         onRecordTap: { recordingContext.handleRecordTap() },
-                        contextTitle: homeRecordContextTitle,
-                        contextSubtitle: homeRecordContextSubtitle
+                        contextTitle: recordContextTitle,
+                        contextSubtitle: recordContextSubtitle
                     )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -229,17 +229,12 @@ struct MauriceApp: App {
         .windowResizability(.contentMinSize)
     }
 
-    private var homeRecordContextTitle: String? {
-        guard coordinator.showHome,
-              let event = calendarViewModel.currentEvent(now: tickDate)
-        else { return nil }
-        return event.summary
+    private var recordContextTitle: String? {
+        calendarViewModel.currentEvent(now: tickDate)?.summary
     }
 
-    private var homeRecordContextSubtitle: String? {
-        guard coordinator.showHome,
-              let event = calendarViewModel.currentEvent(now: tickDate)
-        else { return nil }
+    private var recordContextSubtitle: String? {
+        guard let event = calendarViewModel.currentEvent(now: tickDate) else { return nil }
         switch HomeSchedule.recordPillSubtitle(eventStart: event.start, now: tickDate) {
         case .startsIn(let minutes):
             return String(localized: "starts in \(minutes) min")
