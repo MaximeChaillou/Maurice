@@ -28,9 +28,12 @@ enum EntryDeleteAction {
 
     var message: String {
         switch self {
-        case .note: "La note du \(entry.dateString) sera supprimée définitivement."
-        case .transcript: "Le transcript du \(entry.dateString) sera supprimé définitivement."
-        case .both: "La note et le transcript du \(entry.dateString) seront supprimés définitivement."
+        case .note:
+            String(localized: "The note from \(entry.dateString) will be permanently deleted.")
+        case .transcript:
+            String(localized: "The transcript from \(entry.dateString) will be permanently deleted.")
+        case .both:
+            String(localized: "The note and transcript from \(entry.dateString) will be permanently deleted.")
         }
     }
 }

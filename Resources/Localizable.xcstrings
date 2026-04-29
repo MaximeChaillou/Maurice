@@ -117,6 +117,16 @@
         }
       }
     },
+    "A file named “%@” already exists.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un fichier nommé « %@ » existe déjà."
+          }
+        }
+      }
+    },
     "A skill is a Markdown prompt executed by AI on your notes. Example: summarize a transcript, extract actions.": {
       "localizations": {
         "fr": {
@@ -166,6 +176,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une personne"
+          }
+        }
+      }
+    },
+    "Add an action": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une action"
           }
         }
       }
@@ -1781,6 +1801,16 @@
         }
       }
     },
+    "Recording %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrement %@"
+          }
+        }
+      }
+    },
     "Recording will start automatically in this folder when a Calendar event has this name.": {
       "localizations": {
         "fr": {
@@ -2220,12 +2250,32 @@
         }
       }
     },
+    "The connection timed out (120s)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La connexion a expiré (120s)"
+          }
+        }
+      }
+    },
     "The file '%@' will be permanently deleted.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le fichier « %@ » sera supprimé définitivement."
+          }
+        }
+      }
+    },
+    "The file name is invalid.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le nom du fichier est invalide."
           }
         }
       }
@@ -2250,12 +2300,42 @@
         }
       }
     },
+    "The note and transcript from %@ will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La note et le transcript du %@ seront supprimés définitivement."
+          }
+        }
+      }
+    },
+    "The note from %@ will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La note du %@ sera supprimée définitivement."
+          }
+        }
+      }
+    },
     "The person '%@' and all their content will be deleted.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "La personne « %@ » et tout son contenu seront supprimés."
+          }
+        }
+      }
+    },
+    "The transcript from %@ will be permanently deleted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le transcript du %@ sera supprimé définitivement."
           }
         }
       }
@@ -2286,6 +2366,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aujourd’hui"
+          }
+        }
+      }
+    },
+    "Token exchange failed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de l’échange du token"
+          }
+        }
+      }
+    },
+    "Token refresh failed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec du rafraîchissement du token"
           }
         }
       }
@@ -2339,6 +2439,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible de supprimer « %@ » : %@"
+          }
+        }
+      }
+    },
+    "Unable to retrieve the email": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de récupérer l’email"
           }
         }
       }

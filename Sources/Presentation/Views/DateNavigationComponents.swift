@@ -153,7 +153,7 @@ struct SkillActionsMenu: View {
                 Button {
                     onAddAction?()
                 } label: {
-                    Label("Ajouter une action", systemImage: "plus")
+                    Label("Add an action", systemImage: "plus")
                 }
             }
         } label: {

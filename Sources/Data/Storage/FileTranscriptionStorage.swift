@@ -167,8 +167,8 @@ enum StorageError: Error, LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidName: "Le nom du fichier est invalide."
-        case .duplicateName(let name): "Un fichier nommé « \(name) » existe déjà."
+        case .invalidName: String(localized: "The file name is invalid.")
+        case .duplicateName(let name): String(localized: "A file named “\(name)” already exists.")
         }
     }
 }

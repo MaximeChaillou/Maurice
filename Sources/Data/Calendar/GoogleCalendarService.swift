@@ -311,10 +311,10 @@ enum GoogleCalendarError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .tokenExchangeFailed: "Échec de l'échange du token"
-        case .refreshFailed: "Échec du rafraîchissement du token"
-        case .emailFetchFailed: "Impossible de récupérer l'email"
-        case .oauthTimeout: "La connexion a expiré (120s)"
+        case .tokenExchangeFailed: String(localized: "Token exchange failed")
+        case .refreshFailed: String(localized: "Token refresh failed")
+        case .emailFetchFailed: String(localized: "Unable to retrieve the email")
+        case .oauthTimeout: String(localized: "The connection timed out (120s)")
         }
     }
 }
