@@ -111,9 +111,10 @@ struct MauriceApp: App {
             .onAppear {
                 fileWatcher.start()
                 if AppSettings.onboardingCompleted {
-                    meetingViewModel.loadFolders()
-                    peopleViewModel.loadFolders()
                     Task {
+                        await MeetingConfigStore.shared.bootstrap()
+                        meetingViewModel.loadFolders()
+                        peopleViewModel.loadFolders()
                         await templateUpdateService.reconcile(
                             rootDirectory: AppSettings.rootDirectory
                         )
@@ -262,11 +263,13 @@ struct MauriceApp: App {
     // MARK: - Reload after directory change
 
     private func reloadAfterDirectoryChange() {
-        meetingViewModel.resetDirectory(AppSettings.meetingsDirectory)
-        peopleViewModel.resetDirectory(AppSettings.peopleDirectory)
+        MeetingConfigStore.shared.reset()
         memoryListViewModel.reloadDirectory()
         appTheme = AppTheme.load()
         Task {
+            await MeetingConfigStore.shared.bootstrap()
+            meetingViewModel.resetDirectory(AppSettings.meetingsDirectory)
+            peopleViewModel.resetDirectory(AppSettings.peopleDirectory)
             await templateUpdateService.reconcile(rootDirectory: AppSettings.rootDirectory)
         }
     }

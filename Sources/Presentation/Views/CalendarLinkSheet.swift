@@ -44,8 +44,11 @@ struct CalendarLinkSheet: View {
         .padding()
         .frame(width: 450, height: 180)
         .onAppear {
+            let url = folder.url
             Task {
-                config = await MeetingConfig.loadAsync(from: folder.url)
+                config = await Task.detached {
+                    MeetingConfigStore.shared.config(for: url)
+                }.value
                 eventName = config.calendarEventName ?? ""
             }
         }
@@ -54,6 +57,6 @@ struct CalendarLinkSheet: View {
     private func saveLink() {
         let trimmed = eventName.trimmingCharacters(in: .whitespaces)
         config.calendarEventName = trimmed.isEmpty ? nil : trimmed
-        config.saveAsync(to: folder.url)
+        MeetingConfigStore.shared.update(config, for: folder.url)
     }
 }

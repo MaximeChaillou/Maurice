@@ -1,11 +1,9 @@
 import Foundation
 
-struct MeetingConfig: FolderPersistentCodable {
+struct MeetingConfig: Codable, Sendable, Equatable {
     var icon: String?
     var calendarEventName: String?
     var actions: [SkillAction]
-
-    static let fileName = ".config.json"
 
     init(icon: String? = nil, calendarEventName: String? = nil, actions: [SkillAction] = []) {
         self.icon = icon

@@ -17,11 +17,13 @@ final class PeopleContentViewModelTests: XCTestCase {
 
         originalRootDirectory = UserDefaults.standard.string(forKey: "rootDirectory")
         UserDefaults.standard.set(tempDir.path, forKey: "rootDirectory")
+        MeetingConfigStore.shared.reset()
 
         viewModel = PeopleContentViewModel(directory: peopleDir)
     }
 
     override func tearDown() async throws {
+        MeetingConfigStore.shared.reset()
         if let original = originalRootDirectory {
             UserDefaults.standard.set(original, forKey: "rootDirectory")
         } else {
@@ -141,10 +143,7 @@ final class PeopleContentViewModelTests: XCTestCase {
         let oneOnOneDir = teamDir
             .appendingPathComponent("Alice", isDirectory: true)
             .appendingPathComponent("1-1", isDirectory: true)
-        let configURL = oneOnOneDir.appendingPathComponent(MeetingConfig.fileName)
-        XCTAssertTrue(fm.fileExists(atPath: configURL.path))
-
-        let config = MeetingConfig.load(from: oneOnOneDir)
+        let config = MeetingConfigStore.shared.config(for: oneOnOneDir)
         XCTAssertEqual(config.calendarEventName, "1-1 Alice / Maxime")
     }
 
@@ -158,11 +157,10 @@ final class PeopleContentViewModelTests: XCTestCase {
         viewModel.createPerson(name: "Alice", inCategory: "Team", calendarEventName: "")
         try await Task.sleep(for: .milliseconds(200))
 
-        let configURL = teamDir
+        let oneOnOneDir = teamDir
             .appendingPathComponent("Alice", isDirectory: true)
             .appendingPathComponent("1-1", isDirectory: true)
-            .appendingPathComponent(MeetingConfig.fileName)
-        XCTAssertFalse(fm.fileExists(atPath: configURL.path))
+        XCTAssertNil(MeetingConfigStore.shared.config(for: oneOnOneDir).calendarEventName)
     }
 
     func testCreatePersonTrimsCalendarEventName() async throws {
@@ -182,7 +180,7 @@ final class PeopleContentViewModelTests: XCTestCase {
         let oneOnOneDir = teamDir
             .appendingPathComponent("Alice", isDirectory: true)
             .appendingPathComponent("1-1", isDirectory: true)
-        let config = MeetingConfig.load(from: oneOnOneDir)
+        let config = MeetingConfigStore.shared.config(for: oneOnOneDir)
         XCTAssertEqual(config.calendarEventName, "1-1 Alice")
     }
 
@@ -200,11 +198,10 @@ final class PeopleContentViewModelTests: XCTestCase {
         )
         try await Task.sleep(for: .milliseconds(200))
 
-        let configURL = teamDir
+        let oneOnOneDir = teamDir
             .appendingPathComponent("Alice", isDirectory: true)
             .appendingPathComponent("1-1", isDirectory: true)
-            .appendingPathComponent(MeetingConfig.fileName)
-        XCTAssertFalse(fm.fileExists(atPath: configURL.path))
+        XCTAssertNil(MeetingConfigStore.shared.config(for: oneOnOneDir).calendarEventName)
     }
 
     // MARK: - Deletion

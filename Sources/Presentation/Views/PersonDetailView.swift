@@ -248,7 +248,7 @@ struct PersonOneOnOneView: View {
                 onCancel: { showAddActionForm = false },
                 onSave: { action in
                     meetingConfig.addAction(action)
-                    meetingConfig.saveAsync(to: oneOnOneDir)
+                    MeetingConfigStore.shared.update(meetingConfig, for: oneOnOneDir)
                     showAddActionForm = false
                 }
             )
@@ -267,7 +267,7 @@ struct PersonOneOnOneView: View {
     private func loadConfig() {
         let dir = oneOnOneDir
         Task {
-            meetingConfig = await Task.detached { MeetingConfig.load(from: dir) }.value
+            meetingConfig = await Task.detached { MeetingConfigStore.shared.config(for: dir) }.value
         }
     }
 

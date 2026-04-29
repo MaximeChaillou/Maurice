@@ -5,17 +5,27 @@ import XCTest
 final class FolderContentViewModelTests: XCTestCase {
 
     private var tempDir: URL!
+    private var originalRootDirectory: String?
 
     override func setUp() async throws {
         try await super.setUp()
         await MainActor.run {
             tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
             try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            originalRootDirectory = UserDefaults.standard.string(forKey: "rootDirectory")
+            UserDefaults.standard.set(tempDir.path, forKey: "rootDirectory")
+            MeetingConfigStore.shared.reset()
         }
     }
 
     override func tearDown() async throws {
         await MainActor.run {
+            MeetingConfigStore.shared.reset()
+            if let original = originalRootDirectory {
+                UserDefaults.standard.set(original, forKey: "rootDirectory")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "rootDirectory")
+            }
             try? FileManager.default.removeItem(at: tempDir)
         }
         try await super.tearDown()
@@ -578,7 +588,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testLoadMeetingConfigAssignsWhenSelectionMatches() async throws {
         let folderA = createSubfolder("MeetingA")
         let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
-        configA.save(to: folderA)
+        MeetingConfigStore.shared.update(configA, for: folderA)
 
         let vm = FolderContentViewModel(directory: tempDir)
         vm.selectedFolder = "MeetingA"
@@ -593,9 +603,9 @@ final class FolderContentViewModelTests: XCTestCase {
         let folderA = createSubfolder("MeetingA")
         let folderB = createSubfolder("MeetingB")
         let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
-        configA.save(to: folderA)
+        MeetingConfigStore.shared.update(configA, for: folderA)
         let configB = MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: [])
-        configB.save(to: folderB)
+        MeetingConfigStore.shared.update(configB, for: folderB)
 
         let vm = FolderContentViewModel(directory: tempDir)
         // User was on A then switched to B before A's load completes.
@@ -610,7 +620,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testLoadMeetingConfigIgnoresResultWhenSelectionCleared() async throws {
         let folderA = createSubfolder("MeetingA")
         let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
-        configA.save(to: folderA)
+        MeetingConfigStore.shared.update(configA, for: folderA)
 
         let vm = FolderContentViewModel(directory: tempDir)
         vm.selectedFolder = nil
@@ -622,8 +632,14 @@ final class FolderContentViewModelTests: XCTestCase {
     func testLoadMeetingConfigRapidSwitchKeepsLatestFolderConfig() async throws {
         let folderA = createSubfolder("MeetingA")
         let folderB = createSubfolder("MeetingB")
-        MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: []).save(to: folderA)
-        MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: []).save(to: folderB)
+        MeetingConfigStore.shared.update(
+            MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: []),
+            for: folderA
+        )
+        MeetingConfigStore.shared.update(
+            MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: []),
+            for: folderB
+        )
 
         let vm = FolderContentViewModel(directory: tempDir)
 

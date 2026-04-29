@@ -97,7 +97,7 @@ struct MeetingConfigSheet: View {
         let calTrimmed = calendarText.trimmingCharacters(in: .whitespaces)
         config.calendarEventName = calTrimmed.isEmpty ? nil : calTrimmed
         config.actions = localActions
-        config.saveAsync(to: folderURL)
+        MeetingConfigStore.shared.update(config, for: folderURL)
 
         dismiss()
     }

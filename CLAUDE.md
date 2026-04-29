@@ -30,6 +30,7 @@ Sources/
 - **Tests**: When a new feature is implemented, always add corresponding tests in `Tests/` (file + `project.pbxproj` entries). When a method/protocol is removed, always check and update corresponding tests and mocks in `Tests/`. Tests must **never** touch user files — use only temporary directories (`NSTemporaryDirectory`) and mocks. No reading/writing to `~/Documents/Maurice/` or `AppTheme.persistenceURL` from tests.
 - **Code removal**: When code is removed (method, file, property), trace all references in the project AND tests. Also remove `project.pbxproj` entries for deleted files.
 - **No hardcoded absolute paths**: Never hardcode absolute paths in the code (e.g. `/Users/maxime/...`). Always resolve paths dynamically via `NSHomeDirectory()`, `AppSettings.rootDirectory`, `Bundle.main`, `FileManager.default.urls(for:in:)`, or lookup mechanisms (`which`, multiple candidates). The app must work on any machine.
+- **Error logging**: Every error must go through `IssueLogger.log(...)` with the right level (`.error` for failures that break user-visible behavior, `.warning` for recoverable issues like corrupt cache, missing optional file, or idempotent cleanup that didn't apply), a clear message, a `context:` (relevant path / identifier), and the underlying `error:`. Never swallow errors silently with `try?` or empty `catch {}` blocks — if a failure isn't worth logging, it isn't worth catching.
 
 ## UI
 

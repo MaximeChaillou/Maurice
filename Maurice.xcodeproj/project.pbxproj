@@ -18,6 +18,9 @@
 		CT01BF01CT01BF01CT01BF01 /* ConsoleTerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */; };
 		CP01BF01CP01BF01CP01BF01 /* ConsolePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */; };
 		015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */; };
+		3344556677889900112233CC /* PersistentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4455667788990011223344DD /* PersistentCodable.swift */; };
+		MCS01BF01MCS01BF01MCS001 /* MeetingConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */; };
+		MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */; };
 		02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */; };
 		1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2233445566778899001122BB /* ThemedMarkdownView.swift */; };
 		14E493CCBBE943E380570FF4 /* GoogleCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */; };
@@ -29,7 +32,6 @@
 		2A5E44FE730B27788BAAE31F /* TranscriptDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */; };
 		2D182DD428C529A63EC524BF /* MemoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */; };
 		2D5E9D1C64C59AC43B8B7516 /* MarkdownThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */; };
-		3344556677889900112233CC /* PersistentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4455667788990011223344DD /* PersistentCodable.swift */; };
 		353A6FD06F4DC65BEC7EDDE2 /* MemoryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */; };
 		3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */; };
 		4F8BA5E363FF4AE9809B1699 /* GoogleCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */; };
@@ -130,7 +132,6 @@
 		NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */; };
 		NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */; };
 		PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */; };
-		NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */; };
 		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
 		MF01BF01MF01BF01MF01BF01 /* MemoryFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */; };
@@ -140,7 +141,6 @@
 		FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */; };
 		ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */; };
 		KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */; };
-		FP01BF01FP01BF01FP01BF01 /* FolderPersistentCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */; };
 		SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */; };
 		FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */; };
 
@@ -184,7 +184,6 @@
 		2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeSettingsView.swift; sourceTree = "<group>"; };
 		444945559552A66796B66A73 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		4455667788990011223344DD /* PersistentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodable.swift; sourceTree = "<group>"; };
 		48A9CF845207422686E623CC /* CalendarLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLinkSheet.swift; sourceTree = "<group>"; };
 		50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptDetailView.swift; sourceTree = "<group>"; };
 		52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
@@ -200,6 +199,9 @@
 		834D3E4E2FB74AA39316D24B /* GoogleOAuthTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleOAuthTokenStore.swift; sourceTree = "<group>"; };
 		8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfig.swift; sourceTree = "<group>"; };
+		4455667788990011223344DD /* PersistentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodable.swift; sourceTree = "<group>"; };
+		MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStore.swift; sourceTree = "<group>"; };
+		MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStoreTests.swift; sourceTree = "<group>"; };
 		9CF056EF2F6B3784007276E9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingsView.swift; sourceTree = "<group>"; };
 		GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
@@ -286,7 +288,6 @@
 		NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigTests.swift; sourceTree = "<group>"; };
 		NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingDateEntryTests.swift; sourceTree = "<group>"; };
 		PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleContentViewModelTests.swift; sourceTree = "<group>"; };
-		NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodableTests.swift; sourceTree = "<group>"; };
 		NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCaseTests.swift; sourceTree = "<group>"; };
 		IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLoggerTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
@@ -297,7 +298,6 @@
 		FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderFileTests.swift; sourceTree = "<group>"; };
 		ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDeleteActionTests.swift; sourceTree = "<group>"; };
 		KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelperTests.swift; sourceTree = "<group>"; };
-		FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPersistentCodableTests.swift; sourceTree = "<group>"; };
 		SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStateTests.swift; sourceTree = "<group>"; };
 		FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemTests.swift; sourceTree = "<group>"; };
 
@@ -550,6 +550,7 @@
 				BB22CC33DD44EE55FF660011 /* Folder.swift */,
 				2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */,
 				994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */,
+				MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */,
 				4455667788990011223344DD /* PersistentCodable.swift */,
 				E85222273DB7968BE346AD9C /* MarkdownTheme.swift */,
 				AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */,
@@ -622,7 +623,6 @@
 				NC11NC12NC13NC14NC15NC16 /* NavigationCoordinatorTests.swift */,
 				NN11NN12NN13NN14NN15NN16 /* NextNoteTests.swift */,
 				PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */,
-				NF49NF50NF51NF52NF53NF54 /* PersistentCodableTests.swift */,
 				NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */,
 				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
 				NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */,
@@ -635,7 +635,7 @@
 				FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */,
 				ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */,
 				KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */,
-				FP01RF01FP01RF01FP01RF01 /* FolderPersistentCodableTests.swift */,
+				MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */,
 				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
 				FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */,
 				TT11TT12TT13TT14TT15TT16 /* TemplateUpdateServiceTests.swift */,
@@ -798,6 +798,7 @@
 				02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */,
 				E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */,
 				015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */,
+				MCS01BF01MCS01BF01MCS001 /* MeetingConfigStore.swift in Sources */,
 
 				BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */,
 				CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */,
@@ -895,7 +896,6 @@
 				NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */,
 				VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */,
 				PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */,
-				NT49NT50NT51NT52NT53NT54 /* PersistentCodableTests.swift in Sources */,
 				NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */,
 				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
 				IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */,
@@ -909,7 +909,7 @@
 				FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */,
 				ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */,
 				KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */,
-				FP01BF01FP01BF01FP01BF01 /* FolderPersistentCodableTests.swift in Sources */,
+				MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */,
 				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,
 				FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */,
 				TT01TT02TT03TT04TT05TT06 /* TemplateUpdateServiceTests.swift in Sources */,
@@ -1062,7 +1062,7 @@
 				CODE_SIGN_ENTITLEMENTS = Resources/Maurice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_APP_SANDBOX = NO;
@@ -1077,7 +1077,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				INFOPLIST_KEY_CFBundleDisplayName = "Maurice Debug";
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.debug;
 				PRODUCT_NAME = Maurice;
@@ -1094,7 +1094,7 @@
 				CODE_SIGN_ENTITLEMENTS = Resources/Maurice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_APP_SANDBOX = NO;
@@ -1109,7 +1109,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice;
 				PRODUCT_NAME = Maurice;
 				SDKROOT = macosx;
@@ -1122,14 +1122,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
 				PRODUCT_NAME = MauriceTests;
 				SDKROOT = macosx;
@@ -1143,14 +1143,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxime.maurice.tests;
 				PRODUCT_NAME = MauriceTests;
 				SDKROOT = macosx;

@@ -60,7 +60,7 @@ struct FolderContentView: View {
                 onSave: { action in
                     viewModel.meetingConfig.addAction(action)
                     if let folder = viewModel.currentFolder {
-                        viewModel.meetingConfig.saveAsync(to: folder.url)
+                        MeetingConfigStore.shared.update(viewModel.meetingConfig, for: folder.url)
                     }
                     showAddActionForm = false
                 }

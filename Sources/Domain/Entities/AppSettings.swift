@@ -101,7 +101,7 @@ enum AppSettings {
         rootDirectory.appendingPathComponent("CLAUDE.md")
     }
 
-    private static var mauriceConfigDirectory: URL {
+    static var mauriceConfigDirectory: URL {
         rootDirectory.appendingPathComponent(".maurice", isDirectory: true)
     }
 
@@ -117,5 +117,9 @@ enum AppSettings {
 
     static var searchIndexURL: URL {
         mauriceConfigDirectory.appendingPathComponent("search_index.json")
+    }
+
+    static var meetingConfigsURL: URL {
+        mauriceConfigDirectory.appendingPathComponent("meeting_configs.json")
     }
 }

@@ -66,7 +66,7 @@ final class PeopleContentViewModel {
                         name: personFolder.name,
                         url: personFolder.url,
                         files: [],
-                        icon: MeetingConfig.load(from: personFolder.url).icon,
+                        icon: MeetingConfigStore.shared.config(for: personFolder.url).icon,
                         relativePath: "\(categoryFolder.name)/\(personFolder.name)"
                     )
                 }
@@ -139,7 +139,8 @@ final class PeopleContentViewModel {
                 if !trimmedEvent.isEmpty {
                     var config = MeetingConfig()
                     config.calendarEventName = trimmedEvent
-                    config.save(to: personURL.appendingPathComponent("1-1", isDirectory: true))
+                    let oneOnOneURL = personURL.appendingPathComponent("1-1", isDirectory: true)
+                    MeetingConfigStore.shared.update(config, for: oneOnOneURL)
                 }
             }.value
             loadFolders()
@@ -150,6 +151,7 @@ final class PeopleContentViewModel {
     func deletePerson(_ person: FolderItem) {
         do {
             try FileManager.default.removeItem(at: person.url)
+            MeetingConfigStore.shared.remove(for: person.url)
             if selectedPerson == person.relativePath { selectedPerson = nil }
         } catch {
             IssueLogger.log(.error, "Failed to delete person", context: person.url.path, error: error)

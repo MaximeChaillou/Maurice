@@ -50,7 +50,7 @@ final class RecordingContext {
                       let person = peopleViewModel.selectedPerson {
                 recordingViewModel.subdirectory = "People/\(person)/1-1"
             } else {
-                let name = "Enregistrement \(DateFormatters.dayAndTime.string(from: Date()))"
+                let name = String(localized: "Recording \(DateFormatters.dayAndTime.string(from: Date()))")
                 let created = meetingViewModel.createFolderWithName(name)
                 recordingViewModel.subdirectory = created
                 navigateToMeeting(created)
@@ -95,7 +95,7 @@ final class RecordingContext {
             let meetingsDir = AppSettings.meetingsDirectory
             if let folders = Self.scanDirectory(at: meetingsDir, with: fm) {
                 for folder in folders where folder.hasDirectoryPath {
-                    let config = MeetingConfig.load(from: folder)
+                    let config = MeetingConfigStore.shared.config(for: folder)
                     if let linkedName = config.calendarEventName,
                        linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
                         return folder.lastPathComponent
@@ -111,7 +111,7 @@ final class RecordingContext {
                     for person in people where person.hasDirectoryPath {
                         let oneOnOneDir = person.appendingPathComponent("1-1", isDirectory: true)
                         guard fm.fileExists(atPath: oneOnOneDir.path) else { continue }
-                        let config = MeetingConfig.load(from: oneOnOneDir)
+                        let config = MeetingConfigStore.shared.config(for: oneOnOneDir)
                         if let linkedName = config.calendarEventName,
                            linkedName.localizedCaseInsensitiveCompare(event.summary) == .orderedSame {
                             return "People/\(category.lastPathComponent)/\(person.lastPathComponent)/1-1"
@@ -152,10 +152,10 @@ final class RecordingContext {
             }
 
             // Link calendar event name in config
-            var config = MeetingConfig.load(from: folderURL)
+            var config = MeetingConfigStore.shared.config(for: folderURL)
             if config.calendarEventName == nil {
                 config.calendarEventName = event.summary
-                config.save(to: folderURL)
+                MeetingConfigStore.shared.update(config, for: folderURL)
             }
 
             let fileName = DateFormatters.dayOnly.string(from: Date()) + ".md"

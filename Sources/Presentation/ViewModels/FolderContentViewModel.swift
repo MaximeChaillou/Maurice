@@ -54,7 +54,7 @@ final class FolderContentViewModel {
             for folder in contents.folders {
                 let files = Self.scanFiles(in: folder.url)
                 let dateEntries = await Self.scanDateEntries(in: folder.url)
-                let icon = MeetingConfig.load(from: folder.url).icon
+                let icon = MeetingConfigStore.shared.config(for: folder.url).icon
                 items.append(FolderItem(
                     name: folder.name, url: folder.url, files: files,
                     dateEntries: dateEntries, icon: icon
@@ -106,6 +106,7 @@ final class FolderContentViewModel {
         guard !FileManager.default.fileExists(atPath: newURL.path) else { return false }
         do {
             try FileManager.default.moveItem(at: folder.url, to: newURL)
+            MeetingConfigStore.shared.move(from: folder.url, to: newURL)
             if selectedFolder == folder.name { selectedFolder = trimmed }
             loadFolders()
             return true
@@ -118,6 +119,7 @@ final class FolderContentViewModel {
     func deleteFolder(_ folder: FolderItem) {
         do {
             try FileManager.default.removeItem(at: folder.url)
+            MeetingConfigStore.shared.remove(for: folder.url)
             if selectedFolder == folder.name { selectedFolder = nil }
         } catch {
             IssueLogger.log(.error, "Failed to delete folder", context: folder.url.path, error: error)
@@ -143,7 +145,7 @@ final class FolderContentViewModel {
 
     func loadMeetingConfig(for folderName: String, from url: URL) async {
         let config = await Task.detached {
-            MeetingConfig.load(from: url)
+            MeetingConfigStore.shared.config(for: url)
         }.value
         guard selectedFolder == folderName else { return }
         meetingConfig = config
