@@ -5,14 +5,14 @@ import Foundation
 final class RecordingContext {
     private let recordingViewModel: RecordingViewModel
     private let calendarViewModel: GoogleCalendarViewModel
-    private let meetingViewModel: FolderContentViewModel
+    private let meetingViewModel: MeetingsViewModel
     private let peopleViewModel: PeopleContentViewModel
     private let navigationCoordinator: NavigationCoordinator
 
     init(
         recordingViewModel: RecordingViewModel,
         calendarViewModel: GoogleCalendarViewModel,
-        meetingViewModel: FolderContentViewModel,
+        meetingViewModel: MeetingsViewModel,
         peopleViewModel: PeopleContentViewModel,
         navigationCoordinator: NavigationCoordinator
     ) {

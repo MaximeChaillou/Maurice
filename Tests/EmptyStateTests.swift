@@ -18,20 +18,20 @@ final class EmptyStateTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - FolderContentViewModel empty state
+    // MARK: - MeetingsViewModel empty state
 
-    func testFolderContentViewModelEmptyFolders() {
-        let vm = FolderContentViewModel(directory: tempDir)
+    func testMeetingsViewModelEmptyFolders() {
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         XCTAssertTrue(vm.folders.isEmpty)
         XCTAssertNil(vm.currentFolder)
     }
 
-    func testFolderContentViewModelNonEmpty() async throws {
+    func testMeetingsViewModelNonEmpty() async throws {
         let sub = tempDir.appendingPathComponent("Standup", isDirectory: true)
         try FileManager.default.createDirectory(at: sub, withIntermediateDirectories: true)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 

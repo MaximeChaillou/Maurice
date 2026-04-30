@@ -2,7 +2,7 @@ import XCTest
 @testable import Maurice
 
 @MainActor
-final class FolderContentViewModelTests: XCTestCase {
+final class MeetingsViewModelTests: XCTestCase {
 
     private var tempDir: URL!
     private var originalRootDirectory: String?
@@ -45,7 +45,7 @@ final class FolderContentViewModelTests: XCTestCase {
     // MARK: - Initial state
 
     func testInitialState() {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         XCTAssertTrue(vm.folders.isEmpty)
         XCTAssertNil(vm.selectedFolder)
         XCTAssertNil(vm.selectedFile)
@@ -62,7 +62,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("ProjectA")
         createFile("2024-01-01.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -75,7 +75,7 @@ final class FolderContentViewModelTests: XCTestCase {
         _ = createSubfolder("Apple")
         _ = createSubfolder("Mango")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -88,7 +88,7 @@ final class FolderContentViewModelTests: XCTestCase {
         createFile("2024-01-15.md", in: sub)
         createFile("2024-02-20.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -98,7 +98,7 @@ final class FolderContentViewModelTests: XCTestCase {
     // MARK: - createFolder
 
     func testCreateFolderFromNewFolderName() async throws {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.newFolderName = "New Project"
         vm.isAddingFolder = true
 
@@ -112,7 +112,7 @@ final class FolderContentViewModelTests: XCTestCase {
     }
 
     func testCreateFolderWithEmptyNameDoesNothing() async throws {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.newFolderName = "   "
         vm.createFolder()
         try await Task.sleep(for: .milliseconds(300))
@@ -123,7 +123,7 @@ final class FolderContentViewModelTests: XCTestCase {
     }
 
     func testCreateFolderWithName() async throws {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         let name = vm.createFolderWithName("TestFolder")
 
         XCTAssertEqual(name, "TestFolder")
@@ -139,7 +139,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("OldName")
         createFile("note.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -157,7 +157,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("Folder")
         createFile("note.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -171,7 +171,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("Same")
         createFile("note.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -185,7 +185,7 @@ final class FolderContentViewModelTests: XCTestCase {
         _ = createSubfolder("FolderA")
         _ = createSubfolder("FolderB")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -201,7 +201,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("ToDelete")
         createFile("data.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -216,7 +216,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testDeleteFolderClearsSelectedIfMatch() async throws {
         _ = createSubfolder("Selected")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -231,7 +231,7 @@ final class FolderContentViewModelTests: XCTestCase {
         _ = createSubfolder("Other")
         _ = createSubfolder("ToDelete")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -248,7 +248,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("Meeting")
         createFile("2024-01-01.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -269,7 +269,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let noteFile = FolderFile(id: noteURL, name: "2024-01-01", date: Date(), url: noteURL)
         let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcriptFile: nil)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.deleteDateEntry(entry, noteOnly: true)
 
         // noteOnly doesn't delete transcript (there isn't one anyway)
@@ -285,7 +285,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let noteFile = FolderFile(id: noteURL, name: "2024-01-01", date: Date(), url: noteURL)
         let entry = MeetingDateEntry(dateString: "2024-01-01", date: Date(), noteFile: noteFile, transcriptFile: nil)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.deleteDateEntry(entry, transcriptOnly: true)
 
         // transcriptOnly should NOT delete the note
@@ -297,7 +297,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testUpdateCurrentFolderIcon() async throws {
         _ = createSubfolder("Folder")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -310,7 +310,7 @@ final class FolderContentViewModelTests: XCTestCase {
     }
 
     func testUpdateCurrentFolderIconWithNoSelectionDoesNothing() {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.updateCurrentFolderIcon("star")
         // Should not crash, no folders to update
     }
@@ -322,7 +322,7 @@ final class FolderContentViewModelTests: XCTestCase {
         createFile("2024-01-01.md", in: sub)
         createFile("2024-02-01.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -339,7 +339,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let sub = createSubfolder("Project")
         createFile("2024-01-01.md", in: sub)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -352,7 +352,7 @@ final class FolderContentViewModelTests: XCTestCase {
 
     func testSelectFileAtIndexWithEmptyFolderDoesNothing() {
         let folder = FolderItem(name: "Empty", url: tempDir, files: [])
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.selectFileAtIndex(in: folder)
 
         XCTAssertNil(vm.selectedFile)
@@ -363,7 +363,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testCurrentFolderReturnsMatchingFolder() async throws {
         _ = createSubfolder("Match")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -375,7 +375,7 @@ final class FolderContentViewModelTests: XCTestCase {
     func testCurrentFolderReturnsNilWhenNoMatch() async throws {
         _ = createSubfolder("Folder")
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -384,14 +384,14 @@ final class FolderContentViewModelTests: XCTestCase {
     }
 
     func testCurrentFolderReturnsNilWhenNoSelection() {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         XCTAssertNil(vm.currentFolder)
     }
 
     // MARK: - meetingConfig
 
     func testMeetingConfigDefaultValues() {
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         XCTAssertNil(vm.meetingConfig.icon)
         XCTAssertNil(vm.meetingConfig.calendarEventName)
         XCTAssertEqual(vm.meetingConfig.actions.count, MeetingConfig.defaultActions.count)
@@ -405,7 +405,7 @@ final class FolderContentViewModelTests: XCTestCase {
         createFile("2024-01-01.md", in: source)
         createFile("2024-01-01.transcript", in: source)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -427,7 +427,7 @@ final class FolderContentViewModelTests: XCTestCase {
         createFile("next.md", in: source)
         createFile("2024-01-01.md", in: source)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -446,7 +446,7 @@ final class FolderContentViewModelTests: XCTestCase {
         createFile("2024-01-01.md", in: source)
         createFile(".config.json", in: source)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -467,7 +467,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let destFile = dest.appendingPathComponent("2024-01-01.md")
         try "Dest content".write(to: destFile, atomically: true, encoding: .utf8)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -486,7 +486,7 @@ final class FolderContentViewModelTests: XCTestCase {
         _ = createSubfolder("DestMeeting")
         createFile("2024-01-01.md", in: source)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.loadFolders()
         try await Task.sleep(for: .milliseconds(500))
 
@@ -537,7 +537,7 @@ final class FolderContentViewModelTests: XCTestCase {
             files: []
         )
 
-        let destinations = FolderContentViewModel.listMoveDestinations(excluding: folder)
+        let destinations = MeetingsViewModel.listMoveDestinations(excluding: folder)
         let meetingNames = destinations.filter { $0.section == "Meetings" }.map(\.name)
 
         XCTAssertFalse(meetingNames.contains("Meeting1"))
@@ -575,7 +575,7 @@ final class FolderContentViewModelTests: XCTestCase {
             files: []
         )
 
-        let destinations = FolderContentViewModel.listMoveDestinations(excluding: folder)
+        let destinations = MeetingsViewModel.listMoveDestinations(excluding: folder)
         let peopleDestinations = destinations.filter { $0.section != "Meetings" }
 
         XCTAssertEqual(peopleDestinations.count, 1)
@@ -590,7 +590,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
         MeetingConfigStore.shared.update(configA, for: folderA)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.selectedFolder = "MeetingA"
 
         await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
@@ -607,7 +607,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let configB = MeetingConfig(icon: "🅱️", calendarEventName: "EventB", actions: [])
         MeetingConfigStore.shared.update(configB, for: folderB)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         // User was on A then switched to B before A's load completes.
         vm.selectedFolder = "MeetingB"
         await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
@@ -622,7 +622,7 @@ final class FolderContentViewModelTests: XCTestCase {
         let configA = MeetingConfig(icon: "🅰️", calendarEventName: "EventA", actions: [])
         MeetingConfigStore.shared.update(configA, for: folderA)
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
         vm.selectedFolder = nil
         await vm.loadMeetingConfig(for: "MeetingA", from: folderA)
 
@@ -641,7 +641,7 @@ final class FolderContentViewModelTests: XCTestCase {
             for: folderB
         )
 
-        let vm = FolderContentViewModel(directory: tempDir)
+        let vm = MeetingsViewModel(directory: tempDir)
 
         // Select A, start loading A, then immediately switch to B and load B.
         vm.selectedFolder = "MeetingA"

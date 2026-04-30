@@ -86,12 +86,20 @@
 		EB01EB02EB03EB04EB05EB06 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */; };
 		EE55FF66AA11BB22CC33DD44 /* DirectoryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF66AA11BB22CC33DD44EE55 /* DirectoryScanner.swift */; };
 		F1A2B3C4D5E6F7A8B9C0D1E2 /* CheckboxTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3A4B5C6D7E8F9A0B1C2D3 /* CheckboxTextView.swift */; };
-		F7A8B9C0D1E2F3A4B5C6D7E8 /* FolderContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */; };
+		F7A8B9C0D1E2F3A4B5C6D7E8 /* MeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B9C0D1E2F3A4B5C6D7E8F9 /* MeetingsView.swift */; };
 		FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */; };
-		FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */; };
+		FC01FC02FC03FC04FC05FC06 /* MeetingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC11FC12FC13FC14FC15FC16 /* MeetingsViewModel.swift */; };
 		FF01FF02FF03FF04FF05FF06 /* FolderFileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF11FF12FF13FF14FF15FF16 /* FolderFileEditorView.swift */; };
 		FM01FM02FM03FM04FM05FM06 /* FolderContentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FM11FM12FM13FM14FM15FM16 /* FolderContentModels.swift */; };
 		FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */; };
+		ST01ST02ST03ST04ST05ST06 /* SharedTabComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = ST11ST12ST13ST14ST15ST16 /* SharedTabComponents.swift */; };
+		BC01BC02BC03BC04BC05BC06 /* BreadcrumbBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC11BC12BC13BC14BC15BC16 /* BreadcrumbBar.swift */; };
+		AB01AB02AB03AB04AB05AB06 /* TabActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB11AB12AB13AB14AB15AB16 /* TabActionButtons.swift */; };
+		AP01AP02AP03AP04AP05AP06 /* AddPersonSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AP11AP12AP13AP14AP15AP16 /* AddPersonSheet.swift */; };
+		TD01TD02TD03TD04TD05TD06 /* TabDocHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD11TD12TD13TD14TD15TD16 /* TabDocHeader.swift */; };
+		LE01LE02LE03LE04LE05LE06 /* LinkedEventInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = LE11LE12LE13LE14LE15LE16 /* LinkedEventInfo.swift */; };
+		SD01SD02SD03SD04SD05SD06 /* SidebarDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = SD11SD12SD13SD14SD15SD16 /* SidebarDateFormatter.swift */; };
+		MA01MA02MA03MA04MA05MA06 /* MeetingActionsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = MA11MA12MA13MA14MA15MA16 /* MeetingActionsBar.swift */; };
 		FW01FW02FW03FW04FW05FW06 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FW11FW12FW13FW14FW15FW16 /* FileWatcher.swift */; };
 		IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */; };
 		NA01NA02NA03NA04NA05NA06 /* NavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = NA11NA12NA13NA14NA15NA16 /* NavigationCoordinator.swift */; };
@@ -113,7 +121,7 @@
 		UC01UC02UC03UC04UC05UC06 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = UC11UC12UC13UC14UC15UC16 /* UpdateChecker.swift */; };
 		VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */; };
 		VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */; };
-		VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */; };
+		VM04T004B004C004D004E004 /* MeetingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */; };
 		VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */; };
 		NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */; };
 		NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */; };
@@ -143,8 +151,11 @@
 		KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */; };
 		SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */; };
 		FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */; };
+		LE01BF01LE01BF01LE01BF01 /* LinkedEventInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */; };
+		SD01BF01SD01BF01SD01BF01 /* SidebarDateFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */; };
 
 		WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */; };
+		TA01TA02TA03TA04TA05TA06 /* TabAmbianceBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = TA11TA12TA13TA14TA15TA16 /* TabAmbianceBackground.swift */; };
 		FN01BF01BF01BF01BF01BF01 /* FiraCodeNerdFont-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */; };
 		FN02BF02BF02BF02BF02BF02 /* FiraCodeNerdFont-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */; };
 		FN03BF03BF03BF03BF03BF03 /* FiraCodeNerdFont-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */; };
@@ -211,7 +222,7 @@
 		A149458BA1EDDBB22708DBEE /* TranscriptionEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEntry.swift; sourceTree = "<group>"; };
 		A26DEF28AB727905D3069845 /* Transcription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transcription.swift; sourceTree = "<group>"; };
 		A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryFile.swift; sourceTree = "<group>"; };
-		A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentView.swift; sourceTree = "<group>"; };
+		A8B9C0D1E2F3A4B5C6D7E8F9 /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsView.swift; sourceTree = "<group>"; };
 		A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModel.swift; sourceTree = "<group>"; };
 		ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
@@ -246,11 +257,19 @@
 		F41DF75230BDB23FDEA3D4B4 /* Maurice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maurice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModel.swift; sourceTree = "<group>"; };
 		FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
-		FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModel.swift; sourceTree = "<group>"; };
+		FC11FC12FC13FC14FC15FC16 /* MeetingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsViewModel.swift; sourceTree = "<group>"; };
 		FF11FF12FF13FF14FF15FF16 /* FolderFileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderFileEditorView.swift; sourceTree = "<group>"; };
 		FF66AA11BB22CC33DD44EE55 /* DirectoryScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScanner.swift; sourceTree = "<group>"; };
 		FM11FM12FM13FM14FM15FM16 /* FolderContentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentModels.swift; sourceTree = "<group>"; };
 		FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
+		ST11ST12ST13ST14ST15ST16 /* SharedTabComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTabComponents.swift; sourceTree = "<group>"; };
+		BC11BC12BC13BC14BC15BC16 /* BreadcrumbBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadcrumbBar.swift; sourceTree = "<group>"; };
+		AB11AB12AB13AB14AB15AB16 /* TabActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabActionButtons.swift; sourceTree = "<group>"; };
+		AP11AP12AP13AP14AP15AP16 /* AddPersonSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonSheet.swift; sourceTree = "<group>"; };
+		TD11TD12TD13TD14TD15TD16 /* TabDocHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabDocHeader.swift; sourceTree = "<group>"; };
+		LE11LE12LE13LE14LE15LE16 /* LinkedEventInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedEventInfo.swift; sourceTree = "<group>"; };
+		SD11SD12SD13SD14SD15SD16 /* SidebarDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDateFormatter.swift; sourceTree = "<group>"; };
+		MA11MA12MA13MA14MA15MA16 /* MeetingActionsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingActionsBar.swift; sourceTree = "<group>"; };
 		FW11FW12FW13FW14FW15FW16 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
 		IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDocumentView.swift; sourceTree = "<group>"; };
 		LOCALXCCONFIG00000000000A /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
@@ -300,12 +319,15 @@
 		KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelperTests.swift; sourceTree = "<group>"; };
 		SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStateTests.swift; sourceTree = "<group>"; };
 		FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemTests.swift; sourceTree = "<group>"; };
+		LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedEventInfoTests.swift; sourceTree = "<group>"; };
+		SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDateFormatterTests.swift; sourceTree = "<group>"; };
 
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
 		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
-		VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderContentViewModelTests.swift; sourceTree = "<group>"; };
+		VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsViewModelTests.swift; sourceTree = "<group>"; };
 		VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModelTests.swift; sourceTree = "<group>"; };
 		WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveBackground.swift; sourceTree = "<group>"; };
+		TA11TA12TA13TA14TA15TA16 /* TabAmbianceBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabAmbianceBackground.swift; sourceTree = "<group>"; };
 		FN01FR01FR01FR01FR01FR01 /* FiraCodeNerdFont-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Regular.ttf"; sourceTree = "<group>"; };
 		FN02FR02FR02FR02FR02FR02 /* FiraCodeNerdFont-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-Bold.ttf"; sourceTree = "<group>"; };
 		FN03FR03FR03FR03FR03FR03 /* FiraCodeNerdFont-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCodeNerdFont-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -436,7 +458,7 @@
 			children = (
 				DD44EE55FF66AA11BB22CC33 /* FolderNavigationStack.swift */,
 				FM11FM12FM13FM14FM15FM16 /* FolderContentModels.swift */,
-				FC11FC12FC13FC14FC15FC16 /* FolderContentViewModel.swift */,
+				FC11FC12FC13FC14FC15FC16 /* MeetingsViewModel.swift */,
 				F53B04E0692247039D7920B0 /* GoogleCalendarViewModel.swift */,
 				HS11HS12HS13HS14HS15HS16 /* HomeSchedule.swift */,
 				A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */,
@@ -508,8 +530,14 @@
 				GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */,
 				SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */,
 				FT11FT12FT13FT14FT15FT16 /* FloatingTabBar.swift */,
+				ST11ST12ST13ST14ST15ST16 /* SharedTabComponents.swift */,
+				BC11BC12BC13BC14BC15BC16 /* BreadcrumbBar.swift */,
+				AB11AB12AB13AB14AB15AB16 /* TabActionButtons.swift */,
+				AP11AP12AP13AP14AP15AP16 /* AddPersonSheet.swift */,
+				TD11TD12TD13TD14TD15TD16 /* TabDocHeader.swift */,
+				MA11MA12MA13MA14MA15MA16 /* MeetingActionsBar.swift */,
 				8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */,
-				A8B9C0D1E2F3A4B5C6D7E8F9 /* FolderContentView.swift */,
+				A8B9C0D1E2F3A4B5C6D7E8F9 /* MeetingsView.swift */,
 				FF11FF12FF13FF14FF15FF16 /* FolderFileEditorView.swift */,
 				9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */,
 				DN11DN12DN13DN14DN15DN16 /* DateNavigationComponents.swift */,
@@ -531,6 +559,7 @@
 				2233445566778899001122BB /* ThemedMarkdownView.swift */,
 				50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */,
 				WB11WB12WB13WB14WB15WB16 /* WaveBackground.swift */,
+				TA11TA12TA13TA14TA15TA16 /* TabAmbianceBackground.swift */,
 				PD11PD12PD13PD14PD15PD16 /* PersonDetailView.swift */,
 				PV11PV12PV13PV14PV15PV16 /* PeopleView.swift */,
 				IM11IM12IM13IM14IM15IM16 /* ImportDocumentView.swift */,
@@ -549,6 +578,8 @@
 				FF66AA11BB22CC33DD44EE55 /* DirectoryScanner.swift */,
 				BB22CC33DD44EE55FF660011 /* Folder.swift */,
 				2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */,
+				LE11LE12LE13LE14LE15LE16 /* LinkedEventInfo.swift */,
+				SD11SD12SD13SD14SD15SD16 /* SidebarDateFormatter.swift */,
 				994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */,
 				MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */,
 				4455667788990011223344DD /* PersistentCodable.swift */,
@@ -607,7 +638,7 @@
 				NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */,
 				TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */,
 				NF19NF20NF21NF22NF23NF24 /* FileTranscriptionStorageTests.swift */,
-				VM04F004B004C004D004E004 /* FolderContentViewModelTests.swift */,
+				VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */,
 				NF25NF26NF27NF28NF29NF30 /* FolderNavigationStackTests.swift */,
 				NF31NF32NF33NF34NF35NF36 /* GoogleCalendarServiceTests.swift */,
 				GN11GN12GN13GN14GN15GN16 /* GoogleCalendarServiceNetworkTests.swift */,
@@ -638,6 +669,8 @@
 				MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */,
 				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
 				FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */,
+				LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */,
+				SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */,
 				TT11TT12TT13TT14TT15TT16 /* TemplateUpdateServiceTests.swift */,
 			);
 			path = Tests;
@@ -834,7 +867,7 @@
 				6071ADB5BD2B81A0FB03B264 /* TranscriptionEvent.swift in Sources */,
 				A2B3C4D5E6F7A8B9C0D1E2F3 /* SettingsView.swift in Sources */,
 				D5E6F7A8B9C0D1E2F3A4B5C6 /* AppSettings.swift in Sources */,
-				F7A8B9C0D1E2F3A4B5C6D7E8 /* FolderContentView.swift in Sources */,
+				F7A8B9C0D1E2F3A4B5C6D7E8 /* MeetingsView.swift in Sources */,
 				FM01FM02FM03FM04FM05FM06 /* FolderContentModels.swift in Sources */,
 				FF01FF02FF03FF04FF05FF06 /* FolderFileEditorView.swift in Sources */,
 				A1A2A3A4A5A6A7A8A9A0A1A2 /* MeetingSkillConfig.swift in Sources */,
@@ -845,11 +878,20 @@
 				CC33DD44EE55FF66AA11BB22 /* FolderNavigationStack.swift in Sources */,
 				DF01DF02DF03DF04DF05DF06 /* DateFormatters.swift in Sources */,
 				EE55FF66AA11BB22CC33DD44 /* DirectoryScanner.swift in Sources */,
-				FC01FC02FC03FC04FC05FC06 /* FolderContentViewModel.swift in Sources */,
+				FC01FC02FC03FC04FC05FC06 /* MeetingsViewModel.swift in Sources */,
 				NA01NA02NA03NA04NA05NA06 /* NavigationCoordinator.swift in Sources */,
 				FT01FT02FT03FT04FT05FT06 /* FloatingTabBar.swift in Sources */,
+				ST01ST02ST03ST04ST05ST06 /* SharedTabComponents.swift in Sources */,
+				BC01BC02BC03BC04BC05BC06 /* BreadcrumbBar.swift in Sources */,
+				AB01AB02AB03AB04AB05AB06 /* TabActionButtons.swift in Sources */,
+				AP01AP02AP03AP04AP05AP06 /* AddPersonSheet.swift in Sources */,
+				TD01TD02TD03TD04TD05TD06 /* TabDocHeader.swift in Sources */,
+				MA01MA02MA03MA04MA05MA06 /* MeetingActionsBar.swift in Sources */,
+				LE01LE02LE03LE04LE05LE06 /* LinkedEventInfo.swift in Sources */,
+				SD01SD02SD03SD04SD05SD06 /* SidebarDateFormatter.swift in Sources */,
 				FA01FA02FA03FA04FA05FA06 /* FloatingActionBar.swift in Sources */,
 				WB01WB02WB03WB04WB05WB06 /* WaveBackground.swift in Sources */,
+				TA01TA02TA03TA04TA05TA06 /* TabAmbianceBackground.swift in Sources */,
 				SN01SN02SN03SN04SN05SN06 /* SubfolderNavigationView.swift in Sources */,
 				SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */,
 				SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */,
@@ -885,7 +927,7 @@
 				NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */,
 				TR01TR02TR03TR04TR05TR06 /* DirectoryScannerRecursiveTests.swift in Sources */,
 				NT19NT20NT21NT22NT23NT24 /* FileTranscriptionStorageTests.swift in Sources */,
-				VM04T004B004C004D004E004 /* FolderContentViewModelTests.swift in Sources */,
+				VM04T004B004C004D004E004 /* MeetingsViewModelTests.swift in Sources */,
 				NT25NT26NT27NT28NT29NT30 /* FolderNavigationStackTests.swift in Sources */,
 				NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */,
 				GN01GN02GN03GN04GN05GN06 /* GoogleCalendarServiceNetworkTests.swift in Sources */,
@@ -912,6 +954,8 @@
 				MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */,
 				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,
 				FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */,
+				LE01BF01LE01BF01LE01BF01 /* LinkedEventInfoTests.swift in Sources */,
+				SD01BF01SD01BF01SD01BF01 /* SidebarDateFormatterTests.swift in Sources */,
 				TT01TT02TT03TT04TT05TT06 /* TemplateUpdateServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -186,6 +186,140 @@ final class MeetingConfigStoreTests: XCTestCase {
         XCTAssertNil(MeetingConfigStore.shared.config(for: standup).icon)
     }
 
+    // MARK: - Notifications
+
+    /// Awaits the next `meetingConfigDidChange` notification, returning its
+    /// `userInfo`. Subscribes BEFORE the action so the post is not missed.
+    private func captureNextChange(
+        timeout: TimeInterval = 1.0,
+        action: () -> Void
+    ) async -> [AnyHashable: Any]? {
+        let exp = expectation(description: "meetingConfigDidChange")
+        nonisolated(unsafe) var captured: [AnyHashable: Any]?
+        let token = NotificationCenter.default.addObserver(
+            forName: .meetingConfigDidChange,
+            object: nil,
+            queue: .main
+        ) { note in
+            captured = note.userInfo ?? [:]
+            exp.fulfill()
+        }
+        defer { NotificationCenter.default.removeObserver(token) }
+        action()
+        await fulfillment(of: [exp], timeout: timeout)
+        return captured
+    }
+
+    func testUpdatePostsChangeNotificationWithFolderKey() async throws {
+        await MeetingConfigStore.shared.bootstrap()
+        let folder = makeFolder("Meetings/Standup")
+
+        let info = await captureNextChange {
+            MeetingConfigStore.shared.update(MeetingConfig(icon: "🚀", actions: []), for: folder)
+        }
+
+        XCTAssertEqual(info?["folderKey"] as? String, "Meetings/Standup")
+    }
+
+    func testRemovePostsChangeNotificationWithFolderKey() async throws {
+        await MeetingConfigStore.shared.bootstrap()
+        let folder = makeFolder("Meetings/Standup")
+        MeetingConfigStore.shared.update(MeetingConfig(icon: "🚀", actions: []), for: folder)
+        try await waitForPersist()
+
+        let info = await captureNextChange {
+            MeetingConfigStore.shared.remove(for: folder)
+        }
+
+        XCTAssertEqual(info?["folderKey"] as? String, "Meetings/Standup")
+    }
+
+    func testMovePostsChangeNotificationWithOldAndNewKeys() async throws {
+        await MeetingConfigStore.shared.bootstrap()
+        let oldFolder = makeFolder("People/Team/Alice")
+        MeetingConfigStore.shared.update(MeetingConfig(icon: "👤", actions: []), for: oldFolder)
+        try await waitForPersist()
+
+        let newFolder = tempRoot.appendingPathComponent("People/Team/Alicia", isDirectory: true)
+        let info = await captureNextChange {
+            MeetingConfigStore.shared.move(from: oldFolder, to: newFolder)
+        }
+
+        XCTAssertEqual(info?["oldKey"] as? String, "People/Team/Alice")
+        XCTAssertEqual(info?["newKey"] as? String, "People/Team/Alicia")
+    }
+
+    func testBootstrapPostsBulkReloadNotification() async throws {
+        // Pre-populate disk so bootstrap loads from disk (replace path).
+        let centralURL = AppSettings.meetingConfigsURL
+        try FileManager.default.createDirectory(
+            at: centralURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try Data("{}".utf8).write(to: centralURL, options: .atomic)
+        MeetingConfigStore.shared.reset()
+
+        let info = await captureNextChange {
+            Task { await MeetingConfigStore.shared.bootstrap() }
+        }
+
+        // Bulk reload: empty userInfo (no folderKey).
+        XCTAssertNil(info?["folderKey"])
+        XCTAssertNil(info?["oldKey"])
+        XCTAssertNil(info?["newKey"])
+    }
+
+    // MARK: - Notification.affectsMeetingConfig
+
+    func testAffectsMeetingConfigMatchesUpdateKey() {
+        let folder = tempRoot.appendingPathComponent("Meetings/Standup", isDirectory: true)
+        let note = Notification(
+            name: .meetingConfigDidChange,
+            object: nil,
+            userInfo: ["folderKey": "Meetings/Standup"]
+        )
+        XCTAssertTrue(note.affectsMeetingConfig(for: folder))
+    }
+
+    func testAffectsMeetingConfigMatchesMoveOldKey() {
+        let folder = tempRoot.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        let note = Notification(
+            name: .meetingConfigDidChange,
+            object: nil,
+            userInfo: ["oldKey": "People/Team/Alice", "newKey": "People/Team/Alicia"]
+        )
+        XCTAssertTrue(note.affectsMeetingConfig(for: folder))
+    }
+
+    func testAffectsMeetingConfigMatchesMoveNewKey() {
+        let folder = tempRoot.appendingPathComponent("People/Team/Alicia", isDirectory: true)
+        let note = Notification(
+            name: .meetingConfigDidChange,
+            object: nil,
+            userInfo: ["oldKey": "People/Team/Alice", "newKey": "People/Team/Alicia"]
+        )
+        XCTAssertTrue(note.affectsMeetingConfig(for: folder))
+    }
+
+    func testAffectsMeetingConfigDoesNotMatchUnrelatedKey() {
+        let folder = tempRoot.appendingPathComponent("Meetings/Other", isDirectory: true)
+        let note = Notification(
+            name: .meetingConfigDidChange,
+            object: nil,
+            userInfo: ["folderKey": "Meetings/Standup"]
+        )
+        XCTAssertFalse(note.affectsMeetingConfig(for: folder))
+    }
+
+    func testAffectsMeetingConfigMatchesBulkReloadWhenUserInfoEmpty() {
+        let folder = tempRoot.appendingPathComponent("Meetings/Anything", isDirectory: true)
+        let emptyInfo = Notification(name: .meetingConfigDidChange, object: nil, userInfo: [:])
+        XCTAssertTrue(emptyInfo.affectsMeetingConfig(for: folder))
+
+        let nilInfo = Notification(name: .meetingConfigDidChange, object: nil, userInfo: nil)
+        XCTAssertTrue(nilInfo.affectsMeetingConfig(for: folder))
+    }
+
     // MARK: - Key derivation
 
     func testRelativeKeyForRootSubfolder() {

@@ -8,7 +8,7 @@ struct MauriceApp: App {
     @State private var coordinator = NavigationCoordinator()
     @State private var appTheme = AppTheme.load()
     @AppStorage(AppSettings.appearanceModeKey) private var appearanceMode = "system"
-    @State private var meetingViewModel = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
+    @State private var meetingViewModel = MeetingsViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
     @State private var searchService = SemanticSearchService()
     @State private var showSearch = false
@@ -36,7 +36,7 @@ struct MauriceApp: App {
         let recVM = RecordingViewModel(recordingUseCase: useCase)
         let nav = NavigationCoordinator()
         let calVM = GoogleCalendarViewModel()
-        let meetVM = FolderContentViewModel(directory: AppSettings.meetingsDirectory)
+        let meetVM = MeetingsViewModel(directory: AppSettings.meetingsDirectory)
         let pplVM = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
 
         _recordingViewModel = State(initialValue: recVM)
@@ -56,12 +56,12 @@ struct MauriceApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                WaveBackground(
-                    hue: coordinator.showHome ? appTheme.homeHue : appTheme.hue(for: coordinator.activeTab),
-                    saturation: 1
+                TabAmbianceBackground(
+                    ambiance: TabAmbiance.resolve(
+                        showHome: coordinator.showHome,
+                        activeTab: coordinator.activeTab
+                    )
                 )
-                .animation(.easeInOut(duration: 0.6), value: coordinator.activeTab)
-                .animation(.easeInOut(duration: 0.6), value: coordinator.showHome)
 
                 VStack(spacing: 0) {
                     FloatingTabBar(
@@ -71,8 +71,6 @@ struct MauriceApp: App {
                         onTabTap: { coordinator.showHome = false },
                         onSearchTap: { showSearch = true }
                     )
-                        .padding(.top, 12)
-                        .padding(.bottom, 8)
 
                     Group {
                         if coordinator.showHome {
@@ -90,17 +88,17 @@ struct MauriceApp: App {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
                     .padding(.horizontal, 16)
-
+                    .padding(.bottom, 16)
+                }
+                .overlay(alignment: .bottom) {
                     FloatingActionBar(
                         viewModel: recordingViewModel,
                         onRecordTap: { recordingContext.handleRecordTap() },
                         contextTitle: recordContextTitle,
                         contextSubtitle: recordContextSubtitle
                     )
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.bottom, 12)
                 }
                 .overlay(alignment: .bottomTrailing) {
                     ConsolePanel(viewModel: consoleViewModel)
@@ -173,7 +171,7 @@ struct MauriceApp: App {
             }
             .withErrorBanner()
         }
-        .defaultSize(width: 1100, height: 700)
+        .defaultSize(width: 1300, height: 800)
         .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .appSettings) {
@@ -280,14 +278,17 @@ struct MauriceApp: App {
     private var tabContent: some View {
         switch coordinator.activeTab {
         case .meeting:
-            FolderContentView(
+            MeetingsView(
                 emptyIcon: "calendar",
                 emptyTitle: "No meeting selected",
                 markdownTheme: appTheme.markdown,
                 navigateByDate: true,
+                groupByDate: true,
                 showSkillConfig: true,
                 recordingViewModel: recordingViewModel,
                 consoleViewModel: consoleViewModel,
+                calendarViewModel: calendarViewModel,
+                now: tickDate,
                 viewModel: meetingViewModel
             )
         case .people:
@@ -295,6 +296,8 @@ struct MauriceApp: App {
                 markdownTheme: appTheme.markdown,
                 recordingViewModel: recordingViewModel,
                 consoleViewModel: consoleViewModel,
+                calendarViewModel: calendarViewModel,
+                now: tickDate,
                 viewModel: peopleViewModel
             )
         case .task:
@@ -317,7 +320,7 @@ private struct SettingsMenuButton: View {
 private struct SearchOverlay: View {
     @Binding var showSearch: Bool
     let coordinator: NavigationCoordinator
-    let meetingViewModel: FolderContentViewModel
+    let meetingViewModel: MeetingsViewModel
     let peopleViewModel: PeopleContentViewModel
     let searchService: SemanticSearchService
     @Environment(\.openWindow) private var openWindow

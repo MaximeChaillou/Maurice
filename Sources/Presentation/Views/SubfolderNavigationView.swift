@@ -12,6 +12,7 @@ struct SubfolderNavigationView: View {
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var consoleViewModel: ConsoleViewModel?
     var subfolderURL: URL?
+    var leadingSegments: [BreadcrumbSegment] = []
     var onCreate: () -> Void
     var onDelete: (FolderFile) -> Void
 
@@ -45,6 +46,16 @@ struct SubfolderNavigationView: View {
 
     private var emptyState: some View {
         VStack {
+            if !leadingSegments.isEmpty {
+                HStack(spacing: 8) {
+                    BreadcrumbBar(segments: leadingSegments)
+                    Spacer()
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                Divider().opacity(0.5)
+            }
+
             Spacer()
             if let emptyDescription {
                 ContentUnavailableView(
@@ -86,58 +97,57 @@ struct SubfolderNavigationView: View {
         let safeIndex = min(index, files.count - 1)
         let file = files[max(safeIndex, 0)]
 
-        header(for: file)
-        Divider()
+        toolbar(for: file)
+        Divider().opacity(0.5)
         FolderFileEditorView(file: file, markdownTheme: markdownTheme).id(file.id)
     }
 
-    private func header(for file: FolderFile) -> some View {
-        HStack {
-            navigationButtons
-            Spacer()
-            Text(file.name).font(.headline)
-            Spacer()
+    private func toolbar(for file: FolderFile) -> some View {
+        HStack(spacing: 8) {
+            BreadcrumbBar(segments: leadingSegments + [fileSegment(active: file)])
+            Spacer(minLength: 8)
             actionButtons(for: file)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 14)
         .padding(.vertical, 8)
     }
 
-    private var navigationButtons: some View {
-        HStack {
-            Button {
-                if index < files.count - 1 { index += 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
+    private func fileSegment(active: FolderFile) -> BreadcrumbSegment {
+        BreadcrumbSegment(
+            id: "subfolder-file",
+            label: "\(active.name).md",
+            kind: .file,
+            popoverTitle: String(localized: "Files"),
+            emptyMessage: String(localized: "No other files"),
+            groups: [BreadcrumbSiblingGroup(
+                id: "all",
+                title: nil,
+                siblings: files.map { f in
+                    BreadcrumbSibling(
+                        id: f.url.path,
+                        label: "\(f.name).md",
+                        leading: .symbol("doc.text"),
+                        active: f.url == active.url
+                    )
+                }
+            )],
+            onPick: { path in
+                if let idx = files.firstIndex(where: { $0.url.path == path }) {
+                    index = idx
+                }
             }
-            .buttonStyle(.plain)
-            .disabled(index >= files.count - 1)
-
-            Button {
-                if index > 0 { index -= 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
-            }
-            .buttonStyle(.plain)
-            .disabled(index <= 0)
-        }
+        )
     }
 
     private func actionButtons(for file: FolderFile) -> some View {
-        HStack {
+        HStack(spacing: 6) {
             Button { isAdding = true } label: {
                 Image(systemName: "plus")
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
                     .contentShape(Circle())
-                    .glassEffect(.regular.interactive(), in: .circle)
             }
             .buttonStyle(.plain)
+            .help(addLabel)
 
             if let console = consoleViewModel, let folderURL = subfolderURL {
                 Button {
@@ -147,9 +157,8 @@ struct SubfolderNavigationView: View {
                     )
                 } label: {
                     Image(systemName: "square.and.arrow.down")
-                        .frame(width: 32, height: 32)
+                        .frame(width: 28, height: 28)
                         .contentShape(Circle())
-                        .glassEffect(.regular.interactive(), in: .circle)
                 }
                 .buttonStyle(.plain)
                 .help("Import a file or link")
@@ -162,14 +171,13 @@ struct SubfolderNavigationView: View {
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.body)
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
                     .contentShape(Circle())
             }
             .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .circle)
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
-            .frame(width: 32, height: 32)
+            .frame(width: 28, height: 28)
         }
     }
 }

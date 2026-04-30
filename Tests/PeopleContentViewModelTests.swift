@@ -294,6 +294,217 @@ final class PeopleContentViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.hasAnyPerson)
     }
 
+    // MARK: - Auto-select first person
+
+    func testLoadFoldersAutoSelectsFirstPersonWhenNoSelection() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        XCTAssertNil(viewModel.selectedPerson)
+        await loadAndWait()
+
+        XCTAssertEqual(viewModel.selectedPerson, "Team/Alice",
+                       "First person should be auto-selected when none was selected")
+    }
+
+    func testLoadFoldersDoesNotOverrideExistingSelection() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        let bobDir = tempDir.appendingPathComponent("People/Team/Bob", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+        try fm.createDirectory(at: bobDir, withIntermediateDirectories: true)
+
+        viewModel.selectedPerson = "Team/Bob"
+        await loadAndWait()
+
+        XCTAssertEqual(viewModel.selectedPerson, "Team/Bob",
+                       "Existing selection must not be overridden by auto-select")
+    }
+
+    func testLoadFoldersWithEmptyDirectoryLeavesSelectionNil() async throws {
+        XCTAssertNil(viewModel.selectedPerson)
+        await loadAndWait()
+        XCTAssertNil(viewModel.selectedPerson)
+    }
+
+    // MARK: - renamePerson
+
+    func testRenamePersonSuccess() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        viewModel.selectedPerson = "Team/Alice"
+        let person = viewModel.currentPerson!
+
+        let result = viewModel.renamePerson(person, to: "Alicia")
+
+        XCTAssertTrue(result)
+        XCTAssertFalse(fm.fileExists(atPath: aliceDir.path))
+        let renamedDir = tempDir.appendingPathComponent("People/Team/Alicia", isDirectory: true)
+        XCTAssertTrue(fm.fileExists(atPath: renamedDir.path))
+        XCTAssertEqual(viewModel.selectedPerson, "Team/Alicia",
+                       "Selection should follow the renamed person")
+    }
+
+    func testRenamePersonWithEmptyNameReturnsFalse() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        let person = viewModel.categories.first!.people.first!
+
+        XCTAssertFalse(viewModel.renamePerson(person, to: "   "))
+        XCTAssertTrue(fm.fileExists(atPath: aliceDir.path))
+    }
+
+    func testRenamePersonWithSameNameReturnsFalse() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        let person = viewModel.categories.first!.people.first!
+
+        XCTAssertFalse(viewModel.renamePerson(person, to: "Alice"))
+    }
+
+    func testRenamePersonToExistingNameReturnsFalse() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        let bobDir = tempDir.appendingPathComponent("People/Team/Bob", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+        try fm.createDirectory(at: bobDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        let alice = viewModel.categories.first!.people.first { $0.name == "Alice" }!
+
+        XCTAssertFalse(viewModel.renamePerson(alice, to: "Bob"))
+        XCTAssertTrue(fm.fileExists(atPath: aliceDir.path),
+                      "Original folder must be preserved when target already exists")
+    }
+
+    func testRenamePersonRekeysMeetingConfig() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        let oneOnOneDir = aliceDir.appendingPathComponent("1-1", isDirectory: true)
+        try fm.createDirectory(at: oneOnOneDir, withIntermediateDirectories: true)
+
+        MeetingConfigStore.shared.update(
+            MeetingConfig(calendarEventName: "1-1 Alice", actions: []),
+            for: oneOnOneDir
+        )
+
+        // Pre-condition: the config is in the store under the Alice key.
+        XCTAssertEqual(
+            MeetingConfigStore.shared.config(for: oneOnOneDir).calendarEventName,
+            "1-1 Alice",
+            "Test pre-condition: config must be stored before rename"
+        )
+
+        // Build the FolderItem directly with the URL we know the rename will use,
+        // so the test isn't coupled to DirectoryScanner's URL form.
+        let person = FolderItem(
+            name: "Alice",
+            url: aliceDir,
+            files: [],
+            relativePath: "Team/Alice"
+        )
+        viewModel.selectedPerson = "Team/Alice"
+
+        XCTAssertTrue(viewModel.renamePerson(person, to: "Alicia"))
+
+        let newOneOnOne = tempDir.appendingPathComponent("People/Team/Alicia/1-1", isDirectory: true)
+        XCTAssertEqual(
+            MeetingConfigStore.shared.config(for: newOneOnOne).calendarEventName,
+            "1-1 Alice",
+            "Config must be re-keyed under the renamed person"
+        )
+        XCTAssertNil(
+            MeetingConfigStore.shared.config(for: oneOnOneDir).calendarEventName,
+            "Config under the old key must no longer be found"
+        )
+    }
+
+    func testRenamePersonKeepsSelectionWhenDifferentPersonRenamed() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        let bobDir = tempDir.appendingPathComponent("People/Team/Bob", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+        try fm.createDirectory(at: bobDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        viewModel.selectedPerson = "Team/Alice"
+        let bob = viewModel.categories.first!.people.first { $0.name == "Bob" }!
+
+        XCTAssertTrue(viewModel.renamePerson(bob, to: "Bobby"))
+
+        XCTAssertEqual(viewModel.selectedPerson, "Team/Alice",
+                       "Renaming a different person must not change selection")
+    }
+
+    // MARK: - updatePersonIcon
+
+    func testUpdatePersonIconStoresIconInConfig() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        await loadAndWait()
+        let person = viewModel.categories.first!.people.first!
+
+        viewModel.updatePersonIcon(person, icon: "👩‍💻")
+        try await Task.sleep(for: .milliseconds(150))
+
+        XCTAssertEqual(MeetingConfigStore.shared.config(for: aliceDir).icon, "👩‍💻")
+    }
+
+    func testUpdatePersonIconClearsIconWhenNil() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        MeetingConfigStore.shared.update(
+            MeetingConfig(icon: "👩‍💻", actions: []),
+            for: aliceDir
+        )
+        try await Task.sleep(for: .milliseconds(150))
+
+        await loadAndWait()
+        let person = viewModel.categories.first!.people.first!
+
+        viewModel.updatePersonIcon(person, icon: nil)
+        try await Task.sleep(for: .milliseconds(150))
+
+        XCTAssertNil(MeetingConfigStore.shared.config(for: aliceDir).icon)
+    }
+
+    func testUpdatePersonIconPreservesOtherConfigFields() async throws {
+        let fm = FileManager.default
+        let aliceDir = tempDir.appendingPathComponent("People/Team/Alice", isDirectory: true)
+        try fm.createDirectory(at: aliceDir, withIntermediateDirectories: true)
+
+        MeetingConfigStore.shared.update(
+            MeetingConfig(calendarEventName: "1-1 Alice", actions: []),
+            for: aliceDir
+        )
+        try await Task.sleep(for: .milliseconds(150))
+
+        await loadAndWait()
+        let person = viewModel.categories.first!.people.first!
+
+        viewModel.updatePersonIcon(person, icon: "🌟")
+        try await Task.sleep(for: .milliseconds(150))
+
+        let config = MeetingConfigStore.shared.config(for: aliceDir)
+        XCTAssertEqual(config.icon, "🌟")
+        XCTAssertEqual(config.calendarEventName, "1-1 Alice",
+                       "Updating icon must not wipe calendarEventName")
+    }
+
     // MARK: - Helpers
 
     private func loadAndWait() async {

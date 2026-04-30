@@ -83,6 +83,11 @@ final class PeopleContentViewModel {
         }.value
 
         categories = result
+
+        if selectedPerson == nil,
+           let firstPerson = categories.lazy.flatMap(\.people).first {
+            selectedPerson = firstPerson.relativePath
+        }
     }
 
     func createCategory(name: String) {
@@ -157,6 +162,38 @@ final class PeopleContentViewModel {
             IssueLogger.log(.error, "Failed to delete person", context: person.url.path, error: error)
             errorMessage = String(localized: "Unable to delete '\(person.name)': \(error.localizedDescription)")
         }
+        loadFolders()
+    }
+
+    @discardableResult
+    func renamePerson(_ person: FolderItem, to newName: String) -> Bool {
+        let trimmed = newName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != person.name else { return false }
+        let parentURL = person.url.deletingLastPathComponent()
+        let newURL = parentURL.appendingPathComponent(trimmed, isDirectory: true)
+        guard !FileManager.default.fileExists(atPath: newURL.path) else { return false }
+        do {
+            try FileManager.default.moveItem(at: person.url, to: newURL)
+            MeetingConfigStore.shared.move(from: person.url, to: newURL)
+            let categoryName = parentURL.lastPathComponent
+            let newRelativePath = "\(categoryName)/\(trimmed)"
+            if selectedPerson == person.relativePath {
+                selectedPerson = newRelativePath
+            }
+            loadFolders()
+            return true
+        } catch {
+            IssueLogger.log(.error, "Failed to rename person",
+                            context: "\(person.name) → \(trimmed)", error: error)
+            errorMessage = String(localized: "Unable to rename '\(person.name)': \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    func updatePersonIcon(_ person: FolderItem, icon: String?) {
+        var config = MeetingConfigStore.shared.config(for: person.url)
+        config.icon = icon
+        MeetingConfigStore.shared.update(config, for: person.url)
         loadFolders()
     }
 

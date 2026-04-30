@@ -3,10 +3,12 @@ import SwiftUI
 struct PersonDetailView: View {
     let personName: String
     let personURL: URL
-    let activeSection: PersonSection
+    @Binding var activeSection: PersonSection
+    let personBreadcrumbSegment: BreadcrumbSegment
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var recordingViewModel: RecordingViewModel?
     var consoleViewModel: ConsoleViewModel?
+    var oneOnOneActiveFileURL: Binding<URL?>?
 
     @State private var assessmentFiles: [FolderFile] = []
     @State private var objectifsFiles: [FolderFile] = []
@@ -16,6 +18,58 @@ struct PersonDetailView: View {
     @State private var isAddingObjectif = false
     @State private var newFileName = ""
     @Environment(ErrorState.self) private var errorState: ErrorState?
+
+    private var leadingSegments: [BreadcrumbSegment] {
+        [personBreadcrumbSegment, sectionBreadcrumbSegment]
+    }
+
+    private var sectionBreadcrumbSegment: BreadcrumbSegment {
+        let isFolder: Bool = {
+            switch activeSection {
+            case .oneOnOne, .assessment, .objectifs: true
+            case .profile, .jobDescription: false
+            }
+        }()
+        let label: String
+        switch activeSection {
+        case .oneOnOne: label = "1-1"
+        case .assessment: label = "assessment"
+        case .objectifs: label = "objectifs"
+        case .profile: label = "profile.md"
+        case .jobDescription: label = "job-description.md"
+        }
+        let siblings = PersonSection.allCases.map { section in
+            BreadcrumbSibling(
+                id: section.rawValue,
+                label: PersonDetailView.breadcrumbLabel(for: section),
+                sub: section.localizedName,
+                leading: .symbol(section.icon),
+                active: section == activeSection
+            )
+        }
+        return BreadcrumbSegment(
+            id: "section",
+            label: label,
+            kind: isFolder ? .folder : .file,
+            popoverTitle: String(localized: "Sections"),
+            groups: [BreadcrumbSiblingGroup(id: "all", title: nil, siblings: siblings)],
+            onPick: { rawValue in
+                if let section = PersonSection(rawValue: rawValue) {
+                    activeSection = section
+                }
+            }
+        )
+    }
+
+    fileprivate static func breadcrumbLabel(for section: PersonSection) -> String {
+        switch section {
+        case .oneOnOne: return "1-1"
+        case .assessment: return "assessment"
+        case .objectifs: return "objectifs"
+        case .profile: return "profile.md"
+        case .jobDescription: return "job-description.md"
+        }
+    }
 
     var body: some View {
         sectionContent
@@ -32,14 +86,18 @@ struct PersonDetailView: View {
     private var sectionContent: some View {
         switch activeSection {
         case .profile:
-            markdownFileEditor(fileName: "profile.md")
+            simpleFileSection(fileName: "profile.md", trailingActions: { EmptyView() })
         case .jobDescription:
-            jobDescriptionSection
+            simpleFileSection(fileName: "job-description.md") {
+                jobDescriptionImportButton(fileURL: personURL.appendingPathComponent("job-description.md"))
+            }
         case .oneOnOne:
             PersonOneOnOneView(
                 personURL: personURL,
+                leadingSegments: leadingSegments,
                 markdownTheme: markdownTheme,
-                consoleViewModel: consoleViewModel
+                consoleViewModel: consoleViewModel,
+                activeFileURL: oneOnOneActiveFileURL
             )
         case .assessment:
             SubfolderNavigationView(
@@ -50,6 +108,7 @@ struct PersonDetailView: View {
                 emptyIcon: "checkmark.seal", markdownTheme: markdownTheme,
                 consoleViewModel: consoleViewModel,
                 subfolderURL: personURL.appendingPathComponent("assessment", isDirectory: true),
+                leadingSegments: leadingSegments,
                 onCreate: { createSubfolderFile(subfolder: "assessment", isAdding: $isAddingAssessment) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "assessment") }
             )
@@ -62,57 +121,20 @@ struct PersonDetailView: View {
                 emptyIcon: "target", markdownTheme: markdownTheme,
                 consoleViewModel: consoleViewModel,
                 subfolderURL: personURL.appendingPathComponent("objectifs", isDirectory: true),
+                leadingSegments: leadingSegments,
                 onCreate: { createSubfolderFile(subfolder: "objectifs", isAdding: $isAddingObjectif) },
                 onDelete: { deleteSubfolderFile($0, subfolder: "objectifs") }
             )
         }
     }
 
-    // MARK: - Job description with import
+    // MARK: - Simple file section (profile, job description)
 
     @ViewBuilder
-    private var jobDescriptionSection: some View {
-        let fileURL = personURL.appendingPathComponent("job-description.md")
-        let file = FolderFile(
-            id: fileURL,
-            name: fileURL.deletingPathExtension().lastPathComponent,
-            date: (try? FileManager.default.attributesOfItem(
-                atPath: fileURL.path
-            )[.modificationDate] as? Date) ?? Date(),
-            url: fileURL
-        )
-        VStack(spacing: 0) {
-            if let console = consoleViewModel {
-                HStack {
-                    Spacer()
-                    Button {
-                        ImportDocumentHelper.pickFile(
-                            targetPath: fileURL.path,
-                            consoleViewModel: console
-                        )
-                    } label: {
-                        Image(systemName: "square.and.arrow.down")
-                            .frame(width: 32, height: 32)
-                            .contentShape(Circle())
-                            .glassEffect(.regular.interactive(), in: .circle)
-                    }
-                    .buttonStyle(.plain)
-                    .help("Import a file or link")
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-
-                Divider()
-            }
-
-            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
-        }
-        .id("job-description.md")
-    }
-
-    // MARK: - Markdown file editor
-
-    private func markdownFileEditor(fileName: String) -> some View {
+    private func simpleFileSection<Trailing: View>(
+        fileName: String,
+        @ViewBuilder trailingActions: () -> Trailing
+    ) -> some View {
         let fileURL = personURL.appendingPathComponent(fileName)
         let file = FolderFile(
             id: fileURL,
@@ -122,8 +144,37 @@ struct PersonDetailView: View {
             )[.modificationDate] as? Date) ?? Date(),
             url: fileURL
         )
-        return FolderFileEditorView(file: file, markdownTheme: markdownTheme)
-            .id(fileName)
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                BreadcrumbBar(segments: leadingSegments)
+                Spacer(minLength: 8)
+                trailingActions()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            Divider().opacity(0.5)
+            FolderFileEditorView(file: file, markdownTheme: markdownTheme)
+                .id(fileName)
+        }
+    }
+
+    private func jobDescriptionImportButton(fileURL: URL) -> some View {
+        Group {
+            if let console = consoleViewModel {
+                Button {
+                    ImportDocumentHelper.pickFile(
+                        targetPath: fileURL.path,
+                        consoleViewModel: console
+                    )
+                } label: {
+                    Image(systemName: "square.and.arrow.down")
+                        .frame(width: 28, height: 28)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .help("Import a file or link")
+            }
+        }
     }
 
     // MARK: - File operations
@@ -201,20 +252,15 @@ struct PersonDetailView: View {
 
 struct PersonOneOnOneView: View {
     let personURL: URL
+    var leadingSegments: [BreadcrumbSegment]
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var consoleViewModel: ConsoleViewModel?
+    var activeFileURL: Binding<URL?>?
 
     @State private var entries: [MeetingDateEntry] = []
-    @State private var meetingConfig = MeetingConfig()
     @State private var index: Int = 0
     @State private var showTranscripts = false
-    @State private var showConfigSheet = false
-    @State private var showAddActionForm = false
     @State private var entryDeleteAction: EntryDeleteAction?
-    @State private var addActionName = ""
-    @State private var addActionSkill: String?
-    @State private var addActionParameter = ""
-    @State private var addActionAvailableSkills: [SkillFile] = []
     @Environment(ErrorState.self) private var errorState: ErrorState?
 
     private var oneOnOneDir: URL {
@@ -222,36 +268,30 @@ struct PersonOneOnOneView: View {
     }
 
     var body: some View {
-        dateNavigationDetail
-        .onAppear { loadEntries(); loadConfig() }
+        contentBody
+        .onAppear {
+            loadEntries()
+            publishActiveFile()
+        }
+        .onChange(of: index) { publishActiveFile() }
+        .onChange(of: showTranscripts) { publishActiveFile() }
+        .onChange(of: entries.map(\.dateString)) { publishActiveFile() }
+        .onDisappear { activeFileURL?.wrappedValue = nil }
         .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
             guard notif.affectsPath(oneOnOneDir) else { return }
             loadEntries()
         }
-        .sheet(isPresented: $showConfigSheet) {
-            if let console = consoleViewModel {
-                MeetingConfigSheet(
-                    folderName: "1-1",
-                    folderURL: oneOnOneDir,
-                    config: $meetingConfig,
-                    consoleViewModel: console
-                )
-                .frame(width: 400, height: 500)
-            }
-        }
-        .sheet(isPresented: $showAddActionForm) {
-            ActionFormSheet(
-                name: $addActionName,
-                skill: $addActionSkill,
-                parameter: $addActionParameter,
-                availableSkills: addActionAvailableSkills,
-                onCancel: { showAddActionForm = false },
-                onSave: { action in
-                    meetingConfig.addAction(action)
-                    MeetingConfigStore.shared.update(meetingConfig, for: oneOnOneDir)
-                    showAddActionForm = false
-                }
-            )
+    }
+
+    private func publishActiveFile() {
+        guard let binding = activeFileURL else { return }
+        let url: URL? = {
+            guard let entry = currentEntry else { return nil }
+            if showTranscripts, let t = entry.transcriptFile { return t.url }
+            return entry.noteFile?.url ?? entry.transcriptFile?.url
+        }()
+        if binding.wrappedValue != url {
+            binding.wrappedValue = url
         }
     }
 
@@ -264,14 +304,7 @@ struct PersonOneOnOneView: View {
         }
     }
 
-    private func loadConfig() {
-        let dir = oneOnOneDir
-        Task {
-            meetingConfig = await Task.detached { MeetingConfigStore.shared.config(for: dir) }.value
-        }
-    }
-
-    // MARK: - Date navigation
+    // MARK: - Layout
 
     private var currentEntry: MeetingDateEntry? {
         guard !entries.isEmpty else { return nil }
@@ -279,29 +312,19 @@ struct PersonOneOnOneView: View {
         return entries[max(safeIndex, 0)]
     }
 
-    private var dateNavigationDetail: some View {
+    private var contentBody: some View {
         VStack(spacing: 0) {
-            DateNavigationHeader(
-                entry: currentEntry,
-                totalEntries: entries.count,
-                index: $index,
-                showTranscripts: $showTranscripts,
-                config: meetingConfig,
-                consoleViewModel: consoleViewModel,
-                showConfigAction: consoleViewModel != nil ? { showConfigSheet = true } : nil,
-                onAddAction: consoleViewModel != nil ? {
-                    addActionName = ""
-                    addActionSkill = nil
-                    addActionParameter = ""
-                    Task {
-                        addActionAvailableSkills = await MeetingSkillConfig.availableSkillsAsync()
-                    }
-                    showAddActionForm = true
-                } : nil,
-                entryDeleteAction: $entryDeleteAction,
-                nextFileURL: oneOnOneDir.appendingPathComponent("next.md")
-            )
-            Divider()
+            HStack(spacing: 6) {
+                BreadcrumbBar(segments: leadingSegments + [dateFileSegment])
+                Spacer(minLength: 8)
+                if let entry = currentEntry {
+                    TranscriptPill(entry: entry, showTranscripts: $showTranscripts)
+                    EntryMoreMenu(entry: entry, entryDeleteAction: $entryDeleteAction)
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            Divider().opacity(0.5)
             if let entry = currentEntry {
                 DateEntryContentView(
                     entry: entry, markdownTheme: markdownTheme, showTranscripts: $showTranscripts
@@ -318,22 +341,65 @@ struct PersonOneOnOneView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: index) { showTranscripts = false }
         .entryDeleteAlert(action: $entryDeleteAction) { [errorState] action in
-            let entry = action.entry
-            do {
-                switch action {
-                case .note:
-                    if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
-                case .transcript:
-                    if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
-                case .both:
-                    if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
-                    if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
-                }
-            } catch {
-                IssueLogger.log(.error, "Failed to delete person entry", error: error)
-                errorState?.show(String(localized: "Unable to delete: \(error.localizedDescription)"))
-            }
-            loadEntries()
+            handleEntryDelete(action: action, errorState: errorState)
         }
+    }
+
+    private var dateFileSegment: BreadcrumbSegment {
+        let label: String
+        if let entry = currentEntry {
+            let ext = showTranscripts && entry.hasTranscript ? "transcript" : "md"
+            label = "\(entry.dateString).\(ext)"
+        } else {
+            label = "—"
+        }
+        return BreadcrumbSegment(
+            id: "1-1-file",
+            label: label,
+            kind: .file,
+            popoverTitle: String(localized: "Occurrences"),
+            emptyMessage: String(localized: "No 1-1s yet"),
+            groups: [BreadcrumbSiblingGroup(
+                id: "all",
+                title: nil,
+                siblings: entries.map { entry in
+                    BreadcrumbSibling(
+                        id: entry.dateString,
+                        label: "\(entry.dateString).md",
+                        sub: dateSubtitle(for: entry.date),
+                        leading: .symbol("doc.text"),
+                        active: entry.dateString == currentEntry?.dateString
+                    )
+                }
+            )],
+            onPick: { dateString in
+                if let idx = entries.firstIndex(where: { $0.dateString == dateString }) {
+                    index = idx
+                }
+            }
+        )
+    }
+
+    private func dateSubtitle(for date: Date) -> String {
+        date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
+    }
+
+    private func handleEntryDelete(action: EntryDeleteAction, errorState: ErrorState?) {
+        let entry = action.entry
+        do {
+            switch action {
+            case .note:
+                if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
+            case .transcript:
+                if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
+            case .both:
+                if let note = entry.noteFile { try FileManager.default.removeItem(at: note.url) }
+                if let t = entry.transcriptFile { try FileManager.default.removeItem(at: t.url) }
+            }
+        } catch {
+            IssueLogger.log(.error, "Failed to delete person entry", error: error)
+            errorState?.show(String(localized: "Unable to delete: \(error.localizedDescription)"))
+        }
+        loadEntries()
     }
 }

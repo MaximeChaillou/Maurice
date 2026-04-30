@@ -1,5 +1,28 @@
 import Foundation
 
+extension Notification.Name {
+    /// Posted (on the main queue) when a meeting config is updated, moved, or
+    /// removed. `userInfo["folderKey"]` is the affected relative path; for
+    /// `move`, both `oldKey` and `newKey` are provided. A `nil` `folderKey`
+    /// (e.g. on bulk replace) means observers should refresh unconditionally.
+    static let meetingConfigDidChange = Notification.Name("meetingConfigDidChange")
+}
+
+extension Notification {
+    /// True when this `meetingConfigDidChange` notification refers to
+    /// `folderURL`, or when the notification carries no folder info (bulk
+    /// reload). Handles both `update`/`remove` (single key) and `move`
+    /// (old/new keys).
+    func affectsMeetingConfig(for folderURL: URL) -> Bool {
+        guard let info = userInfo, !info.isEmpty else { return true }
+        let target = MeetingConfigStore.relativeKey(for: folderURL)
+        if let key = info["folderKey"] as? String, key == target { return true }
+        if let oldKey = info["oldKey"] as? String, oldKey == target { return true }
+        if let newKey = info["newKey"] as? String, newKey == target { return true }
+        return false
+    }
+}
+
 /// Centralized store for all meeting configurations.
 ///
 /// All configs live in a single JSON file (`.maurice/meeting_configs.json`),
@@ -51,6 +74,7 @@ final class MeetingConfigStore: @unchecked Sendable {
             return configs
         }
         persist(snapshot)
+        postChange(folderKey: key)
     }
 
     /// Removes the config for `folderURL` and any descendants
@@ -65,6 +89,7 @@ final class MeetingConfigStore: @unchecked Sendable {
             return configs
         }
         persist(snapshot)
+        postChange(folderKey: key)
     }
 
     /// Re-keys the config for `oldURL` (and any descendants) under `newURL`.
@@ -89,10 +114,34 @@ final class MeetingConfigStore: @unchecked Sendable {
             return configs
         }
         persist(snapshot)
+        postMove(oldKey: oldKey, newKey: newKey)
     }
 
     private func replace(with newConfigs: [String: MeetingConfig]) {
         withLock { configs = newConfigs }
+        postChange(folderKey: nil)
+    }
+
+    private func postChange(folderKey: String?) {
+        var userInfo: [String: Any] = [:]
+        if let folderKey { userInfo["folderKey"] = folderKey }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .meetingConfigDidChange,
+                object: nil,
+                userInfo: userInfo
+            )
+        }
+    }
+
+    private func postMove(oldKey: String, newKey: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .meetingConfigDidChange,
+                object: nil,
+                userInfo: ["oldKey": oldKey, "newKey": newKey]
+            )
+        }
     }
 
     private func withLock<T>(_ body: () -> T) -> T {

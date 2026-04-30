@@ -3,7 +3,7 @@ import Observation
 
 @Observable
 @MainActor
-final class FolderContentViewModel {
+final class MeetingsViewModel {
     private(set) var directory: URL
 
     private(set) var folders: [FolderItem] = []

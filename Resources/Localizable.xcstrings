@@ -117,6 +117,26 @@
         }
       }
     },
+    "+ parameter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ paramètre"
+          }
+        }
+      }
+    },
+    "--option=value": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "--option=valeur"
+          }
+        }
+      }
+    },
     "A file named “%@” already exists.": {
       "localizations": {
         "fr": {
@@ -176,16 +196,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une personne"
-          }
-        }
-      }
-    },
-    "Add an action": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajouter une action"
           }
         }
       }
@@ -286,6 +296,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Évaluation"
+          }
+        }
+      }
+    },
+    "Available in library": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disponibles dans la bibliothèque"
           }
         }
       }
@@ -579,16 +599,6 @@
         }
       }
     },
-    "Configure skills": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Configurer les skills"
-          }
-        }
-      }
-    },
     "Connect Google Calendar": {
       "localizations": {
         "fr": {
@@ -859,12 +869,42 @@
         }
       }
     },
+    "Earlier": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tôt"
+          }
+        }
+      }
+    },
+    "Edit skills for this meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier les skills de ce meeting"
+          }
+        }
+      }
+    },
     "Edit action": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Modifier l’action"
+          }
+        }
+      }
+    },
+    "Edit parameter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le paramètre"
           }
         }
       }
@@ -988,6 +1028,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nom de l’événement 1-1 dans Google Calendar (optionnel)"
+          }
+        }
+      }
+    },
+    "Google Calendar linked": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google Calendar lié"
+          }
+        }
+      }
+    },
+    "Google Calendar not linked": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google Calendar non lié"
           }
         }
       }
@@ -1408,6 +1468,46 @@
         }
       }
     },
+    "Next · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain · %@"
+          }
+        }
+      }
+    },
+    "Next · in %lld min": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain · dans %lld min"
+          }
+        }
+      }
+    },
+    "Next · today %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain · aujourd’hui %@"
+          }
+        }
+      }
+    },
+    "Next · tomorrow %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain · demain %@"
+          }
+        }
+      }
+    },
     "No 1-1s": {
       "localizations": {
         "fr": {
@@ -1454,6 +1554,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucune action configurée"
+          }
+        }
+      }
+    },
+    "No configured skills": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun skill configuré"
           }
         }
       }
@@ -1524,6 +1634,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pas de note"
+          }
+        }
+      }
+    },
+    "No other entries": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune autre entrée"
           }
         }
       }
@@ -1660,6 +1780,16 @@
     },
     "OK": {
       "comment": "Alert dismiss button"
+    },
+    "Occurrences": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Occurrences"
+          }
+        }
+      }
     },
     "Open memory": {
       "localizations": {
@@ -1841,6 +1971,26 @@
         }
       }
     },
+    "Remove": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer"
+          }
+        }
+      }
+    },
+    "Rename": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renommer"
+          }
+        }
+      }
+    },
     "Reset": {
       "localizations": {
         "fr": {
@@ -1907,6 +2057,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lancer une action"
+          }
+        }
+      }
+    },
+    "Run a skill action": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer une action de skill"
           }
         }
       }
@@ -2086,6 +2246,16 @@
     },
     "Skills": {
       "comment": "Settings section name"
+    },
+    "Skills for this meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skills de ce meeting"
+          }
+        }
+      }
     },
     "Skills are reusable AI prompts. Create one to automate your tasks (summary, meeting notes...).": {
       "localizations": {
@@ -2340,6 +2510,16 @@
         }
       }
     },
+    "This week": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette semaine"
+          }
+        }
+      }
+    },
     "This file configures the AI assistant's behavior. It is read at each interaction.": {
       "localizations": {
         "fr": {
@@ -2583,6 +2763,16 @@
         }
       }
     },
+    "Yesterday": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hier"
+          }
+        }
+      }
+    },
     "Your meeting transcription assistant": {
       "localizations": {
         "fr": {
@@ -2679,6 +2869,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "commence dans %lld min"
+          }
+        }
+      }
+    },
+    "today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aujourd’hui"
+          }
+        }
+      }
+    },
+    "tomorrow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "demain"
+          }
+        }
+      }
+    },
+    "yesterday": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hier"
           }
         }
       }
