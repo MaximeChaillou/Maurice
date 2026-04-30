@@ -88,6 +88,29 @@ struct TabPillLabel: View {
 
 // MARK: - Tab Square Button
 
+/// Visual content of a small rounded square pill (24×24, secondary icon).
+/// Used standalone inside `AppKitMenuButton` and as the label for
+/// `TabSquareButton`.
+struct TabSquareLabel: View {
+    let systemImage: String
+
+    var body: some View {
+        Image(systemName: systemImage)
+            .font(.system(size: 11.5, weight: .medium))
+            .foregroundStyle(.secondary)
+            .frame(width: 24, height: 24)
+            .background {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.primary.opacity(0.05))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
+                    }
+            }
+            .contentShape(.rect(cornerRadius: 6))
+    }
+}
+
 /// Small rounded square button used for ellipsis / icon-only actions in the toolbar.
 struct TabSquareButton: View {
     let systemImage: String
@@ -96,19 +119,7 @@ struct TabSquareButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 11.5, weight: .medium))
-                .foregroundStyle(.secondary)
-                .frame(width: 24, height: 24)
-                .background {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.primary.opacity(0.05))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
-                        }
-                }
-                .contentShape(.rect(cornerRadius: 6))
+            TabSquareLabel(systemImage: systemImage)
         }
         .buttonStyle(.plain)
         .help(help)
@@ -180,67 +191,212 @@ struct QuickNotesPillButton: View {
     }
 }
 
+// MARK: - AppKit Menu Button (right-aligned native NSMenu)
+
+/// Native NSMenu that drops below a SwiftUI label, with its right edge
+/// aligned to the label's right edge — so the menu extends leftward.
+/// Use this for buttons near the right edge of the screen, where SwiftUI's
+/// `Menu` (which always anchors to the leading edge on macOS) would push
+/// the menu off-screen or cover the wrong area.
+struct AppKitMenuButton: NSViewRepresentable {
+    let entries: [AppKitMenuEntry]
+    let label: AnyView
+
+    init<L: View>(entries: [AppKitMenuEntry], @ViewBuilder label: () -> L) {
+        self.entries = entries
+        self.label = AnyView(label())
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    func makeNSView(context: Context) -> AppKitMenuButtonView {
+        AppKitMenuButtonView(coordinator: context.coordinator, label: label)
+    }
+
+    func updateNSView(_ nsView: AppKitMenuButtonView, context: Context) {
+        context.coordinator.parent = self
+        nsView.updateLabel(label)
+    }
+
+    @MainActor
+    final class Coordinator: NSObject {
+        var parent: AppKitMenuButton
+
+        init(parent: AppKitMenuButton) {
+            self.parent = parent
+        }
+
+        func makeMenu() -> NSMenu {
+            let menu = NSMenu()
+            for (index, entry) in parent.entries.enumerated() {
+                switch entry {
+                case .separator:
+                    menu.addItem(.separator())
+                case .item(let title, let systemImage, let isDestructive, _):
+                    let item = NSMenuItem(
+                        title: title,
+                        action: #selector(menuItemSelected(_:)),
+                        keyEquivalent: ""
+                    )
+                    item.target = self
+                    item.tag = index
+                    if let systemImage {
+                        item.image = NSImage(
+                            systemSymbolName: systemImage,
+                            accessibilityDescription: nil
+                        )
+                    }
+                    if isDestructive {
+                        item.attributedTitle = NSAttributedString(
+                            string: title,
+                            attributes: [.foregroundColor: NSColor.systemRed]
+                        )
+                    }
+                    menu.addItem(item)
+                }
+            }
+            return menu
+        }
+
+        @objc private func menuItemSelected(_ sender: NSMenuItem) {
+            guard sender.tag < parent.entries.count else { return }
+            if case .item(_, _, _, let action) = parent.entries[sender.tag] {
+                action()
+            }
+        }
+    }
+}
+
+enum AppKitMenuEntry {
+    case item(
+        title: String,
+        systemImage: String? = nil,
+        isDestructive: Bool = false,
+        action: () -> Void
+    )
+    case separator
+}
+
+final class AppKitMenuButtonView: NSView {
+    fileprivate let coordinator: AppKitMenuButton.Coordinator
+    private let hosting: NSHostingView<AnyView>
+
+    init(coordinator: AppKitMenuButton.Coordinator, label: AnyView) {
+        self.coordinator = coordinator
+        self.hosting = NSHostingView(rootView: label)
+        super.init(frame: .zero)
+        hosting.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(hosting)
+        NSLayoutConstraint.activate([
+            hosting.topAnchor.constraint(equalTo: topAnchor),
+            hosting.bottomAnchor.constraint(equalTo: bottomAnchor),
+            hosting.leadingAnchor.constraint(equalTo: leadingAnchor),
+            hosting.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+    func updateLabel(_ label: AnyView) {
+        hosting.rootView = label
+    }
+
+    override var intrinsicContentSize: NSSize {
+        hosting.intrinsicContentSize
+    }
+
+    override func resetCursorRects() {
+        addCursorRect(bounds, cursor: .pointingHand)
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        let local = convert(point, from: superview)
+        return bounds.contains(local) ? self : nil
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        let menu = coordinator.makeMenu()
+        menu.update()
+        let menuWidth = menu.size.width > 0 ? menu.size.width : estimatedMenuWidth(menu)
+        let bottomY = isFlipped ? bounds.maxY + 6 : bounds.minY - 6
+        let origin = NSPoint(
+            x: bounds.maxX - menuWidth,
+            y: bottomY
+        )
+        menu.popUp(positioning: nil, at: origin, in: self)
+    }
+
+    private func estimatedMenuWidth(_ menu: NSMenu) -> CGFloat {
+        let attrs: [NSAttributedString.Key: Any] = [.font: NSFont.menuFont(ofSize: 0)]
+        var maxTitleWidth: CGFloat = 0
+        for item in menu.items where !item.isSeparatorItem {
+            let titleSize = (item.title as NSString).size(withAttributes: attrs)
+            maxTitleWidth = max(maxTitleWidth, titleSize.width)
+        }
+        return maxTitleWidth + 28
+    }
+}
+
 // MARK: - Skills Pill Menu
 
-/// "Skills" pill that opens a popover listing configured skill actions plus
-/// a single footer entry that opens the meeting config sheet. Implemented as
-/// a `Button` + `popover` rather than `Menu` so it can share
-/// `TabPillLabel`'s pill background — `.menuStyle(.borderlessButton)` strips
-/// custom label chrome on macOS.
+/// "Skills" pill that opens a right-aligned native NSMenu listing configured
+/// skill actions plus a footer entry that opens the meeting config sheet.
 struct SkillsPillMenu: View {
     let config: MeetingConfig
     let consoleViewModel: ConsoleViewModel
     var activeFilePath: String?
     var onConfigure: (() -> Void)?
 
-    @State private var showMenu = false
-
     var body: some View {
-        TabPillButton(
-            label: "Skills",
-            systemImage: "sparkles",
-            active: showMenu,
-            hasChevron: true,
-            help: "Run a skill action",
-            action: { showMenu.toggle() }
-        )
-        .popover(isPresented: $showMenu, arrowEdge: .bottom) {
-            menuContent
-                .frame(width: 300)
+        AppKitMenuButton(
+            entries: Self.makeEntries(
+                actions: config.actions,
+                runAction: runAction,
+                onConfigure: onConfigure
+            )
+        ) {
+            TabPillLabel(
+                label: "Skills",
+                systemImage: "sparkles",
+                hasChevron: true
+            )
         }
+        .fixedSize()
+        .help("Run a skill action")
     }
 
-    @ViewBuilder
-    private var menuContent: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Skills for this meeting")
-                .textCase(.uppercase)
-                .font(.system(size: 9.5, weight: .bold))
-                .kerning(0.85)
-                .foregroundStyle(.tertiary)
-                .padding(.horizontal, 10)
-                .padding(.top, 6)
-                .padding(.bottom, 4)
-
-            ForEach(config.actions) { action in
-                SkillsActionRow(action: action) {
-                    runAction(action)
-                }
+    static func makeEntries(
+        actions: [SkillAction],
+        runAction: @escaping (SkillAction) -> Void,
+        onConfigure: (() -> Void)?
+    ) -> [AppKitMenuEntry] {
+        var entries: [AppKitMenuEntry] = []
+        for action in actions {
+            let title: String
+            if let parameter = action.parameter, !parameter.isEmpty {
+                title = "\(action.buttonName) — \(parameter)"
+            } else {
+                title = action.buttonName
             }
-
-            if onConfigure != nil {
-                Divider()
-                    .padding(.top, 4)
-            }
-
-            if let onConfigure {
-                SkillsConfigureRow {
-                    onConfigure()
-                    showMenu = false
-                }
-            }
+            entries.append(.item(
+                title: title,
+                action: { runAction(action) }
+            ))
         }
-        .padding(5)
+        if let onConfigure {
+            if !entries.isEmpty {
+                entries.append(.separator)
+            }
+            entries.append(.item(
+                title: String(localized: "Edit skills for this meeting"),
+                systemImage: "slider.horizontal.3",
+                action: onConfigure
+            ))
+        }
+        return entries
     }
 
     private func runAction(_ action: SkillAction) {
@@ -250,84 +406,6 @@ struct SkillsPillMenu: View {
             filename: action.skillFilename,
             parameter: fullParameter.isEmpty ? nil : fullParameter
         )
-        showMenu = false
-    }
-}
-
-private struct SkillsActionRow: View {
-    let action: SkillAction
-    let onRun: () -> Void
-    @State private var hovered = false
-
-    var body: some View {
-        Button(action: onRun) {
-            HStack(spacing: 8) {
-                Text(action.buttonName)
-                    .font(.system(size: 12.5, weight: .medium))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                Spacer(minLength: 4)
-                if let parameter = action.parameter, !parameter.isEmpty {
-                    Text(parameter)
-                        .font(.system(size: 10.5, design: .monospaced))
-                        .foregroundStyle(Color.cyan)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 1)
-                        .background {
-                            RoundedRectangle(cornerRadius: 3)
-                                .fill(Color.cyan.opacity(0.09))
-                        }
-                        .frame(maxWidth: 120, alignment: .trailing)
-                }
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
-            .background {
-                if hovered {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.cyan.opacity(0.14))
-                }
-            }
-            .contentShape(.rect(cornerRadius: 6))
-        }
-        .buttonStyle(.plain)
-        .onHover { hovered = $0 }
-    }
-}
-
-private struct SkillsConfigureRow: View {
-    let onTap: () -> Void
-    @State private var hovered = false
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 8) {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 14)
-                Text("Edit skills for this meeting")
-                    .font(.system(size: 11.5))
-                    .foregroundStyle(.secondary)
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 8, weight: .semibold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
-            .background {
-                if hovered {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.primary.opacity(0.06))
-                }
-            }
-            .contentShape(.rect(cornerRadius: 6))
-        }
-        .buttonStyle(.plain)
-        .onHover { hovered = $0 }
     }
 }
 
@@ -362,49 +440,55 @@ struct TranscriptPill: View {
 
 // MARK: - Entry More Menu (small square)
 
-/// Ellipsis "more" menu rendered as a small rounded square. Houses the
-/// destructive entry-level actions (delete note / transcript / both).
+/// Ellipsis "more" menu rendered as a small rounded square. Right-aligned
+/// native NSMenu housing the destructive entry-level actions (delete note
+/// / transcript / both).
 struct EntryMoreMenu: View {
     let entry: MeetingDateEntry
     @Binding var entryDeleteAction: EntryDeleteAction?
 
     var body: some View {
-        Menu {
-            if entry.hasNote {
-                Button(role: .destructive) { entryDeleteAction = .note(entry) } label: {
-                    Label("Delete note", systemImage: "doc.text")
-                }
+        AppKitMenuButton(
+            entries: Self.makeEntries(entry: entry) { action in
+                entryDeleteAction = action
             }
-            if entry.hasTranscript {
-                Button(role: .destructive) { entryDeleteAction = .transcript(entry) } label: {
-                    Label("Delete transcript", systemImage: "waveform")
-                }
-            }
-            if entry.hasNote && entry.hasTranscript {
-                Divider()
-                Button(role: .destructive) { entryDeleteAction = .both(entry) } label: {
-                    Label("Delete all", systemImage: "trash")
-                }
-            }
-        } label: {
-            Image(systemName: "ellipsis")
-                .font(.system(size: 11.5, weight: .medium))
-                .foregroundStyle(.secondary)
-                .frame(width: 24, height: 24)
-                .background {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.primary.opacity(0.05))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
-                        }
-                }
-                .contentShape(.rect(cornerRadius: 6))
+        ) {
+            TabSquareLabel(systemImage: "ellipsis")
         }
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .buttonStyle(.plain)
-        .frame(width: 24, height: 24)
+        .fixedSize()
         .help("More")
+    }
+
+    static func makeEntries(
+        entry: MeetingDateEntry,
+        delete: @escaping (EntryDeleteAction) -> Void
+    ) -> [AppKitMenuEntry] {
+        var entries: [AppKitMenuEntry] = []
+        if entry.hasNote {
+            entries.append(.item(
+                title: String(localized: "Delete note"),
+                systemImage: "doc.text",
+                isDestructive: true,
+                action: { delete(.note(entry)) }
+            ))
+        }
+        if entry.hasTranscript {
+            entries.append(.item(
+                title: String(localized: "Delete transcript"),
+                systemImage: "waveform",
+                isDestructive: true,
+                action: { delete(.transcript(entry)) }
+            ))
+        }
+        if entry.hasNote && entry.hasTranscript {
+            entries.append(.separator)
+            entries.append(.item(
+                title: String(localized: "Delete all"),
+                systemImage: "trash",
+                isDestructive: true,
+                action: { delete(.both(entry)) }
+            ))
+        }
+        return entries
     }
 }

@@ -148,6 +148,7 @@
 		TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */; };
 		FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */; };
 		ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */; };
+		AKMBBF01AKMBBF01AKMBBF01 /* AppKitMenuButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AKMBRF01AKMBRF01AKMBRF01 /* AppKitMenuButtonTests.swift */; };
 		KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */; };
 		SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */; };
 		FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */; };
@@ -316,6 +317,7 @@
 		TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionTests.swift; sourceTree = "<group>"; };
 		FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderFileTests.swift; sourceTree = "<group>"; };
 		ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDeleteActionTests.swift; sourceTree = "<group>"; };
+		AKMBRF01AKMBRF01AKMBRF01 /* AppKitMenuButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKitMenuButtonTests.swift; sourceTree = "<group>"; };
 		KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelperTests.swift; sourceTree = "<group>"; };
 		SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStateTests.swift; sourceTree = "<group>"; };
 		FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemTests.swift; sourceTree = "<group>"; };
@@ -665,6 +667,7 @@
 				TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */,
 				FF01RF01FF01RF01FF01RF01 /* FolderFileTests.swift */,
 				ED01RF01ED01RF01ED01RF01 /* EntryDeleteActionTests.swift */,
+				AKMBRF01AKMBRF01AKMBRF01 /* AppKitMenuButtonTests.swift */,
 				KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */,
 				MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */,
 				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
@@ -950,6 +953,7 @@
 				TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */,
 				FF01BF01FF01BF01FF01BF01 /* FolderFileTests.swift in Sources */,
 				ED01BF01ED01BF01ED01BF01 /* EntryDeleteActionTests.swift in Sources */,
+				AKMBBF01AKMBBF01AKMBBF01 /* AppKitMenuButtonTests.swift in Sources */,
 				KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */,
 				MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */,
 				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,

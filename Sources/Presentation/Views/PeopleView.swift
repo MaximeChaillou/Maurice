@@ -289,7 +289,6 @@ struct PeopleView: View {
         if let category = personCategory(for: person) {
             meta.append(TabMetaItem(systemImage: "person.2", label: category))
         }
-        meta.append(TabMetaItem(systemImage: selectedSection.icon, label: selectedSection.localizedName))
         return meta
     }
 
