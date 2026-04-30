@@ -40,7 +40,6 @@
 		6071ADB5BD2B81A0FB03B264 /* TranscriptionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */; };
 		6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444945559552A66796B66A73 /* Assets.xcassets */; };
 		LC11LC12LC13LC14LC15LC16 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */; };
-		BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */; };
 		GS01GS02GS03GS04GS05GS06 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */; };
 		CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */; };
 		SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */; };
@@ -215,7 +214,6 @@
 		MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStore.swift; sourceTree = "<group>"; };
 		MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStoreTests.swift; sourceTree = "<group>"; };
 		9CF056EF2F6B3784007276E9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
-		BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingsView.swift; sourceTree = "<group>"; };
 		GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeMDView.swift; sourceTree = "<group>"; };
 		SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsSettingsView.swift; sourceTree = "<group>"; };
@@ -527,7 +525,6 @@
 				EB11EB12EB13EB14EB15EB16 /* ErrorBanner.swift */,
 				FA11FA12FA13FA14FA15FA16 /* FloatingActionBar.swift */,
 
-				BG11BG12BG13BG14BG15BG16 /* BackgroundSettingsView.swift */,
 				CM11CM12CM13CM14CM15CM16 /* ClaudeMDView.swift */,
 				GS11GS12GS13GS14GS15GS16 /* GeneralSettingsView.swift */,
 				SK11SK12SK13SK14SK15SK16 /* SkillsSettingsView.swift */,
@@ -836,7 +833,6 @@
 				015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */,
 				MCS01BF01MCS01BF01MCS001 /* MeetingConfigStore.swift in Sources */,
 
-				BG01BG02BG03BG04BG05BG06 /* BackgroundSettingsView.swift in Sources */,
 				CM01CM02CM03CM04CM05CM06 /* ClaudeMDView.swift in Sources */,
 				GS01GS02GS03GS04GS05GS06 /* GeneralSettingsView.swift in Sources */,
 				SK01SK02SK03SK04SK05SK06 /* SkillsSettingsView.swift in Sources */,

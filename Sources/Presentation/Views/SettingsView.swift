@@ -9,7 +9,6 @@ final class SettingsNavigator {
 enum SettingsSection: String, CaseIterable, Identifiable {
     case general
     case calendar
-    case background
     case appearance
     case skills
     case templateUpdates
@@ -22,7 +21,6 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general: String(localized: "General")
         case .calendar: String(localized: "Google Calendar")
-        case .background: String(localized: "Background")
         case .appearance: String(localized: "Markdown style")
         case .skills: String(localized: "Skills")
         case .templateUpdates: String(localized: "Template updates")
@@ -35,7 +33,6 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general: "folder"
         case .calendar: "calendar.badge.clock"
-        case .background: "paintpalette"
         case .appearance: "paintbrush"
         case .skills: "terminal"
         case .templateUpdates: "arrow.triangle.2.circlepath"
@@ -88,8 +85,6 @@ struct SettingsView: View {
             if let calendarViewModel {
                 GoogleCalendarSettingsView(viewModel: calendarViewModel)
             }
-        case .background:
-            BackgroundSettingsView(appTheme: $appTheme)
         case .appearance:
             MarkdownThemeSettingsView(theme: $appTheme.markdown)
         case .skills:
