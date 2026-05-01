@@ -1,5 +1,11 @@
 import SwiftUI
 
+private let wideInvisibleTitle = String(repeating: "\u{00A0}", count: 400)
+
+private extension View {
+    func wideTitleArea() -> some View { navigationTitle(wideInvisibleTitle) }
+}
+
 @main
 struct MauriceApp: App {
     @State private var recordingViewModel: RecordingViewModel
@@ -106,6 +112,8 @@ struct MauriceApp: App {
                         .padding(.bottom, 25)
                 }
             }
+            .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            .wideTitleArea()
             .onAppear {
                 fileWatcher.start()
                 if AppSettings.onboardingCompleted {
@@ -172,7 +180,6 @@ struct MauriceApp: App {
             .withErrorBanner()
         }
         .defaultSize(width: 1300, height: 800)
-        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .appSettings) {
                 SettingsMenuButton()
@@ -193,38 +200,44 @@ struct MauriceApp: App {
         }
 
         Window("Settings", id: "settings") {
-            SettingsView(
-                appTheme: $appTheme,
-                calendarViewModel: calendarViewModel,
-                updateChecker: updateChecker,
-                templateUpdateService: templateUpdateService,
-                navigator: settingsNavigator
-            ) {
-                reloadAfterDirectoryChange()
+            ZStack {
+                TabAmbianceBackground(ambiance: .home)
+
+                SettingsView(
+                    appTheme: $appTheme,
+                    calendarViewModel: calendarViewModel,
+                    updateChecker: updateChecker,
+                    templateUpdateService: templateUpdateService,
+                    navigator: settingsNavigator
+                ) {
+                    reloadAfterDirectoryChange()
+                }
             }
             .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
+            .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            .wideTitleArea()
             .preferredColorScheme(resolvedColorScheme)
             .withErrorBanner()
         }
-        .defaultSize(width: 800, height: 600)
+        .defaultSize(width: 1200, height: 700)
         .windowResizability(.contentMinSize)
 
         Window("Memory", id: "memory") {
             ZStack {
-                WaveBackground(hue: appTheme.memoryTabHue)
+                TabAmbianceBackground(ambiance: .home)
 
                 MemoryContentView(
                     viewModel: memoryListViewModel,
                     markdownTheme: appTheme.markdown
                 )
-                .glassEffect(.regular, in: .rect(cornerRadius: 12))
-                .padding(16)
             }
             .frame(minWidth: 500, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
+            .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            .wideTitleArea()
             .preferredColorScheme(resolvedColorScheme)
             .withErrorBanner()
         }
-        .defaultSize(width: 800, height: 550)
+        .defaultSize(width: 1200, height: 700)
         .windowResizability(.contentMinSize)
     }
 

@@ -19,15 +19,12 @@ struct MemoryContentView: View {
     @State private var navigationDirection: NavigationDirection = .forward
 
     var body: some View {
-        HStack(spacing: 0) {
+        TabScreenLayout {
             sidebar
-                .frame(width: 240)
-                .clipped()
-
-            Divider()
-
-            detailPane
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } detail: {
+            TabContentCard {
+                detailPane
+            }
         }
         .onAppear { viewModel.load() }
     }
@@ -71,8 +68,8 @@ struct MemoryContentView: View {
                         }
                     } label: {
                         Label(folder.name, systemImage: "folder")
-                            .foregroundStyle(.white)
                             .font(.body)
+                            .foregroundStyle(.primary)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
@@ -84,8 +81,8 @@ struct MemoryContentView: View {
 
                 ForEach(viewModel.files) { file in
                     Label(file.name, systemImage: "doc.text")
-                        .foregroundStyle(.white)
                         .font(.body)
+                        .foregroundStyle(.primary)
                         .lineLimit(1)
                         .padding(.vertical, 2)
                         .tag(file.url)
@@ -96,6 +93,9 @@ struct MemoryContentView: View {
             .id(viewModel.navigation.currentDirectory)
             .transition(.directional(navigationDirection))
         }
+        .frame(width: 248)
+        .clipShape(.rect(cornerRadius: 14))
+        .glassEffect(.regular, in: .rect(cornerRadius: 14))
     }
 
     // MARK: - Detail

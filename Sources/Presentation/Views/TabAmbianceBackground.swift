@@ -28,6 +28,7 @@ struct TabAmbianceBackground: View {
             }
         }
         .ignoresSafeArea()
+        .allowsHitTesting(false)
         .animation(.easeInOut(duration: 0.6), value: ambiance)
     }
 }
