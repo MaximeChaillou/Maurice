@@ -68,12 +68,12 @@ extension MarkdownCoordinator {
         return TableBlockDrawInfo(
             rows: rows, columnWidths: measurement.columnWidths, rowHeights: measurement.rowHeights,
             cellPadding: cellPadding, font: font, headerFont: headerFont,
-            textColor: theme.bodyColor.nsColor,
-            boldColor: theme.boldColor.nsColor,
-            italicColor: theme.italicColor.nsColor,
-            headerBgColor: NSColor.controlAccentColor.withAlphaComponent(0.08),
-            stripeBgColor: NSColor.labelColor.withAlphaComponent(0.04),
-            borderColor: NSColor.separatorColor
+            textColor: theme.bodyColor,
+            boldColor: theme.boldColor,
+            italicColor: theme.italicColor,
+            headerBgColor: theme.tableHeaderBgColor,
+            stripeBgColor: theme.tableRowAltBgColor,
+            borderColor: theme.tableBorderColor
         )
     }
 

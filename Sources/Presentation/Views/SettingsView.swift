@@ -9,7 +9,6 @@ final class SettingsNavigator {
 enum SettingsSection: String, CaseIterable, Identifiable {
     case general
     case calendar
-    case appearance
     case skills
     case templateUpdates
     case mcp
@@ -21,7 +20,6 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general: String(localized: "General")
         case .calendar: String(localized: "Google Calendar")
-        case .appearance: String(localized: "Markdown style")
         case .skills: String(localized: "Skills")
         case .templateUpdates: String(localized: "Template updates")
         case .mcp: String(localized: "MCP Servers")
@@ -33,7 +31,6 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general: "folder"
         case .calendar: "calendar.badge.clock"
-        case .appearance: "paintbrush"
         case .skills: "terminal"
         case .templateUpdates: "arrow.triangle.2.circlepath"
         case .mcp: "server.rack"
@@ -43,7 +40,6 @@ enum SettingsSection: String, CaseIterable, Identifiable {
 }
 
 struct SettingsView: View {
-    @Binding var appTheme: AppTheme
     var calendarViewModel: GoogleCalendarViewModel?
     @ObservedObject var updateChecker: UpdateChecker
     var templateUpdateService: TemplateUpdateService
@@ -85,10 +81,8 @@ struct SettingsView: View {
             if let calendarViewModel {
                 GoogleCalendarSettingsView(viewModel: calendarViewModel)
             }
-        case .appearance:
-            MarkdownThemeSettingsView(theme: $appTheme.markdown)
         case .skills:
-            SkillsSettingsView(markdownTheme: appTheme.markdown)
+            SkillsSettingsView(markdownTheme: MarkdownTheme())
         case .templateUpdates:
             TemplateUpdatesView(
                 service: templateUpdateService,
@@ -97,7 +91,7 @@ struct SettingsView: View {
         case .mcp:
             MCPServersView()
         case .claudeMD:
-            ClaudeMDView(markdownTheme: appTheme.markdown)
+            ClaudeMDView(markdownTheme: MarkdownTheme())
         case .none:
             ContentUnavailableView(
                 "No section selected",

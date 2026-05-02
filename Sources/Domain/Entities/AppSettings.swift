@@ -105,16 +105,6 @@ enum AppSettings {
         rootDirectory.appendingPathComponent(".maurice", isDirectory: true)
     }
 
-    static var themeFileURL: URL {
-        let dir = mauriceConfigDirectory
-        do {
-            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        } catch {
-            IssueLogger.log(.error, "Failed to create .maurice config directory", context: dir.path, error: error)
-        }
-        return dir.appendingPathComponent("theme.json")
-    }
-
     static var searchIndexURL: URL {
         mauriceConfigDirectory.appendingPathComponent("search_index.json")
     }

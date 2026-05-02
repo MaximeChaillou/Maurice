@@ -267,7 +267,7 @@ class MarkdownCoordinator: NSObject, NSTextViewDelegate {
         let fullRange = NSRange(location: 0, length: nsText.length)
         storage.setAttributes([
             .font: defaultFont,
-            .foregroundColor: theme.bodyColor.nsColor,
+            .foregroundColor: theme.bodyColor,
             .paragraphStyle: defaultPara
         ], range: fullRange)
 

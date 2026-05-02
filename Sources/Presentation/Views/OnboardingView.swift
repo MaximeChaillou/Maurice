@@ -414,12 +414,6 @@ enum OnboardingFileSetup {
         if !fm.fileExists(atPath: tasksURL.path) {
             fm.createFile(atPath: tasksURL.path, contents: nil)
         }
-
-        let themeURL = root.appendingPathComponent(".maurice/theme.json")
-        if !fm.fileExists(atPath: themeURL.path) {
-            let data = try JSONEncoder().encode(AppTheme())
-            try data.write(to: themeURL, options: .atomic)
-        }
     }
 
     static func writeIfMissing(_ content: String, to url: URL) throws {

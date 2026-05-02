@@ -12,7 +12,6 @@ struct MauriceApp: App {
     @State private var memoryListViewModel = MemoryListViewModel()
     @State private var consoleViewModel = ConsoleViewModel()
     @State private var coordinator = NavigationCoordinator()
-    @State private var appTheme = AppTheme.load()
     @AppStorage(AppSettings.appearanceModeKey) private var appearanceMode = "system"
     @State private var meetingViewModel = MeetingsViewModel(directory: AppSettings.meetingsDirectory)
     @State private var peopleViewModel = PeopleContentViewModel(directory: AppSettings.peopleDirectory)
@@ -153,7 +152,6 @@ struct MauriceApp: App {
                     peopleViewModel.loadFolders()
                 }
             }
-            .onChange(of: appTheme) { appTheme.saveAsync() }
             .overlay {
                 SearchOverlay(
                     showSearch: $showSearch,
@@ -204,7 +202,6 @@ struct MauriceApp: App {
                 TabAmbianceBackground(ambiance: .home)
 
                 SettingsView(
-                    appTheme: $appTheme,
                     calendarViewModel: calendarViewModel,
                     updateChecker: updateChecker,
                     templateUpdateService: templateUpdateService,
@@ -228,7 +225,7 @@ struct MauriceApp: App {
 
                 MemoryContentView(
                     viewModel: memoryListViewModel,
-                    markdownTheme: appTheme.markdown
+                    markdownTheme: MarkdownTheme()
                 )
             }
             .frame(minWidth: 500, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
@@ -276,7 +273,6 @@ struct MauriceApp: App {
     private func reloadAfterDirectoryChange() {
         MeetingConfigStore.shared.reset()
         memoryListViewModel.reloadDirectory()
-        appTheme = AppTheme.load()
         Task {
             await MeetingConfigStore.shared.bootstrap()
             meetingViewModel.resetDirectory(AppSettings.meetingsDirectory)
@@ -294,7 +290,7 @@ struct MauriceApp: App {
             MeetingsView(
                 emptyIcon: "calendar",
                 emptyTitle: "No meeting selected",
-                markdownTheme: appTheme.markdown,
+                markdownTheme: MarkdownTheme(),
                 navigateByDate: true,
                 groupByDate: true,
                 showSkillConfig: true,
@@ -306,7 +302,7 @@ struct MauriceApp: App {
             )
         case .people:
             PeopleView(
-                markdownTheme: appTheme.markdown,
+                markdownTheme: MarkdownTheme(),
                 recordingViewModel: recordingViewModel,
                 consoleViewModel: consoleViewModel,
                 calendarViewModel: calendarViewModel,
@@ -314,7 +310,7 @@ struct MauriceApp: App {
                 viewModel: peopleViewModel
             )
         case .task:
-            TasksView(markdownTheme: appTheme.markdown)
+            TasksView(markdownTheme: MarkdownTheme())
         }
     }
 }

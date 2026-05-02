@@ -26,7 +26,11 @@ extension MarkdownCoordinator {
 
     func styleCodeLine(storage: NSTextStorage, trimmed: String, range: NSRange, active: Bool) {
         let mono = monoFont(size: theme.baseFontSize - 1)
-        storage.addAttributes([.font: mono, .foregroundColor: theme.codeColor.nsColor], range: range)
+        storage.addAttributes([
+            .font: mono,
+            .foregroundColor: theme.codeColor,
+            .backgroundColor: theme.codeBlockBackgroundColor
+        ], range: range)
         if trimmed.hasPrefix("```") {
             if active {
                 storage.addAttribute(.foregroundColor, value: NSColor.tertiaryLabelColor, range: range)
@@ -55,7 +59,8 @@ extension MarkdownCoordinator {
         let active = ctx.active
         let leading = ctx.line.prefix(while: { $0 == " " || $0 == "\t" }).count
 
-        if trimmed.hasPrefix("### ") || trimmed.hasPrefix("## ") || trimmed.hasPrefix("# ") {
+        if trimmed.hasPrefix("#### ") || trimmed.hasPrefix("### ")
+            || trimmed.hasPrefix("## ") || trimmed.hasPrefix("# ") {
             styleHeading(storage: storage, trimmed: trimmed, range: range, offset: offset, active: active)
         } else if trimmed.hasPrefix("> ") {
             styleBlockquote(storage: storage, range: range, offset: offset, leading: leading, active: active)
@@ -76,50 +81,63 @@ extension MarkdownCoordinator {
         }
     }
 
+    private struct HeadingStyle {
+        let prefixLen: Int
+        let fontSize: CGFloat
+        let kernEm: CGFloat
+        let bold: Bool
+        let italic: Bool
+        let underline: Bool
+        let color: NSColor
+        let para: NSParagraphStyle
+    }
+
+    private func headingStyle(for trimmed: String) -> HeadingStyle {
+        if trimmed.hasPrefix("#### ") {
+            return HeadingStyle(
+                prefixLen: 5, fontSize: theme.h4FontSize, kernEm: -0.005,
+                bold: theme.h4Bold, italic: theme.h4Italic, underline: theme.h4Underline,
+                color: theme.h4Color, para: paragraphStyle(before: 8, after: 2)
+            )
+        }
+        if trimmed.hasPrefix("### ") {
+            return HeadingStyle(
+                prefixLen: 4, fontSize: theme.h3FontSize, kernEm: -0.010,
+                bold: theme.h3Bold, italic: theme.h3Italic, underline: theme.h3Underline,
+                color: theme.h3Color, para: paragraphStyle(before: 10, after: 2)
+            )
+        }
+        if trimmed.hasPrefix("## ") {
+            return HeadingStyle(
+                prefixLen: 3, fontSize: theme.h2FontSize, kernEm: -0.018,
+                bold: theme.h2Bold, italic: theme.h2Italic, underline: theme.h2Underline,
+                color: theme.h2Color, para: paragraphStyle(before: 14, after: 4)
+            )
+        }
+        return HeadingStyle(
+            prefixLen: 2, fontSize: theme.h1FontSize, kernEm: -0.025,
+            bold: theme.h1Bold, italic: theme.h1Italic, underline: theme.h1Underline,
+            color: theme.h1Color, para: paragraphStyle(before: 12, after: 6)
+        )
+    }
+
     private func styleHeading(
         storage: NSTextStorage, trimmed: String,
         range: NSRange, offset: Int, active: Bool
     ) {
-        let level: Int
-        let prefixLen: Int
-        if trimmed.hasPrefix("### ") {
-            level = 3; prefixLen = 4
-        } else if trimmed.hasPrefix("## ") {
-            level = 2; prefixLen = 3
-        } else {
-            level = 1; prefixLen = 2
-        }
-
-        let para: NSParagraphStyle
-        let color: NSColor
-        let isBold: Bool
-        let isItalic: Bool
-        let isUnderline: Bool
-        let fontSize: CGFloat
-        switch level {
-        case 1:
-            fontSize = theme.h1FontSize
-            para = paragraphStyle(before: 12, after: 4)
-            color = theme.h1Color.nsColor
-            isBold = theme.h1Bold; isItalic = theme.h1Italic; isUnderline = theme.h1Underline
-        case 2:
-            fontSize = theme.h2FontSize
-            para = paragraphStyle(before: 12, after: 2)
-            color = theme.h2Color.nsColor
-            isBold = theme.h2Bold; isItalic = theme.h2Italic; isUnderline = theme.h2Underline
-        default:
-            fontSize = theme.h3FontSize
-            para = paragraphStyle(before: 8, after: 2)
-            color = theme.h3Color.nsColor
-            isBold = theme.h3Bold; isItalic = theme.h3Italic; isUnderline = theme.h3Underline
-        }
-        let font = applyTraits(size: fontSize, bold: isBold, italic: isItalic)
-        var attrs: [NSAttributedString.Key: Any] = [.font: font, .paragraphStyle: para, .foregroundColor: color]
-        if isUnderline {
+        let style = headingStyle(for: trimmed)
+        let font = applyTraits(size: style.fontSize, bold: style.bold, italic: style.italic)
+        var attrs: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .paragraphStyle: style.para,
+            .foregroundColor: style.color,
+            .kern: style.fontSize * style.kernEm
+        ]
+        if style.underline {
             attrs[.underlineStyle] = NSUnderlineStyle.single.rawValue
         }
         storage.addAttributes(attrs, range: range)
-        if !active { hideRange(NSRange(location: offset, length: prefixLen)) }
+        if !active { hideRange(NSRange(location: offset, length: style.prefixLen)) }
     }
 
     private func styleBlockquote(
@@ -129,9 +147,9 @@ extension MarkdownCoordinator {
         let indent = CGFloat(leading) * 7
         let font = applyTraits(size: theme.baseFontSize, bold: theme.quoteBold, italic: theme.quoteItalic)
         var attrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: theme.quoteColor.nsColor,
+            .foregroundColor: theme.quoteColor,
             .font: font,
-            .paragraphStyle: paragraphStyle(firstIndent: indent, headIndent: indent + 14)
+            .paragraphStyle: paragraphStyle(firstIndent: indent + 12, headIndent: indent + 12)
         ]
         if theme.quoteUnderline {
             attrs[.underlineStyle] = NSUnderlineStyle.single.rawValue
@@ -163,7 +181,8 @@ extension MarkdownCoordinator {
             let visibleStart = min(offset + leading + 6, offset + range.length)
             checkboxInfos.append(CheckboxDrawInfo(
                 charIndex: offset + leading, visibleCharIndex: visibleStart,
-                checked: true, indent: indent
+                checked: true, indent: indent,
+                borderColor: theme.taskBorderColor, fillColor: theme.accentColor
             ))
         }
     }
@@ -180,7 +199,8 @@ extension MarkdownCoordinator {
             let visibleStart = min(offset + leading + 6, offset + range.length)
             checkboxInfos.append(CheckboxDrawInfo(
                 charIndex: offset + leading, visibleCharIndex: visibleStart,
-                checked: false, indent: indent
+                checked: false, indent: indent,
+                borderColor: theme.taskBorderColor, fillColor: theme.accentColor
             ))
         }
     }
@@ -199,13 +219,13 @@ extension MarkdownCoordinator {
     }
 
     private func styleDivider(storage: NSTextStorage, range: NSRange, active: Bool) {
-        storage.addAttribute(.foregroundColor, value: theme.dividerColor.nsColor, range: range)
+        storage.addAttribute(.foregroundColor, value: theme.dividerColor, range: range)
         if !active {
             storage.addAttribute(.foregroundColor, value: NSColor.clear, range: NSRange(location: range.location, length: 1))
             if range.length > 1 {
                 hideRange(NSRange(location: range.location + 1, length: range.length - 1))
             }
-            dividerInfos.append(DividerDrawInfo(charIndex: range.location, color: theme.dividerColor.nsColor))
+            dividerInfos.append(DividerDrawInfo(charIndex: range.location, color: theme.dividerColor))
         }
     }
 
@@ -262,9 +282,9 @@ extension MarkdownCoordinator {
 
         let styles: [InlineStyle] = [
             InlineStyle(regex: MarkdownRegex.bold, markerLen: 2,
-                        trait: .boldFontMask, color: theme.boldColor.nsColor),
+                        trait: .boldFontMask, color: theme.boldColor),
             InlineStyle(regex: MarkdownRegex.italic, markerLen: 1,
-                        trait: .italicFontMask, color: theme.italicColor.nsColor)
+                        trait: .italicFontMask, color: theme.italicColor)
         ]
         for style in styles {
             styleInlinePattern(storage: storage, lineText: lineText, baseOffset: range.location, style: style)
@@ -308,8 +328,8 @@ extension MarkdownCoordinator {
             if contentRange.length > 0 {
                 storage.addAttributes([
                     .font: monoFont(size: theme.baseFontSize - 1),
-                    .foregroundColor: theme.codeColor.nsColor,
-                    .backgroundColor: theme.codeBackgroundColor.nsColor
+                    .foregroundColor: theme.codeColor,
+                    .backgroundColor: theme.codeBackgroundColor
                 ], range: contentRange)
             }
         }
@@ -348,7 +368,7 @@ extension MarkdownCoordinator {
 
             if contentRange.length > 0 {
                 storage.addAttributes([
-                    .foregroundColor: theme.linkColor.nsColor,
+                    .foregroundColor: theme.linkColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
                     .link: urlString,
                     .cursor: NSCursor.pointingHand,

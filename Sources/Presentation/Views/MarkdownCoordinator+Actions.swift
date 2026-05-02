@@ -63,7 +63,7 @@ extension MarkdownCoordinator {
         let defaultPara = NSMutableParagraphStyle()
         defaultPara.lineSpacing = 4
         let defaultAttrs: [NSAttributedString.Key: Any] = [
-            .font: defaultFont, .foregroundColor: theme.bodyColor.nsColor, .paragraphStyle: defaultPara
+            .font: defaultFont, .foregroundColor: theme.bodyColor, .paragraphStyle: defaultPara
         ]
 
         for lineIdx in affected {

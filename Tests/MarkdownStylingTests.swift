@@ -495,7 +495,7 @@ final class InlineLinkStylingTests: XCTestCase {
         coord.applyMarkdownStyling()
         // "Google" starts at index 7 (after "Visit [")
         let color = tv.textStorage!.attribute(.foregroundColor, at: 7, effectiveRange: nil) as? NSColor
-        let expected = MarkdownTheme().linkColor.nsColor
+        let expected = MarkdownTheme().linkColor
         XCTAssertEqual(color, expected)
     }
 
@@ -538,17 +538,6 @@ final class InlineLinkStylingTests: XCTestCase {
         // Second link text "b" at index 24
         let link2 = tv.textStorage!.attribute(.link, at: 24, effectiveRange: nil) as? String
         XCTAssertEqual(link2, "https://b.com")
-    }
-
-    @MainActor
-    func testLinkCustomColor() {
-        var theme = MarkdownTheme()
-        theme.linkColor = CodableColor(red: 1, green: 0, blue: 0)
-        let text = "[red](https://red.com)"
-        let (coord, tv, _) = makeCoordinator(text: text, theme: theme)
-        coord.applyMarkdownStyling()
-        let color = tv.textStorage!.attribute(.foregroundColor, at: 1, effectiveRange: nil) as? NSColor
-        XCTAssertEqual(color, theme.linkColor.nsColor)
     }
 
     @MainActor
@@ -753,19 +742,6 @@ final class TableColumnWidthTests: XCTestCase {
     }
 }
 
-// MARK: - CodableColor edge case
-
-final class CodableColorEdgeCaseTests: XCTestCase {
-
-    func testInitFromCatalogColor() {
-        // NSColor.labelColor is a catalog color; conversion to sRGB uses fallback
-        let codable = CodableColor(.labelColor)
-        // Should not crash and should have valid components
-        XCTAssertTrue(codable.alpha > 0)
-    }
-
-}
-
 // MARK: - Additional styling edge cases
 
 final class StylingEdgeCaseTests: XCTestCase {
@@ -813,7 +789,10 @@ final class StylingEdgeCaseTests: XCTestCase {
 final class MarkdownDataStructureTests: XCTestCase {
 
     func testCheckboxDrawInfo() {
-        let info = CheckboxDrawInfo(charIndex: 0, visibleCharIndex: 6, checked: true, indent: 0)
+        let info = CheckboxDrawInfo(
+            charIndex: 0, visibleCharIndex: 6, checked: true, indent: 0,
+            borderColor: .gray, fillColor: .systemBlue
+        )
         XCTAssertTrue(info.checked)
         XCTAssertEqual(info.charIndex, 0)
     }

@@ -7,6 +7,8 @@ struct CheckboxDrawInfo {
     let visibleCharIndex: Int
     let checked: Bool
     let indent: CGFloat
+    let borderColor: NSColor
+    let fillColor: NSColor
 }
 
 struct DividerDrawInfo {
@@ -133,7 +135,7 @@ class HidingLayoutManager: NSLayoutManager {
                 y: origin.y + lineRect.origin.y + (lineRect.height - size) / 2,
                 width: size, height: size
             )
-            drawCheckbox(in: rect, checked: cb.checked)
+            drawCheckbox(in: rect, checked: cb.checked, borderColor: cb.borderColor, fillColor: cb.fillColor)
         }
     }
 
@@ -162,25 +164,25 @@ class HidingLayoutManager: NSLayoutManager {
         return glyphIndexForCharacter(at: charIndex)
     }
 
-    private func drawCheckbox(in rect: NSRect, checked: Bool) {
+    private func drawCheckbox(in rect: NSRect, checked: Bool, borderColor: NSColor, fillColor: NSColor) {
         let box = rect.insetBy(dx: 1, dy: 1)
-        let path = NSBezierPath(roundedRect: box, xRadius: 3, yRadius: 3)
+        let path = NSBezierPath(roundedRect: box, xRadius: 4, yRadius: 4)
 
         if checked {
-            NSColor.controlAccentColor.setFill()
+            fillColor.setFill()
             path.fill()
             let check = NSBezierPath()
-            check.lineWidth = 1.8
+            check.lineWidth = 1.5
             check.lineCapStyle = .round
             check.lineJoinStyle = .round
             let bx = box.minX, by = box.minY, bw = box.width, bh = box.height
-            check.move(to: NSPoint(x: bx + bw * 0.2, y: by + bh * 0.5))
-            check.line(to: NSPoint(x: bx + bw * 0.42, y: by + bh * 0.72))
-            check.line(to: NSPoint(x: bx + bw * 0.8, y: by + bh * 0.25))
+            check.move(to: NSPoint(x: bx + bw * 0.22, y: by + bh * 0.5))
+            check.line(to: NSPoint(x: bx + bw * 0.44, y: by + bh * 0.72))
+            check.line(to: NSPoint(x: bx + bw * 0.78, y: by + bh * 0.28))
             NSColor.white.setStroke()
             check.stroke()
         } else {
-            NSColor.tertiaryLabelColor.setStroke()
+            borderColor.setStroke()
             path.lineWidth = 1.5
             path.stroke()
         }

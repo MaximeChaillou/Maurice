@@ -1,144 +1,113 @@
-import SwiftUI
+import AppKit
 
-struct MarkdownTheme: Codable, Equatable {
-    // MARK: - Background
+// MARK: - MarkdownTheme (Sage tokens)
+//
+// Stateless design-tokens struct sourced from `share/maurice-markdown.css`.
+// All colors are dynamic NSColors that resolve against the view's effective
+// appearance, so the same theme automatically renders in light and dark mode.
 
-    var backgroundColor: CodableColor = CodableColor(red: 0.1099, green: 0.1298, blue: 0.1549, alpha: 0.6049)
-
-    // MARK: - Typography
-
-    var fontName: String = "Helvetica Neue"
-    var baseFontSize: CGFloat = 16
-
-    // MARK: - Body text
-
-    var bodyColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
-
-    // MARK: - Headings
-
-    var h1Color: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
-    var h1FontSize: CGFloat = 26
-    var h1Bold: Bool = true
-    var h1Italic: Bool = false
-    var h1Underline: Bool = false
-
-    var h2Color: CodableColor = CodableColor(red: 0.1821, green: 0.4999, blue: 0.9470)
-    var h2FontSize: CGFloat = 22
-    var h2Bold: Bool = true
-    var h2Italic: Bool = false
-    var h2Underline: Bool = false
-
-    var h3Color: CodableColor = CodableColor(red: 0.4855, green: 0.5008, blue: 0.9454)
-    var h3FontSize: CGFloat = 18
-    var h3Bold: Bool = true
-    var h3Italic: Bool = false
-    var h3Underline: Bool = false
-
-    // MARK: - Bold & italic
-
-    var boldColor: CodableColor = CodableColor(red: 0.8563, green: 0.5481, blue: 0.8177)
-    var italicColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
-
-    // MARK: - Blockquotes
-
-    var quoteColor: CodableColor = CodableColor(red: 0.2449, green: 0.7068, blue: 0.7484)
-    var quoteBold: Bool = false
-    var quoteItalic: Bool = true
-    var quoteUnderline: Bool = false
-
-    // MARK: - Code
-
-    var codeColor: CodableColor = CodableColor(red: 0.854, green: 0.854, blue: 0.854)
-    var codeBackgroundColor: CodableColor = CodableColor(red: 1, green: 1, blue: 1, alpha: 0.4012)
-
-    // MARK: - Links
-
-    var linkColor: CodableColor = CodableColor(red: 0.1821, green: 0.4999, blue: 0.9470)
-
-    // MARK: - Dividers
-
-    var dividerColor: CodableColor = CodableColor(red: 0.3584, green: 0.4181, blue: 0.4885)
+struct MarkdownTheme: Equatable {
 
     // MARK: - Layout
 
     var maxContentWidth: CGFloat = 890
 
-    // MARK: - Codable
+    // MARK: - Typography
 
-    init() {}
+    var fontName: String = "System"
+    var baseFontSize: CGFloat = 14.5
 
-    init(from decoder: Decoder) throws {
-        let defaults = MarkdownTheme()
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        backgroundColor = try c.valueOrDefault(forKey: .backgroundColor, default: defaults.backgroundColor)
-        fontName = try c.valueOrDefault(forKey: .fontName, default: defaults.fontName)
-        baseFontSize = try c.valueOrDefault(forKey: .baseFontSize, default: defaults.baseFontSize)
-        bodyColor = try c.valueOrDefault(forKey: .bodyColor, default: defaults.bodyColor)
-        h1Color = try c.valueOrDefault(forKey: .h1Color, default: defaults.h1Color)
-        h1FontSize = try c.valueOrDefault(forKey: .h1FontSize, default: defaults.h1FontSize)
-        h1Bold = try c.valueOrDefault(forKey: .h1Bold, default: defaults.h1Bold)
-        h1Italic = try c.valueOrDefault(forKey: .h1Italic, default: defaults.h1Italic)
-        h1Underline = try c.valueOrDefault(forKey: .h1Underline, default: defaults.h1Underline)
-        h2Color = try c.valueOrDefault(forKey: .h2Color, default: defaults.h2Color)
-        h2FontSize = try c.valueOrDefault(forKey: .h2FontSize, default: defaults.h2FontSize)
-        h2Bold = try c.valueOrDefault(forKey: .h2Bold, default: defaults.h2Bold)
-        h2Italic = try c.valueOrDefault(forKey: .h2Italic, default: defaults.h2Italic)
-        h2Underline = try c.valueOrDefault(forKey: .h2Underline, default: defaults.h2Underline)
-        h3Color = try c.valueOrDefault(forKey: .h3Color, default: defaults.h3Color)
-        h3FontSize = try c.valueOrDefault(forKey: .h3FontSize, default: defaults.h3FontSize)
-        h3Bold = try c.valueOrDefault(forKey: .h3Bold, default: defaults.h3Bold)
-        h3Italic = try c.valueOrDefault(forKey: .h3Italic, default: defaults.h3Italic)
-        h3Underline = try c.valueOrDefault(forKey: .h3Underline, default: defaults.h3Underline)
-        boldColor = try c.valueOrDefault(forKey: .boldColor, default: defaults.boldColor)
-        italicColor = try c.valueOrDefault(forKey: .italicColor, default: defaults.italicColor)
-        quoteColor = try c.valueOrDefault(forKey: .quoteColor, default: defaults.quoteColor)
-        quoteBold = try c.valueOrDefault(forKey: .quoteBold, default: defaults.quoteBold)
-        quoteItalic = try c.valueOrDefault(forKey: .quoteItalic, default: defaults.quoteItalic)
-        quoteUnderline = try c.valueOrDefault(forKey: .quoteUnderline, default: defaults.quoteUnderline)
-        codeColor = try c.valueOrDefault(forKey: .codeColor, default: defaults.codeColor)
-        codeBackgroundColor = try c.valueOrDefault(forKey: .codeBackgroundColor, default: defaults.codeBackgroundColor)
-        linkColor = try c.valueOrDefault(forKey: .linkColor, default: defaults.linkColor)
-        dividerColor = try c.valueOrDefault(forKey: .dividerColor, default: defaults.dividerColor)
-        maxContentWidth = try c.valueOrDefault(forKey: .maxContentWidth, default: defaults.maxContentWidth)
-    }
+    var h1FontSize: CGFloat = 30
+    var h2FontSize: CGFloat = 22
+    var h3FontSize: CGFloat = 17
+    var h4FontSize: CGFloat = 15
+
+    var h1Bold = true
+    var h2Bold = true
+    var h3Bold = true
+    var h4Bold = true
+    var h1Italic = false
+    var h2Italic = false
+    var h3Italic = false
+    var h4Italic = false
+    var h1Underline = false
+    var h2Underline = false
+    var h3Underline = false
+    var h4Underline = false
+
+    var quoteBold = false
+    var quoteItalic = true
+    var quoteUnderline = false
+
+    // MARK: - Color tokens
+
+    var bodyColor: NSColor { .sageBody }
+    var textMutedColor: NSColor { .sageTextMuted }
+    var textFaintColor: NSColor { .sageTextFaint }
+    var headingColor: NSColor { .sageHeading }
+    var boldColor: NSColor { .sageBold }
+    var italicColor: NSColor { .sageBody }
+
+    var h1Color: NSColor { .sageHeading }
+    var h2Color: NSColor { .sageHeading }
+    var h3Color: NSColor { .sageHeading }
+    var h4Color: NSColor { .sageHeading }
+
+    var quoteColor: NSColor { .sageQuote }
+    var quoteRuleColor: NSColor { .sageAccentRule }
+
+    var codeColor: NSColor { .sageCode }
+    var codeBackgroundColor: NSColor { .sageCodeInlineBg }
+    var codeBlockBackgroundColor: NSColor { .sageCodeBlockBg }
+    var codeBlockBorderColor: NSColor { .sageCodeBlockBorder }
+
+    var linkColor: NSColor { .sageAccentText }
+    var dividerColor: NSColor { .sageRule }
+
+    var accentColor: NSColor { .sageAccent }
+    var taskBorderColor: NSColor { .sageTaskBorder }
+
+    var tableHeaderBgColor: NSColor { .sageTableHeaderBg }
+    var tableRowAltBgColor: NSColor { .sageTableRowAlt }
+    var tableBorderColor: NSColor { .sageTableBorder }
 }
 
-// MARK: - Defensive Decoding Helper
+// MARK: - Sage palette
 
-extension KeyedDecodingContainer {
-    func valueOrDefault<T: Decodable>(forKey key: Key, default defaultValue: T) throws -> T {
-        try decodeIfPresent(T.self, forKey: key) ?? defaultValue
-    }
+extension NSColor {
+    fileprivate static let sageBody             = sageDynamic(light: sageRGBA(0, 0, 0, 0.84), dark: sageRGBA(255, 255, 255, 0.88))
+    fileprivate static let sageTextMuted        = sageDynamic(light: sageRGBA(0, 0, 0, 0.55), dark: sageRGBA(255, 255, 255, 0.60))
+    fileprivate static let sageTextFaint        = sageDynamic(light: sageRGBA(0, 0, 0, 0.40), dark: sageRGBA(255, 255, 255, 0.42))
+    fileprivate static let sageHeading          = sageDynamic(light: sageRGBA(0, 0, 0, 0.92), dark: sageRGBA(255, 255, 255, 0.95))
+    fileprivate static let sageBold             = sageDynamic(light: sageRGBA(0, 0, 0, 0.95), dark: sageRGBA(255, 255, 255, 0.98))
+    fileprivate static let sageQuote            = sageDynamic(light: sageRGBA(0, 0, 0, 0.70), dark: sageRGBA(255, 255, 255, 0.78))
+    fileprivate static let sageRule             = sageDynamic(light: sageRGBA(0, 0, 0, 0.10), dark: sageRGBA(255, 255, 255, 0.10))
+    fileprivate static let sageCode             = sageDynamic(light: sageRGBA(0, 0, 0, 0.85), dark: sageRGBA(255, 255, 255, 0.92))
+    fileprivate static let sageCodeInlineBg     = sageDynamic(light: sageRGBA(0, 0, 0, 0.045), dark: sageRGBA(255, 255, 255, 0.07))
+    fileprivate static let sageCodeBlockBg      = sageDynamic(light: sageRGBA(0, 0, 0, 0.035), dark: sageRGBA(0, 0, 0, 0.28))
+    fileprivate static let sageCodeBlockBorder  = sageDynamic(light: sageRGBA(0, 0, 0, 0.06), dark: sageRGBA(255, 255, 255, 0.06))
+    fileprivate static let sageTableHeaderBg    = sageDynamic(light: sageRGBA(0, 0, 0, 0.035), dark: sageRGBA(255, 255, 255, 0.04))
+    fileprivate static let sageTableRowAlt      = sageDynamic(light: sageRGBA(0, 0, 0, 0.018), dark: sageRGBA(255, 255, 255, 0.02))
+    fileprivate static let sageTableBorder      = sageDynamic(light: sageRGBA(0, 0, 0, 0.08), dark: sageRGBA(255, 255, 255, 0.08))
+    fileprivate static let sageAccentText       = sageDynamic(light: sageRGB(0x03, 0x6B, 0x79), dark: sageRGB(0x6E, 0xE8, 0xF5))
+    fileprivate static let sageAccentRule       = sageDynamic(light: sageRGBA(0, 200, 220, 0.40), dark: sageRGBA(0, 200, 220, 0.50))
+    fileprivate static let sageAccent           = sageRGB(0x00, 0xC8, 0xDC)
+    fileprivate static let sageTaskBorder       = sageDynamic(light: sageRGBA(0, 0, 0, 0.22), dark: sageRGBA(255, 255, 255, 0.28))
 }
 
-// MARK: - CodableColor
+// MARK: - Helpers
 
-struct CodableColor: Codable, Equatable {
-    var red: Double
-    var green: Double
-    var blue: Double
-    var alpha: Double
+private func sageRGBA(_ red: Int, _ green: Int, _ blue: Int, _ alpha: Double) -> NSColor {
+    NSColor(srgbRed: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: alpha)
+}
 
-    init(_ nsColor: NSColor) {
-        let c = nsColor.usingColorSpace(.sRGB) ?? nsColor
-        red = Double(c.redComponent)
-        green = Double(c.greenComponent)
-        blue = Double(c.blueComponent)
-        alpha = Double(c.alphaComponent)
-    }
+private func sageRGB(_ red: Int, _ green: Int, _ blue: Int) -> NSColor {
+    sageRGBA(red, green, blue, 1)
+}
 
-    init(red: Double, green: Double, blue: Double, alpha: Double = 1) {
-        self.red = red
-        self.green = green
-        self.blue = blue
-        self.alpha = alpha
-    }
-
-    var nsColor: NSColor {
-        NSColor(srgbRed: red, green: green, blue: blue, alpha: alpha)
-    }
-
-    var color: Color {
-        Color(nsColor: nsColor)
+private func sageDynamic(light: NSColor, dark: NSColor) -> NSColor {
+    NSColor(name: nil) { appearance in
+        let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        return isDark ? dark : light
     }
 }

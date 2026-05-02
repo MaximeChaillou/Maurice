@@ -31,7 +31,6 @@
 		2541655FF7449D8DCC625EDA /* TranscriptionEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A149458BA1EDDBB22708DBEE /* TranscriptionEntry.swift */; };
 		2A5E44FE730B27788BAAE31F /* TranscriptDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EF7F77F7B12DEB1EFB2BBF /* TranscriptDetailView.swift */; };
 		2D182DD428C529A63EC524BF /* MemoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */; };
-		2D5E9D1C64C59AC43B8B7516 /* MarkdownThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */; };
 		353A6FD06F4DC65BEC7EDDE2 /* MemoryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */; };
 		3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */; };
 		4F8BA5E363FF4AE9809B1699 /* GoogleCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */; };
@@ -63,7 +62,6 @@
 		AA11BB22CC33DD44EE55FF66 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF660011 /* Folder.swift */; };
 		AA3E82542E7DEBBBB8799C91 /* AudioWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */; };
 		AI01AI02AI03AI04AI05AI06 /* AddItemSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI11AI12AI13AI14AI15AI16 /* AddItemSheet.swift */; };
-		AT01AT02AT03AT04AT05AT06 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */; };
 		B034A36AA58C309E262870B2 /* BubbleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04267207A548186DD8535FA2 /* BubbleListView.swift */; };
 		B116FC010460BB5092519DC5 /* Transcription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26DEF28AB727905D3069845 /* Transcription.swift */; };
 		C1C2C3C4C5C6C7C8C9C0C1C2 /* MeetingConfigSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D2D3D4D5D6D7D8D9D0D1D2 /* MeetingConfigSheet.swift */; };
@@ -114,7 +112,6 @@
 		SS01SS02SS03SS04SS05SS06 /* SemanticSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */; };
 		SV01SV02SV03SV04SV05SV06 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV11SV12SV13SV14SV15SV16 /* SearchView.swift */; };
 		T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T101A102B103C104D105E106F /* CodableColorTests.swift */; };
-		T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T202A203B204C205D206E207F /* MarkdownThemeTests.swift */; };
 		T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T303A304B305C306D307E308F /* MarkdownStylingTests.swift */; };
 		TP07TP08TP09TP10TP11TP12 /* Templates in Resources */ = {isa = PBXBuildFile; fileRef = TP01TP02TP03TP04TP05TP06 /* Templates */; };
 		UC01UC02UC03UC04UC05UC06 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = UC11UC12UC13UC14UC15UC16 /* UpdateChecker.swift */; };
@@ -123,7 +120,6 @@
 		VM04T004B004C004D004E004 /* MeetingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */; };
 		VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */; };
 		NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */; };
-		NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */; };
 		NT13NT14NT15NT16NT17NT18 /* DirectoryScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */; };
 		TR01TR02TR03TR04TR05TR06 /* DirectoryScannerRecursiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */; };
 
@@ -192,7 +188,6 @@
 		14241F0FA37147C8A3048475 /* TranscriptionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionStorage.swift; sourceTree = "<group>"; };
 		2233445566778899001122BB /* ThemedMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemedMarkdownView.swift; sourceTree = "<group>"; };
 		2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarEvent.swift; sourceTree = "<group>"; };
-		2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeSettingsView.swift; sourceTree = "<group>"; };
 		444945559552A66796B66A73 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		LC01LC02LC03LC04LC05LC06 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		48A9CF845207422686E623CC /* CalendarLinkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLinkSheet.swift; sourceTree = "<group>"; };
@@ -227,7 +222,6 @@
 		AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
 		AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEvent.swift; sourceTree = "<group>"; };
 		AI11AI12AI13AI14AI15AI16 /* AddItemSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemSheet.swift; sourceTree = "<group>"; };
-		AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingSkillConfig.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* MarkdownCoordinator+Styling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownCoordinator+Styling.swift"; sourceTree = "<group>"; };
 		C5D6E7F8A9B0C1D2E3F4A5B6 /* MarkdownCoordinator+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownCoordinator+Actions.swift"; sourceTree = "<group>"; };
@@ -284,13 +278,11 @@
 		SS11SS12SS13SS14SS15SS16 /* SemanticSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchService.swift; sourceTree = "<group>"; };
 		SV11SV12SV13SV14SV15SV16 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		T101A102B103C104D105E106F /* CodableColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColorTests.swift; sourceTree = "<group>"; };
-		T202A203B204C205D206E207F /* MarkdownThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownThemeTests.swift; sourceTree = "<group>"; };
 		T303A304B305C306D307E308F /* MarkdownStylingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStylingTests.swift; sourceTree = "<group>"; };
 		TE01AE02BE03CE04DE05EE06F /* MauriceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MauriceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		TP01TP02TP03TP04TP05TP06 /* Templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Templates; sourceTree = "<group>"; };
 		UC11UC12UC13UC14UC15UC16 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
-		NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeTests.swift; sourceTree = "<group>"; };
 		NF13NF14NF15NF16NF17NF18 /* DirectoryScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerTests.swift; sourceTree = "<group>"; };
 		TF01TF02TF03TF04TF05TF06 /* DirectoryScannerRecursiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryScannerRecursiveTests.swift; sourceTree = "<group>"; };
 
@@ -550,7 +542,6 @@
 				C5D6E7F8A9B0C1D2E3F4A5B6 /* MarkdownCoordinator+Actions.swift */,
 				D6E7F8A9B0C1D2E3F4A5B6C7 /* MarkdownCoordinator+Tables.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* MarkdownLayoutManager.swift */,
-				2F1D76DA22DB1DFF7943019C /* MarkdownThemeSettingsView.swift */,
 				D7CE9DD4757DD131F4C42682 /* MarkdownView.swift */,
 				80051D6DB5639866EA2923C6 /* MemoryContentView.swift */,
 				SV11SV12SV13SV14SV15SV16 /* SearchView.swift */,
@@ -583,7 +574,6 @@
 				MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */,
 				4455667788990011223344DD /* PersistentCodable.swift */,
 				E85222273DB7968BE346AD9C /* MarkdownTheme.swift */,
-				AT11AT12AT13AT14AT15AT16 /* AppTheme.swift */,
 				B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */,
 				DF11DF12DF13DF14DF15DF16 /* DateFormatters.swift */,
 				A7EBEC0ED559704BB57E4ED1 /* MemoryFile.swift */,
@@ -630,7 +620,6 @@
 			isa = PBXGroup;
 			children = (
 				NF01NF02NF03NF04NF05NF06 /* AppSettingsTests.swift */,
-				NF07NF08NF09NF10NF11NF12 /* AppThemeTests.swift */,
 				T101A102B103C104D105E106F /* CodableColorTests.swift */,
 
 				ES11ES12ES13ES14ES15ES16 /* EmptyStateTests.swift */,
@@ -646,7 +635,6 @@
 				LT11LT12LT13LT14LT15LT16 /* LocalizationTests.swift */,
 				VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */,
 				T303A304B305C306D307E308F /* MarkdownStylingTests.swift */,
-				T202A203B204C205D206E207F /* MarkdownThemeTests.swift */,
 				NF37NF38NF39NF40NF41NF42 /* MeetingConfigTests.swift */,
 				NF43NF44NF45NF46NF47NF48 /* MeetingDateEntryTests.swift */,
 				VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */,
@@ -839,8 +827,6 @@
 				7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */,
 				E7F6EB6B9DCCDB03DB45DC14 /* LiveTranscriptionService.swift in Sources */,
 				18F8A264A1F6C7F7C446744E /* MarkdownTheme.swift in Sources */,
-				AT01AT02AT03AT04AT05AT06 /* AppTheme.swift in Sources */,
-				2D5E9D1C64C59AC43B8B7516 /* MarkdownThemeSettingsView.swift in Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* MarkdownCoordinator+Styling.swift in Sources */,
 				A3C4D5E6F7A8B9C0D1E2F3A4 /* MarkdownCoordinator+Actions.swift in Sources */,
 				A4D5E6F7A8B9C0D1E2F3A4B5 /* MarkdownCoordinator+Tables.swift in Sources */,
@@ -915,7 +901,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				NT01NT02NT03NT04NT05NT06 /* AppSettingsTests.swift in Sources */,
-				NT07NT08NT09NT10NT11NT12 /* AppThemeTests.swift in Sources */,
 				T001A002B003C004D005E006F /* CodableColorTests.swift in Sources */,
 
 				ES01ES02ES03ES04ES05ES06 /* EmptyStateTests.swift in Sources */,
@@ -931,7 +916,6 @@
 				NT31NT32NT33NT34NT35NT36 /* GoogleCalendarServiceTests.swift in Sources */,
 				GN01GN02GN03GN04GN05GN06 /* GoogleCalendarServiceNetworkTests.swift in Sources */,
 				VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */,
-				T002A003B004C005D006E007F /* MarkdownThemeTests.swift in Sources */,
 				T003A004B005C006D007E008F /* MarkdownStylingTests.swift in Sources */,
 				NT37NT38NT39NT40NT41NT42 /* MeetingConfigTests.swift in Sources */,
 				NT43NT44NT45NT46NT47NT48 /* MeetingDateEntryTests.swift in Sources */,
