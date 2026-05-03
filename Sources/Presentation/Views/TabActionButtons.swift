@@ -359,7 +359,7 @@ struct SkillsPillMenu: View {
             )
         ) {
             TabPillLabel(
-                label: "Skills",
+                label: "Assistant",
                 systemImage: "sparkles",
                 hasChevron: true
             )

@@ -300,6 +300,16 @@
         }
       }
     },
+    "Assistant": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assistant"
+          }
+        }
+      }
+    },
     "Available in library": {
       "localizations": {
         "fr": {
