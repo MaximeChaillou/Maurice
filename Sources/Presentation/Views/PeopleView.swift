@@ -10,7 +10,6 @@ struct PeopleView: View {
     @State var viewModel: PeopleContentViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var personSubpath: String = ""
     @State private var selectedCategory: String = ""
     @State private var shouldAddPersonAfterCategory = false
     @State private var pendingCategoryName = ""
@@ -19,7 +18,7 @@ struct PeopleView: View {
     @State private var oneOnOneActiveFileURL: URL?
 
     private var isEditingOneOnOne: Bool {
-        personSubpath.hasPrefix("1-1/")
+        viewModel.personSubpath.hasPrefix("1-1/")
     }
 
     var body: some View {
@@ -30,7 +29,12 @@ struct PeopleView: View {
         }
         .onAppear {
             viewModel.loadFolders()
-            Task { await loadOneOnOneConfig() }
+            Task {
+                await loadOneOnOneConfig()
+                if viewModel.personSubpath.isEmpty {
+                    await resolveDefaultSubpath()
+                }
+            }
         }
         .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -41,14 +45,14 @@ struct PeopleView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onChange(of: viewModel.selectedPerson) {
-            personSubpath = ""
+            viewModel.personSubpath = ""
             updateRecordingSubdirectory()
             Task {
                 await loadOneOnOneConfig()
                 await resolveDefaultSubpath()
             }
         }
-        .onChange(of: personSubpath) {
+        .onChange(of: viewModel.personSubpath) {
             updateRecordingSubdirectory()
         }
         .onReceive(NotificationCenter.default.publisher(for: .meetingConfigDidChange)) { notif in
@@ -74,7 +78,7 @@ struct PeopleView: View {
             preferredFolders: ["1-1"]
         )
         if viewModel.currentPerson?.relativePath == person.relativePath {
-            personSubpath = resolved
+            viewModel.personSubpath = resolved
         }
     }
 
@@ -287,7 +291,7 @@ struct PeopleView: View {
         FolderPathExplorerView(
             rootURL: person.url,
             rootSegment: personBreadcrumbSegment(currentPerson: person),
-            subpath: $personSubpath,
+            subpath: $viewModel.personSubpath,
             markdownTheme: markdownTheme,
             onActiveFileChange: { url in oneOnOneActiveFileURL = url }
         )

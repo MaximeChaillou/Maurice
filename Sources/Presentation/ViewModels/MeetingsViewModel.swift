@@ -8,6 +8,7 @@ final class MeetingsViewModel {
 
     private(set) var folders: [FolderItem] = []
     var selectedFolder: String?
+    var currentSubpath: String = ""
     var isAddingFolder = false
     var newFolderName = ""
     var meetingConfig: MeetingConfig = MeetingConfig()
@@ -25,6 +26,7 @@ final class MeetingsViewModel {
     func resetDirectory(_ newDirectory: URL) {
         directory = newDirectory
         selectedFolder = nil
+        currentSubpath = ""
         folders = []
         loadFolders()
     }

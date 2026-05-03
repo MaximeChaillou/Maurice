@@ -14,7 +14,6 @@ struct MeetingsView: View {
     @State var viewModel: MeetingsViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var currentSubpath: String = ""
     @State private var activeFileURL: URL?
 
     var body: some View {
@@ -34,6 +33,9 @@ struct MeetingsView: View {
         .onAppear {
             viewModel.loadFolders()
             reloadCurrentMeetingConfig()
+            if viewModel.currentSubpath.isEmpty, let folder = viewModel.currentFolder {
+                Task { await resolveDefaultSubpath(for: folder) }
+            }
         }
         .onChange(of: viewModel.folders.map(\.name), initial: true) {
             autoSelectFirstSidebarFolder()
@@ -186,7 +188,7 @@ struct MeetingsView: View {
     }
 
     private func handleFolderSelection() {
-        currentSubpath = ""
+        viewModel.currentSubpath = ""
         recordingViewModel?.subdirectory = viewModel.selectedFolder
         guard let folder = viewModel.currentFolder else { return }
         let url = folder.url
@@ -200,7 +202,7 @@ struct MeetingsView: View {
     private func resolveDefaultSubpath(for folder: FolderItem) async {
         let resolved = await FolderPathExplorerView.resolveDefaultSubpath(in: folder.url)
         if viewModel.currentFolder?.name == folder.name {
-            currentSubpath = resolved
+            viewModel.currentSubpath = resolved
         }
     }
 
@@ -294,7 +296,7 @@ struct MeetingsView: View {
         FolderPathExplorerView(
             rootURL: folder.url,
             rootSegment: folderRootSegment(activeFolder: folder),
-            subpath: $currentSubpath,
+            subpath: $viewModel.currentSubpath,
             markdownTheme: markdownTheme,
             onActiveFileChange: { url in activeFileURL = url }
         )

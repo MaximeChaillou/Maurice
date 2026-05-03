@@ -8,6 +8,7 @@ final class PeopleContentViewModel {
 
     private(set) var categories: [PeopleCategory] = []
     var selectedPerson: String?
+    var personSubpath: String = ""
     var isAddingFolder = false
     var isAddingCategory = false
     var newFolderName = ""
@@ -36,6 +37,7 @@ final class PeopleContentViewModel {
     func resetDirectory(_ newDirectory: URL) {
         directory = newDirectory
         selectedPerson = nil
+        personSubpath = ""
         categories = []
         loadFolders()
     }
