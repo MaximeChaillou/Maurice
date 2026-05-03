@@ -99,18 +99,6 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertEqual(AppSettings.searchIndexURL.path, "/tmp/TestRoot/.maurice/search_index.json")
     }
 
-    func testThemeFileURLDerivedFromRoot() {
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("AppSettingsTest-\(UUID().uuidString)", isDirectory: true)
-        try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
-
-        AppSettings.rootDirectory = tempDir
-        let themeURL = AppSettings.themeFileURL
-        XCTAssertEqual(themeURL.lastPathComponent, "theme.json")
-        XCTAssertTrue(themeURL.path.contains(".maurice"))
-    }
-
     func testDerivedPathsUpdateWhenRootChanges() {
         let first = URL(fileURLWithPath: "/tmp/First", isDirectory: true)
         AppSettings.rootDirectory = first

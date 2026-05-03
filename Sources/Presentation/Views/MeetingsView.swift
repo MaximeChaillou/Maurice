@@ -4,7 +4,6 @@ struct MeetingsView: View {
     let emptyIcon: String
     let emptyTitle: LocalizedStringKey
     var markdownTheme: MarkdownTheme = MarkdownTheme()
-    var navigateByDate: Bool = false
     var groupByDate: Bool = false
     var showSkillConfig: Bool = false
     var recordingViewModel: RecordingViewModel?
@@ -15,8 +14,8 @@ struct MeetingsView: View {
     @State var viewModel: MeetingsViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var entryDeleteAction: EntryDeleteAction?
-    @State private var showTranscripts = false
+    @State private var currentSubpath: String = ""
+    @State private var activeFileURL: URL?
 
     var body: some View {
         TabScreenLayout {
@@ -42,9 +41,6 @@ struct MeetingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
             guard notif.affectsPath(viewModel.directory) else { return }
             viewModel.loadFolders()
-            if let folder = viewModel.currentFolder {
-                viewModel.selectFileAtIndex(in: folder)
-            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .meetingConfigDidChange)) { notif in
             guard let folder = viewModel.currentFolder,
@@ -190,18 +186,21 @@ struct MeetingsView: View {
     }
 
     private func handleFolderSelection() {
-        viewModel.selectedFile = nil
+        currentSubpath = ""
         recordingViewModel?.subdirectory = viewModel.selectedFolder
-        if let folder = viewModel.currentFolder {
-            let url = folder.url
-            let folderName = folder.name
-            Task {
-                await viewModel.loadMeetingConfig(for: folderName, from: url)
-            }
-            if navigateByDate {
-                viewModel.fileIndex = 0
-                viewModel.selectFileAtIndex(in: folder)
-            }
+        guard let folder = viewModel.currentFolder else { return }
+        let url = folder.url
+        let folderName = folder.name
+        Task {
+            await viewModel.loadMeetingConfig(for: folderName, from: url)
+            await resolveDefaultSubpath(for: folder)
+        }
+    }
+
+    private func resolveDefaultSubpath(for folder: FolderItem) async {
+        let resolved = await FolderPathExplorerView.resolveDefaultSubpath(in: folder.url)
+        if viewModel.currentFolder?.name == folder.name {
+            currentSubpath = resolved
         }
     }
 
@@ -255,7 +254,7 @@ struct MeetingsView: View {
                         folderDisplayName: folder.name,
                         consoleViewModel: consoleViewModel,
                         config: $viewModel.meetingConfig,
-                        activeFilePath: activeFile(for: folder)?.path
+                        activeFilePath: activeFileURL?.path
                     )
                     .onChange(of: viewModel.meetingConfig.icon) {
                         viewModel.updateCurrentFolderIcon(viewModel.meetingConfig.icon)
@@ -290,30 +289,40 @@ struct MeetingsView: View {
         viewModel.updateCurrentFolderIcon(emoji)
     }
 
-    private func activeFile(for folder: FolderItem) -> URL? {
-        if navigateByDate, !folder.dateEntries.isEmpty {
-            let entries = folder.dateEntries
-            let safeIndex = min(viewModel.fileIndex, entries.count - 1)
-            let entry = entries[max(safeIndex, 0)]
-            if showTranscripts, let transcript = entry.transcriptFile {
-                return transcript.url
-            }
-            return entry.noteFile?.url ?? entry.transcriptFile?.url
-        }
-        if folder.files.count == 1 { return folder.files.first?.url }
-        return viewModel.selectedFile
-    }
-
     @ViewBuilder
     private func detailContent(for folder: FolderItem) -> some View {
-        if navigateByDate, !folder.dateEntries.isEmpty {
-            dateNavigationDetail(for: folder)
-        } else if folder.files.count == 1, let file = folder.files.first {
-            FolderFileDetailView(file: file, markdownTheme: markdownTheme)
-                .id(file.id)
-        } else {
-            fileListDetail(for: folder)
-        }
+        FolderPathExplorerView(
+            rootURL: folder.url,
+            rootSegment: folderRootSegment(activeFolder: folder),
+            subpath: $currentSubpath,
+            markdownTheme: markdownTheme,
+            onActiveFileChange: { url in activeFileURL = url }
+        )
+        .id(folder.relativePath)
+    }
+
+    private func folderRootSegment(activeFolder: FolderItem) -> BreadcrumbSegment {
+        BreadcrumbSegment(
+            id: "folder",
+            label: activeFolder.name,
+            kind: .folder,
+            revealURL: activeFolder.url,
+            popoverTitle: String(localized: "Meetings"),
+            emptyMessage: String(localized: "No meetings"),
+            groups: [BreadcrumbSiblingGroup(
+                id: "all", title: nil,
+                siblings: viewModel.folders.map { f in
+                    BreadcrumbSibling(
+                        id: f.name,
+                        label: f.name,
+                        sub: f.fileCount > 0 ? String(localized: "\(f.fileCount) files") : nil,
+                        leading: f.icon.map { .emoji($0) } ?? .symbol("calendar"),
+                        active: f.name == activeFolder.name
+                    )
+                }
+            )],
+            onPick: { name in viewModel.selectedFolder = name }
+        )
     }
 }
 
@@ -347,149 +356,6 @@ extension MeetingsView {
             } label: {
                 Label("Move content to…", systemImage: "folder.badge.arrow.right")
             }
-        }
-    }
-}
-
-// MARK: - Date navigation
-
-extension MeetingsView {
-    func dateNavigationDetail(for folder: FolderItem) -> some View {
-        let entries = folder.dateEntries
-        let safeIndex = min(viewModel.fileIndex, entries.count - 1)
-        let entry = entries[max(safeIndex, 0)]
-
-        return VStack(spacing: 0) {
-            HStack(spacing: 6) {
-                BreadcrumbBar(segments: meetingBreadcrumb(folder: folder, entry: entry))
-                Spacer(minLength: 8)
-                TranscriptPill(entry: entry, showTranscripts: $showTranscripts)
-                EntryMoreMenu(entry: entry, entryDeleteAction: $entryDeleteAction)
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            Divider().opacity(0.5)
-            DateEntryContentView(
-                entry: entry, markdownTheme: markdownTheme, showTranscripts: $showTranscripts
-            )
-        }
-        .onChange(of: viewModel.fileIndex) { showTranscripts = false }
-        .entryDeleteAlert(action: $entryDeleteAction) { action in
-            switch action {
-            case .note(let e): viewModel.deleteDateEntry(e, noteOnly: true)
-            case .transcript(let e): viewModel.deleteDateEntry(e, transcriptOnly: true)
-            case .both(let e): viewModel.deleteDateEntry(e)
-            }
-        }
-    }
-
-    fileprivate func meetingBreadcrumb(
-        folder: FolderItem,
-        entry: MeetingDateEntry
-    ) -> [BreadcrumbSegment] {
-        [folderBreadcrumbSegment(activeFolder: folder),
-         fileBreadcrumbSegment(folder: folder, entry: entry)]
-    }
-
-    private func folderBreadcrumbSegment(activeFolder: FolderItem) -> BreadcrumbSegment {
-        BreadcrumbSegment(
-            id: "folder",
-            label: activeFolder.name,
-            kind: .folder,
-            popoverTitle: String(localized: "Meetings"),
-            emptyMessage: String(localized: "No meetings"),
-            groups: [BreadcrumbSiblingGroup(
-                id: "all", title: nil,
-                siblings: viewModel.folders.map { f in
-                    BreadcrumbSibling(
-                        id: f.name,
-                        label: f.name,
-                        sub: f.fileCount > 0 ? String(localized: "\(f.fileCount) files") : nil,
-                        leading: f.icon.map { .emoji($0) } ?? .symbol("calendar"),
-                        active: f.name == activeFolder.name
-                    )
-                }
-            )],
-            onPick: { name in viewModel.selectedFolder = name }
-        )
-    }
-
-    private func fileBreadcrumbSegment(
-        folder: FolderItem,
-        entry: MeetingDateEntry
-    ) -> BreadcrumbSegment {
-        let ext = showTranscripts && entry.hasTranscript ? "transcript" : "md"
-        return BreadcrumbSegment(
-            id: "file",
-            label: "\(entry.dateString).\(ext)",
-            kind: .file,
-            popoverTitle: String(localized: "Occurrences"),
-            emptyMessage: String(localized: "No other entries"),
-            groups: [BreadcrumbSiblingGroup(
-                id: "entries", title: nil,
-                siblings: folder.dateEntries.map { e in
-                    BreadcrumbSibling(
-                        id: e.dateString,
-                        label: "\(e.dateString).md",
-                        sub: dateSubtitle(for: e.date),
-                        leading: .symbol("doc.text"),
-                        active: e.dateString == entry.dateString
-                    )
-                }
-            )],
-            onPick: { dateString in
-                if let idx = folder.dateEntries.firstIndex(where: { $0.dateString == dateString }) {
-                    viewModel.fileIndex = idx
-                }
-            }
-        )
-    }
-
-    private func dateSubtitle(for date: Date) -> String {
-        date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
-    }
-}
-
-// MARK: - File list
-
-extension MeetingsView {
-    func fileListDetail(for folder: FolderItem) -> some View {
-        HStack(spacing: 0) {
-            fileList(for: folder)
-                .frame(width: 200)
-
-            Divider().opacity(0.5)
-
-            if let url = viewModel.selectedFile,
-               let file = folder.files.first(where: { $0.url == url }) {
-                FolderFileDetailView(file: file, markdownTheme: markdownTheme)
-                    .id(file.id)
-            } else {
-                ContentUnavailableView(
-                    "No file selected",
-                    systemImage: "doc.text",
-                    description: Text("Select a file from the list.")
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }
-    }
-
-    func fileList(for folder: FolderItem) -> some View {
-        ScrollView {
-            LazyVStack(spacing: 2) {
-                ForEach(folder.files) { file in
-                    SidebarRow(
-                        title: file.name,
-                        subtitle: file.date.formatted(.dateTime.day().month(.abbreviated).year()),
-                        leading: .symbol("doc.text"),
-                        active: viewModel.selectedFile == file.url,
-                        onTap: { viewModel.selectedFile = file.url }
-                    )
-                }
-            }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 6)
         }
     }
 }

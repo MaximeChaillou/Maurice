@@ -2211,6 +2211,16 @@
         }
       }
     },
+    "Show in Finder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher dans le Finder"
+          }
+        }
+      }
+    },
     "Show live transcript": {
       "localizations": {
         "fr": {

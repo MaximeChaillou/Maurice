@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 // MARK: - Breadcrumb data types
@@ -33,6 +34,7 @@ struct BreadcrumbSegment: Identifiable {
     let id: String
     let label: String
     var kind: Kind = .folder
+    var revealURL: URL?
     var popoverTitle: String?
     var emptyMessage: String?
     let groups: [BreadcrumbSiblingGroup]
@@ -70,31 +72,19 @@ struct BreadcrumbBar: View {
         return Button {
             openSegmentID = isOpen ? nil : seg.id
         } label: {
-            HStack(spacing: 3) {
-                Text(seg.label)
-                    .font(.system(
-                        size: 11,
-                        weight: isLast ? .semibold : .regular,
-                        design: .monospaced
-                    ))
-                    .foregroundStyle(isLast ? Color.primary : Color.secondary)
-                    .lineLimit(1)
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 7, weight: .semibold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
-            .background {
-                if isOpen {
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(Color.primary.opacity(0.07))
-                }
-            }
-            .contentShape(.rect(cornerRadius: 5))
+            segmentLabel(seg: seg, isLast: isLast, isOpen: isOpen)
         }
         .buttonStyle(.plain)
         .help(seg.popoverTitle ?? seg.label)
+        .contextMenu {
+            if let url = seg.revealURL {
+                Button {
+                    Self.revealInFinder(url: url, kind: seg.kind)
+                } label: {
+                    Label("Show in Finder", systemImage: "folder")
+                }
+            }
+        }
         .popover(
             isPresented: Binding(
                 get: { isOpen },
@@ -106,6 +96,40 @@ struct BreadcrumbBar: View {
                 openSegmentID = nil
                 seg.onPick(key)
             }
+        }
+    }
+
+    private func segmentLabel(seg: BreadcrumbSegment, isLast: Bool, isOpen: Bool) -> some View {
+        HStack(spacing: 3) {
+            Text(seg.label)
+                .font(.system(
+                    size: 11,
+                    weight: isLast ? .semibold : .regular,
+                    design: .monospaced
+                ))
+                .foregroundStyle(isLast ? Color.primary : Color.secondary)
+                .lineLimit(1)
+            Image(systemName: "chevron.down")
+                .font(.system(size: 7, weight: .semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background {
+            if isOpen {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(Color.primary.opacity(0.07))
+            }
+        }
+        .contentShape(.rect(cornerRadius: 5))
+    }
+
+    private static func revealInFinder(url: URL, kind: BreadcrumbSegment.Kind) {
+        switch kind {
+        case .folder:
+            _ = NSWorkspace.shared.open(url)
+        case .file:
+            NSWorkspace.shared.activateFileViewerSelecting([url])
         }
     }
 }

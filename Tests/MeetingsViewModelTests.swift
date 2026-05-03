@@ -48,8 +48,6 @@ final class MeetingsViewModelTests: XCTestCase {
         let vm = MeetingsViewModel(directory: tempDir)
         XCTAssertTrue(vm.folders.isEmpty)
         XCTAssertNil(vm.selectedFolder)
-        XCTAssertNil(vm.selectedFile)
-        XCTAssertEqual(vm.fileIndex, 0)
         XCTAssertFalse(vm.isAddingFolder)
         XCTAssertEqual(vm.newFolderName, "")
         XCTAssertNil(vm.errorMessage)
@@ -313,49 +311,6 @@ final class MeetingsViewModelTests: XCTestCase {
         let vm = MeetingsViewModel(directory: tempDir)
         vm.updateCurrentFolderIcon("star")
         // Should not crash, no folders to update
-    }
-
-    // MARK: - selectFileAtIndex
-
-    func testSelectFileAtIndex() async throws {
-        let sub = createSubfolder("Project")
-        createFile("2024-01-01.md", in: sub)
-        createFile("2024-02-01.md", in: sub)
-
-        let vm = MeetingsViewModel(directory: tempDir)
-        vm.loadFolders()
-        try await Task.sleep(for: .milliseconds(500))
-
-        let folder = vm.folders.first!
-        vm.fileIndex = 0
-        vm.selectFileAtIndex(in: folder)
-
-        XCTAssertNotNil(vm.selectedFile)
-        // Files sorted descending, so first should be 2024-02-01
-        XCTAssertTrue(vm.selectedFile?.lastPathComponent.contains("2024-02") ?? false)
-    }
-
-    func testSelectFileAtIndexClampsToLastFile() async throws {
-        let sub = createSubfolder("Project")
-        createFile("2024-01-01.md", in: sub)
-
-        let vm = MeetingsViewModel(directory: tempDir)
-        vm.loadFolders()
-        try await Task.sleep(for: .milliseconds(500))
-
-        let folder = vm.folders.first!
-        vm.fileIndex = 999
-        vm.selectFileAtIndex(in: folder)
-
-        XCTAssertNotNil(vm.selectedFile)
-    }
-
-    func testSelectFileAtIndexWithEmptyFolderDoesNothing() {
-        let folder = FolderItem(name: "Empty", url: tempDir, files: [])
-        let vm = MeetingsViewModel(directory: tempDir)
-        vm.selectFileAtIndex(in: folder)
-
-        XCTAssertNil(vm.selectedFile)
     }
 
     // MARK: - currentFolder

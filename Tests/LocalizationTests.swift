@@ -111,28 +111,6 @@ final class LocalizationTests: XCTestCase {
         XCTAssertEqual(icons.count, Set(icons).count, "Icons should be unique")
     }
 
-    // MARK: - PersonSection
-
-    func testPersonSectionAllCasesCount() {
-        XCTAssertEqual(PersonSection.allCases.count, 5)
-    }
-
-    func testPersonSectionLocalizedNameNotEmpty() {
-        for section in PersonSection.allCases {
-            XCTAssertFalse(section.localizedName.isEmpty, "\(section) has empty localizedName")
-        }
-    }
-
-    func testPersonSectionIconNotEmpty() {
-        for section in PersonSection.allCases {
-            XCTAssertFalse(section.icon.isEmpty, "\(section) has empty icon")
-        }
-    }
-
-    func testPersonSectionOneOnOneLocalizedNameIs1dash1() {
-        XCTAssertEqual(PersonSection.oneOnOne.localizedName, "1-1")
-    }
-
     // MARK: - Localizable.xcstrings integrity
 
     func testLocalizableFileExists() {

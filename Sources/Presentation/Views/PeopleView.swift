@@ -1,36 +1,5 @@
 import SwiftUI
 
-enum PersonSection: String, CaseIterable, Identifiable {
-    // Folders first (alphabetical), then files (alphabetical)
-    case oneOnOne = "1-1"
-    case assessment = "Assessment"
-    case objectifs = "Goals"
-    case jobDescription = "Job description"
-    case profile = "Profile"
-
-    var id: String { rawValue }
-
-    var icon: String {
-        switch self {
-        case .profile: "person.text.rectangle"
-        case .jobDescription: "doc.text"
-        case .oneOnOne: "person.2"
-        case .assessment: "checkmark.seal"
-        case .objectifs: "target"
-        }
-    }
-
-    var localizedName: String {
-        switch self {
-        case .profile: String(localized: "Profile")
-        case .jobDescription: String(localized: "Job description")
-        case .oneOnOne: "1-1"
-        case .assessment: String(localized: "Assessment")
-        case .objectifs: String(localized: "Goals")
-        }
-    }
-}
-
 struct PeopleView: View {
     var markdownTheme: MarkdownTheme = MarkdownTheme()
     var recordingViewModel: RecordingViewModel?
@@ -41,13 +10,17 @@ struct PeopleView: View {
     @State var viewModel: PeopleContentViewModel
 
     @State private var folderToDelete: FolderItem?
-    @State private var selectedSection: PersonSection = .oneOnOne
+    @State private var personSubpath: String = ""
     @State private var selectedCategory: String = ""
     @State private var shouldAddPersonAfterCategory = false
     @State private var pendingCategoryName = ""
 
     @State private var oneOnOneConfig = MeetingConfig()
     @State private var oneOnOneActiveFileURL: URL?
+
+    private var isEditingOneOnOne: Bool {
+        personSubpath.hasPrefix("1-1/")
+    }
 
     var body: some View {
         TabScreenLayout {
@@ -68,15 +41,15 @@ struct PeopleView: View {
             if let msg = viewModel.errorMessage { Text(msg) }
         }
         .onChange(of: viewModel.selectedPerson) {
-            selectedSection = .oneOnOne
+            personSubpath = ""
             updateRecordingSubdirectory()
-            Task { await loadOneOnOneConfig() }
-        }
-        .onChange(of: selectedSection) {
-            updateRecordingSubdirectory()
-            if selectedSection == .oneOnOne {
-                Task { await loadOneOnOneConfig() }
+            Task {
+                await loadOneOnOneConfig()
+                await resolveDefaultSubpath()
             }
+        }
+        .onChange(of: personSubpath) {
+            updateRecordingSubdirectory()
         }
         .onReceive(NotificationCenter.default.publisher(for: .meetingConfigDidChange)) { notif in
             guard let person = viewModel.currentPerson else { return }
@@ -87,10 +60,21 @@ struct PeopleView: View {
     }
 
     private func updateRecordingSubdirectory() {
-        if selectedSection == .oneOnOne, let person = viewModel.selectedPerson {
+        if isEditingOneOnOne, let person = viewModel.selectedPerson {
             recordingViewModel?.subdirectory = "People/\(person)/1-1"
         } else {
             recordingViewModel?.subdirectory = nil
+        }
+    }
+
+    private func resolveDefaultSubpath() async {
+        guard let person = viewModel.currentPerson else { return }
+        let resolved = await FolderPathExplorerView.resolveDefaultSubpath(
+            in: person.url,
+            preferredFolders: ["1-1"]
+        )
+        if viewModel.currentPerson?.relativePath == person.relativePath {
+            personSubpath = resolved
         }
     }
 
@@ -230,7 +214,7 @@ struct PeopleView: View {
     }
 
     private func personDocHeader(_ person: FolderItem) -> some View {
-        let event = selectedSection == .oneOnOne
+        let event = isEditingOneOnOne
             ? LinkedEventInfo.findUpcomingEvent(
                 named: oneOnOneConfig.calendarEventName,
                 in: calendarViewModel?.upcomingEvents ?? [],
@@ -249,7 +233,7 @@ struct PeopleView: View {
                 _ = viewModel.renamePerson(person, to: newName)
             },
             trailingActions: {
-                if selectedSection == .oneOnOne {
+                if isEditingOneOnOne {
                     MeetingActionsBar(
                         folderURL: person.url.appendingPathComponent("1-1", isDirectory: true),
                         folderDisplayName: "1-1",
@@ -280,7 +264,7 @@ struct PeopleView: View {
         if let timeLabel = LinkedEventInfo.timeLabel(event: event) {
             meta.append(TabMetaItem(systemImage: "calendar", label: timeLabel))
         }
-        if selectedSection == .oneOnOne {
+        if isEditingOneOnOne {
             meta.append(.googleCalendarStatus(
                 config: $oneOnOneConfig,
                 configURL: person.url.appendingPathComponent("1-1", isDirectory: true)
@@ -300,15 +284,12 @@ struct PeopleView: View {
     }
 
     private func personContentCard(for person: FolderItem) -> some View {
-        PersonDetailView(
-            personName: person.name,
-            personURL: person.url,
-            activeSection: $selectedSection,
-            personBreadcrumbSegment: personBreadcrumbSegment(currentPerson: person),
+        FolderPathExplorerView(
+            rootURL: person.url,
+            rootSegment: personBreadcrumbSegment(currentPerson: person),
+            subpath: $personSubpath,
             markdownTheme: markdownTheme,
-            recordingViewModel: recordingViewModel,
-            consoleViewModel: consoleViewModel,
-            oneOnOneActiveFileURL: $oneOnOneActiveFileURL
+            onActiveFileChange: { url in oneOnOneActiveFileURL = url }
         )
         .id(person.relativePath)
     }
@@ -339,6 +320,7 @@ extension PeopleView {
             id: "person",
             label: currentPerson.name,
             kind: .folder,
+            revealURL: currentPerson.url,
             popoverTitle: String(localized: "People"),
             emptyMessage: String(localized: "No people"),
             groups: groups,

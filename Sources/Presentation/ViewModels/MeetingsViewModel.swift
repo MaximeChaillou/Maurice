@@ -8,8 +8,6 @@ final class MeetingsViewModel {
 
     private(set) var folders: [FolderItem] = []
     var selectedFolder: String?
-    var selectedFile: URL?
-    var fileIndex: Int = 0
     var isAddingFolder = false
     var newFolderName = ""
     var meetingConfig: MeetingConfig = MeetingConfig()
@@ -27,7 +25,6 @@ final class MeetingsViewModel {
     func resetDirectory(_ newDirectory: URL) {
         directory = newDirectory
         selectedFolder = nil
-        selectedFile = nil
         folders = []
         loadFolders()
     }
@@ -161,13 +158,6 @@ final class MeetingsViewModel {
             dateEntries: folders[idx].dateEntries,
             icon: icon
         )
-    }
-
-    func selectFileAtIndex(in folder: FolderItem) {
-        let sorted = folder.files.sorted { $0.name.localizedStandardCompare($1.name) == .orderedDescending }
-        guard !sorted.isEmpty else { return }
-        let idx = min(fileIndex, sorted.count - 1)
-        selectedFile = sorted[idx].url
     }
 
     func moveFolderContent(_ folder: FolderItem, to destination: URL) {

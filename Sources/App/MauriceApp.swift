@@ -291,7 +291,6 @@ struct MauriceApp: App {
                 emptyIcon: "calendar",
                 emptyTitle: "No meeting selected",
                 markdownTheme: MarkdownTheme(),
-                navigateByDate: true,
                 groupByDate: true,
                 showSkillConfig: true,
                 recordingViewModel: recordingViewModel,
