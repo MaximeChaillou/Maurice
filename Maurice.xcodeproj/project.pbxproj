@@ -18,7 +18,6 @@
 		CT01BF01CT01BF01CT01BF01 /* ConsoleTerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CT01RF01CT01RF01CT01RF01 /* ConsoleTerminalView.swift */; };
 		CP01BF01CP01BF01CP01BF01 /* ConsolePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CP01RF01CP01RF01CP01RF01 /* ConsolePanel.swift */; };
 		015A5B2E367D4FC59F9344E1 /* MeetingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */; };
-		3344556677889900112233CC /* PersistentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4455667788990011223344DD /* PersistentCodable.swift */; };
 		MCS01BF01MCS01BF01MCS001 /* MeetingConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */; };
 		MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */; };
 		02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */; };
@@ -204,7 +203,6 @@
 		834D3E4E2FB74AA39316D24B /* GoogleOAuthTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleOAuthTokenStore.swift; sourceTree = "<group>"; };
 		8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfig.swift; sourceTree = "<group>"; };
-		4455667788990011223344DD /* PersistentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentCodable.swift; sourceTree = "<group>"; };
 		MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStore.swift; sourceTree = "<group>"; };
 		MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingConfigStoreTests.swift; sourceTree = "<group>"; };
 		9CF056EF2F6B3784007276E9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -569,7 +567,6 @@
 				SD11SD12SD13SD14SD15SD16 /* SidebarDateFormatter.swift */,
 				994065DA10DB44CEAA1D8EAB /* MeetingConfig.swift */,
 				MCS01RF01MCS01RF01MCS001 /* MeetingConfigStore.swift */,
-				4455667788990011223344DD /* PersistentCodable.swift */,
 				E85222273DB7968BE346AD9C /* MarkdownTheme.swift */,
 				B1B2B3B4B5B6B7B8B9B0B1B2 /* MeetingSkillConfig.swift */,
 				DF11DF12DF13DF14DF15DF16 /* DateFormatters.swift */,
@@ -882,7 +879,6 @@
 				IM01IM02IM03IM04IM05IM06 /* ImportDocumentView.swift in Sources */,
 				EB01EB02EB03EB04EB05EB06 /* ErrorBanner.swift in Sources */,
 				1122334455667788990011AA /* ThemedMarkdownView.swift in Sources */,
-				3344556677889900112233CC /* PersistentCodable.swift in Sources */,
 				59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */,
 				CS01B001C001D001E001F001 /* CalendarServiceProtocol.swift in Sources */,
 				TU01TU02TU03TU04TU05TU06 /* TemplateUpdateService.swift in Sources */,
