@@ -39,6 +39,13 @@ struct MeetingsView: View {
         }
         .onChange(of: viewModel.folders.map(\.name), initial: true) {
             autoSelectFirstSidebarFolder()
+            // A freshly created folder lands in `selectedFolder` before
+            // `folders` reloads — so `handleFolderSelection`'s currentFolder
+            // lookup misses. Resolve the default subpath once the folder
+            // surfaces in the list.
+            if viewModel.currentSubpath.isEmpty, let folder = viewModel.currentFolder {
+                Task { await resolveDefaultSubpath(for: folder) }
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .fileSystemDidChange)) { notif in
             guard notif.affectsPath(viewModel.directory) else { return }
