@@ -424,7 +424,12 @@ enum OnboardingFileSetup {
     /// Copy any missing skill templates to an existing installation.
     static func copyMissingTemplates(to root: URL) {
         let commands = root.appendingPathComponent(".claude/commands")
-        try? FileManager.default.createDirectory(at: commands, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: commands, withIntermediateDirectories: true)
+        } catch {
+            IssueLogger.log(.warning, "Failed to create commands directory",
+                            context: commands.path, error: error)
+        }
 
         let templates: [(resource: String, filename: String)] = [
             ("maurice-convert-file-to-md", "maurice-convert-file-to-md.md"),

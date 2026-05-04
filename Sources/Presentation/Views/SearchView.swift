@@ -256,7 +256,7 @@ private enum ExactSearchEngine {
         }
         for file in contents.files {
             let fileName = file.url.deletingPathExtension().lastPathComponent
-            let content = try? String(contentsOf: file.url, encoding: .utf8)
+            let content = readForSearch(at: file.url)
             let nameMatch = fileName.lowercased().contains(term)
             let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
             if nameMatch || contentMatch {
@@ -266,6 +266,18 @@ private enum ExactSearchEngine {
                     kind: scope.kind(fileName), snippet: snippet, query: query
                 ))
             }
+        }
+    }
+
+    static func readForSearch(at url: URL) -> String? {
+        do {
+            return try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read file for search",
+                                context: url.path, error: error)
+            }
+            return nil
         }
     }
 
@@ -309,7 +321,7 @@ private enum ExactSearchEngine {
         let files = DirectoryScanner.scanRecursiveFiles(at: ctx.folder.url, fileExtension: "md")
         for file in files {
             let fileName = file.url.deletingPathExtension().lastPathComponent
-            let content = try? String(contentsOf: file.url, encoding: .utf8)
+            let content = readForSearch(at: file.url)
             let nameMatch = fileName.lowercased().contains(term)
             let contentMatch = !nameMatch && (content?.lowercased().contains(term) == true)
             if nameMatch || contentMatch {
@@ -328,7 +340,7 @@ private enum ExactSearchEngine {
     }
 
     static func searchTasks(term: String, query: String, into found: inout [SearchResult]) {
-        if let content = try? String(contentsOf: AppSettings.tasksFileURL, encoding: .utf8),
+        if let content = readForSearch(at: AppSettings.tasksFileURL),
            content.lowercased().contains(term) {
             let snippet = extractSnippet(from: content, term: term)
             found.append(SearchResult(

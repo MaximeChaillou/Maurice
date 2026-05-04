@@ -81,10 +81,7 @@ final class TemplateUpdateService {
                 let bundleHash = Self.canonicalHash(rawData, template: rawData)
                 let baseline = baselines[template.name]
                 let userFileExists = FileManager.default.fileExists(atPath: template.userFileURL.path)
-
-                let userData: Data? = userFileExists
-                    ? try? Data(contentsOf: template.userFileURL)
-                    : nil
+                let userData = userFileExists ? Self.readUserData(at: template.userFileURL) : nil
                 let userHash: String? = userData.map { Self.canonicalHash($0, template: rawData) }
 
                 guard let baseline else {
@@ -130,7 +127,7 @@ final class TemplateUpdateService {
 
         await Task.detached {
             guard let rawData = loader(template.bundleResource) else { return }
-            let userData = try? Data(contentsOf: template.userFileURL)
+            let userData = Self.readUserData(at: template.userFileURL)
             let replacements = Self.extractedOrFallbackReplacements(
                 userData: userData, template: rawData, fallback: settingsReplacements
             )
@@ -177,7 +174,19 @@ final class TemplateUpdateService {
     }
 
     func userData(for template: TemplateDescriptor) -> Data {
-        (try? Data(contentsOf: template.userFileURL)) ?? Data()
+        Self.readUserData(at: template.userFileURL) ?? Data()
+    }
+
+    nonisolated static func readUserData(at url: URL) -> Data? {
+        do {
+            return try Data(contentsOf: url)
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read user template",
+                                context: url.path, error: error)
+            }
+            return nil
+        }
     }
 
     // MARK: - Private helpers
@@ -240,8 +249,23 @@ final class TemplateUpdateService {
     }
 
     nonisolated private static func loadBaselines(url: URL) -> [String: String] {
-        guard let data = try? Data(contentsOf: url) else { return [:] }
-        return (try? JSONDecoder().decode([String: String].self, from: data)) ?? [:]
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            if !error.isFileNotFound {
+                IssueLogger.log(.warning, "Failed to read template baselines",
+                                context: url.path, error: error)
+            }
+            return [:]
+        }
+        do {
+            return try JSONDecoder().decode([String: String].self, from: data)
+        } catch {
+            IssueLogger.log(.warning, "Failed to decode template baselines",
+                            context: url.path, error: error)
+            return [:]
+        }
     }
 
     nonisolated private static func saveBaselines(_ baselines: [String: String], url: URL) {

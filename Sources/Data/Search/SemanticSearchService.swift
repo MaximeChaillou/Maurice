@@ -191,7 +191,7 @@ final class SemanticSearchService {
                 continue
             }
             let fileName = file.url.deletingPathExtension().lastPathComponent
-            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else { continue }
+            guard let content = readForIndexing(at: file.url) else { continue }
             let text = "\(fileName) \(content)"
             let truncated = String(text.prefix(500))
             guard let vecs = dualVectors(
@@ -247,10 +247,7 @@ final class SemanticSearchService {
                 continue
             }
             let fileName = file.url.deletingPathExtension().lastPathComponent
-            guard let content = try? String(contentsOf: file.url, encoding: .utf8) else {
-                IssueLogger.log(.warning, "Failed to read file for indexing", context: file.url.path)
-                continue
-            }
+            guard let content = readForIndexing(at: file.url) else { continue }
             let truncated = String("\(fileName) \(content)".prefix(500))
             guard let vecs = dualVectors(
                 for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
@@ -271,10 +268,7 @@ final class SemanticSearchService {
             context.docs.append(cached)
             return
         }
-        guard let content = try? String(contentsOf: url, encoding: .utf8) else {
-            IssueLogger.log(.warning, "Failed to read tasks file for indexing", context: url.path)
-            return
-        }
+        guard let content = readForIndexing(at: url) else { return }
         let truncated = String(content.prefix(500))
         guard let vecs = dualVectors(
             for: truncated, embeddingFr: context.embeddingFr, embeddingEn: context.embeddingEn
@@ -290,6 +284,13 @@ final class SemanticSearchService {
         (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
     }
 
+    nonisolated private static func readForIndexing(at url: URL) -> String? {
+        do { return try String(contentsOf: url, encoding: .utf8) } catch {
+            IssueLogger.log(.warning, "Failed to read file for indexing",
+                            context: url.path, error: error); return nil
+        }
+    }
+
     // MARK: - Persistence
 
     private func saveIndexToDisk() {
@@ -298,14 +299,10 @@ final class SemanticSearchService {
         Task.detached {
             let entries = docs.map { doc in
                 StoredEntry(
-                    name: doc.name,
-                    context: doc.context,
-                    icon: doc.icon,
-                    kindType: doc.kind.typeString,
-                    kindValue: doc.kind.valueString,
+                    name: doc.name, context: doc.context, icon: doc.icon,
+                    kindType: doc.kind.typeString, kindValue: doc.kind.valueString,
                     content: String(doc.content.prefix(500)),
-                    embeddingFr: doc.embeddingFr,
-                    embeddingEn: doc.embeddingEn,
+                    embeddingFr: doc.embeddingFr, embeddingEn: doc.embeddingEn,
                     sourceURL: doc.sourceURL.absoluteString,
                     modificationDate: doc.modificationDate
                 )
