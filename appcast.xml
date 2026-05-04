@@ -381,5 +381,18 @@
                 type="application/octet-stream"
             />
         </item>
+        <item>
+            <title>Version 1.2.0</title>
+            <pubDate>Mon, 04 May 2026 12:49:53 +0200</pubDate>
+            <sparkle:version>31</sparkle:version>
+            <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://github.com/MaximeChaillou/Maurice/releases/download/v1.2.0/Maurice-1.2.0.zip"
+                sparkle:edSignature="8X/NsN0Wef4bpI82PCElENTfZYzrnOU9lgTeeSZGae8IdQMBhBiM8mDZVXuHUkmjxqIt0L40wA35anNZgP5oCw=="
+                length="12349019"
+                type="application/octet-stream"
+            />
+        </item>
     </channel>
 </rss>
