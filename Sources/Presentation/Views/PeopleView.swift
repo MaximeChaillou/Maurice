@@ -218,13 +218,11 @@ struct PeopleView: View {
     }
 
     private func personDocHeader(_ person: FolderItem) -> some View {
-        let event = isEditingOneOnOne
-            ? LinkedEventInfo.findUpcomingEvent(
-                named: oneOnOneConfig.calendarEventName,
-                in: calendarViewModel?.upcomingEvents ?? [],
-                after: now
-            )
-            : nil
+        let event = LinkedEventInfo.findUpcomingEvent(
+            named: oneOnOneConfig.calendarEventName,
+            in: calendarViewModel?.upcomingEvents ?? [],
+            after: now
+        )
         let status = LinkedEventInfo.statusLabel(event: event, now: now)
         return TabDocHeader(
             icon: personIcon(for: person),
@@ -237,15 +235,13 @@ struct PeopleView: View {
                 _ = viewModel.renamePerson(person, to: newName)
             },
             trailingActions: {
-                if isEditingOneOnOne {
-                    MeetingActionsBar(
-                        folderURL: person.url.appendingPathComponent("1-1", isDirectory: true),
-                        folderDisplayName: "1-1",
-                        consoleViewModel: consoleViewModel,
-                        config: $oneOnOneConfig,
-                        activeFilePath: oneOnOneActiveFileURL?.path
-                    )
-                }
+                MeetingActionsBar(
+                    folderURL: person.url.appendingPathComponent("1-1", isDirectory: true),
+                    folderDisplayName: "1-1",
+                    consoleViewModel: consoleViewModel,
+                    config: $oneOnOneConfig,
+                    activeFilePath: oneOnOneActiveFileURL?.path
+                )
             }
         )
     }
@@ -268,12 +264,10 @@ struct PeopleView: View {
         if let timeLabel = LinkedEventInfo.timeLabel(event: event) {
             meta.append(TabMetaItem(systemImage: "calendar", label: timeLabel))
         }
-        if isEditingOneOnOne {
-            meta.append(.googleCalendarStatus(
-                config: $oneOnOneConfig,
-                configURL: person.url.appendingPathComponent("1-1", isDirectory: true)
-            ))
-        }
+        meta.append(.googleCalendarStatus(
+            config: $oneOnOneConfig,
+            configURL: person.url.appendingPathComponent("1-1", isDirectory: true)
+        ))
         if let category = personCategory(for: person) {
             meta.append(TabMetaItem(systemImage: "person.2", label: category))
         }
