@@ -145,6 +145,7 @@
 		AKMBBF01AKMBBF01AKMBBF01 /* AppKitMenuButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AKMBRF01AKMBRF01AKMBRF01 /* AppKitMenuButtonTests.swift */; };
 		KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */; };
 		SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */; };
+		SR01BF01SR01BF01SR01BF01 /* SpeechRecognitionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SR01RF01SR01RF01SR01RF01 /* SpeechRecognitionServiceTests.swift */; };
 		FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */; };
 		LE01BF01LE01BF01LE01BF01 /* LinkedEventInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */; };
 		SD01BF01SD01BF01SD01BF01 /* SidebarDateFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */; };
@@ -307,6 +308,7 @@
 		AKMBRF01AKMBRF01AKMBRF01 /* AppKitMenuButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKitMenuButtonTests.swift; sourceTree = "<group>"; };
 		KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelperTests.swift; sourceTree = "<group>"; };
 		SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechModelStateTests.swift; sourceTree = "<group>"; };
+		SR01RF01SR01RF01SR01RF01 /* SpeechRecognitionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionServiceTests.swift; sourceTree = "<group>"; };
 		FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderItemTests.swift; sourceTree = "<group>"; };
 		LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedEventInfoTests.swift; sourceTree = "<group>"; };
 		SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDateFormatterTests.swift; sourceTree = "<group>"; };
@@ -653,6 +655,7 @@
 				KH01RF01KH01RF01KH01RF01 /* KeychainHelperTests.swift */,
 				MCS02RF01MCS02RF01MCS002 /* MeetingConfigStoreTests.swift */,
 				SM01RF01SM01RF01SM01RF01 /* SpeechModelStateTests.swift */,
+				SR01RF01SR01RF01SR01RF01 /* SpeechRecognitionServiceTests.swift */,
 				FI01RF01FI01RF01FI01RF01 /* FolderItemTests.swift */,
 				LE01RF01LE01RF01LE01RF01 /* LinkedEventInfoTests.swift */,
 				SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */,
@@ -932,6 +935,7 @@
 				KH01BF01KH01BF01KH01BF01 /* KeychainHelperTests.swift in Sources */,
 				MCS02BF01MCS02BF01MCS002 /* MeetingConfigStoreTests.swift in Sources */,
 				SM01BF01SM01BF01SM01BF01 /* SpeechModelStateTests.swift in Sources */,
+				SR01BF01SR01BF01SR01BF01 /* SpeechRecognitionServiceTests.swift in Sources */,
 				FI01BF01FI01BF01FI01BF01 /* FolderItemTests.swift in Sources */,
 				LE01BF01LE01BF01LE01BF01 /* LinkedEventInfoTests.swift in Sources */,
 				SD01BF01SD01BF01SD01BF01 /* SidebarDateFormatterTests.swift in Sources */,

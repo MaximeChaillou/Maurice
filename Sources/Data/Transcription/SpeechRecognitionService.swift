@@ -6,7 +6,7 @@ import Speech
 private let logger = Logger(subsystem: "com.maxime.maurice", category: "SpeechRecognition")
 
 final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Sendable {
-    private let locale: Locale
+    private let localeOverride: Locale?
 
     /// Lock protecting state shared between the audio callback thread and async methods.
     private let lock = NSLock()
@@ -27,13 +27,20 @@ final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Senda
         set { lock.withLock { onAudioLevelHandler = newValue } }
     }
 
-    init(locale: Locale = Locale(identifier: AppSettings.transcriptionLanguage)) {
-        self.locale = locale
+    init(locale: Locale? = nil) {
+        self.localeOverride = locale
+    }
+
+    /// Resolves the locale to use for the next recording. Reads `AppSettings.transcriptionLanguage`
+    /// at call time so changes to the setting take effect on the next `prepare()` without restart.
+    func resolveLocale() -> Locale {
+        localeOverride ?? Locale(identifier: AppSettings.transcriptionLanguage)
     }
 
     func prepare(onStateChange: @escaping @Sendable (SpeechModelState) -> Void) async throws {
         onStateChange(.loading)
 
+        let locale = resolveLocale()
         let transcriber = SpeechTranscriber(
             locale: locale,
             preset: .progressiveTranscription
@@ -49,7 +56,7 @@ final class SpeechRecognitionService: LiveTranscriptionService, @unchecked Senda
             }
         }
 
-        logger.info("SpeechAnalyzer model ready for locale: \(self.locale.identifier)")
+        logger.info("SpeechAnalyzer model ready for locale: \(locale.identifier)")
         onStateChange(.ready)
     }
 
