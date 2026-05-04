@@ -122,21 +122,6 @@ struct MeetingsView: View {
         if let first { viewModel.selectedFolder = first.name }
     }
 
-    private func bucketedFolders() -> [MeetingDateSection: [FolderItem]] {
-        Dictionary(grouping: viewModel.folders) { folder in
-            MeetingDateSection.bucket(
-                lastActivity: folder.dateEntries.first?.date ?? folder.files.first?.date,
-                hasEventToday: folderHasUpcomingEventToday(folder),
-                now: now
-            )
-        }
-    }
-
-    private func folderHasUpcomingEventToday(_ folder: FolderItem) -> Bool {
-        guard let event = upcomingEvent(for: folder) else { return false }
-        return Calendar.current.isDateInToday(event.start)
-    }
-
     private func folderRow(_ folder: FolderItem) -> some View {
         let isActive = viewModel.selectedFolder == folder.name
         let trailing = folderTrailingLabel(for: folder)
@@ -157,7 +142,7 @@ struct MeetingsView: View {
             return label
         }
         if let lastDate = folder.dateEntries.first?.date ?? folder.files.first?.date {
-            return SidebarDateFormatter.relativeLabel(date: lastDate, now: now)
+            return SidebarDateFormatter.relativeLabel(date: lastDate)
         }
         return nil
     }
@@ -325,6 +310,51 @@ struct MeetingsView: View {
             )],
             onPick: { name in viewModel.selectedFolder = name }
         )
+    }
+}
+
+// MARK: - Sidebar bucketing
+
+extension MeetingsView {
+    fileprivate func bucketedFolders() -> [MeetingDateSection: [FolderItem]] {
+        let grouped = Dictionary(grouping: viewModel.folders) { folder in
+            MeetingDateSection.bucket(
+                lastActivity: folder.dateEntries.first?.date ?? folder.files.first?.date,
+                hasEventToday: folderHasUpcomingEventToday(folder),
+                now: now
+            )
+        }
+        return grouped.mapValues { folders in
+            folders.sorted(by: folderOrder)
+        }
+    }
+
+    /// Folders with an in-progress or upcoming event come first, sorted by
+    /// event start ascending. Otherwise sort by last activity descending so
+    /// the most recently used folders bubble up. Past events of today have
+    /// no `upcomingEvent` (they are filtered by `event.end > now`) so they
+    /// fall back to the activity-date ordering and slide below upcoming ones.
+    fileprivate func folderOrder(_ a: FolderItem, _ b: FolderItem) -> Bool {
+        switch (upcomingEvent(for: a), upcomingEvent(for: b)) {
+        case let (eventA?, eventB?): return eventA.start < eventB.start
+        case (.some, nil): return true
+        case (nil, .some): return false
+        case (nil, nil): break
+        }
+        let dateA = a.dateEntries.first?.date ?? a.files.first?.date
+        let dateB = b.dateEntries.first?.date ?? b.files.first?.date
+        switch (dateA, dateB) {
+        case let (da?, db?) where da != db: return da > db
+        case (.some, nil): return true
+        case (nil, .some): return false
+        default:
+            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+        }
+    }
+
+    fileprivate func folderHasUpcomingEventToday(_ folder: FolderItem) -> Bool {
+        guard let event = upcomingEvent(for: folder) else { return false }
+        return Calendar.current.isDateInToday(event.start)
     }
 }
 

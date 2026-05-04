@@ -146,36 +146,26 @@ final class SidebarDateFormatterTests: XCTestCase {
 
     // MARK: - SidebarDateFormatter.relativeLabel
 
-    func testRelativeLabelToday() throws {
+    func testRelativeLabelUsesDayMonthFormatToday() throws {
         let now = realNow
         let earlierToday = try XCTUnwrap(
             calendar.date(byAdding: .hour, value: -1, to: now)
         )
 
-        let label = SidebarDateFormatter.relativeLabel(date: earlierToday, now: now, calendar: calendar)
+        let label = SidebarDateFormatter.relativeLabel(date: earlierToday)
 
-        XCTAssertEqual(label, String(localized: "today"))
+        let expectedDay = String(calendar.component(.day, from: earlierToday))
+        XCTAssertTrue(label?.contains(expectedDay) ?? false,
+                      "Expected day \(expectedDay) in label, got: \(label ?? "nil")")
     }
 
-    func testRelativeLabelYesterday() throws {
-        let now = realNow
-        let yesterdayMidday = try XCTUnwrap(
-            calendar.date(byAdding: .day, value: -1,
-                          to: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!)
-        )
-
-        let label = SidebarDateFormatter.relativeLabel(date: yesterdayMidday, now: now, calendar: calendar)
-
-        XCTAssertEqual(label, String(localized: "yesterday"))
-    }
-
-    func testRelativeLabelEEEdWithinAWeek() throws {
+    func testRelativeLabelUsesDayMonthFormatWithinAWeek() throws {
         let now = realNow
         let threeDaysAgo = try XCTUnwrap(
             calendar.date(byAdding: .day, value: -3, to: now)
         )
 
-        let label = SidebarDateFormatter.relativeLabel(date: threeDaysAgo, now: now, calendar: calendar)
+        let label = SidebarDateFormatter.relativeLabel(date: threeDaysAgo)
 
         XCTAssertNotNil(label)
         let expectedDay = String(calendar.component(.day, from: threeDaysAgo))
@@ -183,13 +173,13 @@ final class SidebarDateFormatterTests: XCTestCase {
                       "Expected day \(expectedDay) in label, got: \(label ?? "nil")")
     }
 
-    func testRelativeLabelDMMForOlderDate() throws {
+    func testRelativeLabelUsesDayMonthFormatForOlderDate() throws {
         let now = realNow
         let weeksAgo = try XCTUnwrap(
             calendar.date(byAdding: .day, value: -30, to: now)
         )
 
-        let label = SidebarDateFormatter.relativeLabel(date: weeksAgo, now: now, calendar: calendar)
+        let label = SidebarDateFormatter.relativeLabel(date: weeksAgo)
 
         XCTAssertNotNil(label)
         let expectedDay = String(calendar.component(.day, from: weeksAgo))

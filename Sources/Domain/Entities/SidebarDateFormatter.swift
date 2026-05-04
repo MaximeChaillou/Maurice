@@ -62,26 +62,11 @@ enum SidebarDateFormatter {
         return formatter.string(from: event.start)
     }
 
-    /// "today", "yesterday", "Mon 14", "5 Apr".
-    static func relativeLabel(
-        date: Date,
-        now: Date,
-        calendar: Calendar = .current
-    ) -> String? {
-        if calendar.isDateInToday(date) {
-            return String(localized: "today")
-        }
-        if calendar.isDateInYesterday(date) {
-            return String(localized: "yesterday")
-        }
-        let daysAgo = calendar.dateComponents([.day], from: date, to: now).day ?? 0
+    /// Day + abbreviated month, e.g. "5 Apr" — uniform across recencies.
+    static func relativeLabel(date: Date) -> String? {
         let formatter = DateFormatter()
         formatter.locale = Locale.current
-        if daysAgo < 7 {
-            formatter.dateFormat = "EEE d"
-        } else {
-            formatter.dateFormat = "d MMM"
-        }
+        formatter.dateFormat = "d MMM"
         return formatter.string(from: date)
     }
 }
