@@ -167,11 +167,17 @@ struct FolderPathExplorerView: View {
             result.append(BreadcrumbSibling(
                 id: pathFromRoot,
                 label: basename + ".md",
+                sub: dateSubtitle(for: basename),
                 leading: .symbol("doc.text"),
                 active: pathFromRoot == activeID
             ))
         }
         return result
+    }
+
+    private func dateSubtitle(for basename: String) -> String? {
+        guard let date = DateFormatters.dayPOSIX.date(from: basename) else { return nil }
+        return date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
     }
 
     private func relativePath(of url: URL) -> String {
