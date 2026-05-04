@@ -113,6 +113,7 @@
 		TP07TP08TP09TP10TP11TP12 /* Templates in Resources */ = {isa = PBXBuildFile; fileRef = TP01TP02TP03TP04TP05TP06 /* Templates */; };
 		UC01UC02UC03UC04UC05UC06 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = UC11UC12UC13UC14UC15UC16 /* UpdateChecker.swift */; };
 		VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */; };
+		RC01TC01RC01TC01RC01TC0 /* RecordingContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC01FR01RC01FR01RC01FR0 /* RecordingContextTests.swift */; };
 		VM03T003B003C003D003E003 /* MemoryListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */; };
 		VM04T004B004C004D004E004 /* MeetingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */; };
 		VM05T005B005C005D005E005 /* GoogleCalendarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */; };
@@ -311,6 +312,7 @@
 		SD01RF01SD01RF01SD01RF01 /* SidebarDateFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDateFormatterTests.swift; sourceTree = "<group>"; };
 
 		VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModelTests.swift; sourceTree = "<group>"; };
+		RC01FR01RC01FR01RC01FR0 /* RecordingContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingContextTests.swift; sourceTree = "<group>"; };
 		VM03F003B003C003D003E003 /* MemoryListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModelTests.swift; sourceTree = "<group>"; };
 		VM04F004B004C004D004E004 /* MeetingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsViewModelTests.swift; sourceTree = "<group>"; };
 		VM05F005B005C005D005E005 /* GoogleCalendarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalendarViewModelTests.swift; sourceTree = "<group>"; };
@@ -637,6 +639,7 @@
 				PX11PX12PX13PX14PX15PX16 /* PeopleContentViewModelTests.swift */,
 				NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */,
 				VM02F002B002C002D002E002 /* RecordingViewModelTests.swift */,
+				RC01FR01RC01FR01RC01FR0 /* RecordingContextTests.swift */,
 				NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */,
 				CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */,
 				VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */,
@@ -914,6 +917,7 @@
 				PX01PX02PX03PX04PX05PX06 /* PeopleContentViewModelTests.swift in Sources */,
 				NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */,
 				VM02T002B002C002D002E002 /* RecordingViewModelTests.swift in Sources */,
+				RC01TC01RC01TC01RC01TC0 /* RecordingContextTests.swift in Sources */,
 				IL41IL42IL43IL44IL45IL46 /* IssueLoggerTests.swift in Sources */,
 				NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */,
 				CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */,

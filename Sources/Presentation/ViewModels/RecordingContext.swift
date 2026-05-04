@@ -43,10 +43,12 @@ final class RecordingContext {
                     recordingViewModel.subdirectory = created
                     navigateToMeeting(created)
                 }
-            } else if navigationCoordinator.activeTab == .meeting,
+            } else if !navigationCoordinator.showHome,
+                      navigationCoordinator.activeTab == .meeting,
                       let folder = meetingViewModel.selectedFolder {
                 recordingViewModel.subdirectory = folder
-            } else if navigationCoordinator.activeTab == .people,
+            } else if !navigationCoordinator.showHome,
+                      navigationCoordinator.activeTab == .people,
                       let person = peopleViewModel.selectedPerson {
                 recordingViewModel.subdirectory = "People/\(person)/1-1"
             } else {
