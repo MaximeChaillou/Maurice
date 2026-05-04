@@ -199,7 +199,8 @@ struct MauriceApp: App {
 
         Window("Settings", id: "settings") {
             ZStack {
-                TabAmbianceBackground(ambiance: .home)
+                Color(nsColor: .windowBackgroundColor)
+                    .ignoresSafeArea()
 
                 SettingsView(
                     calendarViewModel: calendarViewModel,
