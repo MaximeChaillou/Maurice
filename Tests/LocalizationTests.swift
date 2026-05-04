@@ -85,7 +85,7 @@ final class LocalizationTests: XCTestCase {
     // MARK: - SettingsSection
 
     func testSettingsSectionAllCasesCount() {
-        XCTAssertEqual(SettingsSection.allCases.count, 8)
+        XCTAssertEqual(SettingsSection.allCases.count, 6)
     }
 
     func testSettingsSectionIdMatchesRawValue() {

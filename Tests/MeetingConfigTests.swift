@@ -18,12 +18,12 @@ final class MeetingConfigTests: XCTestCase {
 
         let prepareAction = config.actions.first
         XCTAssertNotNil(prepareAction)
-        XCTAssertEqual(prepareAction?.buttonName, "Préparer")
+        XCTAssertEqual(prepareAction?.buttonName, String(localized: "Prepare"))
         XCTAssertEqual(prepareAction?.skillFilename, "prepare-meeting.md")
 
         let summarizeAction = config.actions.last
         XCTAssertNotNil(summarizeAction)
-        XCTAssertEqual(summarizeAction?.buttonName, "Résumer")
+        XCTAssertEqual(summarizeAction?.buttonName, String(localized: "Summarize"))
         XCTAssertEqual(summarizeAction?.skillFilename, "summarize-meeting.md")
     }
 

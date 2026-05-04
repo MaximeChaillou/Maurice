@@ -329,19 +329,19 @@ final class GoogleCalendarServiceTests: XCTestCase {
     func testGoogleCalendarErrorDescriptions() {
         XCTAssertEqual(
             GoogleCalendarError.tokenExchangeFailed.errorDescription,
-            "Échec de l’échange du token"
+            String(localized: "Token exchange failed")
         )
         XCTAssertEqual(
             GoogleCalendarError.refreshFailed.errorDescription,
-            "Échec du rafraîchissement du token"
+            String(localized: "Token refresh failed")
         )
         XCTAssertEqual(
             GoogleCalendarError.emailFetchFailed.errorDescription,
-            "Impossible de récupérer l’email"
+            String(localized: "Unable to retrieve the email")
         )
         XCTAssertEqual(
             GoogleCalendarError.oauthTimeout.errorDescription,
-            "La connexion a expiré (120s)"
+            String(localized: "The connection timed out (120s)")
         )
     }
 
