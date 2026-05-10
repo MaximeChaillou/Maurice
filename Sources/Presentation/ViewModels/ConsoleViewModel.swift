@@ -98,7 +98,7 @@ final class ConsoleViewModel {
         let textBytes = Array(command.utf8)
         terminalView.send(textBytes)
         Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(50))
+            try? await Task.sleep(for: .milliseconds(100))
             terminalView.send([0x0D])
         }
     }
