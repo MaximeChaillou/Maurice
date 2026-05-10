@@ -108,14 +108,28 @@ struct MeetingsView: View {
 
     @ViewBuilder
     private var groupedFolders: some View {
-        let buckets = bucketedFolders()
-        ForEach(MeetingDateSection.allCases, id: \.self) { section in
-            if let folders = buckets[section], !folders.isEmpty {
-                SidebarSectionLabel(title: section.title)
-                ForEach(folders) { folder in
-                    folderRow(folder)
-                }
+        ForEach(groupedSidebarItems) { item in
+            switch item {
+            case .header(_, let title):
+                SidebarSectionLabel(title: title)
+            case .folder(_, let folder):
+                folderRow(folder)
             }
+        }
+    }
+
+    /// Flat list of sidebar items (section headers + folder rows) used by the
+    /// grouped sidebar. Flattening avoids nested `ForEach` inside conditional
+    /// branches, which can confuse `LazyVStack`'s view-identity diffing when
+    /// folders move between buckets and produce a stale `active` highlight on
+    /// a previously-selected row.
+    private var groupedSidebarItems: [MeetingsSidebarItem] {
+        let buckets = bucketedFolders()
+        return MeetingDateSection.allCases.flatMap { section -> [MeetingsSidebarItem] in
+            guard let folders = buckets[section], !folders.isEmpty else { return [] }
+            var out: [MeetingsSidebarItem] = [.header(section: section, title: section.title)]
+            out.append(contentsOf: folders.map { .folder(section: section, folder: $0) })
+            return out
         }
     }
 
@@ -395,6 +409,26 @@ extension MeetingsView {
             } label: {
                 Label("Move content to…", systemImage: "folder.badge.arrow.right")
             }
+        }
+    }
+}
+
+// MARK: - Sidebar item
+
+/// Flat sidebar item representation for the grouped Meetings sidebar. Carries
+/// its own bucket context so the resulting `id` is unique even if the same
+/// folder were ever visible from two buckets — preventing duplicate-id
+/// rendering glitches inside `LazyVStack`.
+enum MeetingsSidebarItem: Identifiable {
+    case header(section: MeetingDateSection, title: LocalizedStringKey)
+    case folder(section: MeetingDateSection, folder: FolderItem)
+
+    var id: String {
+        switch self {
+        case .header(let section, _):
+            return "header-\(section.rawValue)"
+        case .folder(let section, let folder):
+            return "folder-\(section.rawValue)-\(folder.url.path)"
         }
     }
 }
