@@ -2,6 +2,8 @@ import SwiftUI
 
 struct HomeSetUpPanel: View {
     let checker: HomeSetupChecker
+    let templateUpdateService: TemplateUpdateService
+    let settingsNavigator: SettingsNavigator
     @Environment(\.openWindow) private var openWindow
 
     private var memoryDone: Bool { checker.memoryStatus.isComplete }
@@ -9,7 +11,10 @@ struct HomeSetUpPanel: View {
         if case .ok = checker.consoleState { return true }
         return false
     }
-    private var doneCount: Int { (memoryDone ? 1 : 0) + (consoleDone ? 1 : 0) }
+    private var configDone: Bool { !templateUpdateService.hasPendingUpdates }
+    private var doneCount: Int {
+        (memoryDone ? 1 : 0) + (consoleDone ? 1 : 0) + (configDone ? 1 : 0)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -17,7 +22,7 @@ struct HomeSetUpPanel: View {
                 Text("Set up")
                     .font(.system(size: 13.5, weight: .semibold))
                 Spacer()
-                HomeProgressIndicator(done: doneCount, total: 2)
+                HomeProgressIndicator(done: doneCount, total: 3)
             }
 
             VStack(spacing: 4) {
@@ -32,6 +37,12 @@ struct HomeSetUpPanel: View {
                     detail: consoleDetail,
                     state: consoleRowState,
                     action: { Task { await checker.refreshConsole() } }
+                )
+                HomeSetupRow(
+                    label: String(localized: "Configuration up to date"),
+                    detail: configDetail,
+                    state: configDone ? .done : .pending,
+                    action: openTemplateUpdates
                 )
             }
         }
@@ -71,6 +82,17 @@ struct HomeSetUpPanel: View {
         case .failed(let reason):
             return reason
         }
+    }
+
+    private var configDetail: String? {
+        let count = templateUpdateService.pendingTemplates.count
+        guard count > 0 else { return nil }
+        return String(localized: "\(count) update(s) pending")
+    }
+
+    private func openTemplateUpdates() {
+        settingsNavigator.selectedSection = .templateUpdates
+        openWindow(id: "settings")
     }
 }
 

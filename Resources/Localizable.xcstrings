@@ -104,6 +104,16 @@
         }
       }
     },
+    "%lld update(s) pending": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mise(s) à jour en attente"
+          }
+        }
+      }
+    },
     "'%@' will be permanently deleted.": {
       "localizations": {
         "fr": {
@@ -628,6 +638,16 @@
     },
     "Configuration": {
       "comment": "Meeting configuration sheet title"
+    },
+    "Configuration up to date": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration à jour"
+          }
+        }
+      }
     },
     "Configure": {
       "localizations": {
@@ -1398,16 +1418,6 @@
         }
       }
     },
-    "Model updates available": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mises à jour des modèles disponibles"
-          }
-        }
-      }
-    },
     "Move content to…": {
       "localizations": {
         "fr": {
@@ -2097,16 +2107,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réessayer"
-          }
-        }
-      }
-    },
-    "Review": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Consulter"
           }
         }
       }

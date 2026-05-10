@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 struct HomeView: View {
@@ -36,10 +35,6 @@ struct HomeView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if templateUpdateService.hasPendingUpdates {
-                HomeTemplateUpdatesBanner(settingsNavigator: settingsNavigator)
-            }
-
             HomeGreetingStrip(
                 now: now,
                 timeUntilNextEventText: timeUntilNextEventText
@@ -64,7 +59,11 @@ struct HomeView: View {
                     .frame(width: leftWidth, height: geo.size.height)
 
                     VStack(spacing: gap) {
-                        HomeSetUpPanel(checker: setupChecker)
+                        HomeSetUpPanel(
+                            checker: setupChecker,
+                            templateUpdateService: templateUpdateService,
+                            settingsNavigator: settingsNavigator
+                        )
                         HomeGettingStartedPanel(
                             hasMeetings: hasMeetings,
                             hasPeople: hasPeople,
@@ -77,31 +76,6 @@ struct HomeView: View {
         }
         .padding(20)
         .onAppear { setupChecker.refresh() }
-    }
-}
-
-// MARK: - Template updates banner
-
-private struct HomeTemplateUpdatesBanner: View {
-    let settingsNavigator: SettingsNavigator
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "arrow.triangle.2.circlepath")
-                .foregroundStyle(.orange)
-            Text("Model updates available")
-                .font(.callout)
-            Button("Review") {
-                settingsNavigator.selectedSection = .templateUpdates
-                openWindow(id: "settings")
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .glassEffect(.regular, in: .capsule)
     }
 }
 
