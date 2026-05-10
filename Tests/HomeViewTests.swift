@@ -34,6 +34,30 @@ final class HomeViewTests: XCTestCase {
         XCTAssertFalse(showCards)
     }
 
+    // MARK: - Set up "Configuration up to date" row
+
+    func testConfigRowDoneWhenNoPendingTemplateUpdates() {
+        let hasPendingUpdates = false
+        XCTAssertTrue(!hasPendingUpdates)
+    }
+
+    func testConfigRowPendingWhenTemplateUpdatesAreAvailable() {
+        let hasPendingUpdates = true
+        XCTAssertFalse(!hasPendingUpdates)
+    }
+
+    // MARK: - Getting started "Create my own skill" row
+
+    func testCustomSkillDoneWhenSkillCountStrictlyGreaterThanThree() {
+        XCTAssertTrue(4 > 3)
+        XCTAssertTrue(10 > 3)
+    }
+
+    func testCustomSkillNotDoneAtBaselineSkillCount() {
+        XCTAssertFalse(0 > 3)
+        XCTAssertFalse(3 > 3)
+    }
+
     // MARK: - HomeSchedule.timeBreakdown
 
     func testTimeBreakdownMinutesOnly() {

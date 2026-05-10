@@ -67,7 +67,9 @@ struct HomeView: View {
                         HomeGettingStartedPanel(
                             hasMeetings: hasMeetings,
                             hasPeople: hasPeople,
-                            coordinator: coordinator
+                            hasCustomSkill: setupChecker.skillCount > 3,
+                            coordinator: coordinator,
+                            settingsNavigator: settingsNavigator
                         )
                     }
                     .frame(width: rightWidth, alignment: .top)
@@ -343,10 +345,15 @@ private struct HomeEventRow: View {
 private struct HomeGettingStartedPanel: View {
     let hasMeetings: Bool
     let hasPeople: Bool
+    let hasCustomSkill: Bool
     let coordinator: NavigationCoordinator
+    let settingsNavigator: SettingsNavigator
+    @Environment(\.openWindow) private var openWindow
 
-    private var doneCount: Int { (hasMeetings ? 1 : 0) + (hasPeople ? 1 : 0) }
-    private var total: Int { 2 }
+    private var doneCount: Int {
+        (hasMeetings ? 1 : 0) + (hasPeople ? 1 : 0) + (hasCustomSkill ? 1 : 0)
+    }
+    private var total: Int { 3 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -365,6 +372,10 @@ private struct HomeGettingStartedPanel: View {
                 HomeChecklistRow(label: String(localized: "Add a person"), done: hasPeople) {
                     coordinator.showHome = false
                     coordinator.activeTab = .people
+                }
+                HomeChecklistRow(label: String(localized: "Create my own skill"), done: hasCustomSkill) {
+                    settingsNavigator.selectedSection = .skills
+                    openWindow(id: "settings")
                 }
             }
         }

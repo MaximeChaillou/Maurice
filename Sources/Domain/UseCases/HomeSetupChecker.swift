@@ -20,10 +20,25 @@ final class HomeSetupChecker {
 
     private(set) var memoryStatus: MemoryStatus = .init(presentCount: 0, totalCount: requiredMemoryFiles.count)
     private(set) var consoleState: ConsoleState = .checking
+    private(set) var skillCount: Int = 0
 
     func refresh() {
         refreshMemory()
         Task { await refreshConsole() }
+        Task { await refreshSkillCount() }
+    }
+
+    func refreshSkillCount() async {
+        let dir = AppSettings.claudeCommandsDirectory
+        skillCount = await Task.detached {
+            let fm = FileManager.default
+            guard let items = try? fm.contentsOfDirectory(
+                at: dir,
+                includingPropertiesForKeys: nil,
+                options: []
+            ) else { return 0 }
+            return items.filter { $0.pathExtension == "md" }.count
+        }.value
     }
 
     func refreshMemory() {

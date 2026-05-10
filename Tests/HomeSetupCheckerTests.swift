@@ -60,6 +60,68 @@ final class HomeSetupCheckerTests: XCTestCase {
         XCTAssertEqual(sut.consoleState, .checking)
     }
 
+    func testInitialSkillCountIsZero() {
+        let sut = HomeSetupChecker()
+        XCTAssertEqual(sut.skillCount, 0)
+    }
+
+    // MARK: - Skill count
+
+    func testRefreshSkillCountReportsZeroWhenNoCommandsDirectory() async {
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 0)
+    }
+
+    func testRefreshSkillCountReportsZeroWhenCommandsDirectoryIsEmpty() async throws {
+        try FileManager.default.createDirectory(
+            at: AppSettings.claudeCommandsDirectory,
+            withIntermediateDirectories: true
+        )
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 0)
+    }
+
+    func testRefreshSkillCountCountsMarkdownFiles() async throws {
+        try writeSkillFiles(["a.md", "b.md", "c.md", "d.md"])
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 4)
+    }
+
+    func testRefreshSkillCountIncludesMauricePrefixedFiles() async throws {
+        try writeSkillFiles([
+            "prepare-meeting.md",
+            "summarize-meeting.md",
+            "maurice-convert-file-to-md.md"
+        ])
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 3)
+    }
+
+    func testRefreshSkillCountIgnoresNonMarkdownFiles() async throws {
+        try writeSkillFiles(["a.md", "notes.txt", "config.json"])
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 1)
+    }
+
+    func testRefreshSkillCountIgnoresSubdirectoryEntries() async throws {
+        let commandsDir = AppSettings.claudeCommandsDirectory
+        let nested = commandsDir.appendingPathComponent("nested", isDirectory: true)
+        try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
+        try "stub".write(
+            to: nested.appendingPathComponent("hidden.md"),
+            atomically: true,
+            encoding: .utf8
+        )
+        let sut = HomeSetupChecker()
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.skillCount, 0)
+    }
+
     // MARK: - Memory detection
 
     func testRefreshMemoryWithNoFilesReportsZero() {
@@ -141,5 +203,31 @@ final class HomeSetupCheckerTests: XCTestCase {
     func testMemoryStatusNotCompleteWhenPresentLessThanTotal() {
         let status = HomeSetupChecker.MemoryStatus(presentCount: 2, totalCount: 3)
         XCTAssertFalse(status.isComplete)
+    }
+
+    // MARK: - refresh()
+
+    func testRefreshUpdatesMemoryAndSkillCount() async throws {
+        try writeMemoryFile("Company.md")
+        try writeSkillFiles(["one.md", "two.md"])
+        let sut = HomeSetupChecker()
+        sut.refresh()
+        // refresh() schedules async work for skill count and console; await only the
+        // skill count path explicitly so the test stays deterministic.
+        await sut.refreshSkillCount()
+        XCTAssertEqual(sut.memoryStatus.presentCount, 1)
+        XCTAssertEqual(sut.skillCount, 2)
+    }
+
+    private func writeSkillFiles(_ names: [String]) throws {
+        let dir = AppSettings.claudeCommandsDirectory
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        for name in names {
+            try "stub".write(
+                to: dir.appendingPathComponent(name),
+                atomically: true,
+                encoding: .utf8
+            )
+        }
     }
 }

@@ -739,6 +739,16 @@
         }
       }
     },
+    "Create my own skill": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer mon propre skill"
+          }
+        }
+      }
+    },
     "Creating file structure...": {
       "localizations": {
         "fr": {
