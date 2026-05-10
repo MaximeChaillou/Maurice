@@ -9,6 +9,7 @@ struct HomeView: View {
     var hasMeetings: Bool = false
     var hasPeople: Bool = false
     let now: Date
+    @State private var setupChecker = HomeSetupChecker()
 
     private var nextEvent: GoogleCalendarEvent? {
         calendarViewModel.upcomingEvents.first { $0.start > now }
@@ -62,16 +63,20 @@ struct HomeView: View {
                     )
                     .frame(width: leftWidth, height: geo.size.height)
 
-                    HomeGettingStartedPanel(
-                        hasMeetings: hasMeetings,
-                        hasPeople: hasPeople,
-                        coordinator: coordinator
-                    )
-                    .frame(width: rightWidth)
+                    VStack(spacing: gap) {
+                        HomeSetUpPanel(checker: setupChecker)
+                        HomeGettingStartedPanel(
+                            hasMeetings: hasMeetings,
+                            hasPeople: hasPeople,
+                            coordinator: coordinator
+                        )
+                    }
+                    .frame(width: rightWidth, alignment: .top)
                 }
             }
         }
         .padding(20)
+        .onAppear { setupChecker.refresh() }
     }
 }
 
@@ -396,7 +401,7 @@ private struct HomeGettingStartedPanel: View {
     }
 }
 
-private struct HomeProgressIndicator: View {
+struct HomeProgressIndicator: View {
     let done: Int
     let total: Int
 

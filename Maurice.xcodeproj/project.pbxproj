@@ -34,6 +34,7 @@
 		3D45D7C053D5A694C8DDAC62 /* FileTranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17587FFC8F825BCAE12F6E9 /* FileTranscriptionStorage.swift */; };
 		4F8BA5E363FF4AE9809B1699 /* GoogleCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF7B964AE7A43C388CCA3B3 /* GoogleCalendarEvent.swift */; };
 		51DEC22F18B344008A8D0541 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */; };
+		HSP1HSP2HSP3HSP4HSP5HSP6 /* HomeSetUpPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = HSP7HSP8HSP9HSP0HSPAHSPB /* HomeSetUpPanel.swift */; };
 		59A3AFDEE330BA047916FA70 /* TranscriptionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14241F0FA37147C8A3048475 /* TranscriptionStorage.swift */; };
 		6071ADB5BD2B81A0FB03B264 /* TranscriptionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */; };
 		6473E8399C78D6138CC06856 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444945559552A66796B66A73 /* Assets.xcassets */; };
@@ -44,6 +45,8 @@
 		66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */; };
 		68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */; };
 		A1B2C3D4E5F60001AA000001 /* MemoryImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */; };
+		CB01CB02CB03CB04CB05CB06 /* ClaudeBinaryLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB11CB12CB13CB14CB15CB16 /* ClaudeBinaryLocator.swift */; };
+		HC01HC02HC03HC04HC05HC06 /* HomeSetupChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = HC11HC12HC13HC14HC15HC16 /* HomeSetupChecker.swift */; };
 
 		6F1ADD8CF138F5975A4310C0 /* MemoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80051D6DB5639866EA2923C6 /* MemoryContentView.swift */; };
 		7A1B2C3D4E5F6A7B8C9D0E1F /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2C3D4E5F6A7B8C9D0E1F2A /* TasksView.swift */; };
@@ -137,6 +140,8 @@
 		NT55NT56NT57NT58NT59NT60 /* RecordingUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF55NF56NF57NF58NF59NF60 /* RecordingUseCaseTests.swift */; };
 		NT61NT62NT63NT64NT65NT66 /* SemanticSearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */; };
 		MF01BF01MF01BF01MF01BF01 /* MemoryFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */; };
+		HSC1BF01HSC1BF01HSC1BF01 /* HomeSetupCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HSC1RF01HSC1RF01HSC1RF01 /* HomeSetupCheckerTests.swift */; };
+		CBL1BF01CBL1BF01CBL1BF01 /* ClaudeBinaryLocatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBL1RF01CBL1RF01CBL1RF01 /* ClaudeBinaryLocatorTests.swift */; };
 		AL01BF01AL01BF01AL01BF01 /* AudioLevelBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */; };
 		DF01BF01DF01BF01DF01BF01 /* DateFormattersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */; };
 		TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */; };
@@ -195,6 +200,8 @@
 		52EFA5ED4B2C7F4923342C0E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
 		55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingUseCase.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryImporter.swift; sourceTree = "<group>"; };
+		CB11CB12CB13CB14CB15CB16 /* ClaudeBinaryLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBinaryLocator.swift; sourceTree = "<group>"; };
+		HC11HC12HC13HC14HC15HC16 /* HomeSetupChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSetupChecker.swift; sourceTree = "<group>"; };
 
 		5F155C4D7C8645068C4CA520 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		658FD52C5EE5F4000F2ACB93 /* MauriceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MauriceApp.swift; sourceTree = "<group>"; };
@@ -218,6 +225,7 @@
 		A8B9C0D1E2F3A4B5C6D7E8F9 /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsView.swift; sourceTree = "<group>"; };
 		A9845F979EA2C2BC9E4F952C /* MemoryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryListViewModel.swift; sourceTree = "<group>"; };
 		ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		HSP7HSP8HSP9HSP0HSPAHSPB /* HomeSetUpPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSetUpPanel.swift; sourceTree = "<group>"; };
 		AE028134F20B0B629AAEF3AB /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
 		AFBD6F4332B05BF618BA3797 /* TranscriptionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionEvent.swift; sourceTree = "<group>"; };
 		AI11AI12AI13AI14AI15AI16 /* AddItemSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemSheet.swift; sourceTree = "<group>"; };
@@ -300,6 +308,8 @@
 		IL31IL32IL33IL34IL35IL36 /* IssueLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueLoggerTests.swift; sourceTree = "<group>"; };
 		NF61NF62NF63NF64NF65NF66 /* SemanticSearchServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticSearchServiceTests.swift; sourceTree = "<group>"; };
 		MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryFileTests.swift; sourceTree = "<group>"; };
+		HSC1RF01HSC1RF01HSC1RF01 /* HomeSetupCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSetupCheckerTests.swift; sourceTree = "<group>"; };
+		CBL1RF01CBL1RF01CBL1RF01 /* ClaudeBinaryLocatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBinaryLocatorTests.swift; sourceTree = "<group>"; };
 		AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLevelBufferTests.swift; sourceTree = "<group>"; };
 		DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormattersTests.swift; sourceTree = "<group>"; };
 		TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionTests.swift; sourceTree = "<group>"; };
@@ -392,6 +402,8 @@
 		242D0C7FEA5829D1BB31A081 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				CB11CB12CB13CB14CB15CB16 /* ClaudeBinaryLocator.swift */,
+				HC11HC12HC13HC14HC15HC16 /* HomeSetupChecker.swift */,
 				A1B2C3D4E5F60001BB000001 /* MemoryImporter.swift */,
 				55A4A6C7F1D5EFE83B145431 /* RecordingUseCase.swift */,
 				TU11TU12TU13TU14TU15TU16 /* TemplateUpdateService.swift */,
@@ -533,6 +545,7 @@
 				9FFE3EF5E758435D8198C210 /* GoogleCalendarSettingsView.swift */,
 				DN11DN12DN13DN14DN15DN16 /* DateNavigationComponents.swift */,
 				ADB6D8DA0CF849128AA3CB6C /* HomeView.swift */,
+				HSP7HSP8HSP9HSP0HSPAHSPB /* HomeSetUpPanel.swift */,
 				OB11OB12OB13OB14OB15OB16 /* OnboardingView.swift */,
 				CC7ABC0DF96746DCAB1A36FA /* MCPServersView.swift */,
 				AI11AI12AI13AI14AI15AI16 /* AddItemSheet.swift */,
@@ -646,6 +659,8 @@
 				CVT1RF01CVT1RF01CVT1RF01 /* ConsoleViewModelTests.swift */,
 				VTS1RF01VTS1RF01VTS1RF01 /* VTSequencesTests.swift */,
 				MF01RF01MF01RF01MF01RF01 /* MemoryFileTests.swift */,
+				HSC1RF01HSC1RF01HSC1RF01 /* HomeSetupCheckerTests.swift */,
+				CBL1RF01CBL1RF01CBL1RF01 /* ClaudeBinaryLocatorTests.swift */,
 				AL01RF01AL01RF01AL01RF01 /* AudioLevelBufferTests.swift */,
 				DF01RF01DF01RF01DF01RF01 /* DateFormattersTests.swift */,
 				TX01RF01TX01RF01TX01RF01 /* TranscriptionTests.swift */,
@@ -815,6 +830,7 @@
 				66BC974DC31643C2A6913268 /* GoogleCalendarSettingsView.swift in Sources */,
 				DN21DN22DN23DN24DN25DN26 /* DateNavigationComponents.swift in Sources */,
 				51DEC22F18B344008A8D0541 /* HomeView.swift in Sources */,
+				HSP1HSP2HSP3HSP4HSP5HSP6 /* HomeSetUpPanel.swift in Sources */,
 				OB21OB22OB23OB24OB25OB26 /* OnboardingView.swift in Sources */,
 				02FA743B11684038913CCFEE /* MCPServersView.swift in Sources */,
 				E9E7394FFC7A418990ECAAF5 /* CalendarLinkSheet.swift in Sources */,
@@ -840,6 +856,8 @@
 				2D182DD428C529A63EC524BF /* MemoryListViewModel.swift in Sources */,
 				9AD1822356FD7ED58B9C8196 /* SpeechModelState.swift in Sources */,
 				A1B2C3D4E5F60001AA000001 /* MemoryImporter.swift in Sources */,
+				CB01CB02CB03CB04CB05CB06 /* ClaudeBinaryLocator.swift in Sources */,
+				HC01HC02HC03HC04HC05HC06 /* HomeSetupChecker.swift in Sources */,
 				68B233C1DB23DDDCFE49FB3A /* RecordingUseCase.swift in Sources */,
 				RC01RC02RC03RC04RC05RC06 /* RecordingContext.swift in Sources */,
 				HS01HS02HS03HS04HS05HS06 /* HomeSchedule.swift in Sources */,
@@ -926,6 +944,8 @@
 				CVT1BF01CVT1BF01CVT1BF01 /* ConsoleViewModelTests.swift in Sources */,
 				VTS1BF01VTS1BF01VTS1BF01 /* VTSequencesTests.swift in Sources */,
 				MF01BF01MF01BF01MF01BF01 /* MemoryFileTests.swift in Sources */,
+				HSC1BF01HSC1BF01HSC1BF01 /* HomeSetupCheckerTests.swift in Sources */,
+				CBL1BF01CBL1BF01CBL1BF01 /* ClaudeBinaryLocatorTests.swift in Sources */,
 				AL01BF01AL01BF01AL01BF01 /* AudioLevelBufferTests.swift in Sources */,
 				DF01BF01DF01BF01DF01BF01 /* DateFormattersTests.swift in Sources */,
 				TX01BF01TX01BF01TX01BF01 /* TranscriptionTests.swift in Sources */,

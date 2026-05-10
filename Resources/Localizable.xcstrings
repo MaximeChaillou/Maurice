@@ -83,6 +83,16 @@
         }
       }
     },
+    "%lld/%lld files": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld fichiers"
+          }
+        }
+      }
+    },
     "%lld min": {
       "comment": "Short unit for minutes in a duration (e.g. countdown)",
       "localizations": {
@@ -459,6 +469,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vérification des serveurs…"
+          }
+        }
+      }
+    },
+    "Checking…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification…"
+          }
+        }
+      }
+    },
+    "Claude CLI not found": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude CLI introuvable"
+          }
+        }
+      }
+    },
+    "Claude CLI ready": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude CLI prêt"
           }
         }
       }
@@ -949,6 +989,16 @@
         }
       }
     },
+    "Exit code %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code de sortie %lld"
+          }
+        }
+      }
+    },
     "Event name": {
       "localizations": {
         "fr": {
@@ -1324,6 +1374,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mémoire"
+          }
+        }
+      }
+    },
+    "Memory imported": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mémoire importée"
           }
         }
       }
@@ -2187,6 +2247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sélectionnez le dossier racine pour Maurice"
+          }
+        }
+      }
+    },
+    "Set up": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration"
           }
         }
       }
